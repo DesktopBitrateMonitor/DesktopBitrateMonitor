@@ -1,4 +1,4 @@
-export default messages = {
+export const messages = {
   global: {
     error: {
       enabled: true,

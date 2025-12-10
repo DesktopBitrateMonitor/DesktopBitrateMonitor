@@ -1,6 +1,6 @@
 import generateId from '../../lib/id-generator';
 
-export default userCommands = {
+export const userCommands = {
   bitrate: {
     id: generateId(),
     requiredRole: 'user',

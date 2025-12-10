@@ -1,6 +1,6 @@
 import generateId from '../../lib/id-generator';
 
-export default adminCommands = {
+export const adminCommands = {
   startStream: {
     id: generateId(),
     requiredRole: 'admin',

@@ -1,8 +1,7 @@
-import generateId from '../lib/id-generator';
-import adminCommands from './commands/admin-commands';
-import modCommands from './commands/mod-commands';
-import userCommands from './commands/user-commands';
-import messages from './messages/messages';
+import { adminCommands } from './commands/admin-commands';
+import { modCommands } from './commands/mod-commands';
+import { userCommands } from './commands/user-commands';
+import { messages } from './messages/messages';
 import Store from './store';
 
 /**
@@ -30,7 +29,6 @@ export const injectDefaults = () => {
         height: 800
       },
       screen: {
-        name: 'primary',
         id: null
       },
       onQuit: 'quit'

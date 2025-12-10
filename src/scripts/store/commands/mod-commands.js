@@ -1,6 +1,6 @@
 import generateId from '../../lib/id-generator';
 
-export default modCommands = {
+export const modCommands = {
   switchScene: {
     id: generateId(),
     requiredRole: 'mod',
