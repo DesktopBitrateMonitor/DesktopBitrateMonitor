@@ -60,15 +60,13 @@ app.get('/oauth', async (req, res) => {
       profile_image_url: user.profile_image_url
     };
 
-    twitchBotConfig.set(data);
-
-    // store.set('twitch.bot.id', data.id);
-    // store.set('twitch.bot.login', data.login);
-    // store.set('twitch.bot.display_name', data.display_name);
-    // store.set('twitch.bot.access_token', data.access_token);
-    // store.set('twitch.bot.refresh_token', data.refresh_token);
-    // store.set('twitch.bot.scopes', data.scopes);
-    // store.set('twitch.bot.profile_image_url', data.profile_image_url);
+    twitchBotConfig.set('id', data.id);
+    twitchBotConfig.set('login', data.login);
+    twitchBotConfig.set('display_name', data.display_name);
+    twitchBotConfig.set('access_token', data.access_token);
+    twitchBotConfig.set('refresh_token', data.refresh_token);
+    twitchBotConfig.set('scopes', data.scopes);
+    twitchBotConfig.set('profile_image_url', data.profile_image_url);
 
     // Send data to the main process
     const mainWindow = BrowserWindow.getAllWindows()[0];

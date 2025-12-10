@@ -29,7 +29,8 @@
     "electron-updater": "^6.3.9",
     "express": "^5.2.1",
     "obs-websocket-js": "^5.0.7",
-    "react-router-dom": "^7.10.1"
+    "react-router-dom": "^7.10.1",
+    "ws": "^8.18.3"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config": "^2.1.0",

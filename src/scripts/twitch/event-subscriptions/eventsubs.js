@@ -3,6 +3,14 @@ import { getEventTypes } from './eventsub-types';
 import { handleEventSub } from './eventsub-message-handler';
 import { getUsers } from '../twitch-api';
 import { injectDefaults } from '../../store/defaults';
+import WebSocket from 'ws';
+
+const WS_ENDPOINT = 'wss://eventsub.wss.twitch.tv/ws';
+const SUBSCRIPTIONS_ENDPOINT = 'https://api.twitch.tv/helix/eventsub/subscriptions';
+const HEARTBEAT_CHECK_INTERVAL_MS = 10000;
+const HEARTBEAT_TIMEOUT_MS = 30000;
+const RECONNECT_DELAY_MS = 5000;
+const SUBSCRIBE_RETRY_ATTEMPTS = 3;
 
 let ws = null;
 let heartbeatInterval = null;
@@ -10,89 +18,89 @@ let lastKeepAliveMessage = Date.now();
 let reconnecting = false;
 
 // Main entry
-export async function connectToEventSubs(client_id) {
+export async function connectToEventSubs(clientId) {
+  if (!clientId) {
+    Logger.error('Twitch client ID is required before connecting to EventSub.');
+    return;
+  }
 
-  const {twitchBotConfig, twitchChannelConfig} = injectDefaults()
+  const { twitchBotConfig, twitchChannelConfig } = injectDefaults();
+  const bot = twitchBotConfig.get('') || {};
+
+  if (!bot.access_token) {
+    Logger.error('Missing Twitch bot credentials. Aborting EventSub connection.');
+    return;
+  }
+
+  const channels = normalizeChannels(twitchChannelConfig.get('channels'));
+
+  if (!channels.length) {
+    Logger.error('No Twitch channels configured. Skipping EventSub connection.');
+    return;
+  }
 
   await cleanupWebSocket();
-
   reconnecting = true;
 
   while (reconnecting) {
     try {
-      const bot = twitchBotConfig.get('');
-      const channels = twitchChannelConfig.get('channel');
       Logger.info('Attempting to connect to Twitch EventSub WebSocket...');
-      await connectOnce(client_id, bot, channels);
-
-      // Wait here until the connection is closed or errored
-      await new Promise((resolve) => {
-        ws.on('close', resolve);
-        ws.on('error', resolve);
-      });
-
-      Logger.warn('WebSocket closed or errored. Reconnecting in 5 seconds...');
+      await connectOnce(clientId, bot, channels);
+      await waitForSocketExit();
     } catch (err) {
       Logger.error(`Connection failed: ${err.message}`);
+    } finally {
+      await cleanupWebSocket();
     }
 
-    await cleanupWebSocket();
-    await new Promise((res) => setTimeout(res, 5000));
+    if (!reconnecting) {
+      break;
+    }
+
+    Logger.warn(`WebSocket closed or errored. Reconnecting in ${RECONNECT_DELAY_MS / 1000} seconds...`);
+    await delay(RECONNECT_DELAY_MS);
   }
 }
 
 // One connection attempt
-async function connectOnce(client_id, bot, channels) {
+async function connectOnce(clientId, bot, channels) {
   return new Promise((resolve, reject) => {
-    ws = new WebSocket('wss://eventsub.wss.twitch.tv/ws');
+    ws = new WebSocket(WS_ENDPOINT);
+    let settled = false;
 
-    ws.on('open', async () => {
+    const safeResolve = () => {
+      if (!settled) {
+        settled = true;
+        resolve();
+      }
+    };
+
+    const safeReject = (err) => {
+      if (!settled) {
+        settled = true;
+        reject(err);
+      }
+    };
+
+    ws.once('open', () => {
       Logger.success('WebSocket connected.');
       lastKeepAliveMessage = Date.now();
-
-      heartbeatInterval = setInterval(() => {
-        if (Date.now() - lastKeepAliveMessage > 30000) {
-          Logger.error('WebSocket heartbeat lost. Terminating...');
-          if (ws) {
-            ws.close();
-          }
-        }
-      }, 10000);
-
-      resolve();
+      startHeartbeatMonitor();
+      safeResolve();
     });
 
-    ws.on('message', async (data) => {
-      const message = JSON.parse(data);
-
-      if (message.metadata?.message_type === 'ping') {
-        ws.send(JSON.stringify({ metadata: { message_type: 'pong' } }));
-        console.log('Sent pong');
-        return;
-      }
-
-      if (message.metadata?.message_type === 'session_keepalive') {
-        lastKeepAliveMessage = Date.now();
-        return;
-      }
-
-      if (message.metadata?.message_type === 'session_welcome') {
-        const sessionId = message.payload.session.id;
-        await subscribeToMultipleEvents(channels, bot, client_id, sessionId);
-      }
-
-      if (Object.keys(message.payload).length > 0) {
-        handleEventSub(message.payload);
-        lastKeepAliveMessage = Date.now();
-      }
+    ws.on('message', (data) => {
+      processMessage(data, channels, bot, clientId).catch((err) => {
+        Logger.error(`Failed to process EventSub message: ${err.message}`);
+      });
     });
 
-    ws.on('error', (err) => {
+    ws.once('error', (err) => {
       Logger.error(`WebSocket error: ${err.message}`);
-      reject(err);
+      safeReject(err);
     });
 
-    ws.on('close', () => {
+    ws.once('close', () => {
       Logger.warn('WebSocket closed');
     });
   });
@@ -107,13 +115,15 @@ export async function disconnectEventSubs() {
 
 // Kill timers and socket
 async function cleanupWebSocket() {
-  if (heartbeatInterval) {
-    clearInterval(heartbeatInterval);
-    heartbeatInterval = null;
-  }
+  stopHeartbeatMonitor();
   if (ws) {
     try {
-      ws.close();
+      ws.removeAllListeners();
+      if (typeof ws.terminate === 'function') {
+        ws.terminate();
+      } else {
+        ws.close();
+      }
     } catch (err) {
       Logger.warn(`Error terminating WebSocket: ${err.message}`);
     }
@@ -122,66 +132,217 @@ async function cleanupWebSocket() {
 }
 
 // Subscription logic
-export async function subscribeToMultipleEvents(channels, bot, client_id, sessionId) {
-  if (!channels || channels.length === 0) {
+export async function subscribeToMultipleEvents(channels, bot, clientId, sessionId) {
+  const normalizedChannels = normalizeChannels(channels);
+
+  if (!normalizedChannels.length) {
     Logger.error('No channels to subscribe to');
     return { success: false };
   }
 
-  for (const c of channels) {
-    const broadcaster_id = await getUsers(bot.access_token, { user_name: c });
-    const eventTypes = getEventTypes(broadcaster_id, bot);
+  const failures = [];
 
-    for (const event of eventTypes) {
-      const { type, version, condition } = event;
-      await subscribeToEvent(c, bot, client_id, type, version, condition, sessionId);
+  for (const channelName of normalizedChannels) {
+    try {
+      const broadcaster = await getUsers(bot.access_token, { user_name: channelName });
+
+      if (!broadcaster?.id) {
+        Logger.error(`Unable to resolve broadcaster ID for ${channelName}.`);
+        failures.push(channelName);
+        continue;
+      }
+
+      const eventTypes = getEventTypes(broadcaster, bot) || [];
+
+      if (!eventTypes.length) {
+        Logger.warn(`No EventSub definitions available for ${channelName}.`);
+        continue;
+      }
+
+      const results = await Promise.allSettled(
+        eventTypes.map(({ type, version, condition }) =>
+          subscribeToEvent(channelName, bot, clientId, type, version, condition, sessionId)
+        )
+      );
+
+      const hadErrors = results.some((result) => {
+        if (result.status === 'rejected') {
+          return true;
+        }
+        return result.value === null;
+      });
+      if (hadErrors) {
+        failures.push(channelName);
+      }
+    } catch (err) {
+      Logger.error(`Failed to subscribe to ${channelName}: ${err.message}`);
+      failures.push(channelName);
     }
   }
+
+  return { success: failures.length === 0, failures };
 }
 
-async function subscribeToEvent(c, bot, client_id, type, version, condition, sessionId) {
-  try {
-    const response = await fetch('https://api.twitch.tv/helix/eventsub/subscriptions', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${bot.access_token}`,
-        'Client-ID': client_id,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        type,
-        version,
-        condition,
-        transport: {
-          method: 'websocket',
-          session_id: sessionId
+async function subscribeToEvent(channelName, bot, clientId, type, version, condition, sessionId) {
+  const payload = {
+    type,
+    version,
+    condition,
+    transport: {
+      method: 'websocket',
+      session_id: sessionId
+    }
+  };
+
+  for (let attempt = 1; attempt <= SUBSCRIBE_RETRY_ATTEMPTS; attempt += 1) {
+    try {
+      const response = await fetch(SUBSCRIPTIONS_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${bot.access_token}`,
+          'Client-ID': clientId,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const body = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        Logger.error(
+          `Failed to subscribe to ${type} for ${channelName} (attempt ${attempt}/${SUBSCRIBE_RETRY_ATTEMPTS}): ${JSON.stringify(body)}`
+        );
+        if (attempt === SUBSCRIBE_RETRY_ATTEMPTS) {
+          return null;
         }
-      })
-    });
+        await delay(250 * attempt);
+        continue;
+      }
 
-    if (!response.ok) {
-      const error = await response.json();
-      Logger.error(`Failed to subscribe to ${type}: ${JSON.stringify(error)}`);
-      return null;
+      const data = body?.data || [];
+
+      if (data[0]?.type === 'channel.chat.message') {
+        Logger.success(`Joined channel ${capitalize(channelName)}`);
+      } else if (data[0]?.type === 'channel.raid') {
+        Logger.success(`Subscribed to raid event for ${capitalize(channelName)}`);
+      } else {
+        Logger.success(`Subscribed to ${type} for ${capitalize(channelName)}`);
+      }
+
+      return data;
+    } catch (err) {
+      Logger.error(
+        `Error subscribing to ${type} for ${channelName} (attempt ${attempt}/${SUBSCRIBE_RETRY_ATTEMPTS}): ${err.message}`
+      );
+      if (attempt === SUBSCRIBE_RETRY_ATTEMPTS) {
+        return null;
+      }
+      await delay(250 * attempt);
     }
-
-    const { data } = await response.json();
-
-    if (data[0]?.type === 'channel.chat.message') {
-      Logger.success(`Joined channel ${capitalize(c)}`);
-    }
-
-    if (data[0]?.type === 'channel.raid') {
-      Logger.success(`Subscribed to raid event for ${capitalize(c)}`);
-    }
-
-    return data;
-  } catch (err) {
-    Logger.error(`Error subscribing to ${type}: ${err.message}`);
-    return null;
   }
+
+  return null;
 }
 
 function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+function normalizeChannels(channels) {
+  if (!Array.isArray(channels)) {
+    return [];
+  }
+  return [...new Set(channels.map((c) => c?.trim()).filter(Boolean))];
+}
+
+async function processMessage(rawMessage, channels, bot, clientId) {
+  const message = safeJsonParse(rawMessage);
+  if (!message) {
+    return;
+  }
+
+  const type = message.metadata?.message_type;
+
+  switch (type) {
+    case 'ping':
+      sendPong();
+      return;
+    case 'session_keepalive':
+      lastKeepAliveMessage = Date.now();
+      return;
+    case 'session_welcome': {
+      lastKeepAliveMessage = Date.now();
+      const sessionId = message.payload?.session?.id;
+      if (!sessionId) {
+        Logger.error('Missing session ID in welcome payload.');
+        return;
+      }
+      await subscribeToMultipleEvents(channels, bot, clientId, sessionId);
+      return;
+    }
+    case 'session_reconnect':
+      Logger.warn('Twitch requested an EventSub session reconnect. Restarting socket...');
+      ws?.close(4001, 'Reconnecting');
+      return;
+    default:
+      break;
+  }
+
+  if (type === 'notification' && message.payload) {
+    handleEventSub(message.payload);
+    lastKeepAliveMessage = Date.now();
+  }
+}
+
+function sendPong() {
+  if (!ws || ws.readyState !== WebSocket.OPEN) {
+    return;
+  }
+  ws.send(JSON.stringify({ metadata: { message_type: 'pong' } }));
+}
+
+function startHeartbeatMonitor() {
+  stopHeartbeatMonitor();
+  heartbeatInterval = setInterval(() => {
+    if (Date.now() - lastKeepAliveMessage > HEARTBEAT_TIMEOUT_MS) {
+      Logger.error('WebSocket heartbeat lost. Terminating...');
+      ws?.close(4000, 'Heartbeat timeout');
+    }
+  }, HEARTBEAT_CHECK_INTERVAL_MS);
+}
+
+function stopHeartbeatMonitor() {
+  if (heartbeatInterval) {
+    clearInterval(heartbeatInterval);
+    heartbeatInterval = null;
+  }
+}
+
+function safeJsonParse(raw) {
+  try {
+    const value = typeof raw === 'string' ? raw : raw.toString();
+    return JSON.parse(value);
+  } catch (err) {
+    Logger.error(`Failed to parse EventSub message: ${err.message}`);
+    return null;
+  }
+}
+
+async function waitForSocketExit() {
+  if (!ws) {
+    return;
+  }
+
+  await new Promise((resolve) => {
+    const finalize = () => {
+      resolve();
+    };
+
+    ws.once('close', finalize);
+    ws.once('error', finalize);
+  });
+}
+
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }

@@ -48,7 +48,7 @@ export const injectDefaults = () => {
   const twitchChannelConfig = new Store({
     name: 'twitch-channel-config',
     defaults: {
-      channelName: '',
+      channels: [],
       admins: [],
       mods: []
     }

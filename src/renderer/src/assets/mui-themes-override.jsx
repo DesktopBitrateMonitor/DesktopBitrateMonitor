@@ -1,16 +1,42 @@
 import { createTheme } from '@mui/material/styles';
 
-export const createMuiTheme = (mode) => {
-  const isLight = mode.name === 'light';
+export const createMuiTheme = (themeDef) => {
+  const isLight = themeDef.name === 'light';
+  const colors = themeDef.colors || {};
 
-  // Basic theme setup
+  // Build palette using semantic color tokens from theme definition
   return createTheme({
-    // Mui theme palettte
     palette: {
-      mode: isLight ? 'light' : 'dark'
+      mode: isLight ? 'light' : 'dark',
+      primary: { main: colors.primary || '#6366F1' },
+      secondary: { main: colors.secondary || '#06B6D4' },
+      background: {
+        default: colors.background || (isLight ? '#F8FAFC' : '#0F172A'),
+        paper: colors.surface || (isLight ? '#FFFFFF' : '#1E293B')
+      },
+      text: {
+        primary: colors.textPrimary || (isLight ? '#0F172A' : '#F8FAFC'),
+        secondary: colors.textSecondary || colors.muted || (isLight ? '#475569' : '#94A3B8')
+      },
+      divider: colors.muted || (isLight ? '#CBD5F5' : '#94A3B8')
     },
-    // Default MUI components theming props
     components: {
+      MuiCssBaseline: {
+        styleOverrides: {
+          body: {
+            backgroundColor: colors.background || (isLight ? '#F8FAFC' : '#0F172A'),
+            color: colors.textPrimary || (isLight ? '#0F172A' : '#F8FAFC')
+          }
+        }
+      },
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            backgroundImage: 'none',
+            backgroundColor: colors.surface || (isLight ? '#FFFFFF' : '#1E293B')
+          }
+        }
+      },
       MuiTextField: {
         defaultProps: {
           variant: 'outlined',
@@ -20,6 +46,17 @@ export const createMuiTheme = (mode) => {
       MuiButton: {
         defaultProps: {
           variant: 'contained',
+          size: 'small'
+        },
+        styleOverrides: {
+          root: {
+            textTransform: 'none',
+            boxShadow: 'none'
+          }
+        }
+      },
+      MuiSelect: {
+        defaultProps: {
           size: 'small'
         }
       }
