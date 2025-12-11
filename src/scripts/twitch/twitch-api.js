@@ -2,7 +2,7 @@ import axios from 'axios';
 import Logger from '../logger';
 import { injectDefaults } from '../store/defaults';
 
-const { twitchBotConfig } = injectDefaults();
+const { chatbotConfig } = injectDefaults();
 
 const authBaseUrl = 'https://id.twitch.tv/oauth2';
 export const authAPI = axios.create({
@@ -68,11 +68,11 @@ export async function getAccessToken(refresh_token) {
 export async function doTokenValidationProcess(access_token) {
   const validAccessToken = await validateAccessToken(access_token);
   if (!validAccessToken) {
-    const refresh_token = twitchBotConfig.get(`refresh_token`);
+    const refresh_token = chatbotConfig.get(`refresh_token`);
     const newAccessToken = await getAccessToken(refresh_token);
     if (newAccessToken) {
       Logger.log(`Access token refreshed...`);
-      twitchBotConfig.set(`access_token`, newAccessToken.access_token);
+      chatbotConfig.set(`access_token`, newAccessToken.access_token);
       return { access_token: newAccessToken.access_token, success: true };
     } else {
       Logger.log(`Failed to refresh access token...`);

@@ -24,18 +24,24 @@ export async function connectToEventSubs(clientId) {
     return;
   }
 
-  const { twitchBotConfig, twitchChannelConfig } = injectDefaults();
-  const bot = twitchBotConfig.get('') || {};
+  const { chatbotConfig, channelConfig } = injectDefaults();
+  const bot = chatbotConfig.get('');
 
   if (!bot.access_token) {
     Logger.error('Missing Twitch bot credentials. Aborting EventSub connection.');
     return;
   }
 
-  const channels = normalizeChannels(twitchChannelConfig.get('channels'));
+  console.log(channelConfig.get('channel.login'));
 
-  if (!channels.length) {
-    Logger.error('No Twitch channels configured. Skipping EventSub connection.');
+  const rawLogin =
+    channelConfig.get('channel.login') ??
+    channelConfig.get('login') ??
+    channelConfig.get('channel')?.login;
+  const channelLogin = typeof rawLogin === 'string' ? rawLogin.trim() : '';
+
+  if (!channelLogin) {
+    Logger.error('No Twitch channel configured. Skipping EventSub connection.');
     return;
   }
 
@@ -45,7 +51,7 @@ export async function connectToEventSubs(clientId) {
   while (reconnecting) {
     try {
       Logger.info('Attempting to connect to Twitch EventSub WebSocket...');
-      await connectOnce(clientId, bot, channels);
+      await connectOnce(clientId, bot, channelLogin);
       await waitForSocketExit();
     } catch (err) {
       Logger.error(`Connection failed: ${err.message}`);
@@ -57,13 +63,15 @@ export async function connectToEventSubs(clientId) {
       break;
     }
 
-    Logger.warn(`WebSocket closed or errored. Reconnecting in ${RECONNECT_DELAY_MS / 1000} seconds...`);
+    Logger.warn(
+      `WebSocket closed or errored. Reconnecting in ${RECONNECT_DELAY_MS / 1000} seconds...`
+    );
     await delay(RECONNECT_DELAY_MS);
   }
 }
 
 // One connection attempt
-async function connectOnce(clientId, bot, channels) {
+async function connectOnce(clientId, bot, channelLogin) {
   return new Promise((resolve, reject) => {
     ws = new WebSocket(WS_ENDPOINT);
     let settled = false;
@@ -90,7 +98,7 @@ async function connectOnce(clientId, bot, channels) {
     });
 
     ws.on('message', (data) => {
-      processMessage(data, channels, bot, clientId).catch((err) => {
+      processMessage(data, channelLogin, bot, clientId).catch((err) => {
         Logger.error(`Failed to process EventSub message: ${err.message}`);
       });
     });
@@ -132,55 +140,51 @@ async function cleanupWebSocket() {
 }
 
 // Subscription logic
-export async function subscribeToMultipleEvents(channels, bot, clientId, sessionId) {
-  const normalizedChannels = normalizeChannels(channels);
+export async function subscribeToChannelEvents(channelLogin, bot, clientId, sessionId) {
+  const channelName = typeof channelLogin === 'string' ? channelLogin.trim() : '';
 
-  if (!normalizedChannels.length) {
-    Logger.error('No channels to subscribe to');
+  if (!channelName) {
+    Logger.error('No channel login provided for EventSub subscription.');
     return { success: false };
   }
 
-  const failures = [];
+  try {
+    const broadcaster = await getUsers(bot.access_token, { user_name: channelName });
 
-  for (const channelName of normalizedChannels) {
-    try {
-      const broadcaster = await getUsers(bot.access_token, { user_name: channelName });
-
-      if (!broadcaster?.id) {
-        Logger.error(`Unable to resolve broadcaster ID for ${channelName}.`);
-        failures.push(channelName);
-        continue;
-      }
-
-      const eventTypes = getEventTypes(broadcaster, bot) || [];
-
-      if (!eventTypes.length) {
-        Logger.warn(`No EventSub definitions available for ${channelName}.`);
-        continue;
-      }
-
-      const results = await Promise.allSettled(
-        eventTypes.map(({ type, version, condition }) =>
-          subscribeToEvent(channelName, bot, clientId, type, version, condition, sessionId)
-        )
-      );
-
-      const hadErrors = results.some((result) => {
-        if (result.status === 'rejected') {
-          return true;
-        }
-        return result.value === null;
-      });
-      if (hadErrors) {
-        failures.push(channelName);
-      }
-    } catch (err) {
-      Logger.error(`Failed to subscribe to ${channelName}: ${err.message}`);
-      failures.push(channelName);
+    if (!broadcaster?.id) {
+      Logger.error(`Unable to resolve broadcaster ID for ${channelName}.`);
+      return { success: false };
     }
-  }
 
-  return { success: failures.length === 0, failures };
+    const eventTypes = getEventTypes(broadcaster, bot) || [];
+
+    if (!eventTypes.length) {
+      Logger.warn(`No EventSub definitions available for ${channelName}.`);
+      return { success: true };
+    }
+
+    const results = await Promise.allSettled(
+      eventTypes.map(({ type, version, condition }) =>
+        subscribeToEvent(channelName, bot, clientId, type, version, condition, sessionId)
+      )
+    );
+
+    const hadErrors = results.some((result) => {
+      if (result.status === 'rejected') {
+        return true;
+      }
+      return result.value === null;
+    });
+
+    if (hadErrors) {
+      Logger.error(`One or more EventSub subscriptions failed for ${channelName}.`);
+    }
+
+    return { success: !hadErrors };
+  } catch (err) {
+    Logger.error(`Failed to subscribe to ${channelName}: ${err.message}`);
+    return { success: false };
+  }
 }
 
 async function subscribeToEvent(channelName, bot, clientId, type, version, condition, sessionId) {
@@ -248,14 +252,7 @@ function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-function normalizeChannels(channels) {
-  if (!Array.isArray(channels)) {
-    return [];
-  }
-  return [...new Set(channels.map((c) => c?.trim()).filter(Boolean))];
-}
-
-async function processMessage(rawMessage, channels, bot, clientId) {
+async function processMessage(rawMessage, channelLogin, bot, clientId) {
   const message = safeJsonParse(rawMessage);
   if (!message) {
     return;
@@ -277,7 +274,7 @@ async function processMessage(rawMessage, channels, bot, clientId) {
         Logger.error('Missing session ID in welcome payload.');
         return;
       }
-      await subscribeToMultipleEvents(channels, bot, clientId, sessionId);
+      await subscribeToChannelEvents(channelLogin, bot, clientId, sessionId);
       return;
     }
     case 'session_reconnect':

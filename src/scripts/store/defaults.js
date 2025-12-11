@@ -17,7 +17,11 @@ export const injectDefaults = () => {
       theme: 'dark',
       language: 'en',
       layout: {
-        dashboard: null,
+        dashboard: {
+          sidebar: {
+            open: true
+          }
+        },
         settings: null
       },
       position: {
@@ -45,17 +49,25 @@ export const injectDefaults = () => {
     }
   });
 
-  const twitchChannelConfig = new Store({
-    name: 'twitch-channel-config',
+  const channelConfig = new Store({
+    name: 'channel-config',
     defaults: {
-      channels: [],
+      channel: {
+        id: '',
+        login: '',
+        display_name: '',
+        access_token: '',
+        refresh_token: '',
+        scopes: [],
+        profile_image_url: ''
+      },
       admins: [],
       mods: []
     }
   });
 
-  const twitchCommandsConfig = new Store({
-    name: 'twitch-commands-config',
+  const commandsConfig = new Store({
+    name: 'commands-config',
     defaults: {
       adminCommands: adminCommands,
       modCommands: modCommands,
@@ -63,13 +75,13 @@ export const injectDefaults = () => {
     }
   });
 
-  const twitchMessagesConfig = new Store({
-    name: 'twitch-messages-config',
+  const messagesConfig = new Store({
+    name: 'messages-config',
     defaults: messages
   });
 
-  const twitchBotConfig = new Store({
-    name: 'twitch-bot-config',
+  const chatbotConfig = new Store({
+    name: 'chatbot-config',
     defaults: {
       id: '',
       login: '',
@@ -135,10 +147,10 @@ export const injectDefaults = () => {
   return {
     appConfig,
     loggingConfig,
-    twitchChannelConfig,
-    twitchCommandsConfig,
-    twitchMessagesConfig,
-    twitchBotConfig,
+    channelConfig,
+    commandsConfig,
+    messagesConfig,
+    chatbotConfig,
     serverConfig,
     streamingSoftwareConfig,
     switcherConfig

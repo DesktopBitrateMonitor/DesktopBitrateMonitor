@@ -1,16 +1,21 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, CircularProgress, Stack, Typography } from '@mui/material';
+import { useData } from '../contexts/DataContenxt';
 
 const Welcome = () => {
   const navigate = useNavigate();
   const [isBootLoading, setIsBootLoading] = useState(true);
 
+  const data = useData();
+
+  console.log('ServerSettings data', data);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsBootLoading(false);
       navigate('/dashboard');
-    }, 5000);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, [navigate]);

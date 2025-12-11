@@ -5,7 +5,7 @@ import { userAuthorization, authAPI } from './twitch-api';
 import { connectToEventSubs, disconnectEventSubs } from './event-subscriptions/eventsubs';
 import img from '../../assets/icon.png';
 
-const { twitchBotConfig } = injectDefaults();
+const { chatbotConfig } = injectDefaults();
 
 const express = require('express');
 const app = express();
@@ -60,13 +60,13 @@ app.get('/oauth', async (req, res) => {
       profile_image_url: user.profile_image_url
     };
 
-    twitchBotConfig.set('id', data.id);
-    twitchBotConfig.set('login', data.login);
-    twitchBotConfig.set('display_name', data.display_name);
-    twitchBotConfig.set('access_token', data.access_token);
-    twitchBotConfig.set('refresh_token', data.refresh_token);
-    twitchBotConfig.set('scopes', data.scopes);
-    twitchBotConfig.set('profile_image_url', data.profile_image_url);
+    chatbotConfig.set('id', data.id);
+    chatbotConfig.set('login', data.login);
+    chatbotConfig.set('display_name', data.display_name);
+    chatbotConfig.set('access_token', data.access_token);
+    chatbotConfig.set('refresh_token', data.refresh_token);
+    chatbotConfig.set('scopes', data.scopes);
+    chatbotConfig.set('profile_image_url', data.profile_image_url);
 
     // Send data to the main process
     const mainWindow = BrowserWindow.getAllWindows()[0];
@@ -75,7 +75,7 @@ app.get('/oauth', async (req, res) => {
     async function connectEventSubs() {
       disconnectEventSubs();
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      connectToEventSubs(client_id, twitchBotConfig.get(''));
+      connectToEventSubs(client_id, chatbotConfig.get(''));
     }
     connectEventSubs();
 

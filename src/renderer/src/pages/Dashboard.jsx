@@ -1,6 +1,7 @@
 import React from 'react';
 import SidebarNavigation from '../components/SidebarNavigation';
 import { Box, Typography } from '@mui/material';
+import { Outlet } from 'react-router-dom';
 
 const Dashboard = () => {
   return (
@@ -12,12 +13,13 @@ const Dashboard = () => {
         color: 'text.primary'
       }}
     >
-      <SidebarNavigation active="overview" />
+      <SidebarNavigation />
 
-      <Box component="main">
-        <Typography variant="h4" fontWeight={600} sx={{ p: 3 }}>
-          Dashboard
-        </Typography>
+      <Box
+        component="main"
+        sx={{ flexGrow: 1, p: 3, width: '100%', display: 'flex', flexDirection: 'column' }}
+      >
+        <Outlet />
       </Box>
     </Box>
   );

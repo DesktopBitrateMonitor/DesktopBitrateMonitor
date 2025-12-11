@@ -1,4 +1,4 @@
-import { createTheme } from '@mui/material/styles';
+import { alpha, createTheme } from '@mui/material/styles';
 
 export const createMuiTheme = (themeDef) => {
   const isLight = themeDef.name === 'light';
@@ -34,6 +34,13 @@ export const createMuiTheme = (themeDef) => {
           root: {
             backgroundImage: 'none',
             backgroundColor: colors.surface || (isLight ? '#FFFFFF' : '#1E293B')
+          }
+        }
+      },
+      MuiDivider: {
+        styleOverrides: {
+          root: {
+            borderColor: isLight ? '' : alpha('#6366F1', 0.25)
           }
         }
       },

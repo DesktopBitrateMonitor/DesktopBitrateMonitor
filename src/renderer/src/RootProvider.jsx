@@ -1,5 +1,6 @@
 import { AlertProvider } from './contexts/AlertContenx.jsx';
 import { ThemeModeProvider } from './contexts/ThemeContext.jsx';
+import { DataProvider } from './contexts/DataContenxt.jsx';
 
 /**
  * Root component that wraps the entire application with global providers
@@ -9,7 +10,9 @@ import { ThemeModeProvider } from './contexts/ThemeContext.jsx';
 const RootProvider = ({ children }) => {
   return (
     <ThemeModeProvider>
-      <AlertProvider>{children}</AlertProvider>
+      <AlertProvider>
+        <DataProvider>{children}</DataProvider>
+      </AlertProvider>
     </ThemeModeProvider>
   );
 };

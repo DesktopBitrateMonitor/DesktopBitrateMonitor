@@ -10,7 +10,7 @@ const ThemeSelector = () => {
   };
 
   return (
-    <Stack direction="row" alignItems="center" spacing={1.5}>
+    <Stack m={1} direction="row" alignItems="center" spacing={1.5}>
       <Typography variant="subtitle2" color="text.secondary">
         Theme
       </Typography>
