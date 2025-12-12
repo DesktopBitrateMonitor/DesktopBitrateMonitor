@@ -69,9 +69,7 @@ export const injectDefaults = () => {
   const commandsConfig = new Store({
     name: 'commands-config',
     defaults: {
-      adminCommands: adminCommands,
-      modCommands: modCommands,
-      userCommands: userCommands
+      commands: [...adminCommands, ...modCommands, ...userCommands]
     }
   });
 

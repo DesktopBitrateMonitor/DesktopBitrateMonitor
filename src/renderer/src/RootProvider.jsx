@@ -1,6 +1,6 @@
-import { AlertProvider } from './contexts/AlertContenx.jsx';
+import { AlertProvider } from './contexts/AlertContext.jsx';
 import { ThemeModeProvider } from './contexts/ThemeContext.jsx';
-import { DataProvider } from './contexts/DataContenxt.jsx';
+import { DataProvider } from './contexts/DataContext.jsx';
 
 /**
  * Root component that wraps the entire application with global providers

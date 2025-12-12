@@ -13,13 +13,12 @@ import {
   Typography
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import ThemeSelector from './ThemeSelector';
+import ThemeSelector from '../ThemeSelector';
 import SpaceDashboardOutlinedIcon from '@mui/icons-material/SpaceDashboardOutlined';
-import TwitchIcon from '../assets/icons/TwitchIcon';
+import TwitchIcon from '../../assets/icons/TwitchIcon';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import StorageIcon from '@mui/icons-material/Storage';
-import HubIcon from '@mui/icons-material/Hub';
 
 const NAV_ITEMS = [
   { label: 'Dashboard', path: '/dashboard', icon: SpaceDashboardOutlinedIcon, matchPrefix: false },

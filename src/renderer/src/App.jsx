@@ -2,13 +2,13 @@ import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 
 import styled from '@emotion/styled';
 import Dashboard from './pages/Dashboard';
-import ChannelSettings from './pannels/twitch/ChannelSettings';
+import ChannelSettings from './panels/twitch/ChannelSettings';
 import Welcome from './pages/Welcome';
-import ServerSettings from './pannels/server/ServerSettings';
-import TwitchSettings from './pannels/twitch/TwitchSettings';
-import CommandSettings from './pannels/twitch/CommandSettings';
-import MessageSettings from './pannels/twitch/MessageSettings';
-import BotSettings from './pannels/twitch/BotSettings';
+import ServerSettings from './panels/server/ServerSettings';
+import TwitchSettings from './panels/twitch/TwitchSettings';
+import CommandSettings from './panels/twitch/CommandSettings';
+import MessageSettings from './panels/twitch/MessageSettings';
+import BotSettings from './panels/twitch/BotSettings';
 
 function App() {
   return (

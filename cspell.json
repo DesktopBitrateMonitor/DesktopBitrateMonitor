@@ -1,0 +1,15 @@
+{
+    "version": "0.2",
+    "ignorePaths": [],
+    "dictionaryDefinitions": [],
+    "dictionaries": [],
+    "words": [
+        "botsettings",
+        "channelsettings",
+        "commandsettings",
+        "messagesettings",
+        "twitchsettings"
+    ],
+    "ignoreWords": [],
+    "import": []
+}

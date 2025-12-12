@@ -8,8 +8,8 @@ import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
 
 const TAB_CONFIG = [
   { value: 'commandsettings', label: 'Commands', icon: ChatBubbleOutlineIcon },
-  { value: 'channelsettings', label: 'Channel', icon: AccountCircleIcon },
   { value: 'messagesettings', label: 'Messages', icon: EmojiMessagesIcon },
+  { value: 'channelsettings', label: 'Channel', icon: AccountCircleIcon },
   { value: 'botsettings', label: 'Bot', icon: SmartToyOutlinedIcon }
 ];
 
@@ -39,7 +39,15 @@ const TwitchSettings = () => {
   return (
     <Box
       component="main"
-      sx={{ flexGrow: 1, p: 0, width: '100%', display: 'flex', flexDirection: 'column' }}
+      sx={{
+        flex: '1 1 0',
+        p: 0,
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: 0,
+        maxHeight: '100%'
+      }}
     >
       <Tabs
         value={activeValue}
@@ -67,7 +75,17 @@ const TwitchSettings = () => {
         })}
       </Tabs>
 
-      <Box sx={{ flexGrow: 1, pt: 2 }}>
+      <Box
+        sx={{
+          flex: '1 1 0',
+          pt: 2,
+          px: 1.5,
+          pb: 1.5,
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          minHeight: 0
+        }}
+      >
         <Outlet />
       </Box>
     </Box>

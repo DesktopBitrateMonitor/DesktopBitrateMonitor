@@ -1,6 +1,6 @@
 import { Box, TextField, Typography } from '@mui/material';
 import React from 'react';
-import { useData } from '../../contexts/DataContenxt';
+import { useData } from '../../contexts/DataContext';
 
 const SERVER_TYPES = [
   { label: 'SrtLiveServer', value: 'srt-live-server', isDev: false },

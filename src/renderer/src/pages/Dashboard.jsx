@@ -1,5 +1,5 @@
 import React from 'react';
-import SidebarNavigation from '../components/SidebarNavigation';
+import SidebarNavigation from '../components/functional/SidebarNavigation';
 import { Box, Typography } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 
@@ -17,7 +17,15 @@ const Dashboard = () => {
 
       <Box
         component="main"
-        sx={{ flexGrow: 1, p: 3, width: '100%', display: 'flex', flexDirection: 'column' }}
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          minHeight: 0
+        }}
       >
         <Outlet />
       </Box>

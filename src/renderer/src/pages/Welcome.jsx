@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, CircularProgress, Stack, Typography } from '@mui/material';
-import { useData } from '../contexts/DataContenxt';
+import { useData } from '../contexts/DataContext';
 
 const Welcome = () => {
   const navigate = useNavigate();
