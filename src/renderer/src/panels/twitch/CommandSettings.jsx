@@ -6,7 +6,6 @@ import {
   Divider,
   IconButton,
   InputAdornment,
-  Paper,
   Stack,
   Switch,
   TextField,
@@ -18,6 +17,10 @@ import {
 import { alpha } from '@mui/material/styles';
 import { useData } from '../../contexts/DataContext';
 import LayoutToggle from '../../components/functional/LayoutToggle';
+import CollapsibleCard from '../../components/functional/CollapsibleCard';
+import RoleSortControls from '../../components/functional/RoleSortControls';
+import { normalizeAlias, sortTwitchCommands } from '../../../../scripts/lib/shared-functions';
+import { storeLayoutChanges } from '../../scripts/lib';
 
 const ROLE_OPTIONS = [
   { value: 'admin', label: 'Admin' },
@@ -27,15 +30,7 @@ const ROLE_OPTIONS = [
 
 const getCommandTitle = (command) => command.label;
 
-const normalizeAlias = (value) => {
-  const trimmed = value.trim().replace(/\s+/g, '');
-  if (!trimmed) {
-    return '';
-  }
-  return trimmed;
-};
-
-const CommandPanel = ({ command, onChange }) => {
+const CommandPanel = ({ command, onChange, collapsible = true }) => {
   const [aliasDraft, setAliasDraft] = useState('');
   const [aliasError, setAliasError] = useState('');
 
@@ -86,44 +81,26 @@ const CommandPanel = ({ command, onChange }) => {
   };
 
   return (
-    <Paper
-      sx={{
-        p: 2,
-        borderRadius: 1.5,
-        border: '1px solid',
-        borderColor: 'divider',
-        background: (theme) =>
-          theme.palette.mode === 'dark'
-            ? 'radial-gradient(circle at top left, rgba(99,102,241,0.12), transparent 55%)'
-            : theme.palette.background.paper,
-        minHeight: 0
-      }}
+    <CollapsibleCard
+      title={title}
+      subtitle={command.description || 'No description provided.'}
+      actions={
+        <>
+          <Typography variant="body2" color="text.secondary">
+            {command.enabled ? 'Enabled' : 'Disabled'}
+          </Typography>
+          <Switch
+            edge="end"
+            checked={command.enabled}
+            onChange={handleEnabledChange}
+            inputProps={{ 'aria-label': `${title} enabled` }}
+          />
+        </>
+      }
+      defaultExpanded
+      collapsible={collapsible}
     >
       <Stack spacing={2}>
-        <Stack direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" spacing={2}>
-          <Box>
-            <Stack direction="row" spacing={1} alignItems="center">
-              <Typography variant="subtitle1">{title}</Typography>
-            </Stack>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              {command.description || 'No description provided.'}
-            </Typography>
-          </Box>
-          <Stack direction="row" spacing={1} alignItems="center">
-            <Typography variant="body2" color="text.secondary">
-              {command.enabled ? 'Enabled' : 'Disabled'}
-            </Typography>
-            <Switch
-              edge="end"
-              checked={command.enabled}
-              onChange={handleEnabledChange}
-              inputProps={{ 'aria-label': `${title} enabled` }}
-            />
-          </Stack>
-        </Stack>
-
-        <Divider flexItem />
-
         <Box>
           <Stack
             direction={{ xs: 'column', sm: 'row' }}
@@ -310,21 +287,8 @@ const CommandPanel = ({ command, onChange }) => {
 
         {/* Restricted Access is now placed next to Required Role above */}
       </Stack>
-    </Paper>
+    </CollapsibleCard>
   );
-};
-
-const extractCommands = (commandsSnapshot) => {
-  if (!commandsSnapshot) {
-    return [];
-  }
-  if (Array.isArray(commandsSnapshot)) {
-    return commandsSnapshot;
-  }
-  if (Array.isArray(commandsSnapshot.commands)) {
-    return commandsSnapshot.commands;
-  }
-  return [];
 };
 
 const CommandSettings = () => {
@@ -334,11 +298,15 @@ const CommandSettings = () => {
   } = useData();
 
   const [layoutMode, setLayoutMode] = useState('grid');
+  const [sortMode, setSortMode] = useState('none');
 
-  const commands = useMemo(() => extractCommands(commandsConfig), [commandsConfig]);
+  const commands = useMemo(
+    () => sortTwitchCommands(commandsConfig.commands, sortMode),
+    [commandsConfig.commands, sortMode]
+  );
 
   useEffect(() => {
-    const storedLayout = appConfig?.layout?.settings?.twitchCommands;
+    const storedLayout = appConfig?.layout?.settings?.layout?.twitchCommands?.layout;
     if (storedLayout === 'grid' || storedLayout === 'list') {
       setLayoutMode(storedLayout);
     }
@@ -379,7 +347,13 @@ const CommandSettings = () => {
           ...(prev?.layout || {}),
           settings: {
             ...(prev?.layout?.settings || {}),
-            twitchCommands: nextLayout
+            layout: {
+              ...(prev?.layout?.settings?.layout || {}),
+              twitchCommands: {
+                ...(prev?.layout?.settings?.layout?.twitchCommands || {}),
+                layout: nextLayout
+              }
+            }
           }
         };
 
@@ -388,14 +362,7 @@ const CommandSettings = () => {
           layout: nextLayoutState
         };
       });
-
-      if (window?.storeApi?.set) {
-        try {
-          await window.storeApi.set('app-config', 'layout.settings.twitchCommands', nextLayout);
-        } catch (err) {
-          console.error('Failed to persist layout', err);
-        }
-      }
+      storeLayoutChanges({ layout: nextLayout, key: 'twitchCommands' });
     },
     [updateStoreLocally]
   );
@@ -433,50 +400,38 @@ const CommandSettings = () => {
             Command Settings
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Fine-tune Twitch bot commands, manage aliases, and control role restrictions per command.
+            Edit and manage the Twitch commands for the application.
           </Typography>
         </Box>
 
-        <LayoutToggle value={layoutMode} onChange={handleLayoutChange} />
+        <Stack direction="row" spacing={1.5} alignItems="center">
+          <RoleSortControls value={sortMode} onChange={setSortMode} />
+          <LayoutToggle value={layoutMode} onChange={handleLayoutChange} />
+        </Stack>
       </Box>
-
-      {commands.length ? (
-        <Box
-          sx={{
-            display: 'grid',
-            gap: 2,
-            gridTemplateColumns:
-              layoutMode === 'list'
-                ? { xs: '1fr' }
-                : {
-                    xs: '1fr',
-                    sm: 'repeat(2, minmax(0, 1fr))',
-                    xl: 'repeat(3, minmax(0, 1fr))'
-                  }
-          }}
-        >
-          {commands.map((command) => (
-            <CommandPanel key={command.id} command={command} onChange={handleCommandChange} />
-          ))}
-        </Box>
-      ) : (
-        <Paper
-          sx={{
-            p: 4,
-            textAlign: 'center',
-            borderRadius: 2,
-            border: '1px dashed',
-            borderColor: 'divider'
-          }}
-        >
-          <Typography variant="subtitle1" gutterBottom>
-            No commands configured yet
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Commands from the store will appear here automatically once they are loaded.
-          </Typography>
-        </Paper>
-      )}
+      <Box
+        sx={{
+          display: 'grid',
+          gap: 2,
+          gridTemplateColumns:
+            layoutMode === 'list'
+              ? { xs: '1fr' }
+              : {
+                  xs: '1fr',
+                  sm: 'repeat(2, minmax(0, 1fr))',
+                  xl: 'repeat(3, minmax(0, 1fr))'
+                }
+        }}
+      >
+        {commands.map((command) => (
+          <CommandPanel
+            key={command.id}
+            command={command}
+            onChange={handleCommandChange}
+            collapsible={layoutMode === 'list'}
+          />
+        ))}
+      </Box>
     </Box>
   );
 };

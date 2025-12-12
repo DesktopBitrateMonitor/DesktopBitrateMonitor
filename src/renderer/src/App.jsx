@@ -9,6 +9,7 @@ import TwitchSettings from './panels/twitch/TwitchSettings';
 import CommandSettings from './panels/twitch/CommandSettings';
 import MessageSettings from './panels/twitch/MessageSettings';
 import BotSettings from './panels/twitch/BotSettings';
+import AppSettings from './panels/app/AppSettings';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
 
             {/* /dashboard/serversettings */}
             <Route path="serversettings" element={<ServerSettings />} />
+            <Route path="appsettings" element={<AppSettings />} />
           </Route>
         </Routes>
       </Router>

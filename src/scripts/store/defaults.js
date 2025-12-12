@@ -22,7 +22,20 @@ export const injectDefaults = () => {
             open: true
           }
         },
-        settings: null
+        settings: {
+          layout: {
+            twitchCommands: {
+              layout: 'list',
+              collapsed: [],
+              orderGroups: ['admin', 'mod', 'user'],
+              orderCommands: {
+                admin: [],
+                mod: [],
+                user: []
+              }
+            }
+          }
+        }
       },
       position: {
         x: null,
@@ -69,13 +82,17 @@ export const injectDefaults = () => {
   const commandsConfig = new Store({
     name: 'commands-config',
     defaults: {
+      sorting: [],
       commands: [...adminCommands, ...modCommands, ...userCommands]
     }
   });
 
   const messagesConfig = new Store({
     name: 'messages-config',
-    defaults: messages
+    defaults: {
+      sorting: [],
+      messages: messages
+    }
   });
 
   const chatbotConfig = new Store({

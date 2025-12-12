@@ -19,6 +19,7 @@ import TwitchIcon from '../../assets/icons/TwitchIcon';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import StorageIcon from '@mui/icons-material/Storage';
+import Settings from '@mui/icons-material/Settings';
 
 const NAV_ITEMS = [
   { label: 'Dashboard', path: '/dashboard', icon: SpaceDashboardOutlinedIcon, matchPrefix: false },
@@ -33,7 +34,8 @@ const NAV_ITEMS = [
     path: '/dashboard/serversettings',
     icon: StorageIcon,
     matchPrefix: false
-  }
+  },
+  { label: 'App Settings', path: '/dashboard/appsettings', icon: Settings, matchPrefix: false }
 ];
 
 const DRAWER_WIDTH = {

@@ -17,10 +17,12 @@ let isQuitting = false;
 function createWindow(displayIsAvailable = false) {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: appConfig.get('size.width') || 900,
-    height: appConfig.get('size.height') || 670,
+    width: appConfig.get('size.width') || 1200,
+    height: appConfig.get('size.height') || 700,
     x: displayIsAvailable ? appConfig.get('position.x') : 0,
     y: displayIsAvailable ? appConfig.get('position.y') : 0,
+    minWidth: 1200,
+    minHeight: 700,
     show: false,
     autoHideMenuBar: true,
     title: `Desktop-Bitrate-Monitor_v2 (${app.getVersion()})`,

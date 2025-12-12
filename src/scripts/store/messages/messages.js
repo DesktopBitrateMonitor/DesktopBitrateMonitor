@@ -1,74 +1,90 @@
 export const messages = {
-  global: {
-    error: {
+  global: [
+    {
+      event: 'error',
       enabled: true,
       message: 'Somthing went wrong! Please try again.'
     }
-  },
-  stream: {
-    started: {
+  ],
+  stream: [
+    {
+      event: 'started',
       enabled: true,
       message: 'Stream started successfully!'
     },
-    ended: {
+    {
+      event: 'ended',
       enabled: true,
       message: 'Stream has ended. Thanks for watching!'
     },
-    raid: {
+    {
+      event: 'raid',
       enabled: true,
       message: 'Follow us to twitch.tv/${channel} for more content!'
     },
-    refreshTry: {
+    {
+      event: 'refreshTry',
       enabled: true,
       message: 'Try to refresh the stream!'
     },
-    refreshSuccess: {
+    {
+      event: 'refreshSuccess',
       enabled: true,
       message: 'Stream refreshed successfully!'
     },
-    bitrate: {
+    {
+      event: 'bitrate',
       enabled: true,
       message: 'Current bitrate is ${bitrate} kbps.'
     }
-  },
-  switcher: {
-    switch: {
+  ],
+  switcher: [
+    {
+      event: 'switch',
       enabled: true,
       message: 'Switched to scene: ${scene}!'
     },
-    trigger: {
+    {
+      event: 'trigger',
       enabled: true,
       message: 'Bitrate trigger set to ${bitrate} kbps!'
     },
-    rTrigger: {
+    {
+      event: 'rTrigger',
       enabled: true,
       message: 'Bitrate return trigger set to ${bitrate} kbps!'
     }
-  },
-  user: {
-    addAdmin: {
+  ],
+  user: [
+    {
+      event: 'addAdmin',
       enabled: true,
       message: 'User ${user} has been added as an admin.'
     },
-    removeAdmin: {
+    {
+      event: 'removeAdmin',
       enabled: true,
       message: 'User ${user} has been removed from admins.'
     },
-    alreadyAdmin: {
+    {
+      event: 'alreadyAdmin',
       enabled: true,
       message: 'User ${user} is already an admin.'
     },
-    addMod: {
+    {
+      event: 'addMod',
       enabled: true,
       message: 'User ${user} has been added as a moderator.'
     },
-    removeMod: {
+    {
+      event: 'removeMod',
       enabled: true,
       message: 'User ${user} has been removed from moderators.'
     },
-    alreadyMod: {
+    {
+      event: 'alreadyMod',
       enabled: true,
       message: 'User ${user} is already a moderator.'
     }
-  }
+  ]
 };
