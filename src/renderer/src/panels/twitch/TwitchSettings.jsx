@@ -9,8 +9,7 @@ import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
 const TAB_CONFIG = [
   { value: 'commandsettings', label: 'Commands', icon: ChatBubbleOutlineIcon },
   { value: 'messagesettings', label: 'Messages', icon: EmojiMessagesIcon },
-  { value: 'channelsettings', label: 'Channel', icon: AccountCircleIcon },
-  { value: 'botsettings', label: 'Bot', icon: SmartToyOutlinedIcon }
+  { value: 'accountssettings', label: 'Accounts', icon: AccountCircleIcon }
 ];
 
 const TwitchSettings = () => {

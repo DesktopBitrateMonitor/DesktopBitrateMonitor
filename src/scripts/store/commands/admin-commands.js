@@ -4,22 +4,20 @@ export const adminCommands = [
   {
     id: generateId(),
     action: 'startStream',
-    requiredRole: 'admin',
+    requiredRole: 'broadcaster',
     label: 'Start Stream',
     description: 'Starts the stream.',
     cmd: ['!start'],
-    enabled: true,
-    restricted: false // if true, only the broadcaster can start the stream
+    enabled: true
   },
   {
     id: generateId(),
     action: 'stopStream',
-    requiredRole: 'admin',    description: 'Stops the stream.',
+    requiredRole: 'broadcaster',
     label: 'Stop Stream',
     description: 'Stops the stream.',
     cmd: ['!stop'],
-    enabled: true,
-    restricted: false // if true, only the broadcaster can stop the stream
+    enabled: true
   },
   {
     id: generateId(),
@@ -28,8 +26,7 @@ export const adminCommands = [
     label: 'Add Admin',
     description: 'Adds a new admin.',
     cmd: ['!addadmin'],
-    enabled: true,
-    restricted: false // if true, only the broadcaster can add new admins
+    enabled: true
   },
   {
     id: generateId(),
@@ -38,8 +35,7 @@ export const adminCommands = [
     label: 'Remove Admin',
     description: 'Removes an admin.',
     cmd: ['!removeadmin'],
-    enabled: true,
-    restricted: false // if true, only the broadcaster can remove admins
+    enabled: true
   },
   {
     id: generateId(),
@@ -48,8 +44,7 @@ export const adminCommands = [
     label: 'Add Mod',
     description: 'Adds a new moderator.',
     cmd: ['!addmod'],
-    enabled: true,
-    restricted: false // if true, only the broadcaster can add new moderators
+    enabled: true
   },
   {
     id: generateId(),
@@ -58,7 +53,6 @@ export const adminCommands = [
     label: 'Remove Mod',
     description: 'Removes a moderator.',
     cmd: ['!removemod'],
-    enabled: true,
-    restricted: false // if true, only the broadcaster can remove moderators
+    enabled: true
   }
 ];

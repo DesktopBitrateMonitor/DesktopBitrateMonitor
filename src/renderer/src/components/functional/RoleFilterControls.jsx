@@ -10,7 +10,7 @@ import {
   Divider
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
-import SortOutlinedIcon from '@mui/icons-material/SortOutlined';
+import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import AdminPanelSettingsOutlinedIcon from '@mui/icons-material/AdminPanelSettingsOutlined';
 import ShieldMoonOutlinedIcon from '@mui/icons-material/ShieldMoonOutlined';
@@ -18,25 +18,22 @@ import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
 import ToggleOnOutlinedIcon from '@mui/icons-material/ToggleOnOutlined';
 import ToggleOffOutlinedIcon from '@mui/icons-material/ToggleOffOutlined';
 
-const SORT_OPTIONS = [
-  { value: 'none', label: 'Default', icon: <SortOutlinedIcon fontSize="small" /> },
-  {
-    value: 'roleBroadcaster',
-    label: 'Broadcaster',
-    icon: <ShieldMoonOutlinedIcon fontSize="small" />
-  },
-  { value: 'roleAdmin', label: 'Admin', icon: <AdminPanelSettingsOutlinedIcon fontSize="small" /> },
-  { value: 'roleMod', label: 'Mod', icon: <GroupOutlinedIcon fontSize="small" /> },
-  { value: 'roleUser', label: 'User', icon: <PersonOutlineIcon fontSize="small" /> },
+const FILTER_OPTIONS = [
+  { value: 'all', label: 'All', icon: <FilterListOutlinedIcon fontSize="small" /> },
+  { value: 'broadcaster', label: 'Broadcaster', icon: <ShieldMoonOutlinedIcon fontSize="small" /> },
+  { value: 'admin', label: 'Admin', icon: <AdminPanelSettingsOutlinedIcon fontSize="small" /> },
+  { value: 'mod', label: 'Mod', icon: <GroupOutlinedIcon fontSize="small" /> },
+  { value: 'user', label: 'User', icon: <PersonOutlineIcon fontSize="small" /> },
   { value: 'enabled', label: 'Enabled', icon: <ToggleOnOutlinedIcon fontSize="small" /> },
   { value: 'disabled', label: 'Disabled', icon: <ToggleOffOutlinedIcon fontSize="small" /> }
 ];
 
-const RoleSortControls = ({
-  value = 'none',
+// value: 'all' | 'broadcaster' | 'admin' | 'mod' | 'user' | 'enabled' | 'disabled'
+const RoleFilterControls = ({
+  value = 'all',
   onChange,
-  label = 'Sort',
-  availableSorts = [0, 1, 2, 3, 4, 5, 6]
+  label = 'Filter',
+  availableFilters = [0, 1, 2, 3, 4, 5, 6]
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -52,7 +49,7 @@ const RoleSortControls = ({
   return (
     <Stack direction="row" spacing={1.5} alignItems="center">
       <IconButton
-        aria-label="Sort"
+        aria-label="Filter"
         onClick={handleOpen}
         size="small"
         sx={{
@@ -66,22 +63,27 @@ const RoleSortControls = ({
           }
         }}
       >
-        <SortOutlinedIcon fontSize="small" />
+        <FilterListOutlinedIcon fontSize="small" />
       </IconButton>
       <Menu
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
+        keepMounted
         PaperProps={{ onMouseLeave: handleClose }}
       >
-        <ListSubheader>{label || 'Sort'}</ListSubheader>
+        <ListSubheader>{label}</ListSubheader>
         <Divider variant="middle" sx={{ mb: 1 }} />
-        {SORT_OPTIONS.map(
-          (sort, index) =>
-            availableSorts.includes(index) && (
-              <MenuItem selected={value === sort.value} onClick={() => handleSelect(sort.value)}>
-                <ListItemIcon>{sort.icon}</ListItemIcon>
-                <ListItemText>{sort.label}</ListItemText>
+        {FILTER_OPTIONS.map(
+          (filter, index) =>
+            availableFilters.includes(index) && (
+              <MenuItem
+                key={filter.value}
+                selected={value === filter.value}
+                onClick={() => handleSelect(filter.value)}
+              >
+                <ListItemIcon>{filter.icon}</ListItemIcon>
+                <ListItemText>{filter.label}</ListItemText>
               </MenuItem>
             )
         )}
@@ -90,4 +92,4 @@ const RoleSortControls = ({
   );
 };
 
-export default RoleSortControls;
+export default RoleFilterControls;

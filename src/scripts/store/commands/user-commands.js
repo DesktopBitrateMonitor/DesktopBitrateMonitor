@@ -8,7 +8,6 @@ export const userCommands = [
     label: 'Show Bitrate',
     description: 'Displays the current bitrate of the stream.',
     cmd: ['!bitrate', '!b'],
-    enabled: true,
-    restricted: false
+    enabled: true
   }
 ];

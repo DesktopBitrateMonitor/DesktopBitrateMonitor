@@ -2,7 +2,7 @@ import axios from 'axios';
 import Logger from '../logger';
 import { injectDefaults } from '../store/defaults';
 
-const { chatbotConfig } = injectDefaults();
+const { accountsConfig } = injectDefaults();
 
 const authBaseUrl = 'https://id.twitch.tv/oauth2';
 export const authAPI = axios.create({
@@ -65,14 +65,17 @@ export async function getAccessToken(refresh_token) {
   }
 }
 
-export async function doTokenValidationProcess(access_token) {
+export async function doTokenValidationProcess(access_token, accountType) {
+  const selectedConfig =
+    accountType === 'broadcaster' ? accountsConfig.broadcaster : accountsConfig.bot;
+
   const validAccessToken = await validateAccessToken(access_token);
   if (!validAccessToken) {
-    const refresh_token = chatbotConfig.get(`refresh_token`);
+    const refresh_token = selectedConfig.get(`refresh_token`);
     const newAccessToken = await getAccessToken(refresh_token);
     if (newAccessToken) {
       Logger.log(`Access token refreshed...`);
-      chatbotConfig.set(`access_token`, newAccessToken.access_token);
+      selectedConfig.set(`access_token`, newAccessToken.access_token);
       return { access_token: newAccessToken.access_token, success: true };
     } else {
       Logger.log(`Failed to refresh access token...`);
@@ -154,9 +157,18 @@ export async function validateAccessToken(access_token) {
         Authorization: `Bearer ${access_token}`
       }
     });
+    Logger.log('Token validation successful:', {
+      user_id: data.user_id,
+      login: data.login,
+      expires_in: data.expires_in
+    });
     return data;
   } catch (error) {
-    Logger.error(`Token validation error: ${JSON.stringify(error.response.data)}`);
+    if (error.response && error.response.status === 401) {
+      Logger.log('Token is invalid or expired (401)');
+    } else {
+      Logger.error('Token validation error:', error.response ? error.response.data : error.message);
+    }
     return null;
   }
 }
@@ -192,4 +204,33 @@ export async function sendChatMessage(
       return { success: false, error: error.message };
     }
   });
+}
+
+/**
+ * @typedef revokeAccessToken
+ * @prop {string} access_token
+ */
+
+/**
+ *
+ * @param {string} access_token The access token to revoke
+ * @returns Status 200 on success, 400 on error
+ */
+
+export async function revokeAccessToken(access_token) {
+  try {
+    const qs = new URLSearchParams({
+      client_id,
+      token: access_token
+    });
+    const data = await authAPI.post(`/revoke?${qs}`);
+    const resData = { status: data.status, message: data.statusText };
+    return resData;
+  } catch (error) {
+    const resData = {
+      status: error.response.data.status,
+      message: error.response.data.message
+    };
+    return resData;
+  }
 }

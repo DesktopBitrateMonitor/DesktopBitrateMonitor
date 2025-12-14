@@ -23,18 +23,7 @@ export const injectDefaults = () => {
           }
         },
         settings: {
-          layout: {
-            twitchCommands: {
-              layout: 'list',
-              collapsed: [],
-              orderGroups: ['admin', 'mod', 'user'],
-              orderCommands: {
-                admin: [],
-                mod: [],
-                user: []
-              }
-            }
-          }
+          layout: {}
         }
       },
       position: {
@@ -62,10 +51,10 @@ export const injectDefaults = () => {
     }
   });
 
-  const channelConfig = new Store({
-    name: 'channel-config',
+  const accountsConfig = new Store({
+    name: 'accounts-config',
     defaults: {
-      channel: {
+      broadcaster: {
         id: '',
         login: '',
         display_name: '',
@@ -74,6 +63,18 @@ export const injectDefaults = () => {
         scopes: [],
         profile_image_url: ''
       },
+      bot: {
+        id: '',
+        login: '',
+        display_name: '',
+        access_token: '',
+        refresh_token: '',
+        scopes: [],
+        profile_image_url: ''
+      },
+      layout: 'list',
+      collapsed: [],
+      useBotAccount: false,
       admins: [],
       mods: []
     }
@@ -82,7 +83,12 @@ export const injectDefaults = () => {
   const commandsConfig = new Store({
     name: 'commands-config',
     defaults: {
-      sorting: [],
+      layout: 'list',
+      filter: 'all',
+      sort: 'none',
+      order: [],
+      collapsed: [],
+      orderGroups: ['admin', 'mod', 'user'],
       commands: [...adminCommands, ...modCommands, ...userCommands]
     }
   });
@@ -90,30 +96,29 @@ export const injectDefaults = () => {
   const messagesConfig = new Store({
     name: 'messages-config',
     defaults: {
-      sorting: [],
+      layout: 'list',
+      filter: 'all',
+      order: [],
+      collapsed: [],
+      orderGroups: ['admin', 'mod', 'user'],
       messages: messages
-    }
-  });
-
-  const chatbotConfig = new Store({
-    name: 'chatbot-config',
-    defaults: {
-      id: '',
-      login: '',
-      display_name: '',
-      access_token: '',
-      refresh_token: '',
-      scopes: [],
-      profile_image_url: ''
     }
   });
 
   const serverConfig = new Store({
     name: 'server-config',
     defaults: {
-      host: '',
-      streamId: '',
-      provider: ''
+      currentType: 'srt-live-server',
+      openirl: {
+        name: '',
+        statsUrl: '',
+        provider: ''
+      },
+      'srt-live-server': {
+        name: '',
+        statsUrl: '',
+        provider: ''
+      }
     }
   });
 
@@ -162,10 +167,9 @@ export const injectDefaults = () => {
   return {
     appConfig,
     loggingConfig,
-    channelConfig,
     commandsConfig,
     messagesConfig,
-    chatbotConfig,
+    accountsConfig,
     serverConfig,
     streamingSoftwareConfig,
     switcherConfig

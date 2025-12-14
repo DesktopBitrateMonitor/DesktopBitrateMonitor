@@ -5,15 +5,20 @@ import { userAuthorization, authAPI } from './twitch-api';
 import { connectToEventSubs, disconnectEventSubs } from './event-subscriptions/eventsubs';
 import img from '../../assets/icon.png';
 
-const { chatbotConfig } = injectDefaults();
+const { accountsConfig } = injectDefaults();
 
 const express = require('express');
 const app = express();
 app.use(express.json());
 
-const port = import.meta.env.VITE_SERVERPORT || 9898;
+const chatbotConfig = accountsConfig.bot;
+const broadcasterConfig = accountsConfig.broadcaster;
+
+const port = import.meta.env.VITE_SERVERPORT;
 const client_id = import.meta.env.VITE_TWITCHCLIENTID;
 const client_secret = import.meta.env.VITE_TWITCHCLIENTSECRET;
+const bot_scopes = import.meta.env.VITE_BOT_SCOPES;
+const broadcaster_scopes = import.meta.env.VITE_BROADCASTER_SCOPES;
 
 app.listen(port, () => {
   console.log(`Auth server listening at http://localhost:${port}`);
@@ -21,12 +26,15 @@ app.listen(port, () => {
 
 const authBaseUrl = 'https://id.twitch.tv/oauth2';
 
-export function startAuthorization() {
+let type;
+
+export function startAuthorization(authType) {
+  type = authType;
   const qs = new URLSearchParams({
     client_id: client_id,
     redirect_uri: `http://localhost:${port}/oauth`,
     response_type: 'code',
-    scope: 'user:read:chat chat:read chat:edit user:write:chat',
+    scope: type === 'bot' ? bot_scopes : broadcaster_scopes,
     force_verify: true
   });
   return `${authBaseUrl}/authorize?${qs}`;
@@ -60,24 +68,24 @@ app.get('/oauth', async (req, res) => {
       profile_image_url: user.profile_image_url
     };
 
-    chatbotConfig.set('id', data.id);
-    chatbotConfig.set('login', data.login);
-    chatbotConfig.set('display_name', data.display_name);
-    chatbotConfig.set('access_token', data.access_token);
-    chatbotConfig.set('refresh_token', data.refresh_token);
-    chatbotConfig.set('scopes', data.scopes);
-    chatbotConfig.set('profile_image_url', data.profile_image_url);
+    if (type === 'bot') {
+      accountsConfig.set('bot', data);
+    } else {
+      accountsConfig.set('broadcaster', data);
+    }
 
     // Send data to the main process
     const mainWindow = BrowserWindow.getAllWindows()[0];
-    mainWindow.webContents.send('send-oauth-data', data);
+    mainWindow.webContents.send('send-oauth-data', { userType: type, data });
 
-    async function connectEventSubs() {
-      disconnectEventSubs();
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      connectToEventSubs(client_id, chatbotConfig.get(''));
+    if (type === 'broadcaster') {
+      async function connectEventSubs() {
+        disconnectEventSubs();
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        connectToEventSubs(client_id, data);
+      }
+      connectEventSubs();
     }
-    connectEventSubs();
 
     res.send(`
       <!doctype html>
@@ -90,7 +98,7 @@ app.get('/oauth', async (req, res) => {
           <div class="text-container">
             <img class="img" src=${img} alt="../../assets/icon.png" />
             <div>
-              <h1 class="type">Chatbot</h1>
+              <h1 class="type">${type.charAt(0).toUpperCase() + type.slice(1)}</h1>
             </div>
             <h1 class="header">Authorization Successful</h1>
             <p class="sub">You can close this window now</p>

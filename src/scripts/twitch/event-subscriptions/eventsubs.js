@@ -24,21 +24,16 @@ export async function connectToEventSubs(clientId) {
     return;
   }
 
-  const { chatbotConfig, channelConfig } = injectDefaults();
-  const bot = chatbotConfig.get('');
+  const { accountsConfig } = injectDefaults();
 
-  if (!bot.access_token) {
+  let bc = accountsConfig.get('broadcaster');
+
+  if (!bc.access_token) {
     Logger.error('Missing Twitch bot credentials. Aborting EventSub connection.');
     return;
   }
 
-  console.log(channelConfig.get('channel.login'));
-
-  const rawLogin =
-    channelConfig.get('channel.login') ??
-    channelConfig.get('login') ??
-    channelConfig.get('channel')?.login;
-  const channelLogin = typeof rawLogin === 'string' ? rawLogin.trim() : '';
+  const channelLogin = bc.login;
 
   if (!channelLogin) {
     Logger.error('No Twitch channel configured. Skipping EventSub connection.');
@@ -51,7 +46,7 @@ export async function connectToEventSubs(clientId) {
   while (reconnecting) {
     try {
       Logger.info('Attempting to connect to Twitch EventSub WebSocket...');
-      await connectOnce(clientId, bot, channelLogin);
+      await connectOnce(clientId, bc);
       await waitForSocketExit();
     } catch (err) {
       Logger.error(`Connection failed: ${err.message}`);
@@ -71,7 +66,7 @@ export async function connectToEventSubs(clientId) {
 }
 
 // One connection attempt
-async function connectOnce(clientId, bot, channelLogin) {
+async function connectOnce(clientId, bc) {
   return new Promise((resolve, reject) => {
     ws = new WebSocket(WS_ENDPOINT);
     let settled = false;
@@ -98,7 +93,7 @@ async function connectOnce(clientId, bot, channelLogin) {
     });
 
     ws.on('message', (data) => {
-      processMessage(data, channelLogin, bot, clientId).catch((err) => {
+      processMessage(data, bc, clientId).catch((err) => {
         Logger.error(`Failed to process EventSub message: ${err.message}`);
       });
     });
@@ -140,8 +135,8 @@ async function cleanupWebSocket() {
 }
 
 // Subscription logic
-export async function subscribeToChannelEvents(channelLogin, bot, clientId, sessionId) {
-  const channelName = typeof channelLogin === 'string' ? channelLogin.trim() : '';
+export async function subscribeToChannelEvents(bc, clientId, sessionId) {
+  const channelName = bc.login;
 
   if (!channelName) {
     Logger.error('No channel login provided for EventSub subscription.');
@@ -149,14 +144,14 @@ export async function subscribeToChannelEvents(channelLogin, bot, clientId, sess
   }
 
   try {
-    const broadcaster = await getUsers(bot.access_token, { user_name: channelName });
+    const broadcaster = await getUsers(bc.access_token, { user_name: channelName });
 
     if (!broadcaster?.id) {
       Logger.error(`Unable to resolve broadcaster ID for ${channelName}.`);
       return { success: false };
     }
 
-    const eventTypes = getEventTypes(broadcaster, bot) || [];
+    const eventTypes = getEventTypes(broadcaster) || [];
 
     if (!eventTypes.length) {
       Logger.warn(`No EventSub definitions available for ${channelName}.`);
@@ -165,7 +160,7 @@ export async function subscribeToChannelEvents(channelLogin, bot, clientId, sess
 
     const results = await Promise.allSettled(
       eventTypes.map(({ type, version, condition }) =>
-        subscribeToEvent(channelName, bot, clientId, type, version, condition, sessionId)
+        subscribeToEvent(bc, clientId, type, version, condition, sessionId)
       )
     );
 
@@ -187,7 +182,7 @@ export async function subscribeToChannelEvents(channelLogin, bot, clientId, sess
   }
 }
 
-async function subscribeToEvent(channelName, bot, clientId, type, version, condition, sessionId) {
+async function subscribeToEvent(bc, clientId, type, version, condition, sessionId) {
   const payload = {
     type,
     version,
@@ -203,7 +198,7 @@ async function subscribeToEvent(channelName, bot, clientId, type, version, condi
       const response = await fetch(SUBSCRIPTIONS_ENDPOINT, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${bot.access_token}`,
+          Authorization: `Bearer ${bc.access_token}`,
           'Client-ID': clientId,
           'Content-Type': 'application/json'
         },
@@ -214,7 +209,7 @@ async function subscribeToEvent(channelName, bot, clientId, type, version, condi
 
       if (!response.ok) {
         Logger.error(
-          `Failed to subscribe to ${type} for ${channelName} (attempt ${attempt}/${SUBSCRIBE_RETRY_ATTEMPTS}): ${JSON.stringify(body)}`
+          `Failed to subscribe to ${type} for ${bc.display_name} (attempt ${attempt}/${SUBSCRIBE_RETRY_ATTEMPTS}): ${JSON.stringify(body)}`
         );
         if (attempt === SUBSCRIBE_RETRY_ATTEMPTS) {
           return null;
@@ -226,17 +221,17 @@ async function subscribeToEvent(channelName, bot, clientId, type, version, condi
       const data = body?.data || [];
 
       if (data[0]?.type === 'channel.chat.message') {
-        Logger.success(`Joined channel ${capitalize(channelName)}`);
+        Logger.success(`Joined channel ${capitalize(bc.login)}`);
       } else if (data[0]?.type === 'channel.raid') {
-        Logger.success(`Subscribed to raid event for ${capitalize(channelName)}`);
+        Logger.success(`Subscribed to raid event for ${capitalize(bc.login)}`);
       } else {
-        Logger.success(`Subscribed to ${type} for ${capitalize(channelName)}`);
+        Logger.success(`Subscribed to ${type} for ${capitalize(bc.login)}`);
       }
 
       return data;
     } catch (err) {
       Logger.error(
-        `Error subscribing to ${type} for ${channelName} (attempt ${attempt}/${SUBSCRIBE_RETRY_ATTEMPTS}): ${err.message}`
+        `Error subscribing to ${type} for ${bc.display_name} (attempt ${attempt}/${SUBSCRIBE_RETRY_ATTEMPTS}): ${err.message}`
       );
       if (attempt === SUBSCRIBE_RETRY_ATTEMPTS) {
         return null;
@@ -252,7 +247,7 @@ function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-async function processMessage(rawMessage, channelLogin, bot, clientId) {
+async function processMessage(rawMessage, bc, clientId) {
   const message = safeJsonParse(rawMessage);
   if (!message) {
     return;
@@ -274,7 +269,7 @@ async function processMessage(rawMessage, channelLogin, bot, clientId) {
         Logger.error('Missing session ID in welcome payload.');
         return;
       }
-      await subscribeToChannelEvents(channelLogin, bot, clientId, sessionId);
+      await subscribeToChannelEvents(bc, clientId, sessionId);
       return;
     }
     case 'session_reconnect':

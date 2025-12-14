@@ -8,7 +8,7 @@ export function normalizeAlias(command) {
  *
  * @param {Array} commands
  * @param {string} mode
- *   'roleAdmin' | 'roleMod' | 'roleUser' | 'enabled' | 'disabled' | 'titleAsc' | 'titleDesc'
+ *   'roleAdmin' | 'roleMod' | 'roleUser' | 'roleBroadcaster' | 'enabled' | 'disabled'
  *   Defaults to 'roleAdmin' (admin first).
  * @returns {Array}
  */
@@ -28,35 +28,31 @@ export function sortTwitchCommands(commands, mode = 'roleAdmin') {
     return copy.sort((a, b) => Number(Boolean(a.enabled)) - Number(Boolean(b.enabled)));
   }
 
-  if (mode === 'titleAsc' || mode === 'titleDesc') {
-    const direction = mode === 'titleAsc' ? 1 : -1;
-    return copy.sort((a, b) => {
-      const aTitle = (a.label || '').toLowerCase();
-      const bTitle = (b.label || '').toLowerCase();
-      if (aTitle < bTitle) return -1 * direction;
-      if (aTitle > bTitle) return 1 * direction;
-      return 0;
-    });
+  // Dynamic role-first ordering: selected role first, then others
+  if (mode.startsWith('role')) {
+    const selected =
+      mode === 'roleBroadcaster'
+        ? 'broadcaster'
+        : mode === 'roleAdmin'
+        ? 'admin'
+        : mode === 'roleMod'
+        ? 'mod'
+        : mode === 'roleUser'
+        ? 'user'
+        : null;
+
+    const allRoles = ['broadcaster', 'admin', 'mod', 'user'];
+    const roleOrder = selected
+      ? [selected, ...allRoles.filter((r) => r !== selected)]
+      : allRoles;
+
+    const indexOf = (role) => {
+      const idx = roleOrder.indexOf(role);
+      return idx === -1 ? roleOrder.length : idx;
+    };
+
+    return copy.sort((a, b) => indexOf(a?.requiredRole) - indexOf(b?.requiredRole));
   }
 
-  const rolePriorityMaps = {
-    roleAdmin: { admin: 0, mod: 1, user: 2 },
-    roleMod: { mod: 0, admin: 1, user: 2 },
-    roleUser: { user: 0, mod: 1, admin: 2 }
-  };
-
-  const rolePriority = rolePriorityMaps[mode] || rolePriorityMaps.roleAdmin;
-  const fallback = Object.keys(rolePriority).length;
-
-  return copy.sort((a, b) => {
-    const aRole = a?.requiredRole;
-    const bRole = b?.requiredRole;
-    const aIndex = Object.prototype.hasOwnProperty.call(rolePriority, aRole)
-      ? rolePriority[aRole]
-      : fallback;
-    const bIndex = Object.prototype.hasOwnProperty.call(rolePriority, bRole)
-      ? rolePriority[bRole]
-      : fallback;
-    return aIndex - bIndex;
-  });
+  return copy;
 }

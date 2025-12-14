@@ -1,8 +1,8 @@
 import { ipcRenderer } from 'electron';
 
 export const authApi = {
-  startAuthProcess: () => {
-    ipcRenderer.send('start-auth-process');
+  startAuthProcess: (authType) => {
+    ipcRenderer.invoke('start-auth-process', authType);
   },
   getAuthToken: (token) => ipcRenderer.invoke('get-auth-token', token),
   setAuthToken: (callback) => {
@@ -10,5 +10,13 @@ export const authApi = {
       callback(token, value);
     });
   },
-  openAuthWindow: (url) => ipcRenderer.send('open-auth-window', url)
+  openAuthWindow: (url) => ipcRenderer.send('open-auth-window', url),
+  revokeAccessToken: (authType, accessToken) => {
+    return ipcRenderer.invoke('revoke-auth-token', authType, accessToken);
+  },
+  // Send the new OAuth_token to the frontend
+  setOauthData: (callback) =>
+    ipcRenderer.on('send-oauth-data', (event, data) => {
+      callback(data);
+    })
 };

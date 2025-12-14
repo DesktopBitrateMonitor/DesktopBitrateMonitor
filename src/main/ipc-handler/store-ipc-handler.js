@@ -4,10 +4,9 @@ import { injectDefaults } from '../../scripts/store/defaults';
 const {
   appConfig,
   loggingConfig,
-  channelConfig,
   commandsConfig,
   messagesConfig,
-  chatbotConfig,
+  accountsConfig,
   serverConfig,
   streamingSoftwareConfig,
   switcherConfig
@@ -17,10 +16,9 @@ const {
 const STORES = {
   'app-config': appConfig,
   'logging-config': loggingConfig,
-  'channel-config': channelConfig,
   'commands-config': commandsConfig,
   'messages-config': messagesConfig,
-  'chatbot-config': chatbotConfig,
+  'accounts-config': accountsConfig,
   'server-config': serverConfig,
   'streaming-software-config': streamingSoftwareConfig,
   'switcher-config': switcherConfig

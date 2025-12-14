@@ -3,10 +3,9 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 const STORE_REGISTRY = [
   { key: 'appConfig', file: 'app-config' },
   { key: 'loggingConfig', file: 'logging-config' },
-  { key: 'channelConfig', file: 'channel-config' },
   { key: 'commandsConfig', file: 'commands-config' },
   { key: 'messagesConfig', file: 'messages-config' },
-  { key: 'chatbotConfig', file: 'chatbot-config' },
+  { key: 'accountsConfig', file: 'accounts-config' },
   { key: 'serverConfig', file: 'server-config' },
   { key: 'streamingSoftwareConfig', file: 'streaming-software-config' },
   { key: 'switcherConfig', file: 'switcher-config' }

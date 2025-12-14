@@ -20,23 +20,38 @@ const CollapsibleCard = ({
   actions,
   defaultExpanded = true,
   collapsible = true,
+  expanded: controlledExpanded,
+  onExpandedChange,
+  sx,
   children
 }) => {
-  const [expanded, setExpanded] = useState(defaultExpanded);
+  const [expandedState, setExpandedState] = useState(defaultExpanded);
+  const isControlled = typeof controlledExpanded === 'boolean';
+  const expanded = isControlled ? controlledExpanded : expandedState;
+
+  const toggle = () => {
+    onExpandedChange?.(!expanded);
+    if (!isControlled) {
+      setExpandedState((prev) => !prev);
+    }
+  };
 
   return (
     <Paper
-      sx={{
-        p: 2,
-        borderRadius: 1.5,
-        border: '1px solid',
-        borderColor: 'divider',
-        background: (theme) =>
-          theme.palette.mode === 'dark'
-            ? 'radial-gradient(circle at top left, rgba(99,102,241,0.12), transparent 55%)'
-            : theme.palette.background.paper,
-        minHeight: 0
-      }}
+      sx={[
+        {
+          p: 2,
+          borderRadius: 1.5,
+          border: '1px solid',
+          borderColor: 'divider',
+          background: (theme) =>
+            theme.palette.mode === 'dark'
+              ? 'radial-gradient(circle at top left, rgba(99,102,241,0.12), transparent 55%)'
+              : theme.palette.background.paper,
+          minHeight: 0
+        },
+        sx
+      ]}
     >
       <Stack spacing={2}>
         <Stack direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" spacing={2}>
@@ -60,7 +75,7 @@ const CollapsibleCard = ({
                 size="small"
                 edge="end"
                 aria-label={expanded ? 'Collapse section' : 'Expand section'}
-                onClick={() => setExpanded((prev) => !prev)}
+                onClick={toggle}
               >
                 {expanded ? (
                   <ExpandLessIcon fontSize="small" />

@@ -2,16 +2,18 @@ import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 
 import styled from '@emotion/styled';
 import Dashboard from './pages/Dashboard';
-import ChannelSettings from './panels/twitch/ChannelSettings';
 import Welcome from './pages/Welcome';
 import ServerSettings from './panels/server/ServerSettings';
 import TwitchSettings from './panels/twitch/TwitchSettings';
 import CommandSettings from './panels/twitch/CommandSettings';
 import MessageSettings from './panels/twitch/MessageSettings';
-import BotSettings from './panels/twitch/BotSettings';
 import AppSettings from './panels/app/AppSettings';
+import AlertComponent from './components/feedback/AlertComponent';
+import { useAlert } from './contexts/AlertContext';
+import AccountsSettings from './panels/twitch/AccountsSettings';
 
 function App() {
+  const { alerts } = useAlert();
   return (
     <Container>
       <Router>
@@ -23,9 +25,8 @@ function App() {
               {/* Default sub-route when visiting /dashboard/twitchsettings */}
               <Route index element={<CommandSettings />} />
               <Route path="commandsettings" element={<CommandSettings />} />
-              <Route path="channelsettings" element={<ChannelSettings />} />
               <Route path="messagesettings" element={<MessageSettings />} />
-              <Route path="botsettings" element={<BotSettings />} />
+              <Route path="accountssettings" element={<AccountsSettings />} />
             </Route>
 
             {/* /dashboard/serversettings */}
@@ -34,6 +35,7 @@ function App() {
           </Route>
         </Routes>
       </Router>
+      <AlertComponent alerts={alerts} />
     </Container>
   );
 }

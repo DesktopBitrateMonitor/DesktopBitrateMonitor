@@ -1,316 +1,97 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Add as AddIcon } from '@mui/icons-material';
-import {
-  Box,
-  Chip,
-  Divider,
-  IconButton,
-  InputAdornment,
-  Stack,
-  Switch,
-  TextField,
-  ToggleButton,
-  ToggleButtonGroup,
-  Tooltip,
-  Typography
-} from '@mui/material';
-import { alpha } from '@mui/material/styles';
+import { Box, Stack, Typography } from '@mui/material';
 import { useData } from '../../contexts/DataContext';
 import LayoutToggle from '../../components/functional/LayoutToggle';
-import CollapsibleCard from '../../components/functional/CollapsibleCard';
 import RoleSortControls from '../../components/functional/RoleSortControls';
-import { normalizeAlias, sortTwitchCommands } from '../../../../scripts/lib/shared-functions';
-import { storeLayoutChanges } from '../../scripts/lib';
-
-const ROLE_OPTIONS = [
-  { value: 'admin', label: 'Admin' },
-  { value: 'mod', label: 'Mod' },
-  { value: 'user', label: 'User' }
-];
-
-const getCommandTitle = (command) => command.label;
-
-const CommandPanel = ({ command, onChange, collapsible = true }) => {
-  const [aliasDraft, setAliasDraft] = useState('');
-  const [aliasError, setAliasError] = useState('');
-
-  const aliasList = Array.isArray(command.cmd) ? command.cmd : [];
-  const isAdminRole = command.requiredRole === 'admin';
-  const title = getCommandTitle(command);
-
-  const handleRoleChange = (_, nextRole) => {
-    if (!nextRole || nextRole === command.requiredRole) {
-      return;
-    }
-    const nextCommand = {
-      ...command,
-      requiredRole: nextRole,
-      restricted: nextRole === 'admin' ? command.restricted : false
-    };
-    onChange(nextCommand);
-  };
-
-  const handleEnabledChange = (event) => {
-    onChange({ ...command, enabled: event.target.checked });
-  };
-
-  const handleRestrictedChange = (event) => {
-    if (!isAdminRole) {
-      return;
-    }
-    onChange({ ...command, restricted: event.target.checked });
-  };
-
-  const handleAliasAdd = () => {
-    const normalized = normalizeAlias(aliasDraft);
-    if (!normalized) {
-      setAliasError('Alias cannot be empty');
-      return;
-    }
-    if (aliasList.some((alias) => alias === normalized)) {
-      setAliasError('Alias already exists');
-      return;
-    }
-    setAliasError('');
-    setAliasDraft('');
-    onChange({ ...command, cmd: [...aliasList, normalized] });
-  };
-
-  const handleAliasRemove = (alias) => {
-    onChange({ ...command, cmd: aliasList.filter((item) => item !== alias) });
-  };
-
-  return (
-    <CollapsibleCard
-      title={title}
-      subtitle={command.description || 'No description provided.'}
-      actions={
-        <>
-          <Typography variant="body2" color="text.secondary">
-            {command.enabled ? 'Enabled' : 'Disabled'}
-          </Typography>
-          <Switch
-            edge="end"
-            checked={command.enabled}
-            onChange={handleEnabledChange}
-            inputProps={{ 'aria-label': `${title} enabled` }}
-          />
-        </>
-      }
-      defaultExpanded
-      collapsible={collapsible}
-    >
-      <Stack spacing={2}>
-        <Box>
-          <Stack
-            direction={{ xs: 'column', sm: 'row' }}
-            alignItems={{ xs: 'flex-start', sm: 'center' }}
-            justifyContent="space-between"
-            spacing={2}
-          >
-            <Box>
-              <Stack spacing={0.5} alignItems="center">
-                <Typography
-                  variant="caption"
-                  color="text.secondary"
-                  sx={{ fontWeight: 600, letterSpacing: 0.4, textTransform: 'uppercase' }}
-                >
-                  Required Role
-                </Typography>
-                <ToggleButtonGroup
-                  exclusive
-                  value={command.requiredRole}
-                  onChange={handleRoleChange}
-                  size="small"
-                  sx={{
-                    mt: 1,
-                    display: 'inline-flex',
-                    borderRadius: 2.5,
-                    overflow: 'hidden',
-                    border: (theme) => `1px solid ${alpha(theme.palette.divider, 0.6)}`,
-                    backgroundColor: (theme) =>
-                      alpha(
-                        theme.palette.background.paper,
-                        theme.palette.mode === 'light' ? 0.8 : 0.4
-                      ),
-                    '& .MuiToggleButton-root': {
-                      textTransform: 'none',
-                      fontSize: 12,
-                      px: 1.75,
-                      py: 0.5,
-                      border: 'none',
-                      borderRadius: 0,
-                      color: (theme) => theme.palette.text.secondary,
-                      transition: (theme) =>
-                        theme.transitions.create(['background-color', 'color'], {
-                          duration: theme.transitions.duration.shorter
-                        }),
-                      '&:hover': {
-                        backgroundColor: (theme) => alpha(theme.palette.text.primary, 0.08)
-                      },
-                      '&:not(:last-of-type)': {
-                        borderRight: (theme) => `1px solid ${theme.palette.divider}`
-                      }
-                    },
-                    '& .MuiToggleButton-root.Mui-selected': {
-                      color: (theme) => theme.palette.primary.main,
-                      backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.18),
-                      '&:hover': {
-                        backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.26)
-                      }
-                    }
-                  }}
-                >
-                  {ROLE_OPTIONS.map(({ value, label }) => (
-                    <ToggleButton key={value} value={value} disableRipple>
-                      {label}
-                    </ToggleButton>
-                  ))}
-                </ToggleButtonGroup>
-              </Stack>
-            </Box>
-
-            <Box>
-              <Tooltip
-                title="Only broadcaster-level users can execute restricted commands."
-                arrow
-                placement="top-start"
-              >
-                <Stack alignItems="center" spacing={1} sx={{ mt: 0.5 }}>
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    sx={{ fontWeight: 600, letterSpacing: 0.4, textTransform: 'uppercase' }}
-                  >
-                    Restricted Access
-                  </Typography>
-                  <Switch
-                    checked={Boolean(command.restricted)}
-                    onChange={handleRestrictedChange}
-                    disabled={!isAdminRole}
-                    inputProps={{ 'aria-label': `${title} restricted` }}
-                  />
-                </Stack>
-              </Tooltip>
-            </Box>
-          </Stack>
-        </Box>
-
-        <Box>
-          <Typography
-            variant="caption"
-            color="text.secondary"
-            sx={{ fontWeight: 600, letterSpacing: 0.4, textTransform: 'uppercase' }}
-          >
-            Aliases
-          </Typography>
-          <Stack direction="row" gap={1} flexWrap="wrap" sx={{ mt: 1 }}>
-            {aliasList.length ? (
-              aliasList.map((alias) => (
-                <Chip
-                  size="small"
-                  key={alias}
-                  label={alias}
-                  onDelete={() => handleAliasRemove(alias)}
-                />
-              ))
-            ) : (
-              <Typography variant="body2" color="text.secondary">
-                No aliases yet.
-              </Typography>
-            )}
-          </Stack>
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: 1.5 }}>
-            <TextField
-              label="New alias"
-              placeholder="!command"
-              value={aliasDraft}
-              onChange={(event) => {
-                setAliasDraft(event.target.value);
-                setAliasError('');
-              }}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') {
-                  event.preventDefault();
-                  handleAliasAdd();
-                }
-              }}
-              error={Boolean(aliasError)}
-              helperText={aliasError || 'Prefix have to be included in Aliases'}
-              fullWidth
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <Tooltip
-                      title="Click to add alias or press Enter"
-                      placement="top-start"
-                      open={Boolean(aliasDraft)}
-                      disableFocusListener
-                      disableHoverListener
-                      disableTouchListener
-                      slotProps={{
-                        tooltip: {
-                          sx: (theme) => ({
-                            bgcolor: theme.palette.primary.main,
-                            color: theme.palette.primary.contrastText,
-                            fontSize: 12,
-                            px: 1.5,
-                            py: 0.75,
-                            borderRadius: 1.5,
-                            boxShadow: theme.shadows[4],
-                            letterSpacing: 0.3
-                          })
-                        },
-                        arrow: {
-                          sx: (theme) => ({
-                            color: theme.palette.primary.main
-                          })
-                        }
-                      }}
-                      arrow
-                    >
-                      <IconButton
-                        size="small"
-                        color="primary"
-                        aria-label="Add alias"
-                        onClick={handleAliasAdd}
-                      >
-                        <AddIcon fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
-                  </InputAdornment>
-                )
-              }}
-            />
-          </Stack>
-        </Box>
-
-        {/* Restricted Access is now placed next to Required Role above */}
-      </Stack>
-    </CollapsibleCard>
-  );
-};
+import RoleFilterControls from '../../components/functional/RoleFilterControls';
+import { sortTwitchCommands } from '../../../../scripts/lib/shared-functions';
+import CommandPanel from './components/CommandPanel';
+import { useAlert } from '../../contexts/AlertContext';
 
 const CommandSettings = () => {
+  const ALLOWED_SORTS = [
+    'none',
+    'roleBroadcaster',
+    'roleAdmin',
+    'roleMod',
+    'roleUser',
+    'enabled',
+    'disabled'
+  ];
+
   const {
-    data: { commandsConfig, appConfig },
+    data: { commandsConfig },
     updateStoreLocally
   } = useData();
 
+  const { showAlert } = useAlert();
+
   const [layoutMode, setLayoutMode] = useState('grid');
   const [sortMode, setSortMode] = useState('none');
+  const [filterMode, setFilterMode] = useState('all');
+  const [displayOrder, setDisplayOrder] = useState([]);
+  const [collapsedIds, setCollapsedIds] = useState([]);
 
-  const commands = useMemo(
-    () => sortTwitchCommands(commandsConfig.commands, sortMode),
-    [commandsConfig.commands, sortMode]
-  );
+  const commands = useMemo(() => {
+    const list = Array.isArray(commandsConfig?.commands) ? commandsConfig.commands : [];
+    const order = Array.isArray(displayOrder) && displayOrder.length ? displayOrder : null;
+    if (!order) return list;
+
+    const byId = new Map(list.map((cmd) => [cmd.id, cmd]));
+    const used = new Set();
+    const ordered = [];
+    order.forEach((id) => {
+      const cmd = byId.get(id);
+      if (cmd) {
+        ordered.push(cmd);
+        used.add(id);
+      }
+    });
+    list.forEach((cmd) => {
+      if (!used.has(cmd.id)) ordered.push(cmd);
+    });
+    return ordered;
+  }, [commandsConfig?.commands, displayOrder]);
 
   useEffect(() => {
-    const storedLayout = appConfig?.layout?.settings?.layout?.twitchCommands?.layout;
+    const storedLayout = commandsConfig?.layout;
     if (storedLayout === 'grid' || storedLayout === 'list') {
       setLayoutMode(storedLayout);
+    } else {
+      setLayoutMode('grid');
     }
-  }, [appConfig]);
+
+    const storedSort = commandsConfig?.sort;
+    if (storedSort && ALLOWED_SORTS.includes(storedSort)) {
+      setSortMode(storedSort);
+    } else {
+      setSortMode('none');
+    }
+
+    const savedOrder = Array.isArray(commandsConfig?.order) ? commandsConfig.order : [];
+    const cmds = Array.isArray(commandsConfig?.commands) ? commandsConfig.commands : [];
+    const mergedOrder = (() => {
+      const byId = new Set();
+      const next = [];
+      savedOrder.forEach((id) => {
+        if (cmds.some((c) => c.id === id)) {
+          byId.add(id);
+          next.push(id);
+        }
+      });
+      cmds.forEach((c) => {
+        if (!byId.has(c.id)) next.push(c.id);
+      });
+      return next;
+    })();
+    setDisplayOrder(mergedOrder);
+
+    const savedCollapsed = Array.isArray(commandsConfig?.collapsed) ? commandsConfig.collapsed : [];
+    setCollapsedIds(savedCollapsed);
+
+    const storedFilter = commandsConfig?.filter;
+    if (storedFilter) setFilterMode(storedFilter);
+  }, [commandsConfig]);
 
   const persistCommands = useCallback(
     async (nextCommands) => {
@@ -327,12 +108,12 @@ const CommandSettings = () => {
         };
       });
 
-      if (window?.storeApi?.set) {
-        try {
-          await window.storeApi.set('commands-config', 'commands', nextCommands);
-        } catch (err) {
-          console.error('Failed to persist commands', err);
-        }
+      const res = await window.storeApi.set('commands-config', 'commands', nextCommands);
+
+      if (res.success) {
+        showAlert({ message: 'Command updated successfully', severity: 'success' });
+      } else {
+        showAlert({ message: 'Failed to update command', severity: 'error' });
       }
     },
     [updateStoreLocally]
@@ -342,27 +123,12 @@ const CommandSettings = () => {
     async (nextLayout) => {
       setLayoutMode(nextLayout);
 
-      updateStoreLocally('appConfig', (prev) => {
-        const nextLayoutState = {
-          ...(prev?.layout || {}),
-          settings: {
-            ...(prev?.layout?.settings || {}),
-            layout: {
-              ...(prev?.layout?.settings?.layout || {}),
-              twitchCommands: {
-                ...(prev?.layout?.settings?.layout?.twitchCommands || {}),
-                layout: nextLayout
-              }
-            }
-          }
-        };
+      updateStoreLocally('commandsConfig', (prev) => ({
+        ...(prev || {}),
+        layout: nextLayout
+      }));
 
-        return {
-          ...(prev || {}),
-          layout: nextLayoutState
-        };
-      });
-      storeLayoutChanges({ layout: nextLayout, key: 'twitchCommands' });
+      await window.storeApi.set('commands-config', 'layout', nextLayout);
     },
     [updateStoreLocally]
   );
@@ -373,6 +139,77 @@ const CommandSettings = () => {
       persistLayoutMode(nextLayout);
     },
     [layoutMode, persistLayoutMode]
+  );
+
+  const persistOrder = useCallback(
+    async (nextOrder) => {
+      setDisplayOrder(nextOrder);
+
+      updateStoreLocally('commandsConfig', (prev) => ({
+        ...(prev || {}),
+        order: nextOrder
+      }));
+
+      await window.storeApi.set('commands-config', 'order', nextOrder);
+    },
+    [updateStoreLocally]
+  );
+
+  const handleSortChange = useCallback(
+    async (nextSort) => {
+      if (!nextSort || !ALLOWED_SORTS.includes(nextSort)) return;
+      setSortMode(nextSort);
+      updateStoreLocally('commandsConfig', (prev) => ({
+        ...(prev || {}),
+        sort: nextSort
+      }));
+
+      await window.storeApi.set('commands-config', 'sort', nextSort);
+
+      const baseCommands = Array.isArray(commandsConfig?.commands) ? commandsConfig.commands : [];
+      const sorted = sortTwitchCommands(baseCommands, nextSort);
+      const nextOrder = sorted.map((c) => c.id);
+      persistOrder(nextOrder);
+    },
+    [ALLOWED_SORTS, commandsConfig?.commands, persistOrder]
+  );
+
+  const persistFilter = useCallback(
+    async (nextFilter) => {
+      setFilterMode(nextFilter);
+      updateStoreLocally('commandsConfig', (prev) => ({
+        ...(prev || {}),
+        filter: nextFilter
+      }));
+
+      await window.storeApi.set('commands-config', 'filter', nextFilter);
+    },
+    [updateStoreLocally]
+  );
+
+  const handleFilterChange = useCallback(
+    (nextFilter) => {
+      if (!nextFilter) return;
+      persistFilter(nextFilter);
+    },
+    [persistFilter]
+  );
+
+  const toggleCollapsed = useCallback(
+    async (commandId) => {
+      const next = collapsedIds.includes(commandId)
+        ? collapsedIds.filter((id) => id !== commandId)
+        : [...collapsedIds, commandId];
+      setCollapsedIds(next);
+
+      updateStoreLocally('commandsConfig', (prev) => ({
+        ...(prev || {}),
+        collapsed: next
+      }));
+
+      await window.storeApi.set('commands-config', 'collapsed', next);
+    },
+    [collapsedIds, updateStoreLocally]
   );
 
   const handleCommandChange = useCallback(
@@ -405,7 +242,8 @@ const CommandSettings = () => {
         </Box>
 
         <Stack direction="row" spacing={1.5} alignItems="center">
-          <RoleSortControls value={sortMode} onChange={setSortMode} />
+          <RoleFilterControls value={filterMode} onChange={handleFilterChange} />
+          <RoleSortControls value={sortMode} onChange={handleSortChange} />
           <LayoutToggle value={layoutMode} onChange={handleLayoutChange} />
         </Stack>
       </Box>
@@ -423,14 +261,23 @@ const CommandSettings = () => {
                 }
         }}
       >
-        {commands.map((command) => (
-          <CommandPanel
-            key={command.id}
-            command={command}
-            onChange={handleCommandChange}
-            collapsible={layoutMode === 'list'}
-          />
-        ))}
+        {commands
+          .filter((command) => {
+            if (filterMode === 'all') return true;
+            if (filterMode === 'enabled') return Boolean(command.enabled);
+            if (filterMode === 'disabled') return !Boolean(command.enabled);
+            return command.requiredRole === filterMode;
+          })
+          .map((command) => (
+            <CommandPanel
+              key={command.id}
+              command={command}
+              onChange={handleCommandChange}
+              collapsible={layoutMode === 'list'}
+              expanded={!collapsedIds.includes(command.id)}
+              onExpandedChange={() => toggleCollapsed(command.id)}
+            />
+          ))}
       </Box>
     </Box>
   );
