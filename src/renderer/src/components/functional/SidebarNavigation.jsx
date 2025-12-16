@@ -35,7 +35,7 @@ const NAV_ITEMS = [
     icon: StorageIcon,
     matchPrefix: false
   },
-  { label: 'App Settings', path: '/dashboard/appsettings', icon: Settings, matchPrefix: false }
+  { label: 'App Settings', path: '/dashboard/appsettings', icon: Settings, matchPrefix: true }
 ];
 
 const DRAWER_WIDTH = {

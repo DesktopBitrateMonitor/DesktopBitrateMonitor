@@ -16,6 +16,7 @@ import {
 import { alpha } from '@mui/material/styles';
 import CollapsibleCard from '../../../components/functional/CollapsibleCard';
 import { normalizeAlias } from '../../../../../scripts/lib/shared-functions';
+import InputEndAdornment from '../../../components/feedback/InputEndAdornment';
 
 const ROLE_OPTIONS = [
   { value: 'broadcaster', label: 'Broadcaster' },
@@ -226,45 +227,13 @@ const CommandPanel = ({ command, onChange, collapsible = true, expanded, onExpan
               fullWidth
               InputProps={{
                 endAdornment: (
-                  <InputAdornment position="end">
-                    <Tooltip
-                      title="Click to add alias or press Enter"
-                      placement="top-start"
-                      open={Boolean(aliasDraft)}
-                      disableFocusListener
-                      disableHoverListener
-                      disableTouchListener
-                      slotProps={{
-                        tooltip: {
-                          sx: (theme) => ({
-                            bgcolor: theme.palette.primary.main,
-                            color: theme.palette.primary.contrastText,
-                            fontSize: 12,
-                            px: 1.5,
-                            py: 0.75,
-                            borderRadius: 1.5,
-                            boxShadow: theme.shadows[4],
-                            letterSpacing: 0.3
-                          })
-                        },
-                        arrow: {
-                          sx: (theme) => ({
-                            color: theme.palette.primary.main
-                          })
-                        }
-                      }}
-                      arrow
-                    >
-                      <IconButton
-                        size="small"
-                        color="primary"
-                        aria-label="Add alias"
-                        onClick={handleAliasAdd}
-                      >
-                        <AddIcon fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
-                  </InputAdornment>
+                  <InputEndAdornment
+                    title="Click to add alias or press enter"
+                    placement="top-start"
+                    open={Boolean(aliasDraft)}
+                    icon={<AddIcon fontSize="small" />}
+                    handleClick={handleAliasAdd}
+                  />
                 )
               }}
             />

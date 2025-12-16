@@ -4,7 +4,6 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import EmojiMessagesIcon from '@mui/icons-material/QuestionAnswerOutlined';
-import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
 
 const TAB_CONFIG = [
   { value: 'commandsettings', label: 'Commands', icon: ChatBubbleOutlineIcon },

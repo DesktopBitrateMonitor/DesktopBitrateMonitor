@@ -2,6 +2,7 @@ import React from 'react';
 import CollapsibleCard from '../../../components/functional/CollapsibleCard';
 import { Box, IconButton, Switch, TextField, Tooltip, Typography } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
+import InputEndAdornment from '../../../components/feedback/InputEndAdornment';
 
 const MessagePanel = ({ message, onChange, collapsible = true, expanded, onExpandedChange }) => {
   const [messageError, setMessageError] = React.useState('');
@@ -76,40 +77,14 @@ const MessagePanel = ({ message, onChange, collapsible = true, expanded, onExpan
         }}
         InputProps={{
           endAdornment: isDirty && (
-            <Tooltip
-              title={'Click or press Enter to save changes'}
+            <InputEndAdornment
+              title="Click or press Enter to save changes"
               placement="top-start"
               open={Boolean(isDirty)}
-              disableFocusListener
-              disableHoverListener
-              disableTouchListener
-              slotProps={{
-                tooltip: {
-                  sx: (theme) => ({
-                    bgcolor: theme.palette.success.main,
-                    color: theme.palette.success.contrastText,
-                    fontSize: 12,
-                    px: 1.5,
-                    py: 0.75,
-                    borderRadius: 1.5,
-                    boxShadow: theme.shadows[4],
-                    letterSpacing: 0.3
-                  })
-                },
-                arrow: {
-                  sx: (theme) => ({
-                    color: theme.palette.success.main
-                  })
-                }
-              }}
-              arrow
-            >
-              <Box>
-                <IconButton aria-label={`Save ${message.label}`} onClick={handleMessageSave}>
-                  <SaveIcon color="success" />
-                </IconButton>
-              </Box>
-            </Tooltip>
+              color="success"
+              icon={<SaveIcon color="success" />}
+              handleClick={handleMessageSave}
+            />
           )
         }}
       />

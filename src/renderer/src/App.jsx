@@ -11,6 +11,9 @@ import AppSettings from './panels/app/AppSettings';
 import AlertComponent from './components/feedback/AlertComponent';
 import { useAlert } from './contexts/AlertContext';
 import AccountsSettings from './panels/twitch/AccountsSettings';
+import GeneralSettings from './panels/app/GeneralSettings';
+import UpdateSettings from './panels/app/UpdateSettings';
+import StyleSettings from './panels/app/StyleSettings';
 
 function App() {
   const { alerts } = useAlert();
@@ -31,7 +34,12 @@ function App() {
 
             {/* /dashboard/serversettings */}
             <Route path="serversettings" element={<ServerSettings />} />
-            <Route path="appsettings" element={<AppSettings />} />
+            <Route path="appsettings" element={<AppSettings />}>
+              <Route index element={<GeneralSettings />} />
+              <Route path="generalsettings" element={<GeneralSettings />} />
+              <Route path="updatesettings" element={<UpdateSettings />} />
+              <Route path="stylesettings" element={<StyleSettings />} />
+            </Route>
           </Route>
         </Routes>
       </Router>

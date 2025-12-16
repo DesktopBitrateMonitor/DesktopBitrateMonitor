@@ -110,12 +110,17 @@ export const injectDefaults = () => {
     defaults: {
       currentType: 'srt-live-server',
       openirl: {
-        name: '',
+        name: 'OpenIRL',
         statsUrl: '',
         provider: ''
       },
       'srt-live-server': {
-        name: '',
+        name: 'SrtLiveServer',
+        statsUrl: '',
+        provider: ''
+      },
+      belabox: {
+        name: 'Belabox',
         statsUrl: '',
         provider: ''
       }
