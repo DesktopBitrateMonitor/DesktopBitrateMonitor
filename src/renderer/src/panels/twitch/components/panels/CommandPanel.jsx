@@ -14,9 +14,9 @@ import {
   Typography
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
-import CollapsibleCard from '../../../components/functional/CollapsibleCard';
-import { normalizeAlias } from '../../../../../scripts/lib/shared-functions';
-import InputEndAdornment from '../../../components/feedback/InputEndAdornment';
+import CollapsibleCard from '../../../../components/functional/CollapsibleCard';
+import { normalizeAlias } from '../../../../scripts/shared-functions';
+import InputEndAdornment from '../../../../components/feedback/InputEndAdornment';
 
 const ROLE_OPTIONS = [
   { value: 'broadcaster', label: 'Broadcaster' },

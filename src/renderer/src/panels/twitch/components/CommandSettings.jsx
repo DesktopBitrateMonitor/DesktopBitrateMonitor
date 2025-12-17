@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Box, Stack, Typography } from '@mui/material';
-import { useData } from '../../contexts/DataContext';
-import LayoutToggle from '../../components/functional/LayoutToggle';
-import RoleSortControls from '../../components/functional/RoleSortControls';
-import RoleFilterControls from '../../components/functional/RoleFilterControls';
-import { sortTwitchCommands } from '../../../../scripts/lib/shared-functions';
-import CommandPanel from './components/CommandPanel';
-import { useAlert } from '../../contexts/AlertContext';
+import { useData } from '../../../contexts/DataContext';
+import LayoutToggle from '../../../components/functional/LayoutToggle';
+import RoleSortControls from '../../../components/functional/RoleSortControls';
+import RoleFilterControls from '../../../components/functional/RoleFilterControls';
+import { sortTwitchCommands } from '../../../../../scripts/lib/shared-functions';
+import CommandPanel from './panels/CommandPanel';
+import { useAlert } from '../../../contexts/AlertContext';
 
 const CommandSettings = () => {
   const ALLOWED_SORTS = [

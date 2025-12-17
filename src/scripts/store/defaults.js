@@ -1,3 +1,4 @@
+import Main from 'electron/main';
 import { adminCommands } from './commands/admin-commands';
 import { modCommands } from './commands/mod-commands';
 import { userCommands } from './commands/user-commands';
@@ -10,13 +11,16 @@ import Store from './store';
  */
 
 export const injectDefaults = () => {
+  const isSystemDark = Main?.nativeTheme?.shouldUseDarkColors ?? true;
+
   // Default configuration for the application with default values
   const appConfig = new Store({
     name: 'app-config',
     defaults: {
-      theme: 'dark',
+      theme: isSystemDark ? 'dark' : 'light',
       language: 'en',
       layout: {
+        sidebarCollapsed: false,
         dashboard: {
           sidebar: {
             open: true

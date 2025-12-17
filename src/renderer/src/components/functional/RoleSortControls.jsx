@@ -79,7 +79,11 @@ const RoleSortControls = ({
         {SORT_OPTIONS.map(
           (sort, index) =>
             availableSorts.includes(index) && (
-              <MenuItem selected={value === sort.value} onClick={() => handleSelect(sort.value)}>
+              <MenuItem
+                key={sort.value}
+                selected={value === sort.value}
+                onClick={() => handleSelect(sort.value)}
+              >
                 <ListItemIcon>{sort.icon}</ListItemIcon>
                 <ListItemText>{sort.label}</ListItemText>
               </MenuItem>

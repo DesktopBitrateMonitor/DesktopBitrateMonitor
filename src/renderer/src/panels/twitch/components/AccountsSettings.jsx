@@ -1,10 +1,10 @@
 import { Box, Stack, Switch, Tooltip, Typography } from '@mui/material';
 import React, { use, useCallback, useEffect } from 'react';
-import CollapsibleCard from '../../components/functional/CollapsibleCard';
-import LayoutToggle from '../../components/functional/LayoutToggle';
-import { useData } from '../../contexts/DataContext';
-import { useAlert } from '../../contexts/AlertContext';
-import AccountPanel from './components/AccountPanel';
+import CollapsibleCard from '../../../components/functional/CollapsibleCard';
+import LayoutToggle from '../../../components/functional/LayoutToggle';
+import { useData } from '../../../contexts/DataContext';
+import { useAlert } from '../../../contexts/AlertContext';
+import AccountPanel from './panels/AccountPanel';
 
 const AccountsSettings = () => {
   const {

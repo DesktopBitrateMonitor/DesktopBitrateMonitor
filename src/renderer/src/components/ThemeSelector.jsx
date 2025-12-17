@@ -6,7 +6,7 @@ const ThemeSelector = () => {
 
   const handleChange = (event) => {
     const nextMode = event.target.value;
-    if (nextMode !== mode) toggleMode();
+    if (nextMode !== mode) toggleMode(nextMode);
   };
 
   return (
@@ -18,6 +18,7 @@ const ThemeSelector = () => {
         <Select value={mode} onChange={handleChange} aria-label="Select theme mode">
           <MenuItem value="light">Light</MenuItem>
           <MenuItem value="dark">Dark</MenuItem>
+          <MenuItem value="system">System</MenuItem>
         </Select>
       </FormControl>
     </Stack>

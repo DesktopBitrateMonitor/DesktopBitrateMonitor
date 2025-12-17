@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -13,13 +13,15 @@ import {
   Typography
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import ThemeSelector from '../ThemeSelector';
+import ComputerIcon from '@mui/icons-material/Computer';
+import SyncIcon from '@mui/icons-material/Sync';
 import SpaceDashboardOutlinedIcon from '@mui/icons-material/SpaceDashboardOutlined';
 import TwitchIcon from '../../assets/icons/TwitchIcon';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import StorageIcon from '@mui/icons-material/Storage';
 import Settings from '@mui/icons-material/Settings';
+import { useData } from '../../contexts/DataContext';
 
 const NAV_ITEMS = [
   { label: 'Dashboard', path: '/dashboard', icon: SpaceDashboardOutlinedIcon, matchPrefix: false },
@@ -32,6 +34,24 @@ const NAV_ITEMS = [
   {
     label: 'Server Settings',
     path: '/dashboard/serversettings',
+    icon: StorageIcon,
+    matchPrefix: false
+  },
+  {
+    label: 'Software Settings',
+    path: '/dashboard/softwaresettings',
+    icon: ComputerIcon,
+    matchPrefix: false
+  },
+  {
+    label: 'Switcher Settings',
+    path: '/dashboard/switchersettings',
+    icon: SyncIcon,
+    matchPrefix: false
+  },
+  {
+    label: 'Logging Settings',
+    path: '/dashboard/logginsettings',
     icon: StorageIcon,
     matchPrefix: false
   },
@@ -48,6 +68,11 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
   const navigate = useNavigate();
   const theme = useTheme();
 
+  const {
+    data: { appConfig },
+    updateStoreLocally
+  } = useData();
+
   // TODO: Use state from store data
   const [collapsed, setCollapsed] = useState(initialCollapsed);
   const drawerWidth = collapsed ? DRAWER_WIDTH.collapsed : DRAWER_WIDTH.expanded;
@@ -60,10 +85,30 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
     duration: theme.transitions.duration.shorter
   });
 
+  useEffect(() => {
+    setCollapsed(appConfig?.layout?.sidebarCollapsed || false);
+  }, [appConfig?.layout?.sidebarCollapsed]);
+
   const handleNavigate = (path) => {
     if (location.pathname === path) return;
     navigate(path);
   };
+
+  const handleCollapsedChange = useCallback(
+    async (nextCollapsed) => {
+      setCollapsed(nextCollapsed);
+      updateStoreLocally('appConfig', (prev) => ({
+        ...prev,
+        layout: {
+          ...(prev?.layout || {}),
+          sidebarCollapsed: nextCollapsed
+        }
+      }));
+
+      await window.storeApi.set('app-config', 'layout.sidebarCollapsed', nextCollapsed);
+    },
+    [updateStoreLocally]
+  );
 
   return (
     <Box
@@ -103,7 +148,7 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
 
           <IconButton
             size="small"
-            onClick={() => setCollapsed((prev) => !prev)}
+            onClick={() => handleCollapsedChange(!collapsed)}
             aria-label={collapsed ? 'Expand navigation' : 'Collapse navigation'}
           >
             {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
@@ -111,7 +156,6 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
         </Box>
 
         <Divider flexItem />
-        <ThemeSelector />
 
         <List
           disablePadding

@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { useData } from '../../contexts/DataContext';
+import { useData } from '../../../contexts/DataContext';
 import { Box, Stack, Typography } from '@mui/material';
-import RoleFilterControls from '../../components/functional/RoleFilterControls';
-import RoleSortControls from '../../components/functional/RoleSortControls';
-import LayoutToggle from '../../components/functional/LayoutToggle';
-import MessagePanel from './components/MessagePanel';
-import { sortTwitchCommands } from '../../../../scripts/lib/shared-functions';
-import { useAlert } from '../../contexts/AlertContext';
+import RoleFilterControls from '../../../components/functional/RoleFilterControls';
+import RoleSortControls from '../../../components/functional/RoleSortControls';
+import LayoutToggle from '../../../components/functional/LayoutToggle';
+import MessagePanel from './panels/MessagePanel';
+import { sortTwitchCommands } from '../../../../../scripts/lib/shared-functions';
+import { useAlert } from '../../../contexts/AlertContext';
 
 const MessageSettings = () => {
   const ALLOWED_SORTS = ['none', 'enabled', 'disabled'];
