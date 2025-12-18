@@ -2,15 +2,12 @@ import { Box, Stack, Switch, Tooltip, Typography } from '@mui/material';
 import React, { use, useCallback, useEffect } from 'react';
 import CollapsibleCard from '../../../components/functional/CollapsibleCard';
 import LayoutToggle from '../../../components/functional/LayoutToggle';
-import { useData } from '../../../contexts/DataContext';
+import { useAccountsConfigStore } from '../../../contexts/DataContext';
 import { useAlert } from '../../../contexts/AlertContext';
 import AccountPanel from './panels/AccountPanel';
 
 const AccountsSettings = () => {
-  const {
-    data: { accountsConfig },
-    updateStoreLocally
-  } = useData();
+  const { accountsConfig, updateAccountsConfig } = useAccountsConfigStore();
 
   const { showAlert } = useAlert();
 
@@ -41,10 +38,10 @@ const AccountsSettings = () => {
         setChatbotData(data.data);
       }
 
-      updateStoreLocally('accountsConfig', {
-        ...accountsConfig,
+      updateAccountsConfig((prev) => ({
+        ...(prev || {}),
         [data.userType]: data.data
-      });
+      }));
     });
   }, [accountsConfig]);
 
@@ -53,10 +50,10 @@ const AccountsSettings = () => {
       if (!nextLayout || nextLayout === layoutMode) return;
       console.log(nextLayout);
       setLayoutMode(nextLayout);
-      updateStoreLocally('accountsConfig', { ...accountsConfig, layout: nextLayout });
+      updateAccountsConfig((prev) => ({ ...(prev || {}), layout: nextLayout }));
       window.storeApi.set('accounts-config', 'layout', nextLayout);
     },
-    [accountsConfig, updateStoreLocally]
+    [accountsConfig, updateAccountsConfig]
   );
 
   const toggleCollapsed = useCallback(
@@ -66,14 +63,14 @@ const AccountsSettings = () => {
         : [...collapsedIds, accountType];
       setCollapsedIds(next);
 
-      updateStoreLocally('accountsConfig', (prev) => ({
+      updateAccountsConfig((prev) => ({
         ...(prev || {}),
         collapsed: next
       }));
 
       await window.storeApi.set('accounts-config', 'collapsed', next);
     },
-    [collapsedIds, updateStoreLocally]
+    [collapsedIds, updateAccountsConfig]
   );
 
   const handleLogin = async (accountType) => {
@@ -101,21 +98,21 @@ const AccountsSettings = () => {
           setBroadcasterData(null);
           // Disable chatbot usage when broadcaster logs out
           await window.storeApi.set('accounts-config', 'useBotAccount', false);
-          updateStoreLocally('accountsConfig', {
-            ...accountsConfig,
+          updateAccountsConfig((prev) => ({
+            ...(prev || {}),
             [accountType]: data,
             useBotAccount: false
-          });
+          }));
         } else {
           setChatbotData(null);
-          updateStoreLocally('accountsConfig', {
-            ...accountsConfig,
+          updateAccountsConfig((prev) => ({
+            ...(prev || {}),
             [accountType]: data
-          });
+          }));
         }
       }
     },
-    [chatbotData, broadcasterData, accountsConfig, updateStoreLocally]
+    [chatbotData, broadcasterData, accountsConfig, updateAccountsConfig]
   );
 
   const handleSwitchChange = useCallback(
@@ -135,12 +132,12 @@ const AccountsSettings = () => {
         });
       }
 
-      updateStoreLocally('accountsConfig', {
-        ...accountsConfig,
+      updateAccountsConfig((prev) => ({
+        ...(prev || {}),
         useBotAccount: useBot
-      });
+      }));
     },
-    [accountsConfig, updateStoreLocally]
+    [accountsConfig, updateAccountsConfig]
   );
 
   return (

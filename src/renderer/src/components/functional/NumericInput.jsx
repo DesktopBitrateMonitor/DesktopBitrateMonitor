@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  TextField,
-  InputAdornment,
-  IconButton,
-  Box,
-  Tooltip,
-} from '@mui/material';
+import { TextField, InputAdornment, Box, ButtonGroup, Button, Divider, alpha } from '@mui/material';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
@@ -39,9 +33,6 @@ const NumericInput = React.forwardRef(function NumericInput(props, ref) {
     size,
     fullWidth = true,
     InputProps: InputPropsProp,
-    tooltip = false,
-    tooltipIncrement = 'Increase',
-    tooltipDecrement = 'Decrease',
     ...rest
   } = props;
 
@@ -85,8 +76,7 @@ const NumericInput = React.forwardRef(function NumericInput(props, ref) {
   };
 
   const clamp = (num) => {
-    if (num === '' || num === null || Number.isNaN(num))
-      return allowEmpty ? '' : min ?? 0;
+    if (num === '' || num === null || Number.isNaN(num)) return allowEmpty ? '' : (min ?? 0);
     let v = num;
     if (typeof min === 'number' && v < min) v = min;
     if (typeof max === 'number' && v > max) v = max;
@@ -142,82 +132,57 @@ const NumericInput = React.forwardRef(function NumericInput(props, ref) {
   };
 
   const endAdornment = (
-    <InputAdornment position="end" sx={{ alignItems: 'center', ml: 0.5 }}>
-      <Box display="flex" flexDirection="column" gap={0.5}>
-        {tooltip ? (
-          <>
-            <Tooltip title={tooltipIncrement} placement="left" arrow>
-              <span>
-                <IconButton
-                  size="small"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    stepper(1);
-                  }}
-                  disabled={
-                    disabled ||
-                    (typeof max === 'number' && Number(value) >= max)
-                  }
-                  sx={{ p: 0.5 }}
-                >
-                  <KeyboardArrowUpIcon fontSize="inherit" />
-                </IconButton>
-              </span>
-            </Tooltip>
-            <Tooltip title={tooltipDecrement} placement="left" arrow>
-              <span>
-                <IconButton
-                  size="small"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    stepper(-1);
-                  }}
-                  disabled={
-                    disabled ||
-                    (typeof min === 'number' && Number(value) <= min)
-                  }
-                  sx={{ p: 0.5 }}
-                >
-                  <KeyboardArrowDownIcon fontSize="inherit" />
-                </IconButton>
-              </span>
-            </Tooltip>
-          </>
-        ) : (
-          <>
-            <span>
-              <IconButton
-                size="small"
-                onClick={(e) => {
-                  e.preventDefault();
-                  stepper(1);
-                }}
-                disabled={
-                  disabled || (typeof max === 'number' && Number(value) >= max)
-                }
-                sx={{ p: 0.5 }}
-              >
-                <KeyboardArrowUpIcon fontSize="inherit" />
-              </IconButton>
-            </span>
-            <span>
-              <IconButton
-                size="small"
-                onClick={(e) => {
-                  e.preventDefault();
-                  stepper(-1);
-                }}
-                disabled={
-                  disabled || (typeof min === 'number' && Number(value) <= min)
-                }
-                sx={{ p: 0.5 }}
-              >
-                <KeyboardArrowDownIcon fontSize="inherit" />
-              </IconButton>
-            </span>
-          </>
-        )}
-      </Box>
+    <InputAdornment
+      position="end"
+      sx={{
+        p: 0,
+        m: 0,
+        // stretch to full input height and remove internal padding so
+        // the button group visually touches top/bottom/left of the field
+        height: '110%',
+        '& .MuiButtonGroup-root': {
+          height: '120%',
+          paddingRight: '4px'
+        }
+      }}
+    >
+      <Divider orientation="vertical" flexItem sx={{ mr: '4px', borderColor: 'text.secondary' }} />
+      <ButtonGroup
+        orientation="vertical"
+        variant="text"
+        sx={{
+          boxShadow: 'none',
+          borderRadius: 0,
+          '& .MuiButton-root': {
+            minWidth: 0,
+            py: 0,
+            lineHeight: 1,
+            justifyContent: 'center',
+            height: '100%',
+            color: 'text.secondary',
+            borderColor: 'text.secondary'
+          }
+        }}
+      >
+        <Button
+          onClick={(e) => {
+            e.preventDefault();
+            stepper(1);
+          }}
+          disabled={disabled || (typeof max === 'number' && Number(value) >= max)}
+        >
+          <KeyboardArrowUpIcon fontSize="inherit" />
+        </Button>
+        <Button
+          onClick={(e) => {
+            e.preventDefault();
+            stepper(-1);
+          }}
+          disabled={disabled || (typeof min === 'number' && Number(value) <= min)}
+        >
+          <KeyboardArrowDownIcon fontSize="inherit" />
+        </Button>
+      </ButtonGroup>
     </InputAdornment>
   );
 
@@ -230,7 +195,7 @@ const NumericInput = React.forwardRef(function NumericInput(props, ref) {
         {InputPropsProp?.endAdornment}
         {endAdornment}
       </>
-    ),
+    )
   };
 
   return (
@@ -247,6 +212,10 @@ const NumericInput = React.forwardRef(function NumericInput(props, ref) {
       InputProps={mergedInputProps}
       type="text" // prevent native spinner
       {...rest}
+      sx={{
+        '& .MuiInputBase-root': { paddingRight: '0' },
+        ...rest.sx
+      }}
     />
   );
 });

@@ -1,6 +1,6 @@
 import { Box, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui/material';
 import React, { useCallback, useEffect } from 'react';
-import { useData } from '../../contexts/DataContext';
+import { useServerConfigStore } from '../../contexts/DataContext';
 import OpenIrlElement from './components/OpenIrlElement';
 import SrtLiveServerElement from './components/SrtLiveServerElement';
 
@@ -17,28 +17,19 @@ const DEFAULT_SERVER_SECTION = {
 };
 
 const ServerSettings = () => {
+  const { serverConfig, updateServerConfig } = useServerConfigStore();
+
   const [errorMessages, setErrorMessages] = React.useState({
     'srt-live-server': '',
     openirl: '',
     belabox: ''
   });
-  const [serverType, setServerType] = React.useState('srt-live-server');
+  const [serverType, setServerType] = React.useState(serverConfig?.currentType);
   const [dirtyStates, setDirtyStates] = React.useState({
     'srt-live-server': false,
     openirl: false,
     belabox: false
   });
-
-  const {
-    data: { serverConfig },
-    updateStoreLocally
-  } = useData();
-
-  useEffect(() => {
-    if (serverConfig?.currentType) {
-      setServerType(serverConfig.currentType);
-    }
-  }, [serverConfig?.currentType]);
 
   const getServerSection = useCallback(
     (type) => {
@@ -51,13 +42,13 @@ const ServerSettings = () => {
   const handleServerTypeChange = useCallback(
     async (nextType) => {
       setServerType(nextType);
-      updateStoreLocally('serverConfig', (prev) => ({
+      updateServerConfig((prev) => ({
         ...(prev || {}),
         currentType: nextType
       }));
       await window.storeApi.set('server-config', 'currentType', nextType);
     },
-    [updateStoreLocally]
+    [updateServerConfig]
   );
 
   const handleStatsUrlChange = useCallback(
@@ -67,7 +58,7 @@ const ServerSettings = () => {
         ...prev,
         [type]: baseUrl !== value
       }));
-      updateStoreLocally('serverConfig', (prev) => ({
+      updateServerConfig((prev) => ({
         ...(prev || {}),
         [type]: {
           ...(prev?.[type] || DEFAULT_SERVER_SECTION),
@@ -75,7 +66,7 @@ const ServerSettings = () => {
         }
       }));
     },
-    [serverConfig, updateStoreLocally]
+    [serverConfig, updateServerConfig]
   );
 
   const saveStatsUrl = useCallback(
@@ -93,7 +84,7 @@ const ServerSettings = () => {
       const existing = serverConfig?.[type] || DEFAULT_SERVER_SECTION;
       const payload = { ...existing, statsUrl: nextStatsUrl };
 
-      updateStoreLocally('serverConfig', (prev) => ({
+      updateServerConfig((prev) => ({
         ...(prev || {}),
         [type]: payload
       }));
@@ -104,7 +95,7 @@ const ServerSettings = () => {
         [type]: false
       }));
     },
-    [serverConfig, updateStoreLocally]
+    [serverConfig, updateServerConfig]
   );
 
   return (
@@ -135,11 +126,13 @@ const ServerSettings = () => {
             sx={{ width: '200px' }}
             onChange={(e) => handleServerTypeChange(e.target.value)}
           >
-            {SERVER_TYPES.map((type) => (
-              <MenuItem key={type.value} value={type.value}>
-                {type.label}
-              </MenuItem>
-            ))}
+            {SERVER_TYPES.map((type) =>
+              type.isDev ? null : (
+                <MenuItem key={type.value} value={type.value}>
+                  {type.label}
+                </MenuItem>
+              )
+            )}
           </Select>
         </FormControl>
       </Box>

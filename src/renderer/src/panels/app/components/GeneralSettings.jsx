@@ -11,15 +11,12 @@ import {
 } from '@mui/material';
 import React, { useCallback } from 'react';
 import { useAlert } from '../../../contexts/AlertContext';
-import { useData } from '../../../contexts/DataContext';
+import { useAppConfigStore } from '../../../contexts/DataContext';
 
 const GeneralSettings = () => {
   const [searchTerm, setSearchTerm] = React.useState('');
 
-  const {
-    data: { appConfig },
-    updateStoreLocally
-  } = useData();
+  const { appConfig, updateAppConfig } = useAppConfigStore();
 
   const { showAlert } = useAlert();
 
@@ -27,7 +24,7 @@ const GeneralSettings = () => {
     async (event) => {
       const isChecked = event.target.checked;
       const newValue = isChecked ? 'quit' : 'minimize';
-      updateStoreLocally('appConfig', { ...appConfig, onQuit: newValue });
+      updateAppConfig((prev) => ({ ...(prev || {}), onQuit: newValue }));
 
       const res = await window.storeApi.set('app-config', 'onQuit', newValue);
 
@@ -40,14 +37,14 @@ const GeneralSettings = () => {
         showAlert({ message: 'Failed to update setting.', severity: 'error' });
       }
     },
-    [appConfig, updateStoreLocally]
+    [appConfig, updateAppConfig]
   );
 
   const handleSelectChange = useCallback(
     async (event) => {
       const newLanguage = event.target.value;
       console.log('Selected language:', event);
-      updateStoreLocally('appConfig', { ...appConfig, language: newLanguage });
+      updateAppConfig((prev) => ({ ...(prev || {}), language: newLanguage }));
       const res = await window.storeApi.set('app-config', 'language', newLanguage);
 
       if (res.success) {
@@ -59,7 +56,7 @@ const GeneralSettings = () => {
         showAlert({ message: 'Failed to update language.', severity: 'error' });
       }
     },
-    [appConfig, updateStoreLocally]
+    [appConfig, updateAppConfig]
   );
 
   return (

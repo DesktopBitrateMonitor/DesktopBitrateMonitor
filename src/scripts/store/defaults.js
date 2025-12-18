@@ -134,10 +134,19 @@ export const injectDefaults = () => {
   const streamingSoftwareConfig = new Store({
     name: 'streaming-software-config',
     defaults: {
-      software: 'obs',
-      host: 'localhost',
-      port: 4455,
-      password: ''
+      currentType: 'obs-studio',
+      ['obs-studio']: {
+        name: 'OBS Studio',
+        host: 'localhost',
+        port: 4455,
+        password: ''
+      },
+      ['streamlabs-obs']: {
+        name: 'Streamlabs OBS',
+        host: 'localhost',
+        port: 4455,
+        password: ''
+      }
     }
   });
 

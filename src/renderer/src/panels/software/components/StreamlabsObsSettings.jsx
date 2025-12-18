@@ -4,7 +4,7 @@ import React, { useCallback } from 'react';
 import SaveIcon from '@mui/icons-material/Save';
 import InputEndAdornment from '../../../components/feedback/InputEndAdornment';
 
-const ObsSettings = ({ data, onChange, onSave }) => {
+const StreamlabsObsSettings = ({ data, onChange, onSave }) => {
   const [dirty, setDirty] = React.useState({ host: false, port: false, password: false });
   const [errors, setErrors] = React.useState({ host: '', port: '', password: '' });
 
@@ -165,4 +165,4 @@ const ObsSettings = ({ data, onChange, onSave }) => {
   );
 };
 
-export default ObsSettings;
+export default StreamlabsObsSettings;

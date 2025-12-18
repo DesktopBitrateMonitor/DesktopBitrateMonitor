@@ -1,7 +1,7 @@
 import { Avatar, Box, Button, Stack, Typography } from '@mui/material';
 import React from 'react';
 
-const AccountPanel = ({ data, accountType, login, logout, deleteAccount }) => {
+const AccountPanel = ({ data, accountType, login, logout }) => {
   return (
     <Box>
       {data?.id ? (

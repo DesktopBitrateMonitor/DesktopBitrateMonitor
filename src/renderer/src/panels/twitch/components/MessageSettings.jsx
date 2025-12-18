@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { useData } from '../../../contexts/DataContext';
+import { useMessagesConfigStore } from '../../../contexts/DataContext';
 import { Box, Stack, Typography } from '@mui/material';
 import RoleFilterControls from '../../../components/functional/RoleFilterControls';
 import RoleSortControls from '../../../components/functional/RoleSortControls';
@@ -11,10 +11,7 @@ import { useAlert } from '../../../contexts/AlertContext';
 const MessageSettings = () => {
   const ALLOWED_SORTS = ['none', 'enabled', 'disabled'];
 
-  const {
-    data: { messagesConfig },
-    updateStoreLocally
-  } = useData();
+  const { messagesConfig, updateMessagesConfig } = useMessagesConfigStore();
 
   const { showAlert } = useAlert();
 
@@ -87,7 +84,7 @@ const MessageSettings = () => {
 
   const persistMessages = useCallback(
     async (nextMessages) => {
-      updateStoreLocally('messagesConfig', (prev) => {
+      updateMessagesConfig((prev) => {
         const base = prev && typeof prev === 'object' ? prev : {};
         return { ...base, messages: nextMessages };
       });
@@ -99,21 +96,21 @@ const MessageSettings = () => {
         showAlert({ message: 'Failed to update messages', severity: 'error' });
       }
     },
-    [updateStoreLocally]
+    [updateMessagesConfig]
   );
 
   const persistLayoutMode = useCallback(
     async (nextLayout) => {
       setLayoutMode(nextLayout);
 
-      updateStoreLocally('messagesConfig', (prev) => ({
+      updateMessagesConfig((prev) => ({
         ...(prev || {}),
         layout: nextLayout
       }));
 
       await window.storeApi.set('messages-config', 'layout', nextLayout);
     },
-    [updateStoreLocally]
+    [updateMessagesConfig]
   );
 
   const handleLayoutChange = useCallback(
@@ -128,21 +125,21 @@ const MessageSettings = () => {
     async (nextOrder) => {
       setDisplayOrder(nextOrder);
 
-      updateStoreLocally('messagesConfig', (prev) => ({
+      updateMessagesConfig((prev) => ({
         ...(prev || {}),
         order: nextOrder
       }));
 
       await window.storeApi.set('messages-config', 'order', nextOrder);
     },
-    [updateStoreLocally]
+    [updateMessagesConfig]
   );
 
   const handleSortChange = useCallback(
     async (nextSort) => {
       if (!nextSort || !ALLOWED_SORTS.includes(nextSort)) return;
       setSortMode(nextSort);
-      updateStoreLocally('messagesConfig', (prev) => ({
+      updateMessagesConfig((prev) => ({
         ...(prev || {}),
         sort: nextSort
       }));
@@ -160,14 +157,14 @@ const MessageSettings = () => {
   const persistFilter = useCallback(
     async (nextFilter) => {
       setFilterMode(nextFilter);
-      updateStoreLocally('messagesConfig', (prev) => ({
+      updateMessagesConfig((prev) => ({
         ...(prev || {}),
         filter: nextFilter
       }));
 
       await window.storeApi.set('messages-config', 'filter', nextFilter);
     },
-    [updateStoreLocally]
+    [updateMessagesConfig]
   );
 
   const handleFilterChange = useCallback(
@@ -185,14 +182,14 @@ const MessageSettings = () => {
         : [...collapsedIds, messageId];
       setCollapsedIds(next);
 
-      updateStoreLocally('messagesConfig', (prev) => ({
+      updateMessagesConfig((prev) => ({
         ...(prev || {}),
         collapsed: next
       }));
 
       await window.storeApi.set('messages-config', 'collapsed', next);
     },
-    [collapsedIds, updateStoreLocally]
+    [collapsedIds, updateMessagesConfig]
   );
 
   const handleMessageChange = useCallback(

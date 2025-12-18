@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Box, Stack, Typography } from '@mui/material';
-import { useData } from '../../../contexts/DataContext';
+import { useCommandsConfigStore } from '../../../contexts/DataContext';
 import LayoutToggle from '../../../components/functional/LayoutToggle';
 import RoleSortControls from '../../../components/functional/RoleSortControls';
 import RoleFilterControls from '../../../components/functional/RoleFilterControls';
@@ -19,10 +19,7 @@ const CommandSettings = () => {
     'disabled'
   ];
 
-  const {
-    data: { commandsConfig },
-    updateStoreLocally
-  } = useData();
+  const { commandsConfig, updateCommandsConfig } = useCommandsConfigStore();
 
   const { showAlert } = useAlert();
 
@@ -95,7 +92,7 @@ const CommandSettings = () => {
 
   const persistCommands = useCallback(
     async (nextCommands) => {
-      updateStoreLocally('commandsConfig', (prev) => {
+      updateCommandsConfig((prev) => {
         if (!prev) {
           return { commands: nextCommands };
         }
@@ -116,21 +113,21 @@ const CommandSettings = () => {
         showAlert({ message: 'Failed to update command', severity: 'error' });
       }
     },
-    [updateStoreLocally]
+    [updateCommandsConfig]
   );
 
   const persistLayoutMode = useCallback(
     async (nextLayout) => {
       setLayoutMode(nextLayout);
 
-      updateStoreLocally('commandsConfig', (prev) => ({
+      updateCommandsConfig((prev) => ({
         ...(prev || {}),
         layout: nextLayout
       }));
 
       await window.storeApi.set('commands-config', 'layout', nextLayout);
     },
-    [updateStoreLocally]
+    [updateCommandsConfig]
   );
 
   const handleLayoutChange = useCallback(
@@ -145,21 +142,21 @@ const CommandSettings = () => {
     async (nextOrder) => {
       setDisplayOrder(nextOrder);
 
-      updateStoreLocally('commandsConfig', (prev) => ({
+      updateCommandsConfig((prev) => ({
         ...(prev || {}),
         order: nextOrder
       }));
 
       await window.storeApi.set('commands-config', 'order', nextOrder);
     },
-    [updateStoreLocally]
+    [updateCommandsConfig]
   );
 
   const handleSortChange = useCallback(
     async (nextSort) => {
       if (!nextSort || !ALLOWED_SORTS.includes(nextSort)) return;
       setSortMode(nextSort);
-      updateStoreLocally('commandsConfig', (prev) => ({
+      updateCommandsConfig((prev) => ({
         ...(prev || {}),
         sort: nextSort
       }));
@@ -177,14 +174,14 @@ const CommandSettings = () => {
   const persistFilter = useCallback(
     async (nextFilter) => {
       setFilterMode(nextFilter);
-      updateStoreLocally('commandsConfig', (prev) => ({
+      updateCommandsConfig((prev) => ({
         ...(prev || {}),
         filter: nextFilter
       }));
 
       await window.storeApi.set('commands-config', 'filter', nextFilter);
     },
-    [updateStoreLocally]
+    [updateCommandsConfig]
   );
 
   const handleFilterChange = useCallback(
@@ -202,14 +199,14 @@ const CommandSettings = () => {
         : [...collapsedIds, commandId];
       setCollapsedIds(next);
 
-      updateStoreLocally('commandsConfig', (prev) => ({
+      updateCommandsConfig((prev) => ({
         ...(prev || {}),
         collapsed: next
       }));
 
       await window.storeApi.set('commands-config', 'collapsed', next);
     },
-    [collapsedIds, updateStoreLocally]
+    [collapsedIds, updateCommandsConfig]
   );
 
   const handleCommandChange = useCallback(

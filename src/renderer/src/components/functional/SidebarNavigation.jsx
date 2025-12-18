@@ -21,7 +21,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import StorageIcon from '@mui/icons-material/Storage';
 import Settings from '@mui/icons-material/Settings';
-import { useData } from '../../contexts/DataContext';
+import { useAppConfigStore } from '../../contexts/DataContext';
 
 const NAV_ITEMS = [
   { label: 'Dashboard', path: '/dashboard', icon: SpaceDashboardOutlinedIcon, matchPrefix: false },
@@ -68,10 +68,7 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
   const navigate = useNavigate();
   const theme = useTheme();
 
-  const {
-    data: { appConfig },
-    updateStoreLocally
-  } = useData();
+  const { appConfig, updateAppConfig } = useAppConfigStore();
 
   // TODO: Use state from store data
   const [collapsed, setCollapsed] = useState(initialCollapsed);
@@ -97,8 +94,8 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
   const handleCollapsedChange = useCallback(
     async (nextCollapsed) => {
       setCollapsed(nextCollapsed);
-      updateStoreLocally('appConfig', (prev) => ({
-        ...prev,
+      updateAppConfig((prev) => ({
+        ...(prev || {}),
         layout: {
           ...(prev?.layout || {}),
           sidebarCollapsed: nextCollapsed
@@ -107,7 +104,7 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
 
       await window.storeApi.set('app-config', 'layout.sidebarCollapsed', nextCollapsed);
     },
-    [updateStoreLocally]
+    [updateAppConfig]
   );
 
   return (
@@ -155,7 +152,7 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
           </IconButton>
         </Box>
 
-        <Divider flexItem />
+        <Divider flexItem orientation='horizontal' />
 
         <List
           disablePadding
