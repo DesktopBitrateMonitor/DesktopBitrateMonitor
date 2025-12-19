@@ -80,8 +80,10 @@ const GeneralSettings = () => {
         </Box>
         <TextField
           label="Search for setting"
-          InputProps={{
-            endAdornment: <Search />
+          slotProps={{
+            input: {
+              endAdornment: <Search />
+            }
           }}
         />
       </Box>

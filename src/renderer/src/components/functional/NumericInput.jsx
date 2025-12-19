@@ -32,7 +32,7 @@ const NumericInput = React.forwardRef(function NumericInput(props, ref) {
     disabled,
     size,
     fullWidth = true,
-    InputProps: InputPropsProp,
+    slotProps: slotPropsProp,
     ...rest
   } = props;
 
@@ -186,13 +186,13 @@ const NumericInput = React.forwardRef(function NumericInput(props, ref) {
     </InputAdornment>
   );
 
-  const mergedInputProps = {
+  const mergedSlotProps = {
     inputMode: effectiveStep < 1 ? 'decimal' : 'numeric',
     pattern: effectiveStep < 1 ? '[0-9]*[.,]?[0-9]*' : '[0-9]*',
-    ...InputPropsProp,
+    ...slotPropsProp,
     endAdornment: (
       <>
-        {InputPropsProp?.endAdornment}
+        {slotPropsProp?.endAdornment}
         {endAdornment}
       </>
     )
@@ -209,7 +209,7 @@ const NumericInput = React.forwardRef(function NumericInput(props, ref) {
       fullWidth={fullWidth}
       disabled={disabled}
       size={size}
-      InputProps={mergedInputProps}
+      slotProps={{ input: mergedSlotProps }}
       type="text" // prevent native spinner
       {...rest}
       sx={{

@@ -49,12 +49,7 @@ const MessagePanel = ({ message, onChange, collapsible = true, expanded, onExpan
           <Typography variant="body2" color="text.secondary">
             {message.enabled ? 'Enabled' : 'Disabled'}
           </Typography>
-          <Switch
-            edge="end"
-            checked={message.enabled}
-            onChange={handleEnabledChange}
-            inputProps={{ 'aria-label': `${message.label} enabled` }}
-          />
+          <Switch edge="end" checked={message.enabled} onChange={handleEnabledChange} />
         </>
       }
       defaultExpanded
@@ -75,17 +70,19 @@ const MessagePanel = ({ message, onChange, collapsible = true, expanded, onExpan
             handleMessageSave();
           }
         }}
-        InputProps={{
-          endAdornment: isDirty && (
-            <InputEndAdornment
-              title="Click or press Enter to save changes"
-              placement="top-start"
-              open={Boolean(isDirty)}
-              color="success"
-              icon={<SaveIcon color="success" />}
-              handleClick={handleMessageSave}
-            />
-          )
+        slotProps={{
+          input: {
+            endAdornment: isDirty && (
+              <InputEndAdornment
+                title="Click or press Enter to save changes"
+                placement="top-start"
+                open={Boolean(isDirty)}
+                color="success"
+                icon={<SaveIcon color="success" />}
+                handleClick={handleMessageSave}
+              />
+            )
+          }
         }}
       />
     </CollapsibleCard>

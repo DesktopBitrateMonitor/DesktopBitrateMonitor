@@ -2,10 +2,13 @@ import { Box, FormControl, InputLabel, MenuItem, Select, Typography } from '@mui
 import React, { useCallback } from 'react';
 import { useStreamingSoftwareConfigStore } from '../../contexts/DataContext';
 import ObsSettings from './components/ObsSettings.jsx';
+import CollapsibleCard from '../../components/functional/CollapsibleCard.jsx';
+import StreamlabsObsSettings from './components/StreamlabsObsSettings.jsx';
 
 const SOFTWARES = [
   { label: 'OBS Studio', value: 'obs-studio', isDev: false },
-  { label: 'Streamlabs OBS', value: 'streamlabs-obs', isDev: false }
+  { label: 'Streamlabs OBS', value: 'streamlabs-obs', isDev: false },
+  { label: 'MELD Studio', value: 'meld-studio', isDev: true }
 ];
 
 const SoftwareSettings = () => {
@@ -15,11 +18,6 @@ const SoftwareSettings = () => {
   const [softwareType, setSoftwareType] = React.useState(
     streamingSoftwareConfig?.currentType || 'obs-studio'
   );
-
-  const [errorMessages, setErrorMessages] = React.useState({
-    'obs-studio': '',
-    'streamlabs-obs': ''
-  });
 
   const getSoftwareSection = useCallback(
     (type) => {
@@ -102,11 +100,32 @@ const SoftwareSettings = () => {
         </FormControl>
       </Box>
       {softwareType === 'obs-studio' && (
-        <ObsSettings
-          data={getSoftwareSection('obs-studio')}
-          onChange={(data) => handleSettingsChange('obs-studio', data)}
-          onSave={(data) => saveSettings('obs-studio', data)}
-        />
+        <CollapsibleCard
+          title={' OBS Studio Settings'}
+          subtitle={'Setup the connection to OBS'}
+          collapsible={false}
+          defaultExpanded={true}
+        >
+          <ObsSettings
+            data={getSoftwareSection('obs-studio')}
+            onChange={(data) => handleSettingsChange('obs-studio', data)}
+            onSave={(data) => saveSettings('obs-studio', data)}
+          />
+        </CollapsibleCard>
+      )}
+      {softwareType === 'streamlabs-obs' && (
+        <CollapsibleCard
+          title={' Streamlabs OBS Settings'}
+          subtitle={'Setup the connection to Streamlabs OBS'}
+          collapsible={false}
+          defaultExpanded={true}
+        >
+          <StreamlabsObsSettings
+            data={getSoftwareSection('streamlabs-obs')}
+            onChange={(data) => handleSettingsChange('streamlabs-obs', data)}
+            onSave={(data) => saveSettings('streamlabs-obs', data)}
+          />
+        </CollapsibleCard>
       )}
     </Box>
   );

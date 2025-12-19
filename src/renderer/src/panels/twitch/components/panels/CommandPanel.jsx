@@ -78,12 +78,7 @@ const CommandPanel = ({ command, onChange, collapsible = true, expanded, onExpan
           <Typography variant="body2" color="text.secondary">
             {command.enabled ? 'Enabled' : 'Disabled'}
           </Typography>
-          <Switch
-            edge="end"
-            checked={command.enabled}
-            onChange={handleEnabledChange}
-            inputProps={{ 'aria-label': `${title} enabled` }}
-          />
+          <Switch edge="end" checked={command.enabled} onChange={handleEnabledChange} />
         </>
       }
       defaultExpanded
@@ -223,16 +218,18 @@ const CommandPanel = ({ command, onChange, collapsible = true, expanded, onExpan
               error={Boolean(aliasError)}
               helperText={aliasError || 'Prefix have to be included in Aliases'}
               fullWidth
-              InputProps={{
-                endAdornment: (
-                  <InputEndAdornment
-                    title="Click to add alias or press enter"
-                    placement="top-start"
-                    open={Boolean(aliasDraft)}
-                    icon={<AddIcon fontSize="small" />}
-                    handleClick={handleAliasAdd}
-                  />
-                )
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputEndAdornment
+                      title="Click to add alias or press enter"
+                      placement="top-start"
+                      open={Boolean(aliasDraft)}
+                      icon={<AddIcon fontSize="small" />}
+                      handleClick={handleAliasAdd}
+                    />
+                  )
+                }
               }}
             />
           </Stack>

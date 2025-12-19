@@ -1,12 +1,16 @@
-import { Box, Stack, TextField, Typography } from '@mui/material';
+import { IconButton, InputAdornment, Stack, TextField, Typography } from '@mui/material';
 import NumericInput from '../../../components/functional/NumericInput';
 import React, { useCallback } from 'react';
 import SaveIcon from '@mui/icons-material/Save';
 import InputEndAdornment from '../../../components/feedback/InputEndAdornment';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 const ObsSettings = ({ data, onChange, onSave }) => {
   const [dirty, setDirty] = React.useState({ host: false, port: false, password: false });
   const [errors, setErrors] = React.useState({ host: '', port: '', password: '' });
+  const [oldValueDraft, setOldValueDraft] = React.useState(data);
+  const [showPassword, setShowPassword] = React.useState(false);
 
   const validate = useCallback((next) => {
     const nextErrors = { host: '', port: '', password: '' };
@@ -32,7 +36,12 @@ const ObsSettings = ({ data, onChange, onSave }) => {
       const { name, value } = event.target;
       const next = { ...data, [name]: value };
       onChange(next);
-      setDirty((prev) => ({ ...prev, [name]: true }));
+
+      if (oldValueDraft[name] !== value) {
+        setDirty((prev) => ({ ...prev, [name]: true }));
+      } else {
+        setDirty((prev) => ({ ...prev, [name]: false }));
+      }
       validate(next);
     },
     [data, onChange, validate]
@@ -47,6 +56,7 @@ const ObsSettings = ({ data, onChange, onSave }) => {
         if (!hasError) {
           onSave(current);
           setDirty({ host: false, port: false, password: false });
+          setOldValueDraft(current);
         }
       }
     },
@@ -54,35 +64,17 @@ const ObsSettings = ({ data, onChange, onSave }) => {
   );
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-      <Box
-        sx={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 1.5
-        }}
-      >
-        <Box>
-          <Typography variant="h5" sx={{ mb: 0.5 }}>
-            Software Settings
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Customize the broadcasting software settings.
-          </Typography>
-        </Box>
-      </Box>
-      <Stack gap={2}>
-        <TextField
-          label="OBS WebSocket Host"
-          name="host"
-          value={data.host || ''}
-          onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
-          error={Boolean(errors.host)}
-          helperText={errors.host || ''}
-          InputProps={{
+    <Stack gap={2}>
+      <TextField
+        label="OBS WebSocket Host"
+        name="host"
+        value={data.host || ''}
+        onChange={handleInputChange}
+        onKeyDown={handleKeyDown}
+        error={Boolean(errors.host)}
+        helperText={errors.host || ''}
+        slotProps={{
+          input: {
             endAdornment:
               dirty.host && !errors.host ? (
                 <InputEndAdornment
@@ -101,17 +93,19 @@ const ObsSettings = ({ data, onChange, onSave }) => {
                   }}
                 />
               ) : undefined
-          }}
-        />
-        <NumericInput
-          label="Port"
-          name="port"
-          value={data.port || ''}
-          onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
-          error={Boolean(errors.port)}
-          helperText={errors.port || ''}
-          InputProps={{
+          }
+        }}
+      />
+      <NumericInput
+        label="Port"
+        name="port"
+        value={data.port || ''}
+        onChange={handleInputChange}
+        onKeyDown={handleKeyDown}
+        error={Boolean(errors.port)}
+        helperText={errors.port || ''}
+        slotProps={{
+          input: {
             endAdornment:
               dirty.port && !errors.port ? (
                 <InputEndAdornment
@@ -130,38 +124,54 @@ const ObsSettings = ({ data, onChange, onSave }) => {
                   }}
                 />
               ) : undefined
-          }}
-        />
-        <TextField
-          label="Password"
-          name="password"
-          type="password"
-          value={data.password || ''}
-          onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
-          InputProps={{
-            endAdornment:
-              dirty.password && !errors.password ? (
-                <InputEndAdornment
-                  title="Click or press Enter to save changes"
-                  placement="top-start"
-                  open={Boolean(dirty.password)}
-                  color="success"
-                  icon={<SaveIcon color="success" />}
-                  handleClick={() => {
-                    const currentErrors = validate(data);
-                    const hasError = Object.values(currentErrors).some(Boolean);
-                    if (!hasError) {
-                      onSave(data);
-                      setDirty((prev) => ({ ...prev, password: false }));
-                    }
-                  }}
-                />
-              ) : undefined
-          }}
-        />
-      </Stack>
-    </Box>
+          }
+        }}
+      />
+      <TextField
+        label="Password"
+        name="password"
+        type={showPassword ? 'text' : 'password'}
+        value={data.password || ''}
+        onChange={handleInputChange}
+        onKeyDown={handleKeyDown}
+        slotProps={{
+          input: {
+            endAdornment: (
+              <InputAdornment position="end">
+                {dirty.password && !errors.password && (
+                  <InputEndAdornment
+                    title="Click or press Enter to save changes"
+                    placement="top-start"
+                    open={Boolean(dirty.password)}
+                    color="success"
+                    icon={<SaveIcon color="success" />}
+                    handleClick={() => {
+                      const currentErrors = validate(data);
+                      const hasError = Object.values(currentErrors).some(Boolean);
+                      if (!hasError) {
+                        onSave(data);
+                        setDirty((prev) => ({ ...prev, password: false }));
+                      }
+                    }}
+                  />
+                )}
+                <IconButton
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  edge="end"
+                >
+                  {showPassword ? (
+                    <VisibilityOff sx={{ color: 'text.secondary' }} />
+                  ) : (
+                    <Visibility sx={{ color: 'text.secondary' }} />
+                  )}
+                </IconButton>
+              </InputAdornment>
+            )
+          }
+        }}
+      />
+    </Stack>
   );
 };
 

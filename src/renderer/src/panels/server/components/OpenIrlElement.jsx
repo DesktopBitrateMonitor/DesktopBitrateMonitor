@@ -54,17 +54,19 @@ const OpenIrlElement = ({
           label="Stats URL"
           error={Boolean(errorMessage)}
           helperText={errorMessage || 'Example: http://<ip>:<port>/stats/<streamId>'}
-          InputProps={{
-            endAdornment: isDirty && errorMessage.length === 0 && (
-              <InputEndAdornment
-                title="Click or press Enter to save changes"
-                placement="top-start"
-                open={Boolean(isDirty)}
-                color="success"
-                icon={<SaveIcon color="success" />}
-                handleClick={(e) => saveStatsUrl(e.target.value || '')}
-              />
-            )
+          slotProps={{
+            input: {
+              endAdornment: isDirty && errorMessage.length === 0 && (
+                <InputEndAdornment
+                  title="Click or press Enter to save changes"
+                  placement="top-start"
+                  open={Boolean(isDirty)}
+                  color="success"
+                  icon={<SaveIcon color="success" />}
+                  handleClick={(e) => saveStatsUrl(e.target.value || '')}
+                />
+              )
+            }
           }}
         />
       </Stack>
