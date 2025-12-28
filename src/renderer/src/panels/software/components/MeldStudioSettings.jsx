@@ -1,0 +1,234 @@
+import { IconButton, InputAdornment, Stack, TextField, Typography } from '@mui/material';
+import NumericInput from '../../../components/functional/NumericInput';
+import { useState } from 'react';
+import SaveIcon from '@mui/icons-material/Save';
+import InputEndAdornment from '../../../components/feedback/InputEndAdornment';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { useStreamingSoftwareConfigStore } from '../../../contexts/DataContext';
+import { useAlert } from '../../../contexts/AlertContext';
+
+const MeldStudioSettings = () => {
+  const { streamingSoftwareConfig, updateStreamingSoftwareConfig } =
+    useStreamingSoftwareConfigStore();
+  const { showAlert } = useAlert();
+  const type = 'meld-studio';
+
+  const [softwareData, setSoftwareData] = useState({
+    host: streamingSoftwareConfig[type].host,
+    port: streamingSoftwareConfig[type].port,
+    password: streamingSoftwareConfig[type].password
+  });
+  const [errorMessages, setErrorMessages] = useState({
+    host: '',
+    port: '',
+    password: ''
+  });
+  const [dirtyStates, setDirtyStates] = useState({
+    host: false,
+    port: false,
+    password: false
+  });
+  const [oldDataDraft, setOldDataDraft] = useState({
+    host: streamingSoftwareConfig[type].host,
+    port: streamingSoftwareConfig[type].port,
+    password: streamingSoftwareConfig[type].password
+  });
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleInputChange = (name, value) => {
+    setSoftwareData((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+
+    if (oldDataDraft[name] !== value) {
+      setDirtyStates((prev) => ({
+        ...prev,
+        [name]: true
+      }));
+    } else {
+      setDirtyStates((prev) => ({
+        ...prev,
+        [name]: false
+      }));
+    }
+
+    const validationMessage = validateTextField(name, value);
+    setErrorMessages((prev) => ({
+      ...prev,
+      [name]: validationMessage
+    }));
+  };
+
+  const validateTextField = (name, value) => {
+    if (name === 'host') {
+      if (!value.trim() || value.replace(/\s+/g, '').length === 0) {
+        return 'Host cannot be empty.';
+      } else if (value.includes(' ')) {
+        return 'Host must not contain spaces.';
+      }
+    }
+    if (name === 'port') {
+      const portNumber = Number(value);
+      if (isNaN(portNumber) || !Number.isInteger(portNumber)) {
+        return 'Port must be an integer';
+      } else if (portNumber < 1000 || portNumber > 65535) {
+        return 'Port must be between 1000 and 65535.';
+      }
+    }
+    if (name === 'name') {
+      if (!value.trim() || value.replace(/\s+/g, '').length === 0) {
+        return 'Name cannot be empty.';
+      }
+    }
+    if (name === 'password') {
+      if (value.includes(' ')) {
+        return 'Password must not contain spaces.';
+      }
+    }
+    return '';
+  };
+
+  const saveField = async (name) => {
+    if (errorMessages[name] !== '') return;
+    if (oldDataDraft[name] === softwareData[name]) return;
+
+    const res = await window.storeApi.set('streaming-software-config', type, {
+      ...streamingSoftwareConfig[type],
+      [name]: softwareData[name]
+    });
+    if (res.success) {
+      updateStreamingSoftwareConfig((prev) => ({
+        ...(prev || {}),
+        [type]: {
+          ...(prev?.[type] || {}),
+          [name]: softwareData[name]
+        }
+      }));
+      setOldDataDraft((prev) => ({
+        ...prev,
+        [name]: softwareData[name]
+      }));
+      setDirtyStates((prev) => ({
+        ...prev,
+        [name]: false
+      }));
+      showAlert({ message: 'Data saved successfully', severity: 'success' });
+    } else {
+      showAlert({ message: 'Failed to save data', severity: 'error' });
+    }
+  };
+
+  return (
+    <Stack gap={2}>
+      <TextField
+        label="Meld Studio WebSocket Host"
+        name="host"
+        value={softwareData.host || ''}
+        onChange={(e) => handleInputChange('host', e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            saveField('host');
+          }
+        }}
+        error={Boolean(errorMessages.host)}
+        helperText={errorMessages.host || 'Host should be localhost or IP address'}
+        slotProps={{
+          input: {
+            endAdornment:
+              dirtyStates.host && !errorMessages.host ? (
+                <InputEndAdornment
+                  title="Click or press Enter to save changes"
+                  placement="top-start"
+                  open={Boolean(dirtyStates.host)}
+                  color="success"
+                  icon={<SaveIcon color="success" />}
+                  handleClick={() => {
+                    saveField('host');
+                  }}
+                />
+              ) : undefined
+          }
+        }}
+      />
+      <NumericInput
+        label="Port"
+        name="port"
+        min={1000}
+        max={65535}
+        value={softwareData.port || ''}
+        onChange={(e) => handleInputChange('port', e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            saveField('port');
+          }
+        }}
+        error={Boolean(errorMessages.port)}
+        helperText={errorMessages.port || ''}
+        slotProps={{
+          endAdornment:
+            dirtyStates.port && !errorMessages.port ? (
+              <InputEndAdornment
+                title="Click or press Enter to save changes"
+                placement="top-start"
+                open={Boolean(dirtyStates.port)}
+                color="success"
+                icon={<SaveIcon color="success" />}
+                handleClick={() => {
+                  saveField('port');
+                }}
+              />
+            ) : undefined
+        }}
+      />
+      <TextField
+        label="Password"
+        name="password"
+        type={showPassword ? 'text' : 'password'}
+        value={softwareData.password || ''}
+        error={Boolean(errorMessages.password)}
+        helperText={errorMessages.password || 'Password for Meld Studio WebSocket'}
+        onChange={(e) => handleInputChange('password', e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            saveField('password');
+          }
+        }}
+        slotProps={{
+          input: {
+            endAdornment: (
+              <InputAdornment position="end">
+                {dirtyStates.password && !errorMessages.password && (
+                  <InputEndAdornment
+                    title="Click or press Enter to save changes"
+                    placement="top-start"
+                    open={Boolean(dirtyStates.password)}
+                    color="success"
+                    icon={<SaveIcon color="success" />}
+                    handleClick={() => {
+                      saveField('password');
+                    }}
+                  />
+                )}
+                <IconButton
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  edge="end"
+                >
+                  {showPassword ? (
+                    <VisibilityOff sx={{ color: 'text.secondary' }} />
+                  ) : (
+                    <Visibility sx={{ color: 'text.secondary' }} />
+                  )}
+                </IconButton>
+              </InputAdornment>
+            )
+          }
+        }}
+      />
+    </Stack>
+  );
+};
+
+export default MeldStudioSettings;

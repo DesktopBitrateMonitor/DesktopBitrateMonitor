@@ -1,95 +1,162 @@
 import { IconButton, InputAdornment, Stack, TextField, Typography } from '@mui/material';
 import NumericInput from '../../../components/functional/NumericInput';
-import React, { useCallback } from 'react';
+import { useState } from 'react';
 import SaveIcon from '@mui/icons-material/Save';
 import InputEndAdornment from '../../../components/feedback/InputEndAdornment';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { useStreamingSoftwareConfigStore } from '../../../contexts/DataContext';
+import { useAlert } from '../../../contexts/AlertContext';
 
-const ObsSettings = ({ data, onChange, onSave }) => {
-  const [dirty, setDirty] = React.useState({ host: false, port: false, password: false });
-  const [errors, setErrors] = React.useState({ host: '', port: '', password: '' });
-  const [oldValueDraft, setOldValueDraft] = React.useState(data);
-  const [showPassword, setShowPassword] = React.useState(false);
+const ObsSettings = () => {
+  const { streamingSoftwareConfig, updateStreamingSoftwareConfig } =
+    useStreamingSoftwareConfigStore();
+  const { showAlert } = useAlert();
+  const type = 'obs-studio';
 
-  const validate = useCallback((next) => {
-    const nextErrors = { host: '', port: '', password: '' };
+  const [softwareData, setSoftwareData] = useState({
+    host: streamingSoftwareConfig[type].host,
+    port: streamingSoftwareConfig[type].port,
+    password: streamingSoftwareConfig[type].password
+  });
+  const [errorMessages, setErrorMessages] = useState({
+    host: '',
+    port: '',
+    password: ''
+  });
+  const [dirtyStates, setDirtyStates] = useState({
+    host: false,
+    port: false,
+    password: false
+  });
+  const [oldDataDraft, setOldDataDraft] = useState({
+    host: streamingSoftwareConfig[type].host,
+    port: streamingSoftwareConfig[type].port,
+    password: streamingSoftwareConfig[type].password
+  });
+  const [showPassword, setShowPassword] = useState(false);
 
-    if (!next.host || !next.host.trim()) {
-      nextErrors.host = 'Host is required.';
+  const handleInputChange = (name, value) => {
+    setSoftwareData((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+
+    if (oldDataDraft[name] !== value) {
+      setDirtyStates((prev) => ({
+        ...prev,
+        [name]: true
+      }));
+    } else {
+      setDirtyStates((prev) => ({
+        ...prev,
+        [name]: false
+      }));
     }
 
-    if (!next.port) {
-      nextErrors.port = 'Port is required.';
-    } else if (Number.isNaN(Number(next.port))) {
-      nextErrors.port = 'Port must be a number.';
-    }
+    const validationMessage = validateTextField(name, value);
+    setErrorMessages((prev) => ({
+      ...prev,
+      [name]: validationMessage
+    }));
+  };
 
-    // Password: optional here, adjust if you want rules
-
-    setErrors(nextErrors);
-    return nextErrors;
-  }, []);
-
-  const handleInputChange = useCallback(
-    (event) => {
-      const { name, value } = event.target;
-      const next = { ...data, [name]: value };
-      onChange(next);
-
-      if (oldValueDraft[name] !== value) {
-        setDirty((prev) => ({ ...prev, [name]: true }));
-      } else {
-        setDirty((prev) => ({ ...prev, [name]: false }));
+  const validateTextField = (name, value) => {
+    if (name === 'host') {
+      if (!value.trim() || value.replace(/\s+/g, '').length === 0) {
+        return 'Host cannot be empty.';
+      } else if (value.includes(' ')) {
+        return 'Host must not contain spaces.';
       }
-      validate(next);
-    },
-    [data, onChange, validate]
-  );
+    }
+    if (name === 'port') {
+      const portNumber = Number(value);
+      if (isNaN(portNumber) || !Number.isInteger(portNumber)) {
+        return 'Port must be an integer';
+      } else if (portNumber < 1000 || portNumber > 65535) {
+        return 'Port must be between 1000 and 65535.';
+      }
+    }
+    if (name === 'name') {
+      if (!value.trim() || value.replace(/\s+/g, '').length === 0) {
+        return 'Name cannot be empty.';
+      }
+    }
+    if (name === 'password') {
+      if (value.includes(' ')) {
+        return 'Password must not contain spaces.';
+      }
+    }
+    return '';
+  };
 
-  const handleKeyDown = useCallback(
-    (event) => {
-      if (event.key === 'Enter') {
-        const current = data;
-        const currentErrors = validate(current);
-        const hasError = Object.values(currentErrors).some(Boolean);
-        if (!hasError) {
-          onSave(current);
-          setDirty({ host: false, port: false, password: false });
-          setOldValueDraft(current);
+  const saveField = async (name) => {
+    if (errorMessages[name] !== '') return;
+    if (oldDataDraft[name] === softwareData[name]) return;
+
+    const res = await window.storeApi.set('streaming-software-config', type, {
+      ...streamingSoftwareConfig[type],
+      [name]: softwareData[name]
+    });
+    if (res.success) {
+      updateStreamingSoftwareConfig((prev) => ({
+        ...(prev || {}),
+        [type]: {
+          ...(prev?.[type] || {}),
+          [name]: softwareData[name]
         }
-      }
-    },
-    [data, onSave, validate]
-  );
+      }));
+      setOldDataDraft((prev) => ({
+        ...prev,
+        [name]: softwareData[name]
+      }));
+      setDirtyStates((prev) => ({
+        ...prev,
+        [name]: false
+      }));
+      showAlert({ message: 'Data saved successfully', severity: 'success' });
+    } else {
+      showAlert({ message: 'Failed to save data', severity: 'error' });
+    }
+
+    const reconnectRes = await window.servicesApi.reconnectBroadcastSoftware('obs-studio');
+    console.log('reconnectRes', reconnectRes);
+    if (reconnectRes.success) {
+      showAlert({ message: 'Reconnected to OBS successfully', severity: 'info' });
+    } else {
+      showAlert({
+        message: `Failed to reconnect to OBS: ${reconnectRes.error}`,
+        severity: 'error'
+      });
+    }
+  };
 
   return (
     <Stack gap={2}>
       <TextField
         label="OBS WebSocket Host"
         name="host"
-        value={data.host || ''}
-        onChange={handleInputChange}
-        onKeyDown={handleKeyDown}
-        error={Boolean(errors.host)}
-        helperText={errors.host || ''}
+        value={softwareData.host || ''}
+        onChange={(e) => handleInputChange('host', e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            saveField('host');
+          }
+        }}
+        error={Boolean(errorMessages.host)}
+        helperText={errorMessages.host || 'Host should be localhost or IP address'}
         slotProps={{
           input: {
             endAdornment:
-              dirty.host && !errors.host ? (
+              dirtyStates.host && !errorMessages.host ? (
                 <InputEndAdornment
                   title="Click or press Enter to save changes"
                   placement="top-start"
-                  open={Boolean(dirty.host)}
+                  open={Boolean(dirtyStates.host)}
                   color="success"
                   icon={<SaveIcon color="success" />}
                   handleClick={() => {
-                    const currentErrors = validate(data);
-                    const hasError = Object.values(currentErrors).some(Boolean);
-                    if (!hasError) {
-                      onSave(data);
-                      setDirty((prev) => ({ ...prev, host: false }));
-                    }
+                    saveField('host');
                   }}
                 />
               ) : undefined
@@ -99,59 +166,59 @@ const ObsSettings = ({ data, onChange, onSave }) => {
       <NumericInput
         label="Port"
         name="port"
-        value={data.port || ''}
-        onChange={handleInputChange}
-        onKeyDown={handleKeyDown}
-        error={Boolean(errors.port)}
-        helperText={errors.port || ''}
-        slotProps={{
-          input: {
-            endAdornment:
-              dirty.port && !errors.port ? (
-                <InputEndAdornment
-                  title="Click or press Enter to save changes"
-                  placement="top-start"
-                  open={Boolean(dirty.port)}
-                  color="success"
-                  icon={<SaveIcon color="success" />}
-                  handleClick={() => {
-                    const currentErrors = validate(data);
-                    const hasError = Object.values(currentErrors).some(Boolean);
-                    if (!hasError) {
-                      onSave(data);
-                      setDirty((prev) => ({ ...prev, port: false }));
-                    }
-                  }}
-                />
-              ) : undefined
+        min={1000}
+        max={65535}
+        value={softwareData.port || ''}
+        onChange={(e) => handleInputChange('port', e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            saveField('port');
           }
+        }}
+        error={Boolean(errorMessages.port)}
+        helperText={errorMessages.port || ''}
+        slotProps={{
+          endAdornment:
+            dirtyStates.port && !errorMessages.port ? (
+              <InputEndAdornment
+                title="Click or press Enter to save changes"
+                placement="top-start"
+                open={Boolean(dirtyStates.port)}
+                color="success"
+                icon={<SaveIcon color="success" />}
+                handleClick={() => {
+                  saveField('port');
+                }}
+              />
+            ) : undefined
         }}
       />
       <TextField
         label="Password"
         name="password"
         type={showPassword ? 'text' : 'password'}
-        value={data.password || ''}
-        onChange={handleInputChange}
-        onKeyDown={handleKeyDown}
+        value={softwareData.password || ''}
+        error={Boolean(errorMessages.password)}
+        helperText={errorMessages.password || 'Password for OBS WebSocket'}
+        onChange={(e) => handleInputChange('password', e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            saveField('password');
+          }
+        }}
         slotProps={{
           input: {
             endAdornment: (
               <InputAdornment position="end">
-                {dirty.password && !errors.password && (
+                {dirtyStates.password && !errorMessages.password && (
                   <InputEndAdornment
                     title="Click or press Enter to save changes"
                     placement="top-start"
-                    open={Boolean(dirty.password)}
+                    open={Boolean(dirtyStates.password)}
                     color="success"
                     icon={<SaveIcon color="success" />}
                     handleClick={() => {
-                      const currentErrors = validate(data);
-                      const hasError = Object.values(currentErrors).some(Boolean);
-                      if (!hasError) {
-                        onSave(data);
-                        setDirty((prev) => ({ ...prev, password: false }));
-                      }
+                      saveField('password');
                     }}
                   />
                 )}

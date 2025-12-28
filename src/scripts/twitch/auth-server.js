@@ -1,5 +1,5 @@
 import { ipcMain, BrowserWindow } from 'electron';
-import Logger from '../logger';
+import Logger from '../logging/logger';
 import { injectDefaults } from '../store/defaults';
 import { userAuthorization, authAPI } from './twitch-api';
 import { connectToEventSubs, disconnectEventSubs } from './event-subscriptions/eventsubs';
@@ -80,9 +80,9 @@ app.get('/oauth', async (req, res) => {
 
     if (type === 'broadcaster') {
       async function connectEventSubs() {
-        disconnectEventSubs();
+        disconnectEventSubs(mainWindow);
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        connectToEventSubs(client_id, data);
+        connectToEventSubs(client_id, mainWindow);
       }
       connectEventSubs();
     }

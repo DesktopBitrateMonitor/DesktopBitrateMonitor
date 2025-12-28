@@ -1,4 +1,4 @@
-import Logger from '../../scripts/logger';
+import Logger from '../../scripts/logging/logger';
 import { autoUpdater } from 'electron-updater';
 
 let updateIpcInitialized = false;

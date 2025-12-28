@@ -1,4 +1,4 @@
-import Logger from '../../logger';
+import Logger from '../../logging/logger';
 import { handleChatMessage } from '../event-subscriptions/handleChatMessage';
 import { handleRaid } from './handleRaids';
 

@@ -4,6 +4,8 @@ import { loggerApi } from './api/logger-api';
 import { updateApi } from './api/update-api';
 import { storeApi } from './api/store-api';
 import { authApi } from './api/auth-api';
+import { servicesApi } from './api/services-api';
+import { statesApi } from './api/states-api';
 
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise
@@ -15,6 +17,8 @@ if (process.contextIsolated) {
     contextBridge.exposeInMainWorld('loggerApi', loggerApi);
     contextBridge.exposeInMainWorld('updateApi', updateApi);
     contextBridge.exposeInMainWorld('authApi', authApi);
+    contextBridge.exposeInMainWorld('servicesApi', servicesApi);
+    contextBridge.exposeInMainWorld('statesApi', statesApi);
   } catch (error) {
     console.error(error);
   }
@@ -23,5 +27,7 @@ if (process.contextIsolated) {
   window.storeApi = storeApi;
   window.loggerApi = loggerApi;
   window.updateApi = updateApi;
-  window.authAPI = authApi;
+  window.authApi = authApi;
+  window.servicesApi = servicesApi;
+  window.statesApi = statesApi;
 }

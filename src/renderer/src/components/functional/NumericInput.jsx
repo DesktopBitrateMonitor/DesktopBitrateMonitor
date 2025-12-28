@@ -170,6 +170,11 @@ const NumericInput = React.forwardRef(function NumericInput(props, ref) {
             stepper(1);
           }}
           disabled={disabled || (typeof max === 'number' && Number(value) >= max)}
+          onKeyDown={() => {
+            if (e.key === 'Enter') {
+              return;
+            }
+          }}
         >
           <KeyboardArrowUpIcon fontSize="inherit" />
         </Button>
@@ -179,6 +184,11 @@ const NumericInput = React.forwardRef(function NumericInput(props, ref) {
             stepper(-1);
           }}
           disabled={disabled || (typeof min === 'number' && Number(value) <= min)}
+          onKeyDown={() => {
+            if (e.key === 'Enter') {
+              return;
+            }
+          }}
         >
           <KeyboardArrowDownIcon fontSize="inherit" />
         </Button>

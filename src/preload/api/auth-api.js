@@ -18,5 +18,9 @@ export const authApi = {
   setOauthData: (callback) =>
     ipcRenderer.on('send-oauth-data', (event, data) => {
       callback(data);
-    })
+    }),
+
+  validateUser: (userType, userName) => {
+    return ipcRenderer.invoke('validate-user', userType, userName);
+  }
 };

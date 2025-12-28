@@ -7,6 +7,9 @@ import { injectDefaults } from '../scripts/store/defaults';
 import { initializeElectronStoreIpc } from './ipc-handler/store-ipc-handler';
 import { initializeUpdateIpc } from './ipc-handler/update-ipc-handler';
 import { initializeAuthIpc } from './ipc-handler/auth-ipc-handler';
+import { initializeLoggerIpc } from './ipc-handler/logger-ipc-handler';
+import { initializeServices } from './lib/initialize-services';
+import { initializeServicesIpc } from './ipc-handler/services-ipc-handler';
 
 const { appConfig } = injectDefaults();
 
@@ -177,10 +180,13 @@ function updateCurrentDisplay() {
 }
 
 async function registerIpcHandlers() {
+  // Initialize IPC handlers
   await initializeElectronStoreIpc(ipcMain);
   await initializeUpdateIpc(ipcMain);
   await initializeAuthIpc(ipcMain);
-}
+  await initializeLoggerIpc(ipcMain);
+  await initializeServicesIpc(ipcMain, mainWindow);
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
+  // Initialize other services
+  await initializeServices(mainWindow);
+}

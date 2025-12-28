@@ -4,10 +4,12 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import EmojiMessagesIcon from '@mui/icons-material/QuestionAnswerOutlined';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
 const TAB_CONFIG = [
   { value: 'commandsettings', label: 'Commands', icon: ChatBubbleOutlineIcon },
   { value: 'messagesettings', label: 'Messages', icon: EmojiMessagesIcon },
+  { value: 'usersettings', label: 'Users', icon: AdminPanelSettingsIcon },
   { value: 'accountssettings', label: 'Accounts', icon: AccountCircleIcon }
 ];
 
@@ -15,12 +17,21 @@ const TwitchSettings = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const twitchBasePath = useMemo(() => {
+    const parts = location.pathname.split('/').filter(Boolean);
+    const twitchIndex = parts.indexOf('twitch');
+
+    if (twitchIndex === -1) return location.pathname;
+
+    return `/${parts.slice(0, twitchIndex + 1).join('/')}`;
+  }, [location.pathname]);
+
   const activeValue = useMemo(() => {
     const parts = location.pathname.split('/').filter(Boolean);
     const last = parts[parts.length - 1] || '';
 
-    // When at /dashboard/twitchsettings (index route), default to commands
-    if (last === 'twitchsettings') return 'commandsettings';
+    // When at /dashboard/accountssettings/twitch (index route), default to commands
+    if (last === 'twitch' || last === 'twitchsettings') return 'commandsettings';
 
     return TAB_CONFIG.some((t) => t.value === last) ? last : 'commandsettings';
   }, [location.pathname]);
@@ -28,15 +39,15 @@ const TwitchSettings = () => {
   const handleChange = (_event, newValue) => {
     // Commands is the default: use index route when selecting it
     if (newValue === 'commandsettings') {
-      navigate('.', { replace: false });
+      navigate(twitchBasePath, { replace: false });
     } else {
-      navigate(newValue, { replace: false });
+      navigate(`${twitchBasePath}/${newValue}`, { replace: false });
     }
   };
 
   return (
     <Box
-      component="main"
+      component={'main'}
       sx={{
         flex: '1 1 0',
         p: 0,
@@ -44,7 +55,8 @@ const TwitchSettings = () => {
         display: 'flex',
         flexDirection: 'column',
         minHeight: 0,
-        maxHeight: '100%'
+        maxHeight: '100%',
+        height: '100%'
       }}
     >
       <Tabs
@@ -72,7 +84,6 @@ const TwitchSettings = () => {
           );
         })}
       </Tabs>
-
       <Box
         sx={{
           flex: '1 1 0',
@@ -81,7 +92,8 @@ const TwitchSettings = () => {
           pb: 1.5,
           overflowY: 'auto',
           overflowX: 'hidden',
-          minHeight: 0
+          minHeight: 0,
+          height: '100%'
         }}
       >
         <Outlet />

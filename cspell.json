@@ -1,29 +1,40 @@
 {
-    "version": "0.2",
-    "ignorePaths": [],
-    "dictionaryDefinitions": [],
-    "dictionaries": [],
-    "words": [
-        "accountssettings",
-        "appsettings",
-        "belabox",
-        "Belabox",
-        "botsettings",
-        "channelsettings",
-        "commandsettings",
-        "eventsubs",
-        "generalsettings",
-        "messagesettings",
-        "openirl",
-        "restrictable",
-        "Segoe",
-        "SERVERPORT",
-        "serversettings",
-        "stylesettings",
-        "TWITCHCLIENTID",
-        "TWITCHCLIENTSECRET",
-        "twitchsettings"
-    ],
-    "ignoreWords": [],
-    "import": []
+  "version": "0.2",
+  "ignorePaths": [],
+  "dictionaryDefinitions": [
+    {
+      "name": "custom-dictionary",
+      "path": "./.cspell/custom-dictionary.txt",
+      "addWords": true
+    }
+  ],
+  "dictionaries": ["custom-dictionary"],
+  "words": [
+    "accountssettings",
+    "appsettings",
+    "belabox",
+    "Belabox",
+    "botsettings",
+    "channelsettings",
+    "commandsettings",
+    "eventsubs",
+    "generalsettings",
+    "logginsettings",
+    "messagesettings",
+    "openirl",
+    "restrictable",
+    "Segoe",
+    "SERVERPORT",
+    "serversettings",
+    "softwaresettings",
+    "Streamlabs",
+    "stylesettings",
+    "switchersettings",
+    "TWITCHCLIENTID",
+    "TWITCHCLIENTSECRET",
+    "twitchsettings",
+    "kbps"
+  ],
+  "ignoreWords": [],
+  "import": []
 }

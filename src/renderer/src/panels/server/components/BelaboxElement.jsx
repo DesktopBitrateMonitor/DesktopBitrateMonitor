@@ -1,70 +1,171 @@
 import { Box, Stack, TextField, Typography } from '@mui/material';
-import React, { useEffect } from 'react';
+import { useState } from 'react';
 import InputEndAdornment from '../../../components/feedback/InputEndAdornment';
 import SaveIcon from '@mui/icons-material/Save';
+import { useServerConfigStore } from '../../../contexts/DataContext';
+import { useAlert } from '../../../contexts/AlertContext';
 
-const BelaboxElement = ({
-  data,
-  onChange,
-  saveStatsUrl,
-  isDirty,
-  errorMessage,
-  setErrorMessage
-}) => {
-  useEffect(() => {
-    const value = data.statsUrl || '';
-    let nextMessage = '';
+const BelaboxElement = ({}) => {
+  const { serverConfig, updateServerConfig } = useServerConfigStore();
+  const { showAlert } = useAlert();
+  const type = 'belabox';
 
-    if (!value.trim() || value.replace(/\s+/g, '').length === 0) {
-      nextMessage = 'Stats URL cannot be empty.';
-    } else if (!value.startsWith('http')) {
-      nextMessage = 'Stats URL must start with http.';
-    } else if (value.includes(' ')) {
-      nextMessage = 'Stats URL must not contain spaces.';
+  const [serverData, setServerData] = useState({
+    name: serverConfig[type].name,
+    statsUrl: serverConfig[type].statsUrl,
+    provider: serverConfig[type].provider
+  });
+
+  const [errorMessages, setErrorMessages] = useState({
+    name: '',
+    statsUrl: '',
+    provider: ''
+  });
+
+  const [dirtyStates, setDirtyStates] = useState({
+    name: false,
+    statsUrl: false,
+    provider: false
+  });
+
+  const [oldDataDraft, setOldDataDraft] = useState({
+    name: serverConfig[type].name,
+    statsUrl: serverConfig[type].statsUrl,
+    provider: serverConfig[type].provider
+  });
+
+  const handleInputChange = (name, value) => {
+    setServerData((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+
+    if (oldDataDraft[name] !== value) {
+      setDirtyStates((prev) => ({
+        ...prev,
+        [name]: true
+      }));
+    } else {
+      setDirtyStates((prev) => ({
+        ...prev,
+        [name]: false
+      }));
     }
 
-    if (nextMessage !== errorMessage) {
-      setErrorMessage(nextMessage);
+    const validationMessage = validateTextField(name, value);
+    setErrorMessages((prev) => ({
+      ...prev,
+      [name]: validationMessage
+    }));
+  };
+
+  const validateTextField = (name, value) => {
+    if (name === 'statsUrl') {
+      if (!value.trim() || value.replace(/\s+/g, '').length === 0) {
+        return 'Stats URL cannot be empty.';
+      } else if (!value.startsWith('http://')) {
+        return 'Stats URL must start with http.';
+      } else if (value.includes(' ')) {
+        return 'Stats URL must not contain spaces.';
+      }
+      return '';
     }
-  }, [data.statsUrl, errorMessage, setErrorMessage]);
+    if (name === 'name') {
+      if (!value.trim() || value.replace(/\s+/g, '').length === 0) {
+        return 'Name cannot be empty.';
+      }
+      return '';
+    }
+    return '';
+  };
+
+  const saveField = async (name) => {
+    if (errorMessages[name] !== '') return;
+    if (oldDataDraft[name] === serverData[name]) return;
+
+    const res = await window.storeApi.set('server-config', type, {
+      ...serverConfig[type],
+      [name]: serverData[name]
+    });
+    if (res.success) {
+      updateServerConfig((prev) => ({
+        ...(prev || {}),
+        [type]: {
+          ...(prev?.[type] || {}),
+          [name]: serverData[name]
+        }
+      }));
+      setOldDataDraft((prev) => ({
+        ...prev,
+        [name]: serverData[name]
+      }));
+      setDirtyStates((prev) => ({
+        ...prev,
+        [name]: false
+      }));
+      showAlert({ message: 'Data saved successfully', severity: 'success' });
+    } else {
+      showAlert({ message: 'Failed to save data', severity: 'error' });
+    }
+  };
 
   return (
     <Box>
-      <Typography variant="body2" color="text.secondary" mb={3}>
-        SrtLiveServer Settings
-      </Typography>
-
       <Stack gap={2}>
         <TextField
-          label="Name"
-          value={data.name || ''}
-          onChange={(e) => onChange({ ...data, name: e.target.value })}
+          label="Server Name"
+          value={serverData.name || ''}
+          onChange={(e) => handleInputChange('name', e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              saveField('name');
+            }
+          }}
           sx={{ width: '240px' }}
-          helperText="The name of the server instance"
+          required
+          error={Boolean(errorMessages.name)}
+          helperText={errorMessages.name || 'The name of the server instance'}
+          slotProps={{
+            input: {
+              endAdornment: dirtyStates.name && errorMessages.name.length === 0 && (
+                <InputEndAdornment
+                  title="Click or press Enter to save changes"
+                  placement="top-start"
+                  open={Boolean(dirtyStates.name)}
+                  color="success"
+                  icon={<SaveIcon color="success" />}
+                  handleClick={(e) => saveField('name')}
+                />
+              )
+            }
+          }}
         />
 
         <TextField
           fullWidth
-          onChange={onChange}
+          label="Stats URL"
+          value={serverData.statsUrl || ''}
+          onChange={(e) => handleInputChange('statsUrl', e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
-              saveStatsUrl(e.target.value || '');
+              saveField('statsUrl');
             }
           }}
-          value={data.statsUrl || ''}
-          label="Stats URL"
-          error={Boolean(errorMessage)}
-          helperText={errorMessage || 'Example: http://<ip>:<port>/stats/<streamId>'}
+          required
+          error={Boolean(errorMessages.statsUrl)}
+          helperText={errorMessages.statsUrl || 'Example: http://<ip>:<port>/stats/<streamId>'}
           slotProps={{
             input: {
-              endAdornment: isDirty && errorMessage.length === 0 && (
+              endAdornment: dirtyStates.statsUrl && errorMessages.statsUrl.length === 0 && (
                 <InputEndAdornment
                   title="Click or press Enter to save changes"
                   placement="top-start"
-                  open={Boolean(isDirty)}
+                  open={Boolean(dirtyStates.statsUrl)}
                   color="success"
                   icon={<SaveIcon color="success" />}
-                  handleClick={(e) => saveStatsUrl(e.target.value || '')}
+                  handleClick={(e) => {
+                    saveField('statsUrl');
+                  }}
                 />
               )
             }

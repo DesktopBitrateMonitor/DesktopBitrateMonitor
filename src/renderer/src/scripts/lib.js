@@ -1,4 +1,4 @@
-import Logger from '../../../scripts/logger';
+import Logger from '../../../scripts/logging/logger';
 
 export async function storeLayoutChanges({ layout, key }) {
   if (!layout || !key) {

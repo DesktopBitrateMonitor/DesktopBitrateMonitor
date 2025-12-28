@@ -34,8 +34,10 @@ const AccountsSettings = () => {
     window.authApi.setOauthData((data) => {
       if (data.userType === 'broadcaster') {
         setBroadcasterData(data.data);
+        showAlert({ message: 'Broadcaster account connected successfully!', severity: 'success' });
       } else if (data.userType === 'bot') {
         setChatbotData(data.data);
+        showAlert({ message: 'Chatbot account connected successfully!', severity: 'success' });
       }
 
       updateAccountsConfig((prev) => ({
@@ -48,7 +50,6 @@ const AccountsSettings = () => {
   const handleLayoutChange = useCallback(
     (nextLayout) => {
       if (!nextLayout || nextLayout === layoutMode) return;
-      console.log(nextLayout);
       setLayoutMode(nextLayout);
       updateAccountsConfig((prev) => ({ ...(prev || {}), layout: nextLayout }));
       window.storeApi.set('accounts-config', 'layout', nextLayout);
@@ -91,6 +92,11 @@ const AccountsSettings = () => {
           scopes: [],
           profile_image_url: ''
         };
+
+        showAlert({
+          message: `Successfully logged out from ${accountType} account. Token revoked, user data cleared.`,
+          severity: 'success'
+        });
 
         await window.storeApi.set(`accounts-config`, accountType, data);
 
@@ -141,7 +147,13 @@ const AccountsSettings = () => {
   );
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 3
+      }}
+    >
       <Box
         sx={{
           display: 'flex',

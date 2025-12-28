@@ -1,4 +1,4 @@
-import Logger from '../../logger';
+import Logger from '../../logging/logger';
 import { getEventTypes } from './eventsub-types';
 import { handleEventSub } from './eventsub-message-handler';
 import { getUsers } from '../twitch-api';
@@ -17,14 +17,14 @@ let heartbeatInterval = null;
 let lastKeepAliveMessage = Date.now();
 let reconnecting = false;
 
+const { accountsConfig } = injectDefaults();
+
 // Main entry
-export async function connectToEventSubs(clientId) {
+export async function connectToEventSubs(clientId, mainWindow = null) {
   if (!clientId) {
     Logger.error('Twitch client ID is required before connecting to EventSub.');
     return;
   }
-
-  const { accountsConfig } = injectDefaults();
 
   let bc = accountsConfig.get('broadcaster');
 
@@ -46,7 +46,7 @@ export async function connectToEventSubs(clientId) {
   while (reconnecting) {
     try {
       Logger.info('Attempting to connect to Twitch EventSub WebSocket...');
-      await connectOnce(clientId, bc);
+      await connectOnce(clientId, bc, mainWindow);
       await waitForSocketExit();
     } catch (err) {
       Logger.error(`Connection failed: ${err.message}`);
@@ -66,7 +66,7 @@ export async function connectToEventSubs(clientId) {
 }
 
 // One connection attempt
-async function connectOnce(clientId, bc) {
+async function connectOnce(clientId, bc, mainWindow = null) {
   return new Promise((resolve, reject) => {
     ws = new WebSocket(WS_ENDPOINT);
     let settled = false;
@@ -93,7 +93,7 @@ async function connectOnce(clientId, bc) {
     });
 
     ws.on('message', (data) => {
-      processMessage(data, bc, clientId).catch((err) => {
+      processMessage(data, bc, clientId, mainWindow).catch((err) => {
         Logger.error(`Failed to process EventSub message: ${err.message}`);
       });
     });
@@ -110,8 +110,13 @@ async function connectOnce(clientId, bc) {
 }
 
 // Disconnect + cleanup
-export async function disconnectEventSubs() {
+export async function disconnectEventSubs(mainWindow = null) {
   Logger.info('Manual disconnect from EventSub...');
+  mainWindow?.webContents.send('twitch-eventsub-connection', {
+    success: true,
+    data: { message: 'Manually disconnected from EventSub.' },
+    error: null
+  });
   reconnecting = false;
   await cleanupWebSocket();
 }
@@ -135,19 +140,29 @@ async function cleanupWebSocket() {
 }
 
 // Subscription logic
-export async function subscribeToChannelEvents(bc, clientId, sessionId) {
+export async function subscribeToChannelEvents(bc, clientId, sessionId, mainWindow = null) {
   const channelName = bc.login;
 
   if (!channelName) {
     Logger.error('No channel login provided for EventSub subscription.');
+    mainWindow?.webContents.send('twitch-eventsub-connection', {
+      success: false,
+      data: null,
+      error: { message: 'No channel login provided for EventSub subscription.' }
+    });
     return { success: false };
   }
 
   try {
-    const broadcaster = await getUsers(bc.access_token, { user_name: channelName });
+    const broadcaster = await getUsers(bc.access_token, { user_name: channelName }, 'broadcaster');
 
     if (!broadcaster?.id) {
       Logger.error(`Unable to resolve broadcaster ID for ${channelName}.`);
+      mainWindow?.webContents.send('twitch-eventsub-connection', {
+        success: false,
+        data: null,
+        error: { message: `Unable to resolve broadcaster ID for ${channelName}.` }
+      });
       return { success: false };
     }
 
@@ -160,7 +175,7 @@ export async function subscribeToChannelEvents(bc, clientId, sessionId) {
 
     const results = await Promise.allSettled(
       eventTypes.map(({ type, version, condition }) =>
-        subscribeToEvent(bc, clientId, type, version, condition, sessionId)
+        subscribeToEvent(accountsConfig.get('broadcaster'), clientId, type, version, condition, sessionId)
       )
     );
 
@@ -175,9 +190,22 @@ export async function subscribeToChannelEvents(bc, clientId, sessionId) {
       Logger.error(`One or more EventSub subscriptions failed for ${channelName}.`);
     }
 
+    mainWindow?.webContents.send('twitch-eventsub-connection', {
+      success: !hadErrors,
+      data: !hadErrors ? { message: 'All EventSub subscriptions successful.' } : null,
+      error: hadErrors ? { message: 'One or more subscriptions failed.' } : null
+    });
+
     return { success: !hadErrors };
   } catch (err) {
     Logger.error(`Failed to subscribe to ${channelName}: ${err.message}`);
+
+    mainWindow?.webContents.send('twitch-eventsub-connection', {
+      success: false,
+      data: null,
+      error: { message: err.message }
+    });
+
     return { success: false };
   }
 }
@@ -247,7 +275,7 @@ function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-async function processMessage(rawMessage, bc, clientId) {
+async function processMessage(rawMessage, bc, clientId, mainWindow = null) {
   const message = safeJsonParse(rawMessage);
   if (!message) {
     return;
@@ -269,12 +297,18 @@ async function processMessage(rawMessage, bc, clientId) {
         Logger.error('Missing session ID in welcome payload.');
         return;
       }
-      await subscribeToChannelEvents(bc, clientId, sessionId);
+      await subscribeToChannelEvents(bc, clientId, sessionId, mainWindow);
       return;
     }
     case 'session_reconnect':
       Logger.warn('Twitch requested an EventSub session reconnect. Restarting socket...');
       ws?.close(4001, 'Reconnecting');
+
+      mainWindow?.webContents.send('twitch-eventsub-connection', {
+        success: false,
+        data: { message: 'Reconnecting as requested by Twitch' },
+        error: null
+      });
       return;
     default:
       break;

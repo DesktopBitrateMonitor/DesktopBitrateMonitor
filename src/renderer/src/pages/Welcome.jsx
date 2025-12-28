@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, CircularProgress, Stack, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 const Welcome = () => {
   const navigate = useNavigate();
   const [isBootLoading, setIsBootLoading] = useState(true);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -29,18 +31,17 @@ const Welcome = () => {
     >
       <Stack spacing={4} alignItems="center" maxWidth={460} textAlign="center">
         <Typography variant="h3" fontWeight={600}>
-          Desktop Bitrate Monitor
+          {t('welcome.title')}
         </Typography>
         <Typography variant="body1" color="text.secondary">
-          Initializing data sources... the dashboard will appear automatically when the startup
-          checks finish.
+          {t('welcome.description')}
         </Typography>
 
         {isBootLoading ? (
           <Stack spacing={2} alignItems="center">
             <CircularProgress color="primary" />
             <Typography variant="body2" color="text.secondary">
-              Loading experience (5s)
+              {t('welcome.loading')}
             </Typography>
           </Stack>
         ) : null}

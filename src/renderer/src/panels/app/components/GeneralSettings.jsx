@@ -12,6 +12,9 @@ import {
 import React, { useCallback } from 'react';
 import { useAlert } from '../../../contexts/AlertContext';
 import { useAppConfigStore } from '../../../contexts/DataContext';
+import CollapsibleCard from '../../../components/functional/CollapsibleCard';
+import { useTranslation } from 'react-i18next';
+import { useLanguage } from '../../../contexts/LanguageContext';
 
 const GeneralSettings = () => {
   const [searchTerm, setSearchTerm] = React.useState('');
@@ -19,6 +22,8 @@ const GeneralSettings = () => {
   const { appConfig, updateAppConfig } = useAppConfigStore();
 
   const { showAlert } = useAlert();
+  const { language, supportedLanguages, changeLanguage } = useLanguage();
+  const { t } = useTranslation();
 
   const handleSwitchChange = useCallback(
     async (event) => {
@@ -30,81 +35,85 @@ const GeneralSettings = () => {
 
       if (res.success) {
         showAlert({
-          message: `App will now ${isChecked ? 'quit' : 'minimize'} on close.`,
+          message: t('generalSettings.quitMessage', {
+            action: t(`generalSettings.actions.${isChecked ? 'quit' : 'minimize'}`)
+          }),
           severity: 'info'
         });
       } else {
-        showAlert({ message: 'Failed to update setting.', severity: 'error' });
+        showAlert({ message: t('generalSettings.updateError'), severity: 'error' });
       }
     },
-    [appConfig, updateAppConfig]
+    [t, updateAppConfig]
   );
 
   const handleSelectChange = useCallback(
     async (event) => {
       const newLanguage = event.target.value;
-      console.log('Selected language:', event);
-      updateAppConfig((prev) => ({ ...(prev || {}), language: newLanguage }));
-      const res = await window.storeApi.set('app-config', 'language', newLanguage);
+      const result = await changeLanguage(newLanguage);
 
-      if (res.success) {
+      if (result.success) {
+        const fallbackLabel =
+          result.meta?.label ||
+          supportedLanguages.find((lang) => lang.code === newLanguage)?.label ||
+          newLanguage;
+
         showAlert({
-          message: `Language changed`,
-          severity: 'info'
+          message: t('generalSettings.languageChanged', { language: fallbackLabel }),
+          severity: 'success'
         });
       } else {
-        showAlert({ message: 'Failed to update language.', severity: 'error' });
+        showAlert({ message: t('generalSettings.languageError'), severity: 'error' });
       }
     },
-    [appConfig, updateAppConfig]
+    [changeLanguage, showAlert, supportedLanguages, t]
   );
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-      <Box
-        sx={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 1.5
-        }}
-      >
-        <Box>
-          <Typography variant="h5" sx={{ mb: 0.5 }}>
-            General Settings
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Configure general application settings here.
-          </Typography>
-        </Box>
-        <TextField
-          label="Search for setting"
-          slotProps={{
-            input: {
-              endAdornment: <Search />
-            }
-          }}
-        />
-      </Box>
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-        <Box>
-          <FormControl size="small" sx={{ width: '180px' }}>
-            <InputLabel>App Language</InputLabel>
-            <Select label="App Language" onChange={handleSelectChange} value={appConfig.language}>
-              <MenuItem value="en">English</MenuItem>
-              <MenuItem value="de">German</MenuItem>
-            </Select>
-          </FormControl>
-        </Box>
-        <Box>
-          <Typography variant="body1">Quit App on close</Typography>
-          <Switch
-            checked={appConfig.onQuit === 'quit' ? true : false}
-            onChange={handleSwitchChange}
+      <CollapsibleCard
+        title={t('generalSettings.title')}
+        subtitle={t('generalSettings.subtitle')}
+        collapsible={false}
+        actions={
+          <TextField
+            label={t('generalSettings.search')}
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+            slotProps={{
+              input: {
+                endAdornment: <Search />
+              }
+            }}
           />
+        }
+      >
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box>
+            <FormControl size="small" sx={{ width: '180px' }}>
+              <InputLabel>{t('generalSettings.languageLabel')}</InputLabel>
+              <Select
+                label={t('generalSettings.languageLabel')}
+                onChange={handleSelectChange}
+                value={language}
+              >
+                {supportedLanguages.map((lang) => (
+                  <MenuItem key={lang.code} value={lang.code}>
+                    {lang.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
+          <Box>
+            <Typography variant="body1">{t('generalSettings.quitLabel')}</Typography>
+            <Switch
+              checked={appConfig.onQuit === 'quit' ? true : false}
+              onChange={handleSwitchChange}
+            />
+          </Box>
         </Box>
-      </Box>
+      </CollapsibleCard>
     </Box>
   );
 };

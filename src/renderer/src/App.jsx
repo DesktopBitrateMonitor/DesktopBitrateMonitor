@@ -1,13 +1,14 @@
-import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
+import { MemoryRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 import styled from '@emotion/styled';
 import Dashboard from './pages/Dashboard';
 import Welcome from './pages/Welcome';
 import ServerSettings from './panels/server/ServerSettings';
+import AccountsSettings from './panels/accounts/AccountsSettings';
 import TwitchSettings from './panels/twitch/TwitchSettings';
 import CommandSettings from './panels/twitch/components/CommandSettings';
 import MessageSettings from './panels/twitch/components/MessageSettings';
-import AccountsSettings from './panels/twitch/components/AccountsSettings';
+import TwitchAccountSettings from './panels/twitch/components/AccountsSettings';
 import AppSettings from './panels/app/AppSettings';
 import AlertComponent from './components/feedback/AlertComponent';
 import { useAlert } from './contexts/AlertContext';
@@ -17,6 +18,8 @@ import StyleSettings from './panels/app/components/StyleSettings';
 import SoftwareSettings from './panels/software/SoftwareSettings';
 import SwitcherSettings from './panels/switcher/SwitcherSettings';
 import LoggingSettings from './panels/logging/LoggingSettings';
+import Main from './panels/dashboard/main';
+import UserSettings from './panels/twitch/components/UserSettings';
 
 function App() {
   const { alerts } = useAlert();
@@ -27,12 +30,20 @@ function App() {
           <Route path="/" element={<Welcome />} />
 
           <Route path="/dashboard" element={<Dashboard />}>
-            <Route path="twitchsettings" element={<TwitchSettings />}>
-              <Route index element={<CommandSettings />} />
-              <Route path="commandsettings" element={<CommandSettings />} />
-              <Route path="messagesettings" element={<MessageSettings />} />
-              <Route path="accountssettings" element={<AccountsSettings />} />
+            <Route index element={<Main />} />
+
+            <Route path="accountssettings" element={<AccountsSettings />}>
+              <Route index element={<Navigate to="twitch" replace />} />
+              <Route path="twitch" element={<TwitchSettings />}>
+                <Route index element={<CommandSettings />} />
+                <Route path="commandsettings" element={<CommandSettings />} />
+                <Route path="messagesettings" element={<MessageSettings />} />
+                <Route path="usersettings" element={<UserSettings />} />
+                <Route path="accountssettings" element={<TwitchAccountSettings />} />
+              </Route>
             </Route>
+
+            <Route path="twitchsettings/*" element={<Navigate to="/dashboard/accountssettings/twitch" replace />} />
 
             <Route path="serversettings" element={<ServerSettings />} />
 
@@ -46,7 +57,7 @@ function App() {
             <Route path="softwaresettings" element={<SoftwareSettings />} />
 
             <Route path="switchersettings" element={<SwitcherSettings />} />
-            <Route path="logginsettings" element={<LoggingSettings />} />
+            <Route path="loggingsettings" element={<LoggingSettings />} />
           </Route>
         </Routes>
       </Router>

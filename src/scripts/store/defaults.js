@@ -1,9 +1,27 @@
-import Main from 'electron/main';
+import Main, { app } from 'electron/main';
+import path from 'path';
 import { adminCommands } from './commands/admin-commands';
 import { modCommands } from './commands/mod-commands';
 import { userCommands } from './commands/user-commands';
 import { messages } from './messages/messages';
 import Store from './store';
+
+const defaultSessionLoggingPath = path.join(
+  app.getPath('documents'),
+  'DesktopBitrateMonitor',
+  'FeedLogs'
+);
+const defaultActionsLoggingPath = path.join(
+  app.getPath('documents'),
+  'DesktopBitrateMonitor',
+  'ActionLogs'
+);
+
+const preferredSystemLanguages = app.getPreferredSystemLanguages();
+const language =
+  preferredSystemLanguages && preferredSystemLanguages.length > 0
+    ? preferredSystemLanguages[0].split('-')[0]
+    : 'en';
 
 /**
  * Inject default values into the store.
@@ -18,17 +36,9 @@ export const injectDefaults = () => {
     name: 'app-config',
     defaults: {
       theme: isSystemDark ? 'dark' : 'light',
-      language: 'en',
+      language,
       layout: {
-        sidebarCollapsed: false,
-        dashboard: {
-          sidebar: {
-            open: true
-          }
-        },
-        settings: {
-          layout: {}
-        }
+        sidebarCollapsed: false
       },
       position: {
         x: null,
@@ -41,7 +51,20 @@ export const injectDefaults = () => {
       screen: {
         id: null
       },
-      onQuit: 'quit'
+      onQuit: 'quit',
+      paths: {
+        layout: 'grid',
+        sessionLogsPath: defaultSessionLoggingPath,
+        sessionLogsFileSize: 5,
+        actionsLogsPath: defaultActionsLoggingPath,
+        logActions: true,
+        logSessions: true
+      },
+      autoCheckForUpdates: true,
+      autoInstallUpdates: true,
+      installOnQuit: false,
+      installOnStart: true,
+      lastUpdateCheck: null
     }
   });
 
@@ -77,6 +100,7 @@ export const injectDefaults = () => {
         profile_image_url: ''
       },
       layout: 'list',
+      userLayout: 'list',
       collapsed: [],
       useBotAccount: false,
       admins: [],
@@ -115,18 +139,18 @@ export const injectDefaults = () => {
       currentType: 'srt-live-server',
       openirl: {
         name: 'OpenIRL',
-        statsUrl: '',
-        provider: ''
+        statsUrl: 'http://xxx.xxx.xxx.xxx:8080/stats/play/live/test?legacy=1',
+        publisher: 'live'
       },
       'srt-live-server': {
         name: 'SrtLiveServer',
-        statsUrl: '',
-        provider: ''
+        statsUrl: 'http://xxx.xxx.xxx.xxx:8080/stats',
+        publisher: 'publish/live/your_stream_key'
       },
       belabox: {
         name: 'Belabox',
         statsUrl: '',
-        provider: ''
+        publisher: ''
       }
     }
   });
@@ -144,6 +168,12 @@ export const injectDefaults = () => {
       ['streamlabs-obs']: {
         name: 'Streamlabs OBS',
         host: 'localhost',
+        port: 59650,
+        password: ''
+      },
+      ['meld-studio']: {
+        name: 'Meld Studio',
+        host: 'localhost',
         port: 4455,
         password: ''
       }
@@ -153,20 +183,24 @@ export const injectDefaults = () => {
   const switcherConfig = new Store({
     name: 'switcher-config',
     defaults: {
+      collapsed: [],
+      layout: 'list',
       trigger: 400,
       rTrigger: 1200,
-      triggerOffline: 0,
-      switchTimeout: {
-        toLive: 3,
-        toLow: 3,
-        toOffline: 3
-      },
+      offTrigger: 0,
+      triggerToLive: 3,
+      triggerToLow: 3,
+      triggerToOffline: 3,
       sceneLive: 'LIVE',
       sceneLow: 'FALLBACK',
       sceneOffline: 'OFFLINE',
       scenePrivacy: 'PRIVACY',
       sceneStart: 'INTRO',
-      switcherEnabled: true
+      switcherEnabled: true,
+      onlySwitchWhenLive: false,
+      enableChatNotifications: true,
+      switchToStartSceneOnStreamStart: true,
+      stopStreamAfterRaid: true
     }
   });
 

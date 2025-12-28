@@ -1,0 +1,6 @@
+eventsub
+kbps
+loggingsettings
+unsub
+unsubs
+usersettings

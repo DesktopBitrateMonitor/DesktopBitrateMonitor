@@ -1,0 +1,66 @@
+{
+  "app": {
+    "name": "Desktop Bitratenmonitor"
+  },
+  "welcome": {
+    "title": "Desktop Bitratenmonitor",
+    "description": "Datenquellen werden initialisiert ... das Dashboard erscheint automatisch, sobald die Startprüfungen abgeschlossen sind.",
+    "loading": "Erlebnis wird geladen (5 s)"
+  },
+  "navigation": {
+    "brand": "Bitratenmonitor",
+    "dashboard": "Dashboard",
+    "accountsSettings": "Konten",
+    "twitchSettings": "Twitch-Einstellungen",
+    "serverSettings": "Server-Einstellungen",
+    "softwareSettings": "Software-Einstellungen",
+    "switcherSettings": "Switcher-Einstellungen",
+    "loggingSettings": "Logging-Einstellungen",
+    "appSettings": "App-Einstellungen"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Überwache deine Stream-Bitrate und Leistung in Echtzeit."
+  },
+  "generalSettings": {
+    "title": "Allgemeine Einstellungen",
+    "subtitle": "Konfiguriere hier allgemeine App-Einstellungen.",
+    "search": "Einstellung suchen",
+    "languageLabel": "App-Sprache",
+    "languageChanged": "Sprache auf {{language}} gesetzt.",
+    "languageError": "Sprache konnte nicht aktualisiert werden.",
+    "updateError": "Einstellung konnte nicht aktualisiert werden.",
+    "quitLabel": "App beim Schließen beenden",
+    "quitMessage": "Die App wird beim Schließen nun {{action}}.",
+    "actions": {
+      "quit": "beendet",
+      "minimize": "minimiert"
+    }
+  },
+  "logging": {
+    "title": "Protokolleinstellungen",
+    "subtitle": "Lege die Protokollpfade und -zustände fest",
+    "sessionCardTitle": "Sitzungsprotokolle",
+    "sessionCardSubtitle": "Konfiguriere die Einstellungen für Sitzungsprotokolle",
+    "actionsCardTitle": "Aktionsprotokolle",
+    "actionsCardSubtitle": "Konfiguriere die Einstellungen für Aktionsprotokolle",
+    "enabled": "Protokollierung aktiviert",
+    "disabled": "Protokollierung deaktiviert",
+    "sessionPathLabel": "Pfad für Sitzungsprotokolle",
+    "actionsPathLabel": "Pfad für Aktionsprotokolle",
+    "fileSizeLabel": "Dateigröße für Sitzungsprotokolle (MB)",
+    "saveTooltip": "Zum Speichern klicken oder Enter drücken",
+    "directoryDialogTitle": "Verzeichnis für {{label}} auswählen",
+    "validation": {
+      "pathEmpty": "Pfad darf nicht leer sein.",
+      "pathNoSpaces": "Pfad darf keine Leerzeichen enthalten.",
+      "fileSizeInteger": "Dateigröße muss eine ganze Zahl sein.",
+      "fileSizeRange": "Dateigröße muss zwischen 0 und 10 liegen.",
+      "fileSizeEmpty": "Dateigröße darf nicht leer sein."
+    }
+  },
+  "alerts": {
+    "saveSuccess": "Daten erfolgreich gespeichert",
+    "saveError": "Daten konnten nicht gespeichert werden"
+  }
+}

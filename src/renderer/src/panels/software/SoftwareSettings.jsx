@@ -4,12 +4,15 @@ import { useStreamingSoftwareConfigStore } from '../../contexts/DataContext';
 import ObsSettings from './components/ObsSettings.jsx';
 import CollapsibleCard from '../../components/functional/CollapsibleCard.jsx';
 import StreamlabsObsSettings from './components/StreamlabsObsSettings.jsx';
+import MeldStudioSettings from './components/MeldStudioSettings.jsx';
 
 const SOFTWARES = [
   { label: 'OBS Studio', value: 'obs-studio', isDev: false },
-  { label: 'Streamlabs OBS', value: 'streamlabs-obs', isDev: false },
+  { label: 'Streamlabs OBS', value: 'streamlabs-obs', isDev: true },
   { label: 'MELD Studio', value: 'meld-studio', isDev: true }
 ];
+
+const isDev = import.meta.env.DEV;
 
 const SoftwareSettings = () => {
   const { streamingSoftwareConfig, updateStreamingSoftwareConfig } =
@@ -17,14 +20,6 @@ const SoftwareSettings = () => {
 
   const [softwareType, setSoftwareType] = React.useState(
     streamingSoftwareConfig?.currentType || 'obs-studio'
-  );
-
-  const getSoftwareSection = useCallback(
-    (type) => {
-      const section = streamingSoftwareConfig?.[type];
-      return section ? section : { host: '', port: '', password: '' };
-    },
-    [streamingSoftwareConfig]
   );
 
   const handleSoftwareTypeChange = useCallback(
@@ -39,30 +34,8 @@ const SoftwareSettings = () => {
     [setSoftwareType, updateStreamingSoftwareConfig]
   );
 
-  const handleSettingsChange = useCallback(
-    (type, data) => {
-      updateStreamingSoftwareConfig((prev) => ({
-        ...(prev || {}),
-        [type]: data
-      }));
-    },
-    [updateStreamingSoftwareConfig]
-  );
-
-  const saveSettings = useCallback(
-    async (type, data) => {
-      updateStreamingSoftwareConfig((prev) => ({
-        ...(prev || {}),
-        [type]: data
-      }));
-
-      await window.storeApi.set('streaming-software-config', type, data);
-    },
-    [updateStreamingSoftwareConfig]
-  );
-
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, flex: 1, minHeight: 0 }}>
       <Box
         sx={{
           display: 'flex',
@@ -90,7 +63,7 @@ const SoftwareSettings = () => {
             onChange={(e) => handleSoftwareTypeChange(e.target.value)}
           >
             {SOFTWARES.map((type) =>
-              type.isDev ? null : (
+              type.isDev && !isDev ? null : (
                 <MenuItem key={type.value} value={type.value}>
                   {type.label}
                 </MenuItem>
@@ -99,34 +72,48 @@ const SoftwareSettings = () => {
           </Select>
         </FormControl>
       </Box>
-      {softwareType === 'obs-studio' && (
-        <CollapsibleCard
-          title={' OBS Studio Settings'}
-          subtitle={'Setup the connection to OBS'}
-          collapsible={false}
-          defaultExpanded={true}
-        >
-          <ObsSettings
-            data={getSoftwareSection('obs-studio')}
-            onChange={(data) => handleSettingsChange('obs-studio', data)}
-            onSave={(data) => saveSettings('obs-studio', data)}
-          />
-        </CollapsibleCard>
-      )}
-      {softwareType === 'streamlabs-obs' && (
-        <CollapsibleCard
-          title={' Streamlabs OBS Settings'}
-          subtitle={'Setup the connection to Streamlabs OBS'}
-          collapsible={false}
-          defaultExpanded={true}
-        >
-          <StreamlabsObsSettings
-            data={getSoftwareSection('streamlabs-obs')}
-            onChange={(data) => handleSettingsChange('streamlabs-obs', data)}
-            onSave={(data) => saveSettings('streamlabs-obs', data)}
-          />
-        </CollapsibleCard>
-      )}
+      <Box
+        sx={{
+          flex: '1 1 0',
+          pt: 2,
+          px: 1.5,
+          pb: 1.5,
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          minHeight: 0
+        }}
+      >
+        {softwareType === 'obs-studio' && (
+          <CollapsibleCard
+            title={' OBS Studio Settings'}
+            subtitle={'Setup the connection to OBS'}
+            collapsible={false}
+            defaultExpanded={true}
+          >
+            <ObsSettings />
+          </CollapsibleCard>
+        )}
+        {softwareType === 'streamlabs-obs' && (
+          <CollapsibleCard
+            title={' Streamlabs OBS Settings'}
+            subtitle={'Setup the connection to Streamlabs OBS'}
+            collapsible={false}
+            defaultExpanded={true}
+          >
+            <StreamlabsObsSettings />
+          </CollapsibleCard>
+        )}
+        {softwareType === 'meld-studio' && (
+          <CollapsibleCard
+            title={' MELD Studio Settings'}
+            subtitle={'Setup the connection to MELD Studio'}
+            collapsible={false}
+            defaultExpanded={true}
+          >
+            <MeldStudioSettings />
+          </CollapsibleCard>
+        )}
+      </Box>
     </Box>
   );
 };

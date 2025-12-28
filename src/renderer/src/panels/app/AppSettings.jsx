@@ -2,13 +2,13 @@ import { Box, Tab, Tabs } from '@mui/material';
 import React, { useMemo } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import TuneIcon from '@mui/icons-material/Tune';
-// import SyncAltIcon from '@mui/icons-material/SyncAlt';
+import SyncAltIcon from '@mui/icons-material/SyncAlt';
 import ColorLensIcon from '@mui/icons-material/ColorLens';
 
 const TAB_CONFIG = [
   { value: 'generalsettings', label: 'General', icon: TuneIcon },
-  { value: 'stylesettings', label: 'Style', icon: ColorLensIcon }
-  // { value: 'updatesettings', label: 'Updates', icon: SyncAltIcon }
+  { value: 'stylesettings', label: 'Style', icon: ColorLensIcon },
+  { value: 'updatesettings', label: 'Updates', icon: SyncAltIcon }
 ];
 
 const AppSettings = () => {
@@ -19,7 +19,6 @@ const AppSettings = () => {
     const parts = location.pathname.split('/').filter(Boolean);
     const last = parts[parts.length - 1] || '';
 
-    // When at /dashboard/twitchsettings (index route), default to commands
     if (last === 'appsettings') return 'generalsettings';
 
     return TAB_CONFIG.some((t) => t.value === last) ? last : 'generalsettings';

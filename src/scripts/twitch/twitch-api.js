@@ -1,5 +1,5 @@
 import axios from 'axios';
-import Logger from '../logger';
+import Logger from '../logging/logger';
 import { injectDefaults } from '../store/defaults';
 
 const { accountsConfig } = injectDefaults();
@@ -66,16 +66,24 @@ export async function getAccessToken(refresh_token) {
 }
 
 export async function doTokenValidationProcess(access_token, accountType) {
+  if (!accountType) {
+    return { success: false, access_token: null, error: 'No account type specified' };
+  }
   const selectedConfig =
-    accountType === 'broadcaster' ? accountsConfig.broadcaster : accountsConfig.bot;
+    accountType === 'broadcaster' ? accountsConfig.get('broadcaster') : accountsConfig.get('bot');
 
   const validAccessToken = await validateAccessToken(access_token);
   if (!validAccessToken) {
-    const refresh_token = selectedConfig.get(`refresh_token`);
+    const refresh_token = selectedConfig.refresh_token;
     const newAccessToken = await getAccessToken(refresh_token);
     if (newAccessToken) {
       Logger.log(`Access token refreshed...`);
-      selectedConfig.set(`access_token`, newAccessToken.access_token);
+
+      accountsConfig.set(`${accountType}`, {
+        ...selectedConfig,
+        access_token: newAccessToken.access_token,
+        refresh_token: newAccessToken.refresh_token
+      });
       return { access_token: newAccessToken.access_token, success: true };
     } else {
       Logger.log(`Failed to refresh access token...`);
@@ -85,8 +93,11 @@ export async function doTokenValidationProcess(access_token, accountType) {
   return { access_token: access_token, success: true };
 }
 
-export async function validateAndProceed(access_token, callback) {
-  const { access_token: validToken, success } = await doTokenValidationProcess(access_token);
+export async function validateAndProceed(access_token, accountType, callback) {
+  const { access_token: validToken, success } = await doTokenValidationProcess(
+    access_token,
+    accountType
+  );
   if (!success) {
     throw new Error('Unable to validate or refresh access token.');
   }
@@ -111,11 +122,12 @@ export async function validateAndProceed(access_token, callback) {
 /**
  * @param {string} access_token Requires an app access token or user access token.
  * @param {string} user_id OR user_name
+ * @param {string} accountType 'broadcaster' or 'bot'
  * @return {getUsers} Data[]
  */
 
-export async function getUsers(access_token, userData) {
-  return validateAndProceed(access_token, async (validToken) => {
+export async function getUsers(access_token, userData, accountType) {
+  return validateAndProceed(access_token, accountType, async (validToken) => {
     let qs;
     userData.user_id
       ? (qs = new URLSearchParams({

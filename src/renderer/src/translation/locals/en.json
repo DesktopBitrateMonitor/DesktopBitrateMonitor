@@ -1,0 +1,66 @@
+{
+  "app": {
+    "name": "Desktop Bitrate Monitor"
+  },
+  "welcome": {
+    "title": "Desktop Bitrate Monitor",
+    "description": "Initializing data sources... the dashboard will appear automatically when the startup checks finish.",
+    "loading": "Loading experience (5s)"
+  },
+  "navigation": {
+    "brand": "Bitrate Monitor",
+    "dashboard": "Dashboard",
+    "accountsSettings": "Accounts",
+    "twitchSettings": "Twitch Settings",
+    "serverSettings": "Server Settings",
+    "softwareSettings": "Software Settings",
+    "switcherSettings": "Switcher Settings",
+    "loggingSettings": "Logging Settings",
+    "appSettings": "App Settings"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Monitor your stream bitrate and performance in real-time."
+  },
+  "generalSettings": {
+    "title": "General Settings",
+    "subtitle": "Configure general application settings here.",
+    "search": "Search for setting",
+    "languageLabel": "App Language",
+    "languageChanged": "Language changed to {{language}}.",
+    "languageError": "Failed to update language.",
+    "updateError": "Failed to update setting.",
+    "quitLabel": "Quit app on close",
+    "quitMessage": "App will now {{action}} on close.",
+    "actions": {
+      "quit": "quit",
+      "minimize": "minimize"
+    }
+  },
+  "logging": {
+    "title": "Logging Settings",
+    "subtitle": "Set the logging paths and states",
+    "sessionCardTitle": "Session Logging Settings",
+    "sessionCardSubtitle": "Set the logging settings for session logs",
+    "actionsCardTitle": "Actions Logging Settings",
+    "actionsCardSubtitle": "Set the logging settings for actions logs",
+    "enabled": "Logging enabled",
+    "disabled": "Logging disabled",
+    "sessionPathLabel": "Session Logs Path",
+    "actionsPathLabel": "Actions Logs Path",
+    "fileSizeLabel": "Session Logs File Size (MB)",
+    "saveTooltip": "Click or press Enter to save changes",
+    "directoryDialogTitle": "Select directory for {{label}}",
+    "validation": {
+      "pathEmpty": "Path cannot be empty.",
+      "pathNoSpaces": "Path must not contain spaces.",
+      "fileSizeInteger": "File size must be an integer",
+      "fileSizeRange": "File size must be between 0 and 10.",
+      "fileSizeEmpty": "File size cannot be empty."
+    }
+  },
+  "alerts": {
+    "saveSuccess": "Data saved successfully",
+    "saveError": "Failed to save data"
+  }
+}
