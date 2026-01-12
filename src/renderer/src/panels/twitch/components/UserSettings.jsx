@@ -12,34 +12,34 @@ import {
   useTheme
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
-import { useAccountsConfigStore } from '../../../contexts/DataContext';
+import { useTwitchAccountsConfig } from '../../../contexts/DataContext';
 import CollapsibleCard from '../../../components/functional/CollapsibleCard';
 import LayoutToggle from '../../../components/functional/LayoutToggle';
 import InputEndAdornment from '../../../components/feedback/InputEndAdornment';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 
 const UserSettings = () => {
-  const { accountsConfig, updateAccountsConfig } = useAccountsConfigStore();
+  const { twitchAccountsConfig, updateTwitchAccountsConfig } = useTwitchAccountsConfig();
   const { showAlert } = useAlert();
   const theme = useTheme();
 
   const [layoutMode, setLayoutMode] = React.useState('grid');
   const [users, setUsers] = React.useState({ admin: '', mod: '' });
-  const [adminsList, setAdminsList] = React.useState(accountsConfig?.admins ?? []);
-  const [modsList, setModsList] = React.useState(accountsConfig?.mods ?? []);
+  const [adminsList, setAdminsList] = React.useState(twitchAccountsConfig?.admins ?? []);
+  const [modsList, setModsList] = React.useState(twitchAccountsConfig?.mods ?? []);
   const [isValidating, setIsValidating] = React.useState({ admin: false, mod: false });
 
   useEffect(() => {
-    const storedLayout = accountsConfig?.userLayout;
+    const storedLayout = twitchAccountsConfig?.userLayout;
     if (storedLayout === 'grid' || storedLayout === 'list') {
       setLayoutMode(storedLayout);
     } else {
       setLayoutMode('list');
     }
 
-    setAdminsList(accountsConfig?.admins);
-    setModsList(accountsConfig?.mods);
-  }, [accountsConfig]);
+    setAdminsList(twitchAccountsConfig?.admins);
+    setModsList(twitchAccountsConfig?.mods);
+  }, [twitchAccountsConfig]);
 
   const isUserInputValid = (value = '') => value.trim().replace(/\s/g, '').length > 0;
 
@@ -47,10 +47,10 @@ const UserSettings = () => {
     (nextLayout) => {
       if (!nextLayout || nextLayout === layoutMode) return;
       setLayoutMode(nextLayout);
-      updateAccountsConfig((prev) => ({ ...(prev || {}), userLayout: nextLayout }));
-      window.storeApi.set('accounts-config', 'userLayout', nextLayout);
+      updateTwitchAccountsConfig((prev) => ({ ...(prev || {}), userLayout: nextLayout }));
+      window.storeApi.set('twitch-accounts-config', 'userLayout', nextLayout);
     },
-    [accountsConfig, updateAccountsConfig]
+    [twitchAccountsConfig, updateTwitchAccountsConfig]
   );
 
   const handleInputChange = (userType, value) => {
@@ -77,8 +77,8 @@ const UserSettings = () => {
         }
         const updatedAdmins = [...adminsList, newUser];
         setAdminsList(updatedAdmins);
-        updateAccountsConfig((prev) => ({ ...(prev || {}), admins: updatedAdmins }));
-        await window.storeApi.set('accounts-config', 'admins', updatedAdmins);
+        updateTwitchAccountsConfig((prev) => ({ ...(prev || {}), admins: updatedAdmins }));
+        await window.storeApi.set('twitch-accounts-config', 'admins', updatedAdmins);
       } else if (userType === 'mod') {
         if (modsList.some((mod) => mod.id === newUser.id)) {
           showAlert({ message: 'Mod already exists', severity: 'error' });
@@ -86,8 +86,8 @@ const UserSettings = () => {
         }
         const updatedMods = [...modsList, newUser];
         setModsList(updatedMods);
-        updateAccountsConfig((prev) => ({ ...(prev || {}), mods: updatedMods }));
-        await window.storeApi.set('accounts-config', 'mods', updatedMods);
+        updateTwitchAccountsConfig((prev) => ({ ...(prev || {}), mods: updatedMods }));
+        await window.storeApi.set('twitch-accounts-config', 'mods', updatedMods);
       }
       setUsers((prev) => ({ ...prev, [userType]: '' }));
       (prev) => ({ ...prev, [userType]: '' });
@@ -103,13 +103,13 @@ const UserSettings = () => {
     if (userType === 'admin') {
       const updatedAdmins = adminsList.filter((admin) => admin.id !== user.id);
       setAdminsList(updatedAdmins);
-      updateAccountsConfig((prev) => ({ ...(prev || {}), admins: updatedAdmins }));
-      window.storeApi.set('accounts-config', 'admins', updatedAdmins);
+      updateTwitchAccountsConfig((prev) => ({ ...(prev || {}), admins: updatedAdmins }));
+      window.storeApi.set('twitch-accounts-config', 'admins', updatedAdmins);
     } else if (userType === 'mod') {
       const updatedMods = modsList.filter((mod) => mod.id !== user.id);
       setModsList(updatedMods);
-      updateAccountsConfig((prev) => ({ ...(prev || {}), mods: updatedMods }));
-      window.storeApi.set('accounts-config', 'mods', updatedMods);
+      updateTwitchAccountsConfig((prev) => ({ ...(prev || {}), mods: updatedMods }));
+      window.storeApi.set('twitch-accounts-config', 'mods', updatedMods);
     }
   };
 
@@ -191,7 +191,7 @@ const UserSettings = () => {
                 }
         }}
       >
-        {accountsConfig.broadcaster.login.length === 0 ? (
+        {twitchAccountsConfig.broadcaster.login.length === 0 ? (
           <Box sx={{ mb: 2 }}>
             <Typography variant="body2" color="error.main">
               Please set a broadcaster account in the Accounts Panel to manage admins and mods.

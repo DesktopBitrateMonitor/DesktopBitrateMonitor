@@ -7,7 +7,7 @@ import {
   disconnectEventSubs
 } from '../../scripts/twitch/event-subscriptions/eventsubs';
 
-const { accountsConfig, streamingSoftwareConfig, serverConfig } = injectDefaults();
+const { twitchAccountsConfig, streamingSoftwareConfig, serverConfig } = injectDefaults();
 const client_id = import.meta.env.VITE_TWITCHCLIENTID;
 
 export async function initializeServices(mainWindow = null) {
@@ -36,9 +36,9 @@ export async function connectStreamingSoftware(mainWindow) {
 }
 
 export async function connectToTwitchChannel(mainWindow = null) {
-  const channelToConnect = accountsConfig.get('broadcaster.login');
+  const channelToConnect = twitchAccountsConfig.get('broadcaster.login');
   if (channelToConnect.length === 0) {
-    Logger.log('No Twitch channel found in accountsConfig. Skipping Twitch connection.');
+    Logger.log('No Twitch channel found in twitchAccountsConfig. Skipping Twitch connection.');
     return;
   }
 

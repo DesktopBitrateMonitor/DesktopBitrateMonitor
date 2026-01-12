@@ -7,7 +7,7 @@ import { disconnectEventSubs } from '../../scripts/twitch/event-subscriptions/ev
 
 let isAuthIpcInitialized = false;
 
-const { accountsConfig } = injectDefaults();
+const { twitchAccountsConfig } = injectDefaults();
 
 export async function initializeAuthIpc(ipcMain) {
   if (isAuthIpcInitialized) {
@@ -31,7 +31,7 @@ export async function initializeAuthIpc(ipcMain) {
   });
 
   ipcMain.handle('validate-user', async (event, userType, userName) => {
-    const access_token = accountsConfig.get('broadcaster.access_token');
+    const access_token = twitchAccountsConfig.get('broadcaster.access_token');
 
     const user = await getUsers(access_token, { user_name: userName }, 'broadcaster');
     return { success: true, data: { user: user, userType } };

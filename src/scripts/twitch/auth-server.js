@@ -5,14 +5,11 @@ import { userAuthorization, authAPI } from './twitch-api';
 import { connectToEventSubs, disconnectEventSubs } from './event-subscriptions/eventsubs';
 import img from '../../assets/icon.png';
 
-const { accountsConfig } = injectDefaults();
+const { twitchAccountsConfig } = injectDefaults();
 
 const express = require('express');
 const app = express();
 app.use(express.json());
-
-const chatbotConfig = accountsConfig.bot;
-const broadcasterConfig = accountsConfig.broadcaster;
 
 const port = import.meta.env.VITE_SERVERPORT;
 const client_id = import.meta.env.VITE_TWITCHCLIENTID;
@@ -69,9 +66,9 @@ app.get('/oauth', async (req, res) => {
     };
 
     if (type === 'bot') {
-      accountsConfig.set('bot', data);
+      twitchAccountsConfig.set('bot', data);
     } else {
-      accountsConfig.set('broadcaster', data);
+      twitchAccountsConfig.set('broadcaster', data);
     }
 
     // Send data to the main process
@@ -100,7 +97,7 @@ app.get('/oauth', async (req, res) => {
             <div>
               <h1 class="type">${type.charAt(0).toUpperCase() + type.slice(1)}</h1>
             </div>
-            <h1 class="header">Authorization Successful</h1>
+            <h1 class="header">Authorization To Twitch Successful</h1>
             <p class="sub">You can close this window now</p>
           </div>
         </body>

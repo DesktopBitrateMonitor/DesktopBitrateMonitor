@@ -2,7 +2,7 @@ import axios from 'axios';
 import Logger from '../logging/logger';
 import { injectDefaults } from '../store/defaults';
 
-const { accountsConfig } = injectDefaults();
+const { twitchAccountsConfig } = injectDefaults();
 
 const authBaseUrl = 'https://id.twitch.tv/oauth2';
 export const authAPI = axios.create({
@@ -70,7 +70,9 @@ export async function doTokenValidationProcess(access_token, accountType) {
     return { success: false, access_token: null, error: 'No account type specified' };
   }
   const selectedConfig =
-    accountType === 'broadcaster' ? accountsConfig.get('broadcaster') : accountsConfig.get('bot');
+    accountType === 'broadcaster'
+      ? twitchAccountsConfig.get('broadcaster')
+      : twitchAccountsConfig.get('bot');
 
   const validAccessToken = await validateAccessToken(access_token);
   if (!validAccessToken) {
@@ -79,7 +81,7 @@ export async function doTokenValidationProcess(access_token, accountType) {
     if (newAccessToken) {
       Logger.log(`Access token refreshed...`);
 
-      accountsConfig.set(`${accountType}`, {
+      twitchAccountsConfig.set(`${accountType}`, {
         ...selectedConfig,
         access_token: newAccessToken.access_token,
         refresh_token: newAccessToken.refresh_token

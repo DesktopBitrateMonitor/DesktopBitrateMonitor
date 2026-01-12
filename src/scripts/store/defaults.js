@@ -78,8 +78,8 @@ export const injectDefaults = () => {
     }
   });
 
-  const accountsConfig = new Store({
-    name: 'accounts-config',
+  const twitchAccountsConfig = new Store({
+    name: 'twitch-accounts-config',
     defaults: {
       broadcaster: {
         id: '',
@@ -221,7 +221,7 @@ export const injectDefaults = () => {
     loggingConfig,
     commandsConfig,
     messagesConfig,
-    accountsConfig,
+    twitchAccountsConfig,
     serverConfig,
     streamingSoftwareConfig,
     switcherConfig

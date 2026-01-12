@@ -6,7 +6,7 @@ const {
   loggingConfig,
   commandsConfig,
   messagesConfig,
-  accountsConfig,
+  twitchAccountsConfig,
   serverConfig,
   streamingSoftwareConfig,
   switcherConfig
@@ -18,7 +18,7 @@ const STORES = {
   'logging-config': loggingConfig,
   'commands-config': commandsConfig,
   'messages-config': messagesConfig,
-  'accounts-config': accountsConfig,
+  'twitch-accounts-config': twitchAccountsConfig,
   'server-config': serverConfig,
   'streaming-software-config': streamingSoftwareConfig,
   'switcher-config': switcherConfig

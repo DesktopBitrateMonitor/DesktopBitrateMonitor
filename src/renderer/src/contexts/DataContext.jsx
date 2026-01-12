@@ -17,13 +17,19 @@ const createStoreContext = (displayName) => {
 // Create one context per store
 const [AppConfigContext, useAppConfigInternal] = createStoreContext('AppConfigContext');
 const [LoggingConfigContext, useLoggingConfigInternal] = createStoreContext('LoggingConfigContext');
-const [CommandsConfigContext, useCommandsConfigInternal] = createStoreContext('CommandsConfigContext');
-const [MessagesConfigContext, useMessagesConfigInternal] = createStoreContext('MessagesConfigContext');
-const [AccountsConfigContext, useAccountsConfigInternal] = createStoreContext('AccountsConfigContext');
+const [CommandsConfigContext, useCommandsConfigInternal] =
+  createStoreContext('CommandsConfigContext');
+const [MessagesConfigContext, useMessagesConfigInternal] =
+  createStoreContext('MessagesConfigContext');
+const [TwitchAccountsConfigContext, useTwitchAccountsConfigInternal] = createStoreContext(
+  'TwitchAccountsConfigContext'
+);
 const [ServerConfigContext, useServerConfigInternal] = createStoreContext('ServerConfigContext');
-const [StreamingSoftwareConfigContext, useStreamingSoftwareConfigInternal] =
-  createStoreContext('StreamingSoftwareConfigContext');
-const [SwitcherConfigContext, useSwitcherConfigInternal] = createStoreContext('SwitcherConfigContext');
+const [StreamingSoftwareConfigContext, useStreamingSoftwareConfigInternal] = createStoreContext(
+  'StreamingSoftwareConfigContext'
+);
+const [SwitcherConfigContext, useSwitcherConfigInternal] =
+  createStoreContext('SwitcherConfigContext');
 
 const useStoreState = (file) => {
   const [config, setConfig] = useState(null);
@@ -74,7 +80,7 @@ export const DataProvider = ({ children }) => {
   const loggingConfigStore = useStoreState('logging-config');
   const commandsConfigStore = useStoreState('commands-config');
   const messagesConfigStore = useStoreState('messages-config');
-  const accountsConfigStore = useStoreState('accounts-config');
+  const twitchAccountsConfigStore = useStoreState('twitch-accounts-config');
   const serverConfigStore = useStoreState('server-config');
   const streamingSoftwareConfigStore = useStoreState('streaming-software-config');
   const switcherConfigStore = useStoreState('switcher-config');
@@ -84,7 +90,7 @@ export const DataProvider = ({ children }) => {
       <LoggingConfigContext.Provider value={loggingConfigStore}>
         <CommandsConfigContext.Provider value={commandsConfigStore}>
           <MessagesConfigContext.Provider value={messagesConfigStore}>
-            <AccountsConfigContext.Provider value={accountsConfigStore}>
+            <TwitchAccountsConfigContext.Provider value={twitchAccountsConfigStore}>
               <ServerConfigContext.Provider value={serverConfigStore}>
                 <StreamingSoftwareConfigContext.Provider value={streamingSoftwareConfigStore}>
                   <SwitcherConfigContext.Provider value={switcherConfigStore}>
@@ -92,7 +98,7 @@ export const DataProvider = ({ children }) => {
                   </SwitcherConfigContext.Provider>
                 </StreamingSoftwareConfigContext.Provider>
               </ServerConfigContext.Provider>
-            </AccountsConfigContext.Provider>
+            </TwitchAccountsConfigContext.Provider>
           </MessagesConfigContext.Provider>
         </CommandsConfigContext.Provider>
       </LoggingConfigContext.Provider>
@@ -104,7 +110,13 @@ export const DataProvider = ({ children }) => {
 export const useAppConfigStore = () => {
   const { config, loading, error, reload, updateLocal } = useAppConfigInternal();
   return useMemo(
-    () => ({ appConfig: config, loading, error, reloadAppConfig: reload, updateAppConfig: updateLocal }),
+    () => ({
+      appConfig: config,
+      loading,
+      error,
+      reloadAppConfig: reload,
+      updateAppConfig: updateLocal
+    }),
     [config, loading, error, reload, updateLocal]
   );
 };
@@ -151,15 +163,29 @@ export const useMessagesConfigStore = () => {
   );
 };
 
-export const useAccountsConfigStore = () => {
-  const { config, loading, error, reload, updateLocal } = useAccountsConfigInternal();
+// export const useAccountsConfigStore = () => {
+//   const { config, loading, error, reload, updateLocal } = useAccountsConfigInternal();
+//   return useMemo(
+//     () => ({
+//       accountsConfig: config,
+//       loading,
+//       error,
+//       reloadAccountsConfig: reload,
+//       updateAccountsConfig: updateLocal
+//     }),
+//     [config, loading, error, reload, updateLocal]
+//   );
+// };
+
+export const useTwitchAccountsConfig = () => {
+  const { config, loading, error, reload, updateLocal } = useTwitchAccountsConfigInternal();
   return useMemo(
     () => ({
-      accountsConfig: config,
+      twitchAccountsConfig: config,
       loading,
       error,
-      reloadAccountsConfig: reload,
-      updateAccountsConfig: updateLocal
+      reloadTwitchAccountsConfig: reload,
+      updateTwitchAccountsConfig: updateLocal
     }),
     [config, loading, error, reload, updateLocal]
   );
@@ -214,7 +240,7 @@ export const useAllStores = () => {
   const logging = useLoggingConfigStore();
   const commands = useCommandsConfigStore();
   const messages = useMessagesConfigStore();
-  const accounts = useAccountsConfigStore();
+  const twitchAccounts = useTwitchAccountsConfig();
   const server = useServerConfigStore();
   const streaming = useStreamingSoftwareConfigStore();
   const switcher = useSwitcherConfigStore();
@@ -224,7 +250,7 @@ export const useAllStores = () => {
     loggingConfig: logging.loggingConfig,
     commandsConfig: commands.commandsConfig,
     messagesConfig: messages.messagesConfig,
-    accountsConfig: accounts.accountsConfig,
+    twitchAccountsConfig: twitchAccounts.twitchAccountsConfig,
     serverConfig: server.serverConfig,
     streamingSoftwareConfig: streaming.streamingSoftwareConfig,
     switcherConfig: switcher.switcherConfig

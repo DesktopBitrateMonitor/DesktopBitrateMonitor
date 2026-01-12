@@ -17,7 +17,7 @@ let heartbeatInterval = null;
 let lastKeepAliveMessage = Date.now();
 let reconnecting = false;
 
-const { accountsConfig } = injectDefaults();
+const { twitchAccountsConfig } = injectDefaults();
 
 // Main entry
 export async function connectToEventSubs(clientId, mainWindow = null) {
@@ -26,7 +26,7 @@ export async function connectToEventSubs(clientId, mainWindow = null) {
     return;
   }
 
-  let bc = accountsConfig.get('broadcaster');
+  let bc = twitchAccountsConfig.get('broadcaster');
 
   if (!bc.access_token) {
     Logger.error('Missing Twitch bot credentials. Aborting EventSub connection.');
@@ -175,7 +175,14 @@ export async function subscribeToChannelEvents(bc, clientId, sessionId, mainWind
 
     const results = await Promise.allSettled(
       eventTypes.map(({ type, version, condition }) =>
-        subscribeToEvent(accountsConfig.get('broadcaster'), clientId, type, version, condition, sessionId)
+        subscribeToEvent(
+          twitchAccountsConfig.get('broadcaster'),
+          clientId,
+          type,
+          version,
+          condition,
+          sessionId
+        )
       )
     );
 

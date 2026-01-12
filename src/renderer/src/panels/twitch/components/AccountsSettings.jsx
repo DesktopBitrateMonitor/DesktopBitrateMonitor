@@ -2,12 +2,12 @@ import { Box, Stack, Switch, Tooltip, Typography } from '@mui/material';
 import React, { use, useCallback, useEffect } from 'react';
 import CollapsibleCard from '../../../components/functional/CollapsibleCard';
 import LayoutToggle from '../../../components/functional/LayoutToggle';
-import { useAccountsConfigStore } from '../../../contexts/DataContext';
+import { useTwitchAccountsConfig } from '../../../contexts/DataContext';
 import { useAlert } from '../../../contexts/AlertContext';
 import AccountPanel from './panels/AccountPanel';
 
 const AccountsSettings = () => {
-  const { accountsConfig, updateAccountsConfig } = useAccountsConfigStore();
+  const { twitchAccountsConfig, updateTwitchAccountsConfig } = useTwitchAccountsConfig();
 
   const { showAlert } = useAlert();
 
@@ -17,17 +17,19 @@ const AccountsSettings = () => {
   const [collapsedIds, setCollapsedIds] = React.useState([]);
 
   useEffect(() => {
-    const storedLayout = accountsConfig?.layout;
+    const storedLayout = twitchAccountsConfig?.layout;
     if (storedLayout === 'grid' || storedLayout === 'list') {
       setLayoutMode(storedLayout);
     } else {
       setLayoutMode('list');
     }
 
-    setBroadcasterData(accountsConfig?.broadcaster);
-    setChatbotData(accountsConfig?.bot);
+    setBroadcasterData(twitchAccountsConfig?.broadcaster);
+    setChatbotData(twitchAccountsConfig?.bot);
 
-    const savedCollapsed = Array.isArray(accountsConfig?.collapsed) ? accountsConfig.collapsed : [];
+    const savedCollapsed = Array.isArray(twitchAccountsConfig?.collapsed)
+      ? twitchAccountsConfig.collapsed
+      : [];
     setCollapsedIds(savedCollapsed);
 
     // Listen for OAuth data updates and update the frontend state accordingly
@@ -40,21 +42,21 @@ const AccountsSettings = () => {
         showAlert({ message: 'Chatbot account connected successfully!', severity: 'success' });
       }
 
-      updateAccountsConfig((prev) => ({
+      updateTwitchAccountsConfig((prev) => ({
         ...(prev || {}),
         [data.userType]: data.data
       }));
     });
-  }, [accountsConfig]);
+  }, [twitchAccountsConfig]);
 
   const handleLayoutChange = useCallback(
     (nextLayout) => {
       if (!nextLayout || nextLayout === layoutMode) return;
       setLayoutMode(nextLayout);
-      updateAccountsConfig((prev) => ({ ...(prev || {}), layout: nextLayout }));
-      window.storeApi.set('accounts-config', 'layout', nextLayout);
+      updateTwitchAccountsConfig((prev) => ({ ...(prev || {}), layout: nextLayout }));
+      window.storeApi.set('twitch-accounts-config', 'layout', nextLayout);
     },
-    [accountsConfig, updateAccountsConfig]
+    [twitchAccountsConfig, updateTwitchAccountsConfig]
   );
 
   const toggleCollapsed = useCallback(
@@ -64,14 +66,14 @@ const AccountsSettings = () => {
         : [...collapsedIds, accountType];
       setCollapsedIds(next);
 
-      updateAccountsConfig((prev) => ({
+      updateTwitchAccountsConfig((prev) => ({
         ...(prev || {}),
         collapsed: next
       }));
 
-      await window.storeApi.set('accounts-config', 'collapsed', next);
+      await window.storeApi.set('twitch-accounts-config', 'collapsed', next);
     },
-    [collapsedIds, updateAccountsConfig]
+    [collapsedIds, updateTwitchAccountsConfig]
   );
 
   const handleLogin = async (accountType) => {
@@ -98,34 +100,34 @@ const AccountsSettings = () => {
           severity: 'success'
         });
 
-        await window.storeApi.set(`accounts-config`, accountType, data);
+        await window.storeApi.set(`twitch-accounts-config`, accountType, data);
 
         if (accountType === 'broadcaster') {
           setBroadcasterData(null);
           // Disable chatbot usage when broadcaster logs out
-          await window.storeApi.set('accounts-config', 'useBotAccount', false);
-          updateAccountsConfig((prev) => ({
+          await window.storeApi.set('twitch-accounts-config', 'useBotAccount', false);
+          updateTwitchAccountsConfig((prev) => ({
             ...(prev || {}),
             [accountType]: data,
             useBotAccount: false
           }));
         } else {
           setChatbotData(null);
-          updateAccountsConfig((prev) => ({
+          updateTwitchAccountsConfig((prev) => ({
             ...(prev || {}),
             [accountType]: data
           }));
         }
       }
     },
-    [chatbotData, broadcasterData, accountsConfig, updateAccountsConfig]
+    [chatbotData, broadcasterData, twitchAccountsConfig, updateTwitchAccountsConfig]
   );
 
   const handleSwitchChange = useCallback(
     async (event) => {
       const useBot = event.target.checked;
 
-      const res = await window.storeApi.set('accounts-config', 'useBotAccount', useBot);
+      const res = await window.storeApi.set('twitch-accounts-config', 'useBotAccount', useBot);
       if (res.success) {
         showAlert({
           message: `Successfully ${useBot ? 'enabled' : 'disabled'} chatbot account usage.`,
@@ -138,12 +140,12 @@ const AccountsSettings = () => {
         });
       }
 
-      updateAccountsConfig((prev) => ({
+      updateTwitchAccountsConfig((prev) => ({
         ...(prev || {}),
         useBotAccount: useBot
       }));
     },
-    [accountsConfig, updateAccountsConfig]
+    [twitchAccountsConfig, updateTwitchAccountsConfig]
   );
 
   return (
@@ -213,7 +215,7 @@ const AccountsSettings = () => {
               <Tooltip title={'Use the chatbot account to post messages in the chat'}>
                 <Typography variant="body2" color="text.secondary"></Typography>
                 <Switch
-                  checked={accountsConfig.useBotAccount}
+                  checked={twitchAccountsConfig.useBotAccount}
                   onChange={handleSwitchChange}
                   disabled={!broadcasterData?.id}
                 />

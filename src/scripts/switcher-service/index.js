@@ -90,11 +90,19 @@ export async function switcherService(data, mainWindow = null) {
 
   // If the bitrate band hasn't changed since the last tick, skip OBS calls to
   // avoid spamming the API when telemetry is noisy but stable.
+
+  // Commenting out the band check to allow repeated switches even in the same band.
   if (band === lastBand) {
     return;
   }
 
   lastBand = band;
+
+  // If switcher is disabled, exit the switcher
+  if (!vars.switcherEnabled) {
+    Logger.log('Switcher is disabled.');
+    return;
+  }
 
   const streamState = await checkStreamState();
 
@@ -112,12 +120,6 @@ export async function switcherService(data, mainWindow = null) {
   // If only switch when live is enabled, and stream is not live, exit the switcher
   if (vars.onlySwitchWhenLive && !streamState?.data?.outputActive) {
     Logger.log('Streamer is not live. Switcher is inactive.');
-    return;
-  }
-
-  // If switcher is disabled, exit the switcher
-  if (!vars.switcherEnabled) {
-    Logger.log('Switcher is disabled.');
     return;
   }
 
@@ -151,6 +153,7 @@ export async function switcherService(data, mainWindow = null) {
 
         const latestScene = await getCurrentScene();
         if (latestScene.data === targetScene) return;
+        if (latestScene.data === switcherSettings.scenePrivacy) return;
 
         const res = await setCurrentProgramScene(targetScene);
         if (!res.success) {
