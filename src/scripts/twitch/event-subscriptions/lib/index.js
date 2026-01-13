@@ -1,3 +1,5 @@
+import { injectDefaults } from '../../../store/defaults';
+
 /**
  *
  * @param {object} event - The event object from the EventSub subscription

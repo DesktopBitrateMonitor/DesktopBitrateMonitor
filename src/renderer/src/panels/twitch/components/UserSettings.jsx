@@ -41,6 +41,32 @@ const UserSettings = () => {
     setModsList(twitchAccountsConfig?.mods);
   }, [twitchAccountsConfig]);
 
+  useEffect(() => {
+    window.authApi.updateTwitchUser((data) => {
+      if (data?.type === 'admin') {
+        if (data?.action === 'add') {
+          const updatedAdmins = [...adminsList, data.user];
+          setAdminsList(updatedAdmins);
+          updateTwitchAccountsConfig((prev) => ({ ...(prev || {}), admins: updatedAdmins }));
+        } else if (data?.action === 'remove') {
+          const updatedAdmins = adminsList.filter((admin) => admin.id !== data.user.id);
+          setAdminsList(updatedAdmins);
+          updateTwitchAccountsConfig((prev) => ({ ...(prev || {}), admins: updatedAdmins }));
+        }
+      } else if (data?.type === 'mod') {
+        if (data?.action === 'add') {
+          const updatedMods = [...modsList, data.user];
+          setModsList(updatedMods);
+          updateTwitchAccountsConfig((prev) => ({ ...(prev || {}), mods: updatedMods }));
+        } else if (data?.action === 'remove') {
+          const updatedMods = modsList.filter((mod) => mod.id !== data.user.id);
+          setModsList(updatedMods);
+          updateTwitchAccountsConfig((prev) => ({ ...(prev || {}), mods: updatedMods }));
+        }
+      }
+    });
+  }, [updateTwitchAccountsConfig, adminsList, modsList]);
+
   const isUserInputValid = (value = '') => value.trim().replace(/\s/g, '').length > 0;
 
   const handleLayoutChange = useCallback(

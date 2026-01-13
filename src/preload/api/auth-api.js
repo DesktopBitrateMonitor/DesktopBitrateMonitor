@@ -22,5 +22,10 @@ export const authApi = {
 
   validateUser: (userType, userName) => {
     return ipcRenderer.invoke('validate-user', userType, userName);
+  },
+  updateTwitchUser: (callback) => {
+    ipcRenderer.on('update-twitch-user', (event, data) => {
+      callback(data);
+    });
   }
 };

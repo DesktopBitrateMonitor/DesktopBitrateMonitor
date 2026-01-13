@@ -156,12 +156,9 @@ export async function startStream() {
   try {
     const { data } = await getStreamState();
     if (data?.outputActive) {
-      Logger.info('Stream already running');
       return { success: false, data: null, error: null };
     }
-    //TODO: check if there is any response from the obs.call function
     await obs.call('StartStream');
-    Logger.success('Stream successfully started');
     return { success: true, data: null, error: null };
   } catch (error) {
     Logger.error('Stream start failed');
@@ -170,20 +167,24 @@ export async function startStream() {
 }
 
 export async function stopStream() {
-  const { data } = await getStreamState();
-  if (!data) {
-    Logger.error('OBS returns null');
-    return { success: false, data: null, error: null };
-  }
-  if (!data.outputActive) {
-    Logger.info(`Stream isn't running`);
-    return { success: false, data: null, error: null };
-  }
+  try {
+    const { data } = await getStreamState();
+    if (!data) {
+      Logger.error('OBS returns null');
+      return { success: false, data: null, error: null };
+    }
+    if (!data.outputActive) {
+      Logger.info(`Stream isn't running`);
+      return { success: false, data: null, error: null };
+    }
 
-  //TODO: check if there is any response from the obs.call function
-  await obs.call('StopStream');
-  Logger.success('Stream successfully stopped');
-  return { success: true, data: null, error: null };
+    await obs.call('StopStream');
+    Logger.success('Stream successfully stopped');
+    return { success: true, data: null, error: null };
+  } catch (error) {
+    Logger.error(`Failed to stop stream: ${error}`);
+    return { success: false, data: null, error: error };
+  }
 }
 
 export async function setCurrentProgramScene(scene) {
