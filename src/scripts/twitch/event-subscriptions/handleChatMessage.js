@@ -11,7 +11,7 @@ import {
 import Logger from '../../logging/logger';
 import { getUsers } from '../twitch-api';
 
-const { messagesConfig, commandsConfig, twitchAccountsConfig } = injectDefaults();
+const { messagesConfig, commandsConfig, twitchAccountsConfig, switcherConfig } = injectDefaults();
 
 export function handleChatMessage(eventSub) {
   const event = eventSub.event;
@@ -152,9 +152,7 @@ const commandActions = {
     }
 
     const modUsers = twitchAccountsConfig.get('mods');
-    const userIndex = modUsers.findIndex(
-      (mod) => mod.login.toLowerCase() === user.toLowerCase()
-    );
+    const userIndex = modUsers.findIndex((mod) => mod.login.toLowerCase() === user.toLowerCase());
     if (userIndex === -1) {
       Logger.error(`${user} is not a mod.`);
       return;
@@ -170,7 +168,56 @@ const commandActions = {
     //TODO: post message to chat
     return { success: true, data: removedUser };
   },
-  switchScene: (sceneName) => {},
+  switchToLow: async () => {
+    const scene = switcherConfig.get('sceneLow');
+    const res = await setCurrentProgramScene(scene);
+    if (res.success) {
+      Logger.log('Switched to low scene.');
+    } else {
+      Logger.error(`Failed to switch to low scene: ${res.error}`);
+    }
+  },
+  switchToLive: async () => {
+    const scene = switcherConfig.get('sceneLive');
+    const res = await setCurrentProgramScene(scene);
+    if (res.success) {
+      Logger.log('Switched to live scene.');
+    } else {
+      Logger.error(`Failed to switch to live scene: ${res.error}`);
+    }
+  },
+  switchToOffline: async () => {
+    const scene = switcherConfig.get('sceneOffline');
+    const res = await setCurrentProgramScene(scene);
+    if (res.success) {
+      Logger.log('Switched to offline scene.');
+    } else {
+      Logger.error(`Failed to switch to offline scene: ${res.error}`);
+    }
+  },
+  switchToPrivacy: async () => {
+    const scene = switcherConfig.get('scenePrivacy');
+    const res = await setCurrentProgramScene(scene);
+
+    if (res.success) {
+      Logger.log('Switched to privacy scene.');
+    } else {
+      Logger.error(`Failed to switch to privacy scene: ${res.error}`);
+    }
+  },
+  switchScene: async (sceneName) => {
+    if (typeof sceneName !== 'string' || sceneName.trim().replace(/\s/g, '') === '') {
+      Logger.error('Invalid scene provided for switchScene command.');
+      return;
+    }
+    const res = await setCurrentProgramScene(sceneName);
+
+    if (res.success) {
+      Logger.log(`Switched to scene: ${sceneName}`);
+    } else {
+      Logger.error(`Failed to switch to scene ${sceneName}: ${res.error}`);
+    }
+  },
   refreshStream: () => {},
   setTrigger: (triggerValue) => {},
   setRTrigger: (rTriggerValue) => {},

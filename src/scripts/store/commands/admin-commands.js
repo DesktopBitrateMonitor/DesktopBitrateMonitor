@@ -22,7 +22,7 @@ export const adminCommands = [
   {
     id: generateId(),
     action: 'addAdmin',
-    requiredRole: 'admin',
+    requiredRole: 'broadcaster',
     label: 'Add Admin',
     description: 'Adds a new admin.',
     cmd: ['!addadmin'],
@@ -31,11 +31,43 @@ export const adminCommands = [
   {
     id: generateId(),
     action: 'removeAdmin',
-    requiredRole: 'admin',
+    requiredRole: 'broadcaster',
     label: 'Remove Admin',
     description: 'Removes an admin.',
     cmd: ['!removeadmin'],
     enabled: true
+  },
+  {
+    id: generateId(),
+    action: 'switchToLive',
+    requiredRole: 'admin',
+    label: 'Switch to Live Scene',
+    cmd:['!live'],
+    description: 'Switches to the live scene.',
+  },
+  {
+    id: generateId(),
+    action: 'switchToLow',
+    requiredRole: 'admin',
+    label: 'Switch to Low Scene',
+    cmd:['!low'],
+    description: 'Switches to the Low scene.',
+  },
+  {
+    id: generateId(),
+    action: 'switchToOffline',
+    requiredRole: 'admin',
+    label: 'Switch to Offline Scene',
+    cmd:['!offline'],
+    description: 'Switches to the offline scene.',
+  },
+  {
+    id: generateId(),
+    action: 'switchToPrivacy',
+    requiredRole: 'admin',
+    label: 'Switch to Privacy Scene',
+    cmd:['!privacy'],
+    description: 'Switches to the privacy scene.',
   },
   {
     id: generateId(),
