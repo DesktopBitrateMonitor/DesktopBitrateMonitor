@@ -10,7 +10,7 @@
   "navigation": {
     "brand": "Bitrate Monitor",
     "dashboard": "Dashboard",
-    "accountsSettings": "Accounts",
+    "plattformsSettings": "Plattforms",
     "twitchSettings": "Twitch Settings",
     "serverSettings": "Server Settings",
     "softwareSettings": "Software Settings",

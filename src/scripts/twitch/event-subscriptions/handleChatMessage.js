@@ -2,16 +2,12 @@ import { injectDefaults } from '../../store/defaults';
 import { hasPermission } from './lib';
 import { BrowserWindow } from 'electron';
 
-import {
-  startStream,
-  stopStream,
-  getCurrentProgramScene,
-  setCurrentProgramScene
-} from '../../streaming-software/obs-api';
+import { startStream, stopStream, setCurrentProgramScene } from '../../streaming-software/obs-api';
 import Logger from '../../logging/logger';
 import { getUsers } from '../twitch-api';
+import { messageService } from '../message-service/chat-messages';
 
-const { messagesConfig, commandsConfig, twitchAccountsConfig, switcherConfig } = injectDefaults();
+const { commandsConfig, twitchAccountsConfig, switcherConfig } = injectDefaults();
 
 export function handleChatMessage(eventSub) {
   const event = eventSub.event;
@@ -46,21 +42,30 @@ const commandActions = {
   startStream: async () => {
     const res = await startStream();
     if (res.success) {
+      await messageService({ action: 'startStream', event: 'success' });
       Logger.log('Stream started successfully.');
     } else {
+      await messageService({ action: 'startStream', event: 'error' });
       Logger.error(`Failed to start stream: ${res.error}`);
     }
   },
   stopStream: async () => {
     const res = await stopStream();
     if (res.success) {
+      await messageService({ action: 'stopStream', event: 'success' });
       Logger.log('Stream stopped successfully.');
     } else {
+      await messageService({ action: 'stopStream', event: 'error' });
       Logger.error(`Failed to stop stream: ${res.error}`);
     }
   },
   addAdmin: async (user) => {
     if (typeof user !== 'string' || user.trim().replace(/\s/g, '') === '' || !isNaN(user)) {
+      await messageService({
+        action: 'addAdmin',
+        event: 'error',
+        variables: { user: 'undefined' }
+      });
       Logger.error('Invalid username provided for addAdmin command.');
       return;
     }
@@ -69,6 +74,7 @@ const commandActions = {
 
     for (const admin of adminUsers) {
       if (admin.login === user.toLowerCase()) {
+        await messageService({ action: 'addAdmin', event: 'alreadyAdmin', variables: { user } });
         Logger.error(`${user} is already an admin.`);
         return;
       }
@@ -85,12 +91,17 @@ const commandActions = {
       action: 'add',
       user: userObj
     });
-    //TODO: post message to chat
 
+    await messageService({ action: 'addAdmin', event: 'success', variables: { user } });
     return { success: true, data: userObj };
   },
-  removeAdmin: (user) => {
+  removeAdmin: async (user) => {
     if (typeof user !== 'string' || user.trim().replace(/\s/g, '') === '' || !isNaN(user)) {
+      await messageService({
+        action: 'removeAdmin',
+        event: 'error',
+        variables: { user: 'undefined' }
+      });
       Logger.error('Invalid username provided for removeAdmin command.');
       return;
     }
@@ -100,6 +111,7 @@ const commandActions = {
       (admin) => admin.login.toLowerCase() === user.toLowerCase()
     );
     if (userIndex === -1) {
+      await messageService({ action: 'removeAdmin', event: 'notFound', variables: { user } });
       Logger.error(`${user} is not an admin.`);
       return;
     }
@@ -112,11 +124,16 @@ const commandActions = {
       action: 'remove',
       user: removedUser
     });
-    //TODO: post message to chat
+    await messageService({
+      action: 'removeAdmin',
+      event: 'success',
+      variables: { user: removedUser.login }
+    });
     return { success: true, data: removedUser };
   },
   addMod: async (user) => {
     if (typeof user !== 'string' || user.trim().replace(/\s/g, '') === '' || !isNaN(user)) {
+      await messageService({ action: 'addMod', event: 'error', variables: { user: 'undefined' } });
       Logger.error('Invalid username provided for addMod command.');
       return;
     }
@@ -125,6 +142,7 @@ const commandActions = {
 
     for (const mod of modUsers) {
       if (mod.login === user.toLowerCase()) {
+        await messageService({ action: 'addMod', event: 'alreadyMod', variables: { user } });
         Logger.error(`${user} is already a mod.`);
         return;
       }
@@ -141,12 +159,16 @@ const commandActions = {
       action: 'add',
       user: userObj
     });
-    //TODO: post message to chat
-
+    await messageService({ action: 'addMod', event: 'success', variables: { user } });
     return { success: true, data: userObj };
   },
-  removeMod: (user) => {
+  removeMod: async (user) => {
     if (typeof user !== 'string' || user.trim().replace(/\s/g, '') === '' || !isNaN(user)) {
+      await messageService({
+        action: 'removeMod',
+        event: 'error',
+        variables: { user: 'undefined' }
+      });
       Logger.error('Invalid username provided for removeMod command.');
       return;
     }
@@ -154,6 +176,7 @@ const commandActions = {
     const modUsers = twitchAccountsConfig.get('mods');
     const userIndex = modUsers.findIndex((mod) => mod.login.toLowerCase() === user.toLowerCase());
     if (userIndex === -1) {
+      await messageService({ action: 'removeMod', event: 'notFound', variables: { user } });
       Logger.error(`${user} is not a mod.`);
       return;
     }
@@ -165,13 +188,19 @@ const commandActions = {
       action: 'remove',
       user: removedUser
     });
-    //TODO: post message to chat
+
+    await messageService({
+      action: 'removeMod',
+      event: 'success',
+      variables: { user: removedUser.login }
+    });
     return { success: true, data: removedUser };
   },
   switchToLow: async () => {
     const scene = switcherConfig.get('sceneLow');
     const res = await setCurrentProgramScene(scene);
     if (res.success) {
+      await messageService({ action: 'switchToLow', event: 'success', variables: { scene } });
       Logger.log('Switched to low scene.');
     } else {
       Logger.error(`Failed to switch to low scene: ${res.error}`);
@@ -181,8 +210,9 @@ const commandActions = {
     const scene = switcherConfig.get('sceneLive');
     const res = await setCurrentProgramScene(scene);
     if (res.success) {
-      Logger.log('Switched to live scene.');
+      await messageService({ action: 'switchScene', event: 'success', variables: { scene } });
     } else {
+      await messageService({ action: 'switchScene', event: 'error', variables: { scene } });
       Logger.error(`Failed to switch to live scene: ${res.error}`);
     }
   },
@@ -190,8 +220,10 @@ const commandActions = {
     const scene = switcherConfig.get('sceneOffline');
     const res = await setCurrentProgramScene(scene);
     if (res.success) {
+      await messageService({ action: 'switchToOffline', event: 'success', variables: { scene } });
       Logger.log('Switched to offline scene.');
     } else {
+      await messageService({ action: 'switchToOffline', event: 'error', variables: { scene } });
       Logger.error(`Failed to switch to offline scene: ${res.error}`);
     }
   },
@@ -200,21 +232,38 @@ const commandActions = {
     const res = await setCurrentProgramScene(scene);
 
     if (res.success) {
+      await messageService({ action: 'switchToPrivacy', event: 'success', variables: { scene } });
       Logger.log('Switched to privacy scene.');
     } else {
+      await messageService({ action: 'switchToPrivacy', event: 'error', variables: { scene } });
       Logger.error(`Failed to switch to privacy scene: ${res.error}`);
     }
   },
   switchScene: async (sceneName) => {
     if (typeof sceneName !== 'string' || sceneName.trim().replace(/\s/g, '') === '') {
+      await messageService({
+        action: 'switchScene',
+        event: 'error',
+        variables: { scene: 'undefined' }
+      });
       Logger.error('Invalid scene provided for switchScene command.');
       return;
     }
     const res = await setCurrentProgramScene(sceneName);
 
     if (res.success) {
+      await messageService({
+        action: 'switchScene',
+        event: 'success',
+        variables: { scene: sceneName }
+      });
       Logger.log(`Switched to scene: ${sceneName}`);
     } else {
+      await messageService({
+        action: 'switchScene',
+        event: 'error',
+        variables: { scene: sceneName }
+      });
       Logger.error(`Failed to switch to scene ${sceneName}: ${res.error}`);
     }
   },

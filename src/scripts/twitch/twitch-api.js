@@ -187,6 +187,16 @@ export async function validateAccessToken(access_token) {
   }
 }
 
+/**
+ *
+ * @param {string} access_token The sender users access_token
+ * @param {string} broadcaster_id The id of the broadcaster who is the message sent on
+ * @param {string} sender_id The id of the user sending the message
+ * @param {string} message the message to send | Can not be a empty string
+ * @param {string|null} reply_parent_message_id The id of the parent message to reply to, if any
+ * @returns
+ */
+
 export async function sendChatMessage(
   access_token,
   broadcaster_id,
