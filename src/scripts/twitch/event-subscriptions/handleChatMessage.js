@@ -2,7 +2,12 @@ import { injectDefaults } from '../../store/defaults';
 import { hasPermission } from './lib';
 import { BrowserWindow } from 'electron';
 
-import { startStream, stopStream, setCurrentProgramScene } from '../../streaming-software/obs-api';
+import {
+  startStream,
+  stopStream,
+  setCurrentProgramScene,
+  refreshMediaSources
+} from '../../streaming-software/obs-api';
 import Logger from '../../logging/logger';
 import { getUsers } from '../twitch-api';
 import { messageService } from '../message-service/chat-messages';
@@ -15,7 +20,7 @@ export function handleChatMessage(eventSub) {
   const message = event.message.text;
   const args = message.split(' ');
   const commandName = args[0].toLowerCase();
-  const commandArg = args.length > 1 ? args[1].toLowerCase() : null;
+  const commandArg = args.splice(1).join(' ').toLowerCase();
 
   const commandsArray = commandsConfig.get('commands').map((cmd) => ({ ...cmd }));
   const allAliases = commandsArray.map((cmd) => cmd.cmd).flat();
@@ -200,9 +205,11 @@ const commandActions = {
     const scene = switcherConfig.get('sceneLow');
     const res = await setCurrentProgramScene(scene);
     if (res.success) {
-      await messageService({ action: 'switchToLow', event: 'success', variables: { scene } });
+      console.log(scene);
+      await messageService({ action: 'switchScene', event: 'success', variables: { scene } });
       Logger.log('Switched to low scene.');
     } else {
+      await messageService({ action: 'switchScene', event: 'error', variables: { scene } });
       Logger.error(`Failed to switch to low scene: ${res.error}`);
     }
   },
@@ -220,10 +227,10 @@ const commandActions = {
     const scene = switcherConfig.get('sceneOffline');
     const res = await setCurrentProgramScene(scene);
     if (res.success) {
-      await messageService({ action: 'switchToOffline', event: 'success', variables: { scene } });
+      await messageService({ action: 'switchScene', event: 'success', variables: { scene } });
       Logger.log('Switched to offline scene.');
     } else {
-      await messageService({ action: 'switchToOffline', event: 'error', variables: { scene } });
+      await messageService({ action: 'switchScene', event: 'error', variables: { scene } });
       Logger.error(`Failed to switch to offline scene: ${res.error}`);
     }
   },
@@ -232,10 +239,10 @@ const commandActions = {
     const res = await setCurrentProgramScene(scene);
 
     if (res.success) {
-      await messageService({ action: 'switchToPrivacy', event: 'success', variables: { scene } });
+      await messageService({ action: 'switchScene', event: 'success', variables: { scene } });
       Logger.log('Switched to privacy scene.');
     } else {
-      await messageService({ action: 'switchToPrivacy', event: 'error', variables: { scene } });
+      await messageService({ action: 'switchScene', event: 'error', variables: { scene } });
       Logger.error(`Failed to switch to privacy scene: ${res.error}`);
     }
   },
@@ -267,7 +274,19 @@ const commandActions = {
       Logger.error(`Failed to switch to scene ${sceneName}: ${res.error}`);
     }
   },
-  refreshStream: () => {},
+  refreshStream: async () => {
+    await messageService({ action: 'refreshStream', event: 'try' });
+
+    const res = await refreshMediaSources();
+
+    if (res.success) {
+      await messageService({ action: 'refreshStream', event: 'success' });
+      Logger.log('Media sources refreshed successfully.');
+    } else {
+      await messageService({ action: 'refreshStream', event: 'error' });
+      Logger.error(`Failed to refresh media sources: ${res.error}`);
+    }
+  },
   setTrigger: (triggerValue) => {},
   setRTrigger: (rTriggerValue) => {},
   bitrate: () => {}

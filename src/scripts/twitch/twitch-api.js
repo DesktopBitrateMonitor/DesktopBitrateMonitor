@@ -188,8 +188,8 @@ export async function validateAccessToken(access_token) {
 }
 
 /**
- *
  * @param {string} access_token The sender users access_token
+ * @param {string} accountType 'broadcaster' or 'bot'
  * @param {string} broadcaster_id The id of the broadcaster who is the message sent on
  * @param {string} sender_id The id of the user sending the message
  * @param {string} message the message to send | Can not be a empty string
@@ -199,12 +199,13 @@ export async function validateAccessToken(access_token) {
 
 export async function sendChatMessage(
   access_token,
+  accountType,
   broadcaster_id,
   sender_id,
   message,
   reply_parent_message_id = null
 ) {
-  return await validateAndProceed(access_token, async (validToken) => {
+  return await validateAndProceed(access_token, accountType, async (validToken) => {
     const body = {
       broadcaster_id,
       sender_id: sender_id,

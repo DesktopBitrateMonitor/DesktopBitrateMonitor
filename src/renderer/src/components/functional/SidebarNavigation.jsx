@@ -40,7 +40,7 @@ const NAV_ITEMS = [
     matchPrefix: false
   },
   {
-    translationKey: 'navigation.accountsSettings',
+    translationKey: 'navigation.platformsSettings',
     path: ACCOUNTS_PATH,
     icon: ManageAccountsIcon,
     matchPrefix: true
