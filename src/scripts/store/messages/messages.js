@@ -143,7 +143,7 @@ export const messages = [
     event: 'success',
     enabled: true,
     label: 'Bitrate Trigger Success Message',
-    message: 'Bitrate trigger set to ${bitrate} kbps!'
+    message: 'Bitrate trigger set to ${trigger} kbps!'
   },
   {
     id: generateId(),
@@ -152,7 +152,7 @@ export const messages = [
     event: 'error',
     enabled: true,
     label: 'Bitrate Trigger Error Message',
-    message: ' Failed to set bitrate trigger to ${bitrate} kbps!'
+    message: ' Failed to set bitrate trigger to ${trigger} kbps!'
   },
   {
     id: generateId(),
@@ -161,7 +161,7 @@ export const messages = [
     event: 'success',
     enabled: true,
     label: 'Bitrate Return Trigger Success Message',
-    message: 'Bitrate return trigger set to ${bitrate} kbps!'
+    message: 'Bitrate return trigger set to ${rtrigger} kbps!'
   },
   {
     id: generateId(),
@@ -170,7 +170,7 @@ export const messages = [
     event: 'error',
     enabled: true,
     label: 'Bitrate Return Trigger Error Message',
-    message: 'Failed to set bitrate return trigger to ${bitrate} kbps!'
+    message: 'Failed to set bitrate return trigger to ${rtrigger} kbps!'
   },
   {
     id: generateId(),

@@ -76,7 +76,7 @@ export function stopFetchingStats() {
   fetchInterval = null;
 }
 
-async function fetchStats(statsUrl) {
+export async function fetchStats(statsUrl) {
   try {
     const stats = await axios.get(statsUrl);
     return { stats: stats.data };

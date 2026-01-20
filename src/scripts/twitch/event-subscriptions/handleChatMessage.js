@@ -11,8 +11,10 @@ import {
 import Logger from '../../logging/logger';
 import { getUsers } from '../twitch-api';
 import { messageService } from '../message-service/chat-messages';
+import { fetchStats } from '../../stats-watcher/stats-fetcher';
+import { formatStatsOpenIrl } from '../../stats-watcher/openirl';
 
-const { commandsConfig, twitchAccountsConfig, switcherConfig } = injectDefaults();
+const { commandsConfig, twitchAccountsConfig, switcherConfig, serverConfig } = injectDefaults();
 
 export function handleChatMessage(eventSub) {
   const event = eventSub.event;
@@ -287,7 +289,75 @@ const commandActions = {
       Logger.error(`Failed to refresh media sources: ${res.error}`);
     }
   },
-  setTrigger: (triggerValue) => {},
-  setRTrigger: (rTriggerValue) => {},
-  bitrate: () => {}
+  setTrigger: async (triggerValue) => {
+    if (
+      typeof triggerValue !== 'number' ||
+      triggerValue.trim().replace(/\s/g, '') === '' ||
+      isNaN(triggerValue)
+    ) {
+      await messageService({
+        action: 'setTrigger',
+        event: 'error',
+        variables: { trigger: 'undefined' }
+      });
+      Logger.error('Invalid username provided for addMod command.');
+      return;
+    }
+    switcherConfig.set('bitrateTrigger', triggerValue);
+    await messageService({
+      action: 'setTrigger',
+      event: 'success',
+      variables: { trigger: triggerValue }
+    });
+  },
+  setRTrigger: async (rTriggerValue) => {
+    if (
+      typeof rTriggerValue !== 'number' ||
+      rTriggerValue.trim().replace(/\s/g, '') === '' ||
+      isNaN(rTriggerValue)
+    ) {
+      await messageService({
+        action: 'setRTrigger',
+        event: 'error',
+        variables: { rtrigger: 'undefined' }
+      });
+    }
+    switcherConfig.set('rTrigger', rTriggerValue);
+    await messageService({
+      action: 'setRTrigger',
+      event: 'success',
+      variables: { rtrigger: rTriggerValue }
+    });
+  },
+  bitrate: async () => {
+    // Return the current bitrate value to the chat
+    const serverData = serverConfig.get('');
+    const serverType = serverData.currentType;
+    const stats = await fetchStats(serverData.statsUrl);
+    let res;
+
+    if (serverType === 'openirl') {
+      res = await formatStatsOpenIrl(stats);
+    }
+    if (serverType === 'srt-live-server') {
+      res = await formatStatsOpenIrl(stats);
+    }
+    if (serverType === 'belabox') {
+      // Implement when belabox format function is available
+    }
+
+    if (res.success) {
+      const currentBitrate = res.data.bitrate;
+      await messageService({
+        action: 'bitrate',
+        event: 'success',
+        variables: { bitrate: currentBitrate, speed: res.data.rtt }
+      });
+    } else {
+      await messageService({
+        action: 'bitrate',
+        event: 'error'
+      });
+    }
+  }
 };
