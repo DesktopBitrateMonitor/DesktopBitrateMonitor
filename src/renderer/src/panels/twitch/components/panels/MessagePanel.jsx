@@ -63,7 +63,7 @@ const MessagePanel = ({ message, onChange, collapsible = true, expanded, onExpan
         value={messageDraft}
         onChange={handleMessageChange}
         error={!!messageError}
-        helperText={messageError}
+        helperText={!messageError ? message.hint : messageError}
         onKeyDown={(event) => {
           if (event.key === 'Enter') {
             event.preventDefault();

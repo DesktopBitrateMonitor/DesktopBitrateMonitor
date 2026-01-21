@@ -13,6 +13,7 @@ import { getUsers } from '../twitch-api';
 import { messageService } from '../message-service/chat-messages';
 import { fetchStats } from '../../stats-watcher/stats-fetcher';
 import { formatStatsOpenIrl } from '../../stats-watcher/openirl';
+import globalInternalStore from '../../store/global-internal-store';
 
 const { commandsConfig, twitchAccountsConfig, switcherConfig, serverConfig } = injectDefaults();
 
@@ -331,33 +332,41 @@ const commandActions = {
   },
   bitrate: async () => {
     // Return the current bitrate value to the chat
-    const serverData = serverConfig.get('');
-    const serverType = serverData.currentType;
-    const stats = await fetchStats(serverData.statsUrl);
-    let res;
+    // const serverData = serverConfig.get('');
+    // const serverType = serverData.currentType;
+    // const stats = await fetchStats(serverData.statsUrl);
+    // let res;
 
-    if (serverType === 'openirl') {
-      res = await formatStatsOpenIrl(stats);
-    }
-    if (serverType === 'srt-live-server') {
-      res = await formatStatsOpenIrl(stats);
-    }
-    if (serverType === 'belabox') {
-      // Implement when belabox format function is available
-    }
+    const {stats} = globalInternalStore.get();
 
-    if (res.success) {
-      const currentBitrate = res.data.bitrate;
-      await messageService({
-        action: 'bitrate',
-        event: 'success',
-        variables: { bitrate: currentBitrate, speed: res.data.rtt }
-      });
-    } else {
-      await messageService({
-        action: 'bitrate',
-        event: 'error'
-      });
-    }
+    await messageService({
+      action: 'bitrate',
+      event: 'success',
+      variables: { bitrate: stats.bitrate, speed: stats.rtt }
+    })
+
+    // if (serverType === 'openirl') {
+    //   res = await formatStatsOpenIrl(stats);
+    // }
+    // if (serverType === 'srt-live-server') {
+    //   res = await formatStatsOpenIrl(stats);
+    // }
+    // if (serverType === 'belabox') {
+    //   // Implement when belabox format function is available
+    // }
+
+    // if (res.success) {
+    //   const currentBitrate = res.data.bitrate;
+    //   await messageService({
+    //     action: 'bitrate',
+    //     event: 'success',
+    //     variables: { bitrate: currentBitrate, speed: res.data.rtt }
+    //   });
+    // } else {
+    //   await messageService({
+    //     action: 'bitrate',
+    //     event: 'error'
+    //   });
+    // }
   }
 };

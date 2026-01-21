@@ -55,7 +55,7 @@ const computeBand = (bitrate, t, previous) => {
 };
 
 export async function switcherService(data, mainWindow = null) {
-  if (!data.data) return;
+  if (!data || !data.data) return;
 
   const { bitrate, speed, uptime } = data.data;
   const switcherSettings = switcherConfig.get('');

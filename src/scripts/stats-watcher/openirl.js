@@ -1,4 +1,5 @@
 import { injectDefaults } from '../store/defaults';
+import globalInternalStore from '../store/global-internal-store';
 
 export async function formatStatsOpenIrl(statsData) {
   if (!statsData.success) return;
@@ -13,6 +14,9 @@ export async function formatStatsOpenIrl(statsData) {
       const publisherData = data?.publisher || {};
 
       if (Object.keys(publisherData).length > 0) {
+        // Store the latest stats in the global internal store for usage in the app backend
+        globalInternalStore.stats.set(publisherData);
+
         return {
           success: true,
           data: {
@@ -23,6 +27,9 @@ export async function formatStatsOpenIrl(statsData) {
           error: null
         };
       } else {
+        // Store the latest stats in the global internal store for usage in the app backend
+        globalInternalStore.stats.set({ bitrate: 0, rtt: 0, uptime: 0 });
+
         return {
           success: true,
           data: {
@@ -41,6 +48,10 @@ export async function formatStatsOpenIrl(statsData) {
         if (serverConfig.get('openirl.publisher') === Object.keys(data.publishers)[0]) {
           const livePublisherKey = Object.keys(data.publishers)[0];
           const livePublisherData = data.publishers[livePublisherKey];
+
+          // Store the latest stats in the global internal store for usage in the app backend
+          globalInternalStore.stats.set(livePublisherData);
+
           return {
             success: true,
             data: {
@@ -51,6 +62,9 @@ export async function formatStatsOpenIrl(statsData) {
             error: null
           };
         } else {
+          // Store the latest stats in the global internal store for usage in the app backend
+          globalInternalStore.stats.set({ bitrate: 0, rtt: 0, uptime: 0 });
+
           return {
             success: true,
             data: {
@@ -62,6 +76,9 @@ export async function formatStatsOpenIrl(statsData) {
           };
         }
       } else {
+        // Store the latest stats in the global internal store for usage in the app backend
+        globalInternalStore.stats.set({ bitrate: 0, rtt: 0, uptime: 0 });
+
         return {
           success: true,
           data: {
@@ -74,6 +91,9 @@ export async function formatStatsOpenIrl(statsData) {
       }
     }
   } catch (error) {
+    // Store the latest stats in the global internal store for usage in the app backend
+    globalInternalStore.stats.set({ bitrate: 0, rtt: 0, uptime: 0 });
+
     return {
       success: false,
       data: null,

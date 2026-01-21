@@ -40,31 +40,35 @@ export async function startFetchingStats(
     const serverData = serverConfig.get(serverType);
     const stats = await fetchStats(serverData.statsUrl);
 
-    if (stats && stats?.stats?.status === 'ok') {
-      response.success = true;
-      response.server = serverType;
-      response.data = stats.stats;
-      response.storedPublisher = serverData.publisher;
-      response.error = null;
-    } else {
-      response.success = false;
-      response.server = serverType;
-      response.data = null;
-      response.storedPublisher = serverData.publisher;
-      response.error = stats.stats;
-    }
+    try {
+      if (stats && stats?.stats?.status === 'ok') {
+        response.success = true;
+        response.server = serverType;
+        response.data = stats.stats;
+        response.storedPublisher = serverData.publisher;
+        response.error = null;
+      } else {
+        response.success = false;
+        response.server = serverType;
+        response.data = null;
+        response.storedPublisher = serverData?.publisher;
+        response.error = stats?.stats || 'Failed to fetch stats from the server';
+      }
 
-    if (mainWindow) {
-      mainWindow?.webContents.send('server-connected', response);
-    }
+      if (mainWindow) {
+        mainWindow?.webContents.send('server-connected', response);
+      }
 
-    if (serverType === 'openirl') {
-      const res = await formatStatsOpenIrl(response);
-      await switcherService(res, mainWindow);
-    }
-    if (serverType === 'srt-live-server') {
-      const res = await formatStatsSrtLiveServer(response);
-      await switcherService(res, mainWindow);
+      if (serverType === 'openirl') {
+        const res = await formatStatsOpenIrl(response);
+        await switcherService(res, mainWindow);
+      }
+      if (serverType === 'srt-live-server') {
+        const res = await formatStatsSrtLiveServer(response);
+        await switcherService(res, mainWindow);
+      }
+    } catch (error) {
+      Logger.error(`Error processing fetched stats: ${error.message}`);
     }
   };
 
