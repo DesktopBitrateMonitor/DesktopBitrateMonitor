@@ -337,13 +337,13 @@ const commandActions = {
     // const stats = await fetchStats(serverData.statsUrl);
     // let res;
 
-    const {stats} = globalInternalStore.get();
+    const { stats } = globalInternalStore.get();
 
     await messageService({
       action: 'bitrate',
       event: 'success',
       variables: { bitrate: stats.bitrate, speed: stats.rtt }
-    })
+    });
 
     // if (serverType === 'openirl') {
     //   res = await formatStatsOpenIrl(stats);

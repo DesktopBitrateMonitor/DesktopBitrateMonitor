@@ -31,6 +31,8 @@ import { useTranslation } from 'react-i18next';
 import ConnectionStates from '../../panels/dashboard/components/ConnectionStates';
 import TwitchIcon from '../../assets/icons/TwitchIcon';
 
+const isDev = import.meta.env.DEV;
+
 const ACCOUNTS_PATH = '/dashboard/accountssettings';
 const NAV_ITEMS = [
   {
@@ -79,8 +81,20 @@ const NAV_ITEMS = [
 
 const PLATFORM_ROUTES = [
   { label: 'Twitch', path: `${ACCOUNTS_PATH}/twitch`, icon: TwitchIcon },
-  { label: 'YouTube (coming soon)', path: `${ACCOUNTS_PATH}/youtube`, icon: YouTubeIcon, disabled: true },
-  { label: 'Kick (coming soon)', path: `${ACCOUNTS_PATH}/kick`, icon: SportsEsportsIcon, disabled: true }
+  {
+    label: 'YouTube (coming soon)',
+    path: `${ACCOUNTS_PATH}/youtube`,
+    icon: YouTubeIcon,
+    disabled: true,
+    development: true
+  },
+  {
+    label: 'Kick (coming soon)',
+    path: `${ACCOUNTS_PATH}/kick`,
+    icon: SportsEsportsIcon,
+    disabled: true,
+    development: true
+  }
 ];
 
 const DRAWER_WIDTH = {
@@ -307,6 +321,7 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
             >
               <List disablePadding sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                 {PLATFORM_ROUTES.map((platform) => {
+                  if(platform.development && !isDev) return null;
                   const Icon = platform.icon;
                   return (
                     <ListItemButton
@@ -371,7 +386,10 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
                   >
                     <InsightsOutlinedIcon />
                   </ListItemIcon>
-                  <ListItemText primary="Connections" slotProps={{ primary: { fontWeight: 500 } }} />
+                  <ListItemText
+                    primary="Connections"
+                    slotProps={{ primary: { fontWeight: 500 } }}
+                  />
                 </ListItemButton>
               )}
             </Box>
@@ -400,7 +418,7 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
               }
             }}
           >
-            <ConnectionStates isMenu/>
+            <ConnectionStates isMenu />
           </Popover>
         </Box>
       </Drawer>

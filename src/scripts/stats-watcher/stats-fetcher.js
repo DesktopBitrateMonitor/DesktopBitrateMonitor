@@ -21,6 +21,7 @@ const response = {
  *
  * @param {boolean|false} fetchingActive The fetching status
  * @param {string|null} serverType The server type to fetch stats from
+ * @param {BrowserWindow|null} mainWindow The main Electron window
  * @returns
  */
 export async function startFetchingStats(
