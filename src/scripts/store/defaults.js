@@ -3,7 +3,7 @@ import path from 'path';
 import { adminCommands } from './commands/admin-commands';
 import { modCommands } from './commands/mod-commands';
 import { userCommands } from './commands/user-commands';
-import { messages } from './messages/messages';
+import { buildMessages } from './messages/messages';
 import Store from './store';
 
 const defaultSessionLoggingPath = path.join(
@@ -52,6 +52,7 @@ export const injectDefaults = () => {
         id: null
       },
       onQuit: 'quit',
+      activePlatform: 'twitch',
       paths: {
         layout: 'grid',
         sessionLogsPath: defaultSessionLoggingPath,
@@ -129,7 +130,7 @@ export const injectDefaults = () => {
       order: [],
       collapsed: [],
       orderGroups: ['admin', 'mod', 'user'],
-      messages: messages
+      messages: buildMessages(language)
     }
   });
 

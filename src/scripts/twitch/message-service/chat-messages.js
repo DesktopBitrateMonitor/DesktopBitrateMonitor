@@ -3,7 +3,7 @@ import Logger from '../../logging/logger';
 import { injectDefaults } from '../../store/defaults';
 import { sendChatMessage } from '../twitch-api';
 
-export async function messageService({ action, event, variables = {} }) {
+export async function twitchMessageService({ action, event, variables = {} }) {
   const { messagesConfig, twitchAccountsConfig } = injectDefaults();
   const allMessages = messagesConfig.get('messages');
 

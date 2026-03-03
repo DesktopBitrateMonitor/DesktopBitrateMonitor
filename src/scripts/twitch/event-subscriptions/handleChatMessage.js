@@ -10,7 +10,7 @@ import {
 } from '../../streaming-software/obs-api';
 import Logger from '../../logging/logger';
 import { getUsers } from '../twitch-api';
-import { messageService } from '../message-service/chat-messages';
+import { twitchMessageService } from '../message-service/chat-messages';
 import { fetchStats } from '../../stats-watcher/stats-fetcher';
 import { formatStatsOpenIrl } from '../../stats-watcher/openirl';
 import globalInternalStore from '../../store/global-internal-store';
@@ -50,26 +50,26 @@ const commandActions = {
   startStream: async () => {
     const res = await startStream();
     if (res.success) {
-      await messageService({ action: 'startStream', event: 'success' });
+      await twitchMessageService({ action: 'startStream', event: 'success' });
       Logger.log('Stream started successfully.');
     } else {
-      await messageService({ action: 'startStream', event: 'error' });
+      await twitchMessageService({ action: 'startStream', event: 'error' });
       Logger.error(`Failed to start stream: ${res.error}`);
     }
   },
   stopStream: async () => {
     const res = await stopStream();
     if (res.success) {
-      await messageService({ action: 'stopStream', event: 'success' });
+      await twitchMessageService({ action: 'stopStream', event: 'success' });
       Logger.log('Stream stopped successfully.');
     } else {
-      await messageService({ action: 'stopStream', event: 'error' });
+      await twitchMessageService({ action: 'stopStream', event: 'error' });
       Logger.error(`Failed to stop stream: ${res.error}`);
     }
   },
   addAdmin: async (user) => {
     if (typeof user !== 'string' || user.trim().replace(/\s/g, '') === '' || !isNaN(user)) {
-      await messageService({
+      await twitchMessageService({
         action: 'addAdmin',
         event: 'error',
         variables: { user: 'undefined' }
@@ -82,7 +82,11 @@ const commandActions = {
 
     for (const admin of adminUsers) {
       if (admin.login === user.toLowerCase()) {
-        await messageService({ action: 'addAdmin', event: 'alreadyAdmin', variables: { user } });
+        await twitchMessageService({
+          action: 'addAdmin',
+          event: 'alreadyAdmin',
+          variables: { user }
+        });
         Logger.error(`${user} is already an admin.`);
         return;
       }
@@ -100,12 +104,12 @@ const commandActions = {
       user: userObj
     });
 
-    await messageService({ action: 'addAdmin', event: 'success', variables: { user } });
+    await twitchMessageService({ action: 'addAdmin', event: 'success', variables: { user } });
     return { success: true, data: userObj };
   },
   removeAdmin: async (user) => {
     if (typeof user !== 'string' || user.trim().replace(/\s/g, '') === '' || !isNaN(user)) {
-      await messageService({
+      await twitchMessageService({
         action: 'removeAdmin',
         event: 'error',
         variables: { user: 'undefined' }
@@ -119,7 +123,7 @@ const commandActions = {
       (admin) => admin.login.toLowerCase() === user.toLowerCase()
     );
     if (userIndex === -1) {
-      await messageService({ action: 'removeAdmin', event: 'notFound', variables: { user } });
+      await twitchMessageService({ action: 'removeAdmin', event: 'notFound', variables: { user } });
       Logger.error(`${user} is not an admin.`);
       return;
     }
@@ -132,7 +136,7 @@ const commandActions = {
       action: 'remove',
       user: removedUser
     });
-    await messageService({
+    await twitchMessageService({
       action: 'removeAdmin',
       event: 'success',
       variables: { user: removedUser.login }
@@ -141,7 +145,11 @@ const commandActions = {
   },
   addMod: async (user) => {
     if (typeof user !== 'string' || user.trim().replace(/\s/g, '') === '' || !isNaN(user)) {
-      await messageService({ action: 'addMod', event: 'error', variables: { user: 'undefined' } });
+      await twitchMessageService({
+        action: 'addMod',
+        event: 'error',
+        variables: { user: 'undefined' }
+      });
       Logger.error('Invalid username provided for addMod command.');
       return;
     }
@@ -150,7 +158,7 @@ const commandActions = {
 
     for (const mod of modUsers) {
       if (mod.login === user.toLowerCase()) {
-        await messageService({ action: 'addMod', event: 'alreadyMod', variables: { user } });
+        await twitchMessageService({ action: 'addMod', event: 'alreadyMod', variables: { user } });
         Logger.error(`${user} is already a mod.`);
         return;
       }
@@ -167,12 +175,12 @@ const commandActions = {
       action: 'add',
       user: userObj
     });
-    await messageService({ action: 'addMod', event: 'success', variables: { user } });
+    await twitchMessageService({ action: 'addMod', event: 'success', variables: { user } });
     return { success: true, data: userObj };
   },
   removeMod: async (user) => {
     if (typeof user !== 'string' || user.trim().replace(/\s/g, '') === '' || !isNaN(user)) {
-      await messageService({
+      await twitchMessageService({
         action: 'removeMod',
         event: 'error',
         variables: { user: 'undefined' }
@@ -184,7 +192,7 @@ const commandActions = {
     const modUsers = twitchAccountsConfig.get('mods');
     const userIndex = modUsers.findIndex((mod) => mod.login.toLowerCase() === user.toLowerCase());
     if (userIndex === -1) {
-      await messageService({ action: 'removeMod', event: 'notFound', variables: { user } });
+      await twitchMessageService({ action: 'removeMod', event: 'notFound', variables: { user } });
       Logger.error(`${user} is not a mod.`);
       return;
     }
@@ -197,7 +205,7 @@ const commandActions = {
       user: removedUser
     });
 
-    await messageService({
+    await twitchMessageService({
       action: 'removeMod',
       event: 'success',
       variables: { user: removedUser.login }
@@ -209,10 +217,10 @@ const commandActions = {
     const res = await setCurrentProgramScene(scene);
     if (res.success) {
       console.log(scene);
-      await messageService({ action: 'switchScene', event: 'success', variables: { scene } });
+      await twitchMessageService({ action: 'switchScene', event: 'success', variables: { scene } });
       Logger.log('Switched to low scene.');
     } else {
-      await messageService({ action: 'switchScene', event: 'error', variables: { scene } });
+      await twitchMessageService({ action: 'switchScene', event: 'error', variables: { scene } });
       Logger.error(`Failed to switch to low scene: ${res.error}`);
     }
   },
@@ -220,9 +228,9 @@ const commandActions = {
     const scene = switcherConfig.get('sceneLive');
     const res = await setCurrentProgramScene(scene);
     if (res.success) {
-      await messageService({ action: 'switchScene', event: 'success', variables: { scene } });
+      await twitchMessageService({ action: 'switchScene', event: 'success', variables: { scene } });
     } else {
-      await messageService({ action: 'switchScene', event: 'error', variables: { scene } });
+      await twitchMessageService({ action: 'switchScene', event: 'error', variables: { scene } });
       Logger.error(`Failed to switch to live scene: ${res.error}`);
     }
   },
@@ -230,10 +238,10 @@ const commandActions = {
     const scene = switcherConfig.get('sceneOffline');
     const res = await setCurrentProgramScene(scene);
     if (res.success) {
-      await messageService({ action: 'switchScene', event: 'success', variables: { scene } });
+      await twitchMessageService({ action: 'switchScene', event: 'success', variables: { scene } });
       Logger.log('Switched to offline scene.');
     } else {
-      await messageService({ action: 'switchScene', event: 'error', variables: { scene } });
+      await twitchMessageService({ action: 'switchScene', event: 'error', variables: { scene } });
       Logger.error(`Failed to switch to offline scene: ${res.error}`);
     }
   },
@@ -242,16 +250,16 @@ const commandActions = {
     const res = await setCurrentProgramScene(scene);
 
     if (res.success) {
-      await messageService({ action: 'switchScene', event: 'success', variables: { scene } });
+      await twitchMessageService({ action: 'switchScene', event: 'success', variables: { scene } });
       Logger.log('Switched to privacy scene.');
     } else {
-      await messageService({ action: 'switchScene', event: 'error', variables: { scene } });
+      await twitchMessageService({ action: 'switchScene', event: 'error', variables: { scene } });
       Logger.error(`Failed to switch to privacy scene: ${res.error}`);
     }
   },
   switchScene: async (sceneName) => {
     if (typeof sceneName !== 'string' || sceneName.trim().replace(/\s/g, '') === '') {
-      await messageService({
+      await twitchMessageService({
         action: 'switchScene',
         event: 'error',
         variables: { scene: 'undefined' }
@@ -262,14 +270,14 @@ const commandActions = {
     const res = await setCurrentProgramScene(sceneName);
 
     if (res.success) {
-      await messageService({
+      await twitchMessageService({
         action: 'switchScene',
         event: 'success',
         variables: { scene: sceneName }
       });
       Logger.log(`Switched to scene: ${sceneName}`);
     } else {
-      await messageService({
+      await twitchMessageService({
         action: 'switchScene',
         event: 'error',
         variables: { scene: sceneName }
@@ -278,15 +286,15 @@ const commandActions = {
     }
   },
   refreshStream: async () => {
-    await messageService({ action: 'refreshStream', event: 'try' });
+    await twitchMessageService({ action: 'refreshStream', event: 'try' });
 
     const res = await refreshMediaSources();
 
     if (res.success) {
-      await messageService({ action: 'refreshStream', event: 'success' });
+      await twitchMessageService({ action: 'refreshStream', event: 'success' });
       Logger.log('Media sources refreshed successfully.');
     } else {
-      await messageService({ action: 'refreshStream', event: 'error' });
+      await twitchMessageService({ action: 'refreshStream', event: 'error' });
       Logger.error(`Failed to refresh media sources: ${res.error}`);
     }
   },
@@ -296,7 +304,7 @@ const commandActions = {
       triggerValue.trim().replace(/\s/g, '') === '' ||
       isNaN(triggerValue)
     ) {
-      await messageService({
+      await twitchMessageService({
         action: 'setTrigger',
         event: 'error',
         variables: { trigger: 'undefined' }
@@ -305,7 +313,7 @@ const commandActions = {
       return;
     }
     switcherConfig.set('bitrateTrigger', triggerValue);
-    await messageService({
+    await twitchMessageService({
       action: 'setTrigger',
       event: 'success',
       variables: { trigger: triggerValue }
@@ -317,14 +325,14 @@ const commandActions = {
       rTriggerValue.trim().replace(/\s/g, '') === '' ||
       isNaN(rTriggerValue)
     ) {
-      await messageService({
+      await twitchMessageService({
         action: 'setRTrigger',
         event: 'error',
         variables: { rtrigger: 'undefined' }
       });
     }
     switcherConfig.set('rTrigger', rTriggerValue);
-    await messageService({
+    await twitchMessageService({
       action: 'setRTrigger',
       event: 'success',
       variables: { rtrigger: rTriggerValue }
@@ -339,7 +347,7 @@ const commandActions = {
 
     const { stats } = globalInternalStore.get();
 
-    await messageService({
+    await twitchMessageService({
       action: 'bitrate',
       event: 'success',
       variables: { bitrate: stats.bitrate, speed: stats.rtt }

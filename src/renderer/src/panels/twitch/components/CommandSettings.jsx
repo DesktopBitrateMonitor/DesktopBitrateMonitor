@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Stack, TextField, Typography } from '@mui/material';
 import { useCommandsConfigStore } from '../../../contexts/DataContext';
 import LayoutToggle from '../../../components/functional/LayoutToggle';
 import RoleSortControls from '../../../components/functional/RoleSortControls';
@@ -28,6 +28,7 @@ const CommandSettings = () => {
   const [filterMode, setFilterMode] = useState('all');
   const [displayOrder, setDisplayOrder] = useState([]);
   const [collapsedIds, setCollapsedIds] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const commands = useMemo(() => {
     const list = Array.isArray(commandsConfig?.commands) ? commandsConfig.commands : [];
@@ -218,6 +219,27 @@ const CommandSettings = () => {
     [commands, persistCommands]
   );
 
+  const filteredCommands = useMemo(() => {
+    const normalizedSearch = searchTerm.trim().toLowerCase();
+
+    return commands.filter((command) => {
+      const matchesFilter = (() => {
+        if (filterMode === 'all') return true;
+        if (filterMode === 'enabled') return Boolean(command.enabled);
+        if (filterMode === 'disabled') return !Boolean(command.enabled);
+        return command.requiredRole === filterMode;
+      })();
+
+      const aliasList = Array.isArray(command.cmd) ? command.cmd : [];
+      const matchesSearch =
+        !normalizedSearch ||
+        (command.label || '').toLowerCase().includes(normalizedSearch) ||
+        aliasList.some((alias) => alias.toLowerCase().includes(normalizedSearch));
+
+      return matchesFilter && matchesSearch;
+    });
+  }, [commands, filterMode, searchTerm]);
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
       <Box
@@ -239,6 +261,14 @@ const CommandSettings = () => {
         </Box>
 
         <Stack direction="row" spacing={1.5} alignItems="center">
+          <TextField
+            size="small"
+            label="Search commands"
+            placeholder="Title or alias"
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+            sx={{ minWidth: { xs: '100%', sm: 240 } }}
+          />
           <RoleFilterControls value={filterMode} onChange={handleFilterChange} />
           <RoleSortControls value={sortMode} onChange={handleSortChange} />
           <LayoutToggle value={layoutMode} onChange={handleLayoutChange} />
@@ -258,23 +288,16 @@ const CommandSettings = () => {
                 }
         }}
       >
-        {commands
-          .filter((command) => {
-            if (filterMode === 'all') return true;
-            if (filterMode === 'enabled') return Boolean(command.enabled);
-            if (filterMode === 'disabled') return !Boolean(command.enabled);
-            return command.requiredRole === filterMode;
-          })
-          .map((command) => (
-            <CommandPanel
-              key={command.id}
-              command={command}
-              onChange={handleCommandChange}
-              collapsible={layoutMode === 'list'}
-              expanded={!collapsedIds.includes(command.id)}
-              onExpandedChange={() => toggleCollapsed(command.id)}
-            />
-          ))}
+        {filteredCommands.map((command) => (
+          <CommandPanel
+            key={command.id}
+            command={command}
+            onChange={handleCommandChange}
+            collapsible={layoutMode === 'list'}
+            expanded={!collapsedIds.includes(command.id)}
+            onExpandedChange={() => toggleCollapsed(command.id)}
+          />
+        ))}
       </Box>
     </Box>
   );

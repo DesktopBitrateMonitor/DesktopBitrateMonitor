@@ -59,8 +59,235 @@
       "fileSizeEmpty": "Dateigröße darf nicht leer sein."
     }
   },
+  "platforms": {
+    "twitch": {},
+    "youtube": {},
+    "kick": {},
+    "commands": {},
+    "messages": {
+      "searchBox": {
+        "label": "Nachricht suchen",
+        "placeholder": "Titel oder Text"
+      },
+      "subtitle": "Nachricht, die in den Chat gepostet wird.",
+      "save": "Klicken oder mit Enter speichern",
+      "global": {
+        "success": {
+          "label": "Allgemeine Erfolgsmeldung",
+          "hint": ""
+        },
+        "error": {
+          "label": "Allgemeine Fehlermeldung",
+          "hint": ""
+        }
+      },
+      "startStream": {
+        "success": {
+          "label": "Stream gestartet Nachricht",
+          "hint": ""
+        },
+        "error": {
+          "label": "Stream Start Fehler Nachricht",
+          "hint": ""
+        }
+      },
+      "endStream": {
+        "success": {
+          "label": "Stream beendet Nachricht",
+          "hint": ""
+        },
+        "error": {
+          "label": "Stream beenden Fehler Nachricht",
+          "hint": ""
+        }
+      },
+      "raid": {
+        "success": {
+          "label": "Raid erfolgreich Nachricht",
+          "hint": "${channel} wird mit dem Namen des geraideten Kanals ersetzt."
+        },
+        "error": {
+          "label": "Raid Fehler Nachricht",
+          "hint": "${channel} wird mit dem Namen des geraideten Kanals ersetzt."
+        }
+      },
+      "refreshStream": {
+        "success": {
+          "label": "Aktualisierung erfolgreich Nachricht",
+          "hint": ""
+        },
+        "try": {
+          "label": "Aktualisierungsversuch Nachricht",
+          "hint": ""
+        },
+        "error": {
+          "label": "Aktualisierungsfehler Nachricht",
+          "hint": ""
+        }
+      },
+      "bitrate": {
+        "success": {
+          "label": "Abruf der Bitrate Nachricht",
+          "hint": "${bitrate} wird mit der aktuellen Bitrate und ${speed} mit der aktuellen Geschwindigkeit ersetzt."
+        },
+        "error": {
+          "label": "Fehler beim Abruf der Bitrate Nachricht",
+          "hint": ""
+        }
+      },
+      "switchScene": {
+        "success": {
+          "label": "Szenenwechsel erfolgreich Nachricht",
+          "hint": "${scene} wird mit dem Namen der gewechselten Szene ersetzt."
+        },
+        "error": {
+          "label": "Szenenwechsel Fehler Nachricht",
+          "hint": "${scene} wird mit dem Namen der gewechselten Szene ersetzt."
+        }
+      },
+      "setTrigger": {
+        "success": {
+          "label": "Trigger setzen erfolgreich Nachricht",
+          "hint": "${trigger} wird mit dem gesetzten Bitrate Trigger in kbps ersetzt."
+        },
+        "error": {
+          "label": "Trigger setzen Fehler Nachricht",
+          "hint": "${trigger} wird mit dem gesetzten Bitrate Trigger in kbps ersetzt."
+        }
+      },
+      "setRTrigger": {
+        "success": {
+          "label": "Recovery Trigger setzen erfolgreich Nachricht",
+          "hint": "${trigger} wird mit dem gesetzten Bitrate Recovery Trigger in kbps ersetzt."
+        },
+        "error": {
+          "label": "Recovery Trigger setzen Fehler Nachricht",
+          "hint": "${trigger} wird mit dem gesetzten Bitrate Recovery Trigger in kbps ersetzt."
+        }
+      },
+      "addAdmin": {
+        "success": {
+          "label": "Admin hinzufügen erfolgreich Nachricht",
+          "hint": "${user} wird mit dem Namen des hinzuzufügenden Admins ersetzt."
+        },
+        "alreadyAdmin": {
+          "label": "Admin bereits vorhanden Nachricht",
+          "hint": "${user} wird mit dem Namen des hinzuzufügenden Admins ersetzt."
+        },
+        "error": {
+          "label": "Admin hinzufügen Fehler Nachricht",
+          "hint": "${user} wird mit dem Namen des hinzuzufügenden Admins ersetzt."
+        }
+      },
+      "removeAdmin": {
+        "success": {
+          "label": "Admin entfernen erfolgreich Nachricht",
+          "hint": "${user} wird mit dem Namen des zu entfernenden Admins ersetzt."
+        },
+        "notFound": {
+          "label": "Admin nicht gefunden Nachricht",
+          "hint": ""
+        },
+        "error": {
+          "label": "Admin entfernen Fehler Nachricht",
+          "hint": ""
+        }
+      },
+      "addMod": {
+        "success": {
+          "label": "Mod hinzufügen erfolgreich Nachricht",
+          "hint": "${user} wird mit dem Namen des hinzuzufügenden Mods ersetzt."
+        },
+        "alreadyMod": {
+          "label": "Mod bereits vorhanden Nachricht",
+          "hint": ""
+        },
+        "error": {
+          "label": "Mod hinzufügen Fehler Nachricht",
+          "hint": ""
+        }
+      },
+      "removeMod": {
+        "success": {
+          "label": "Mod entfernen erfolgreich Nachricht",
+          "hint": "${user} wird mit dem Namen des zu entfernenden Mods ersetzt."
+        },
+        "notFound": {
+          "label": "Mod nicht gefunden Nachricht",
+          "hint": ""
+        },
+        "error": {
+          "label": "Mod entfernen Fehler Nachricht",
+          "hint": ""
+        }
+      },
+      "users": {},
+      "accounts": {}
+    }
+  },
   "alerts": {
     "saveSuccess": "Daten erfolgreich gespeichert",
     "saveError": "Daten konnten nicht gespeichert werden"
+  },
+  "defaults": {
+    "messages": {
+      "global": {
+        "success": "Erfolgreich ausgeführt",
+        "error": "Es ist ein Fehler aufgetreten, bitte versuche es erneut"
+      },
+      "startStream": {
+        "success": "Stream erfolgreich gestartet",
+        "error": "Fehler beim Starten des Streams"
+      },
+      "endStream": {
+        "success": "Stream erfolgreich beendet",
+        "error": "Fehler beim Beenden des Streams"
+      },
+      "raid": {
+        "success": "Folgt mit uns zu twitch.tv/${channel} für mehr Unterhaltung!",
+        "error": "Fehler bei der Erstellung des Raids zu twitch.tv/${channel}"
+      },
+      "refreshStream": {
+        "success": "Stream erfolgreich aktualisiert",
+        "try": "Versuche den stream zu aktu1alisieren ...",
+        "error": "Fehler beim Aktualisieren des Streams"
+      },
+      "bitrate": {
+        "success": "Aktuelle Bitrate: ${bitrate}|${speed} kbps",
+        "error": "Fehler beim Abrufen der Bitrate"
+      },
+      "switchScene": {
+        "success": "Szene erfolgreich zu ${scene} gewechselt",
+        "error": "Fehler beim Wechseln der Szene"
+      },
+      "setTrigger": {
+        "success": "Bitrate Trigger auf ${trigger} kbps gesetzt",
+        "error": "Fehler beim Setzen des Bitrate Triggers"
+      },
+      "setRTrigger": {
+        "success": "Bitrate Recovery Trigger auf ${trigger} kbps gesetzt",
+        "error": "Fehler beim Setzen des Bitrate Recovery Triggers"
+      },
+      "addAdmin": {
+        "success": "${user} erfolgreich als Admin hinzugefügt",
+        "alreadyAdmin": "${user} ist bereits ein Admin",
+        "error": "Fehler beim Hinzufügen von ${user} als Admin"
+      },
+      "removeAdmin": {
+        "success": "${user} erfolgreich als Admin entfernt",
+        "notFound": "Kein Admin mit dem Namen ${user} gefunden",
+        "error": "Fehler beim Entfernen von ${user} als Admin"
+      },
+      "addMod": {
+        "success": "${user} erfolgreich als Mod hinzugefügt",
+        "alreadyMod": "${user} ist bereits ein Mod",
+        "error": "Fehler beim Hinzufügen von ${user} als Mod"
+      },
+      "removeMod": {
+        "success": "${user} erfolgreich als Mod entfernt",
+        "notFound": "Kein Mod mit dem Namen ${user} gefunden",
+        "error": "Fehler beim Entfernen von ${user} als Mod"
+      }
+    }
   }
 }

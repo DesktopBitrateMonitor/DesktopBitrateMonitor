@@ -10,6 +10,7 @@ import {
   ListItemIcon,
   ListItemText,
   Popover,
+  Switch,
   Tooltip,
   Typography
 } from '@mui/material';
@@ -80,8 +81,9 @@ const NAV_ITEMS = [
 ];
 
 const PLATFORM_ROUTES = [
-  { label: 'Twitch', path: `${ACCOUNTS_PATH}/twitch`, icon: TwitchIcon },
+  { id: 'twitch', label: 'Twitch', path: `${ACCOUNTS_PATH}/twitch`, icon: TwitchIcon },
   {
+    id: 'youtube',
     label: 'YouTube (coming soon)',
     path: `${ACCOUNTS_PATH}/youtube`,
     icon: YouTubeIcon,
@@ -89,6 +91,7 @@ const PLATFORM_ROUTES = [
     development: true
   },
   {
+    id: 'kick',
     label: 'Kick (coming soon)',
     path: `${ACCOUNTS_PATH}/kick`,
     icon: SportsEsportsIcon,
@@ -113,6 +116,7 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
   const [collapsed, setCollapsed] = useState(initialCollapsed);
   const [statsAnchorEl, setStatsAnchorEl] = useState(null);
   const [accountsAnchorEl, setAccountsAnchorEl] = useState(null);
+  const activePlatform = appConfig?.activePlatform || null;
   const drawerWidth = collapsed ? DRAWER_WIDTH.collapsed : DRAWER_WIDTH.expanded;
   const widthTransition = theme.transitions.create('width', {
     easing: theme.transitions.easing.sharp,
@@ -165,6 +169,19 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
       }));
 
       await window.storeApi.set('app-config', 'layout.sidebarCollapsed', nextCollapsed);
+    },
+    [updateAppConfig]
+  );
+
+  const handleActivePlatformChange = useCallback(
+    (platformId) => async (event) => {
+      const active = event.target.checked;
+      console.log('Setting active platform to', active ? platformId : null);
+      updateAppConfig((prev) => ({
+        ...(prev || {}),
+        activePlatform: platformId
+      }));
+      await window.storeApi.set('app-config', 'activePlatform', platformId);
     },
     [updateAppConfig]
   );
@@ -321,20 +338,36 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
             >
               <List disablePadding sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                 {PLATFORM_ROUTES.map((platform) => {
-                  if(platform.development && !isDev) return null;
+                  if (platform.development && !isDev) return null;
                   const Icon = platform.icon;
                   return (
-                    <ListItemButton
-                      key={platform.path}
-                      disabled={platform.disabled}
-                      onClick={() => handleSelectPlatform(platform.path)}
-                      sx={{ borderRadius: 1, px: 1.5, py: 1 }}
+                    <Box
+                      key={platform.id}
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        px: 1
+                      }}
                     >
-                      <ListItemIcon sx={{ minWidth: 36 }}>
-                        <Icon fontSize="small" />
-                      </ListItemIcon>
-                      <ListItemText primary={platform.label} />
-                    </ListItemButton>
+                      <Switch
+                        key={platform.id}
+                        onChange={handleActivePlatformChange(platform.id)}
+                        checked={activePlatform === platform.id}
+                        disabled={activePlatform === platform.id}
+                      />
+                      <ListItemButton
+                        key={platform.path}
+                        disabled={platform.disabled}
+                        onClick={() => handleSelectPlatform(platform.path)}
+                        sx={{ borderRadius: 1, px: 1.5, py: 1 }}
+                      >
+                        <ListItemIcon sx={{ minWidth: 36 }}>
+                          <Icon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText primary={platform.label} />
+                      </ListItemButton>
+                    </Box>
                   );
                 })}
               </List>

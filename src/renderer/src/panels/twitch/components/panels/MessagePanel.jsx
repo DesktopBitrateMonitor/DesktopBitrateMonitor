@@ -3,8 +3,18 @@ import CollapsibleCard from '../../../../components/functional/CollapsibleCard';
 import { Switch, TextField, Typography } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import InputEndAdornment from '../../../../components/feedback/InputEndAdornment';
+import { useTranslation } from 'react-i18next';
 
-const MessagePanel = ({ message, onChange, collapsible = true, expanded, onExpandedChange }) => {
+const MessagePanel = ({
+  message,
+  onChange,
+  collapsible = true,
+  expanded,
+  onExpandedChange,
+  transLabel,
+  transHint
+}) => {
+  const { t } = useTranslation();
   const [messageError, setMessageError] = React.useState('');
   const [messageDraft, setMessageDraft] = React.useState(message.message);
   const [oldMessageDraft, setOldMessageDraft] = React.useState(message.message);
@@ -42,8 +52,8 @@ const MessagePanel = ({ message, onChange, collapsible = true, expanded, onExpan
 
   return (
     <CollapsibleCard
-      title={message.label}
-      subtitle={'Message are posted to the chat, if the event happens'}
+      title={t(transLabel)}
+      subtitle={t('platforms.messages.subtitle')}
       actions={
         <>
           <Typography variant="body2" color="text.secondary">
@@ -59,11 +69,11 @@ const MessagePanel = ({ message, onChange, collapsible = true, expanded, onExpan
     >
       <TextField
         fullWidth
-        label={message.label}
+        label={t(transLabel)}
         value={messageDraft}
         onChange={handleMessageChange}
         error={!!messageError}
-        helperText={!messageError ? message.hint : messageError}
+        helperText={!messageError ? t(transHint) : messageError}
         onKeyDown={(event) => {
           if (event.key === 'Enter') {
             event.preventDefault();
@@ -74,7 +84,7 @@ const MessagePanel = ({ message, onChange, collapsible = true, expanded, onExpan
           input: {
             endAdornment: isDirty && (
               <InputEndAdornment
-                title="Click or press Enter to save changes"
+                title={t('platforms.messages.save')}
                 placement="top-start"
                 open={Boolean(isDirty)}
                 color="success"

@@ -38,6 +38,8 @@ function createWindow(displayIsAvailable = false) {
     }
   });
 
+  console.log(app.getLocale());
+
   mainWindow.on('ready-to-show', () => {
     // Automatically open DevTools in development mode
     if (is.dev) {

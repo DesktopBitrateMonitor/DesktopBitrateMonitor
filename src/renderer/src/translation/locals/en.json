@@ -59,8 +59,249 @@
       "fileSizeEmpty": "File size cannot be empty."
     }
   },
+  "platforms": {
+    "twitch": {},
+    "youtube":{},
+    "kick":{},
+    "commands": {},
+    "messages": {
+      "searchBox": 
+      {
+        "label": "Search messages",
+        "placeholder": "Title or text"
+      },
+      "subtitle": "Message to post in the chat",
+      "save": "Click or press Enter to save",
+      "global": {
+        "success": {
+          "label": "General Success Message",
+          "hint": ""
+        },
+        "error": {
+          "label": "General Error Message",
+          "hint": ""
+        }
+      },
+      "startStream": {
+        "success": {
+          "label": "Stream Started Message",
+          "hint": ""
+        },
+        "error": {
+          "label": "Stream Start Error Message",
+          "hint": ""
+        }
+      },
+      "endStream": {
+        "success": {
+          "label": "Stream Ended Message",
+          "hint": ""
+        },
+        "error": {
+          "label": "Stream End Error Message",
+          "hint": ""
+        }
+      },
+      "raid": {
+        "success": {
+          "label": "Raid Success Message",
+          "hint": "${channel} will be replaced with the name of the raided channel."
+        },
+        "error": {
+          "label": "Raid Error Message",
+          "hint": "${channel} will be replaced with the name of the raided channel."
+        }
+      },
+      "refreshStream": {
+        "success": {
+          "label": "Refresh Stream Success Message",
+          "hint": ""
+        },
+        "try": {
+          "label": "Refresh Stream Attempt Message",
+          "hint": ""
+        },
+        "error": {
+          "label": "Refresh Stream Error Message",
+          "hint": ""
+        }
+      },
+      "bitrate": {
+        "success": {
+          "label": "Bitrate Success Message",
+          "hint": "${bitrate} will be replaced with the current bitrate and ${speed} with the current speed."
+        },
+        "error": {
+          "label": "Bitrate Error Message",
+          "hint": ""
+        }
+      },
+      "switchScene": {
+        "success": {
+          "label": "Switch Scene Success Message",
+          "hint": "${scene} will be replaced with the name of the switched scene."
+        },
+        "error": {
+          "label": "Switch Scene Error Message",
+          "hint": "${scene} will be replaced with the name of the switched scene."
+        }
+      },
+      "setTrigger": {
+        "success": {
+          "label": "Set Trigger Success Message",
+          "hint": "${trigger} will be replaced with the set bitrate trigger in kbps."
+        },
+        "error": {
+          "label": "Set Trigger Error Message",
+          "hint": "${trigger} will be replaced with the set bitrate trigger in kbps."
+        }
+      },
+      "setRTrigger": {
+        "success": {
+          "label": "Set Recovery Trigger Success Message",
+          "hint": "${trigger} will be replaced with the set bitrate recovery trigger in kbps."
+        },
+        "error": {
+          "label": "Set Recovery Trigger Error Message",
+          "hint": "${trigger} will be replaced with the set bitrate recovery trigger in kbps."
+        }
+      },
+      "addAdmin": {
+        "success": {
+          "label": "Add Admin Success Message",
+          "hint": "${user} will be replaced with the name of the admin being added."
+        },
+        "alreadyAdmin": {
+          "label": "Admin Already Exists Message",
+          "hint": "${user} will be replaced with the name of the admin being added."
+        },
+        "error": {
+          "label": "Add Admin Error Message",
+          "hint": "${user} will be replaced with the name of the admin being added."
+        }
+      },
+      "removeAdmin": {
+        "success": {
+          "label": "Remove Admin Success Message",
+          "hint": "${user} will be replaced with the name of the admin being removed."
+        },
+        "notFound": {
+          "label": "Remove Admin Not Found Message",
+          "hint": ""
+        },
+        "error": {
+          "label": "Remove Admin Error Message",
+          "hint": ""
+        }
+      },
+      "addMod": {
+        "success": {
+          "label": "Add Mod Success Message",
+          "hint": "${user} will be replaced with the name of the mod being added."
+        },
+        "alreadyMod": {
+          "label": "Mod Already Exists Message",
+          "hint": "${user} will be replaced with the name of the mod being added."
+        },
+        "error": {
+          "label": "Add Mod Error Message",
+          "hint": ""
+        }
+      },
+      "removeMod": {
+        "success": {
+          "label": "Remove Mod Success Message",
+          "hint": "${user} will be replaced with the name of the mod being removed."
+        },
+        "notFound": {
+          "label": "Remove Mod Not Found Message",
+          "hint": "${user} will be replaced with the name of the mod being removed."
+        },
+        "error": {
+          "label": "Remove Mod Error Message",
+          "hint": ""
+        }
+      },
+      "users": {},
+      "accounts": {}
+    },
+    "alerts": {
+      "saveSuccess": "Data saved successfully",
+      "saveError": "Failed to save data"
+    }
+  },
   "alerts": {
     "saveSuccess": "Data saved successfully",
     "saveError": "Failed to save data"
+  },
+  "defaults": {
+    "messages": {
+      "global": {
+        "success": "Operation completed successfully!",
+        "error": "Something went wrong! Please try again."
+      },
+      "startStream": {
+        "success": "Stream started successfully!",
+        "error": "Failed to start the stream."
+      },
+      "endStream": {
+        "success": "Stream has ended. Thanks for watching!",
+        "error": "Failed to end the stream."
+      },
+      "raid": {
+        "success": "Follow us to twitch.tv/${channel} for more content!",
+        "error": "Failed to raid twitch.tv/${channel}",
+        "hint": "${channel} will be replaced with the raided channel name."
+      },
+      "refreshStream": {
+        "success": "Stream refreshed successfully!",
+        "try": "Trying to refresh the stream...",
+        "error": "Failed to refresh the stream."
+      },
+      "bitrate": {
+        "success": "Current bitrate is ${bitrate}|${speed} kbps.",
+        "error": "Failed to retrieve current bitrate.",
+        "hint": "${bitrate} will be replaced with the current bitrate and ${speed} with the current speed."
+      },
+      "switchScene": {
+        "success": "Switched to scene: ${scene}!",
+        "error": "Failed to switch to scene: ${scene}!",
+        "hint": "${scene} will be replaced with the name of the switched scene."
+      },
+      "setTrigger": {
+        "success": "Bitrate trigger set to ${trigger} kbps!",
+        "error": "Failed to set bitrate trigger to ${trigger} kbps!",
+        "hint": "${trigger} will be replaced with the set bitrate trigger."
+      },
+      "setRTrigger": {
+        "success": "Bitrate recovery trigger set to ${rtrigger} kbps!",
+        "error": "Failed to set bitrate recovery trigger to ${rtrigger} kbps!",
+        "hint": "${rtrigger} will be replaced with the set bitrate recovery trigger."
+      },
+      "addAdmin": {
+        "success": "User ${user} has been added as an admin.",
+        "alreadyAdmin": "User ${user} is already an admin.",
+        "error": "Failed to add user ${user} as an admin.",
+        "hint": "${user} will be replaced with the admin to add username."
+      },
+      "removeAdmin": {
+        "success": "User ${user} has been removed from admins.",
+        "notFound": "No admin found with username ${user}.",
+        "error": "Failed to remove user ${user} from admins.",
+        "hint": "${user} will be replaced with the admin to remove username."
+      },
+      "addMod": {
+        "success": "User ${user} has been added as a moderator.",
+        "alreadyMod": "User ${user} is already a moderator.",
+        "error": "Failed to add user ${user} as a moderator.",
+        "hint": "${user} will be replaced with the moderator to add username."
+      },
+      "removeMod": {
+        "success": "User ${user} has been removed from moderators.",
+        "notFound": "No moderator found with username ${user}.",
+        "error": "Failed to remove user ${user} from moderators.",
+        "hint": "${user} will be replaced with the moderator to remove username."
+      }
+    }
   }
 }

@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useMessagesConfigStore } from '../../../contexts/DataContext';
-import { Box, Stack, Typography } from '@mui/material';
+import { Box, Stack, TextField, Typography } from '@mui/material';
 import RoleFilterControls from '../../../components/functional/RoleFilterControls';
 import RoleSortControls from '../../../components/functional/RoleSortControls';
 import LayoutToggle from '../../../components/functional/LayoutToggle';
 import MessagePanel from './panels/MessagePanel';
 import { sortTwitchCommands } from '../../../../../scripts/lib/shared-functions';
 import { useAlert } from '../../../contexts/AlertContext';
+import { useTranslation } from 'react-i18next';
 
 const MessageSettings = () => {
   const ALLOWED_SORTS = ['none', 'enabled', 'disabled'];
@@ -14,12 +15,14 @@ const MessageSettings = () => {
   const { messagesConfig, updateMessagesConfig } = useMessagesConfigStore();
 
   const { showAlert } = useAlert();
+  const { t } = useTranslation();
 
   const [layoutMode, setLayoutMode] = React.useState('grid');
   const [sortMode, setSortMode] = React.useState('none');
   const [filterMode, setFilterMode] = React.useState('all');
   const [displayOrder, setDisplayOrder] = React.useState([]);
   const [collapsedIds, setCollapsedIds] = React.useState([]);
+  const [searchTerm, setSearchTerm] = React.useState('');
 
   const messages = useMemo(() => {
     const list = Array.isArray(messagesConfig?.messages) ? messagesConfig.messages : [];
@@ -199,6 +202,25 @@ const MessageSettings = () => {
     [messages, persistMessages]
   );
 
+  const filteredMessages = useMemo(() => {
+    const normalizedSearch = searchTerm.trim().toLowerCase();
+    return messages.filter((msg) => {
+      const matchesFilter = (() => {
+        if (filterMode === 'all') return true;
+        if (filterMode === 'enabled') return Boolean(msg.enabled);
+        if (filterMode === 'disabled') return !Boolean(msg.enabled);
+        return true;
+      })();
+
+      const matchesSearch =
+        !normalizedSearch ||
+        (msg.label || '').toLowerCase().includes(normalizedSearch) ||
+        (msg.message || '').toLowerCase().includes(normalizedSearch);
+
+      return matchesFilter && matchesSearch;
+    });
+  }, [messages, filterMode, searchTerm]);
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
       <Box
@@ -220,6 +242,14 @@ const MessageSettings = () => {
         </Box>
 
         <Stack direction="row" spacing={1.5} alignItems="center">
+          <TextField
+            size="small"
+            label={t('platforms.messages.searchBox.label')}
+            placeholder={t('platforms.messages.searchBox.placeholder')}
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+            sx={{ minWidth: { xs: '100%', sm: 240 } }}
+          />
           <RoleFilterControls
             value={filterMode}
             onChange={handleFilterChange}
@@ -251,23 +281,18 @@ const MessageSettings = () => {
                 }
         }}
       >
-        {messages
-          .filter((msg) => {
-            if (filterMode === 'all') return true;
-            if (filterMode === 'enabled') return Boolean(msg.enabled);
-            if (filterMode === 'disabled') return !Boolean(msg.enabled);
-            return true;
-          })
-          .map((message) => (
-            <MessagePanel
-              key={message.id}
-              message={message}
-              onChange={handleMessageChange}
-              collapsible={layoutMode === 'list'}
-              expanded={!collapsedIds.includes(message.id)}
-              onExpandedChange={() => toggleCollapsed(message.id)}
-            />
-          ))}
+        {filteredMessages.map((message) => (
+          <MessagePanel
+            key={message.id}
+            message={message}
+            transLabel={`platforms.messages.${message.action}.${message.event}.label`}
+            transHint={`platforms.messages.${message.action}.${message.event}.hint`}
+            onChange={handleMessageChange}
+            collapsible={layoutMode === 'list'}
+            expanded={!collapsedIds.includes(message.id)}
+            onExpandedChange={() => toggleCollapsed(message.id)}
+          />
+        ))}
       </Box>
     </Box>
   );

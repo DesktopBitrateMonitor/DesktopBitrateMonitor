@@ -4,8 +4,12 @@ import {
   getCurrentScene,
   getSceneList,
   getStreamState,
+  refreshMediaSources,
   setCurrentProgramScene
 } from '../streaming-software/obs-api';
+import { twitchMessageService } from '../twitch/message-service/chat-messages';
+
+// TODO: Implement different streaming software support
 
 const isDev = import.meta.env.DEV;
 
@@ -34,7 +38,7 @@ const streamStateCache = {
   ttlMs: 500
 };
 
-const { switcherConfig } = injectDefaults();
+const { appConfig, switcherConfig } = injectDefaults();
 
 // Hysteresis helper so we don't bounce bands when rTrigger > trigger.
 const computeBand = (bitrate, t, previous) => {
@@ -59,6 +63,9 @@ export async function switcherService(data, mainWindow = null) {
 
   const { bitrate, speed, uptime } = data.data;
   const switcherSettings = switcherConfig.get('');
+  const appSettings = appConfig.get('');
+
+  const platform = appSettings.activePlatform;
 
   const vars = {
     switcherEnabled: switcherSettings.switcherEnabled,
@@ -157,8 +164,15 @@ export async function switcherService(data, mainWindow = null) {
 
         const res = await setCurrentProgramScene(targetScene);
         if (!res.success) {
-          Logger.error(`Failed to switch to ${key} scene`);
+          Logger.error(`Failed to switch to ${targetScene} scene`);
           return;
+        }
+
+        if (key === 'live') {
+          const refRes = await refreshMediaSources();
+          if (!refRes.success) {
+            Logger.error('Failed to refresh media sources after switching to live scene');
+          }
         }
 
         const counterKey =
@@ -168,6 +182,16 @@ export async function switcherService(data, mainWindow = null) {
 
         if (vars.enableChatNotifications) {
           Logger.log(`Switched to ${key.toUpperCase()} scene`);
+
+          if (platform === 'twitch') {
+            await twitchMessageService({
+              action: 'switchScene',
+              event: 'success',
+              variables: { scene: targetScene }
+            });
+            Logger.log(`Automatic switch to scene ${key}`);
+          }
+
           // Schedule chat notification here (after successful switch)
         }
       },

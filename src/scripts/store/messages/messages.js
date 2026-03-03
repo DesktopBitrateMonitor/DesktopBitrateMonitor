@@ -1,304 +1,265 @@
+import { app } from 'electron';
 import generateId from '../../lib/id-generator';
+import { readJsonData } from '../../lib/json-reader';
+import de from '../../../renderer/src/translation/locals/de.json';
+import en from '../../../renderer/src/translation/locals/en.json';
 
-export const messages = [
-  {
-    id: generateId(),
-    group: 'global',
-    action: 'global',
-    event: 'success',
-    enabled: true,
-    label: 'Global Success Message',
-    message: 'Operation completed successfully!',
-    hint: null
-  },
-  {
-    id: generateId(),
-    group: 'global',
-    action: 'global',
-    event: 'error',
-    enabled: true,
-    label: 'Global Error Message',
-    message: 'Something went wrong! Please try again.',
-    hint: null
-  },
-  {
-    id: generateId(),
-    group: 'stream',
-    action: 'startStream',
-    event: 'success',
-    enabled: true,
-    label: 'Stream Started Message',
-    message: 'Stream started successfully!',
-    hint: null
-  },
-  {
-    id: generateId(),
-    group: 'stream',
-    action: 'startStream',
-    event: 'error',
-    enabled: true,
-    label: 'Stream Start Failure Message',
-    message: 'Failed to start the stream!',
-    hint: null
-  },
-  {
-    id: generateId(),
-    group: 'stream',
-    action: 'endStream',
-    event: 'success',
-    enabled: true,
-    label: 'Stream Ended Message',
-    message: 'Stream has ended. Thanks for watching!',
-    hint: null
-  },
-  {
-    id: generateId(),
-    group: 'stream',
-    action: 'endStream',
-    event: 'error',
-    enabled: true,
-    label: 'Stream End Failure Message',
-    message: 'Failed to end the stream!',
-    hint: null
-  },
-  {
-    id: generateId(),
-    group: 'stream',
-    action: 'raid',
-    event: 'success',
-    enabled: true,
-    label: 'Raid Success Message',
-    message: 'Follow us to twitch.tv/${channel} for more content!',
-    hint: '${channel} will be replaced with the raided channel name.'
-  },
-  {
-    id: generateId(),
-    group: 'stream',
-    action: 'raid',
-    event: 'error',
-    enabled: true,
-    label: 'Raid Failure Message',
-    message: 'Failed to raid twitch.tv/${channel}!',
-    hint: '${channel} will be replaced with the raided channel name.'
-  },
-  {
-    id: generateId(),
-    group: 'stream',
-    action: 'refreshStream',
-    event: 'try',
-    enabled: true,
-    label: 'Refresh Stream Attempt Message',
-    message: 'Try to refresh the stream!',
-    hint: null
-  },
-  {
-    id: generateId(),
-    group: 'stream',
-    action: 'refreshStream',
-    event: 'success',
-    enabled: true,
-    label: 'Refresh Stream Success Message',
-    message: 'Stream refreshed successfully!',
-    hint: null
-  },
-  {
-    id: generateId(),
-    group: 'stream',
-    action: 'refreshStream',
-    event: 'error',
-    enabled: true,
-    label: 'Refresh Stream Failure Message',
-    message: 'Failed to refresh the stream!',
-    hint: null
-  },
-  {
-    id: generateId(),
-    group: 'stream',
-    action: 'bitrate',
-    event: 'success',
-    enabled: true,
-    label: 'Bitrate Message',
-    message: 'Current bitrate is ${bitrate}|${speed} kbps.',
-    hint: '${bitrate} will be replaced with the current bitrate. ${speed} will be replaced with the current transmition speed.'
-  },
-  {
-    id: generateId(),
-    group: 'stream',
-    action: 'bitrate',
-    event: 'error',
-    enabled: true,
-    label: 'Bitrate Message',
-    message: 'Failed to retrieve current bitrate.',
-    hint: null
-  },
-  {
-    id: generateId(),
-    group: 'switcher',
-    action: 'switchScene',
-    event: 'success',
-    enabled: true,
-    label: 'Switch Scene Message',
-    message: 'Switched to scene: ${scene}!',
-    hint: '${scene} will be replaced with the switched scene name.'
-  },
-  {
-    id: generateId(),
-    group: 'switcher',
-    action: 'switchScene',
-    event: 'error',
-    enabled: true,
-    label: 'Switch Scene Failure Message',
-    message: 'Failed to switch to scene: ${scene}!',
-    hint: '${scene} will be replaced with the switched scene name.'
-  },
-  {
-    id: generateId(),
-    group: 'switcher',
-    action: 'setTrigger',
-    event: 'success',
-    enabled: true,
-    label: 'Bitrate Trigger Success Message',
-    message: 'Bitrate trigger set to ${trigger} kbps!',
-    hint: '${trigger} will be replaced with the set trigger value.'
-  },
-  {
-    id: generateId(),
-    group: 'switcher',
-    action: 'setTrigger',
-    event: 'error',
-    enabled: true,
-    label: 'Bitrate Trigger Error Message',
-    message: ' Failed to set bitrate trigger to ${trigger} kbps!',
-    hint: '${trigger} will be replaced with the set trigger value.'
-  },
-  {
-    id: generateId(),
-    group: 'switcher',
-    action: 'setRTrigger',
-    event: 'success',
-    enabled: true,
-    label: 'Bitrate Return Trigger Success Message',
-    message: 'Bitrate return trigger set to ${rtrigger} kbps!',
-    hint: '${rtrigger} will be replaced with the set return trigger value.'
-  },
-  {
-    id: generateId(),
-    group: 'switcher',
-    action: 'setRTrigger',
-    event: 'error',
-    enabled: true,
-    label: 'Bitrate Return Trigger Error Message',
-    message: 'Failed to set bitrate return trigger to ${rtrigger} kbps!',
-    hint: '${rtrigger} will be replaced with the set return trigger value.'
-  },
-  {
-    id: generateId(),
-    group: 'user',
-    action: 'addAdmin',
-    event: 'success',
-    enabled: true,
-    label: 'Add Admin Message',
-    message: 'User ${user} has been added as an admin.',
-    hint: '${user} will be replaced with the added admin username.'
-  },
-  {
-    id: generateId(),
-    group: 'user',
-    action: 'addAdmin',
-    event: 'error',
-    enabled: true,
-    label: 'Add Admin Error Success Message',
-    message: 'Failed to add user ${user} as an admin.',
-    hint: '${user} will be replaced with the added admin username.'
-  },
-  {
-    id: generateId(),
-    group: 'user',
-    action: 'addAdmin',
-    event: 'alreadyAdmin',
-    enabled: true,
-    label: 'Already Admin Message',
-    message: 'User ${user} is already an admin.',
-    hint: '${user} will be replaced with the added admin username.'
-  },
-  {
-    id: generateId(),
-    group: 'user',
-    action: 'removeAdmin',
-    event: 'success',
-    enabled: true,
-    label: 'Remove Admin Success Message',
-    message: 'User ${user} has been removed from admins.',
-    hint: '${user} will be replaced with the removed admin username.'
-  },
-  {
-    id: generateId(),
-    group: 'user',
-    action: 'removeAdmin',
-    event: 'error',
-    enabled: true,
-    label: 'Remove Admin Error Message',
-    message: 'Failed to remove user ${user} from admins.',
-    hint: '${user} will be replaced with the removed admin username.'
-  },
-  {
-    id: generateId(),
-    group: 'user',
-    action: 'removeAdmin',
-    event: 'notFound',
-    enabled: true,
-    label: 'Admin Not Found Message',
-    message: 'No admin found with username ${user}.',
-    hint: '${user} will be replaced with the removed admin username.'
-  },
-  {
-    id: generateId(),
-    group: 'user',
-    action: 'addMod',
-    event: 'success',
-    enabled: true,
-    label: 'Add Mod Success Message',
-    message: 'User ${user} has been added as a moderator.',
-    hint: '${user} will be replaced with the added moderator username.'
-  },
-  {
-    id: generateId(),
-    group: 'user',
-    action: 'addMod',
-    event: 'error',
-    enabled: true,
-    label: 'Add Mod Error Message',
-    message: 'Failed to add user ${user} as a moderator.',
-    hint: '${user} will be replaced with the added moderator username.'
-  },
-  {
-    id: generateId(),
-    group: 'user',
-    action: 'removeMod',
-    event: 'success',
-    enabled: true,
-    label: 'Remove Mod Success Message',
-    message: 'User ${user} has been removed from moderators.',
-    hint: '${user} will be replaced with the removed moderator username.'
-  },
-  {
-    id: generateId(),
-    group: 'user',
-    action: 'removeMod',
-    event: 'alreadyMod',
-    enabled: true,
-    label: 'Already Mod Message',
-    message: 'User ${user} is already a moderator.',
-    hint: '${user} will be replaced with the removed moderator username.'
-  },
-  {
-    id: generateId(),
-    group: 'user',
-    action: 'removeMod',
-    event: 'notFound',
-    enabled: true,
-    label: 'Mod Not Found Message',
-    message: 'No moderator found with username ${user}.',
-    hint: '${user} will be replaced with the removed moderator username.'
-  }
-];
+const langs = { de, en };
+
+const normalizeLocale = (locale) => (locale || 'en').toLowerCase().split('-')[0];
+
+const pickLocale = (locale) => {
+  const normalized = normalizeLocale(locale);
+  return langs[normalized] || langs.en;
+};
+
+const getMessage = (lng, key, fallbackValue) =>
+  readJsonData({ lng, fallbackLng: langs.en, key, fallbackValue });
+
+export const buildMessages = (locale) => {
+  const lng = pickLocale(locale ?? app?.getLocale?.());
+  const gm = (key, fallback) => getMessage(lng, key, fallback);
+
+  return [
+    {
+      id: generateId(),
+      group: 'global',
+      action: 'global',
+      event: 'success',
+      enabled: true,
+      message: gm('defaults.messages.global.success')
+    },
+    {
+      id: generateId(),
+      group: 'global',
+      action: 'global',
+      event: 'error',
+      enabled: true,
+      message: gm('defaults.messages.global.error')
+    },
+    {
+      id: generateId(),
+      group: 'stream',
+      action: 'startStream',
+      event: 'success',
+      enabled: true,
+      message: gm('defaults.messages.startStream.success')
+    },
+    {
+      id: generateId(),
+      group: 'stream',
+      action: 'startStream',
+      event: 'error',
+      enabled: true,
+      message: gm('defaults.messages.startStream.error')
+    },
+    {
+      id: generateId(),
+      group: 'stream',
+      action: 'endStream',
+      event: 'success',
+      enabled: true,
+      message: gm('defaults.messages.endStream.success')
+    },
+    {
+      id: generateId(),
+      group: 'stream',
+      action: 'endStream',
+      event: 'error',
+      enabled: true,
+      message: gm('defaults.messages.endStream.error')
+    },
+    {
+      id: generateId(),
+      group: 'stream',
+      action: 'raid',
+      event: 'success',
+      enabled: true,
+      message: gm('defaults.messages.raid.success')
+    },
+    {
+      id: generateId(),
+      group: 'stream',
+      action: 'raid',
+      event: 'error',
+      enabled: true,
+      message: gm('defaults.messages.raid.error')
+    },
+    {
+      id: generateId(),
+      group: 'stream',
+      action: 'refreshStream',
+      event: 'try',
+      enabled: true,
+      message: gm('defaults.messages.refreshStream.try')
+    },
+    {
+      id: generateId(),
+      group: 'stream',
+      action: 'refreshStream',
+      event: 'success',
+      enabled: true,
+      message: gm('defaults.messages.refreshStream.success')
+    },
+    {
+      id: generateId(),
+      group: 'stream',
+      action: 'refreshStream',
+      event: 'error',
+      enabled: true,
+      message: gm('defaults.messages.refreshStream.error')
+    },
+    {
+      id: generateId(),
+      group: 'stream',
+      action: 'bitrate',
+      event: 'success',
+      enabled: true,
+      message: gm('defaults.messages.bitrate.success')
+    },
+    {
+      id: generateId(),
+      group: 'stream',
+      action: 'bitrate',
+      event: 'error',
+      enabled: true,
+      message: gm('defaults.messages.bitrate.error')
+    },
+    {
+      id: generateId(),
+      group: 'switcher',
+      action: 'switchScene',
+      event: 'success',
+      enabled: true,
+      message: gm('defaults.messages.switchScene.success')
+    },
+    {
+      id: generateId(),
+      group: 'switcher',
+      action: 'switchScene',
+      event: 'error',
+      enabled: true,
+      message: gm('defaults.messages.switchScene.error')
+    },
+    {
+      id: generateId(),
+      group: 'switcher',
+      action: 'setTrigger',
+      event: 'success',
+      enabled: true,
+      message: gm('defaults.messages.setTrigger.success')
+    },
+    {
+      id: generateId(),
+      group: 'switcher',
+      action: 'setTrigger',
+      event: 'error',
+      enabled: true,
+      message: gm('defaults.messages.setTrigger.error')
+    },
+    {
+      id: generateId(),
+      group: 'switcher',
+      action: 'setRTrigger',
+      event: 'success',
+      enabled: true,
+      message: gm('defaults.messages.setRTrigger.success')
+    },
+    {
+      id: generateId(),
+      group: 'switcher',
+      action: 'setRTrigger',
+      event: 'error',
+      enabled: true,
+      message: gm('defaults.messages.setRTrigger.error')
+    },
+    {
+      id: generateId(),
+      group: 'user',
+      action: 'addAdmin',
+      event: 'success',
+      enabled: true,
+      message: gm('defaults.messages.addAdmin.success')
+    },
+    {
+      id: generateId(),
+      group: 'user',
+      action: 'addAdmin',
+      event: 'error',
+      enabled: true,
+      message: gm('defaults.messages.addAdmin.error')
+    },
+    {
+      id: generateId(),
+      group: 'user',
+      action: 'addAdmin',
+      event: 'alreadyAdmin',
+      enabled: true,
+      message: gm('defaults.messages.addAdmin.alreadyAdmin')
+    },
+    {
+      id: generateId(),
+      group: 'user',
+      action: 'removeAdmin',
+      event: 'success',
+      enabled: true,
+      message: gm('defaults.messages.removeAdmin.success')
+    },
+    {
+      id: generateId(),
+      group: 'user',
+      action: 'removeAdmin',
+      event: 'error',
+      enabled: true,
+      message: gm('defaults.messages.removeAdmin.error')
+    },
+    {
+      id: generateId(),
+      group: 'user',
+      action: 'removeAdmin',
+      event: 'notFound',
+      enabled: true,
+      message: gm('defaults.messages.removeAdmin.notFound')
+    },
+    {
+      id: generateId(),
+      group: 'user',
+      action: 'addMod',
+      event: 'success',
+      enabled: true,
+      message: gm('defaults.messages.addMod.success')
+    },
+    {
+      id: generateId(),
+      group: 'user',
+      action: 'addMod',
+      event: 'error',
+      enabled: true,
+      message: gm('defaults.messages.addMod.error')
+    },
+    {
+      id: generateId(),
+      group: 'user',
+      action: 'addMod',
+      event: 'alreadyMod',
+      enabled: true,
+      message: gm('defaults.messages.addMod.alreadyMod')
+    },
+    {
+      id: generateId(),
+      group: 'user',
+      action: 'removeMod',
+      event: 'success',
+      enabled: true,
+      message: gm('defaults.messages.removeMod.success')
+    },
+    {
+      id: generateId(),
+      group: 'user',
+      action: 'removeMod',
+      event: 'notFound',
+      enabled: true,
+      message: gm('defaults.messages.removeMod.notFound')
+    }
+  ];
+};
