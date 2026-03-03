@@ -2,6 +2,20 @@
   "app": {
     "name": "Desktop Bitrate Monitor"
   },
+    "authorization": {
+    "twitch": {
+      "header": "Twitch Authentication Successful",
+      "description": "You can close this window now"
+    },
+    "kick": {
+      "header": "Kick Authentication Successful",
+      "description": "You can close this window now"
+    },
+    "youtube": {
+      "header": "YouTube Authentication Successful",
+      "description": "You can close this window now"
+    }
+  },
   "welcome": {
     "title": "Desktop Bitrate Monitor",
     "description": "Initializing data sources... the dashboard will appear automatically when the startup checks finish.",

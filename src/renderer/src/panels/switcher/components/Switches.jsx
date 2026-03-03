@@ -51,7 +51,7 @@ const Switches = ({ collapsedIds, toggleCollapsed }) => {
       <CollapsibleCard
         title={'Switcher state Settings'}
         subtitle={'Setup the switcher enabled states'}
-        expanded={collapsedIds.includes('switches')}
+        expanded={!collapsedIds.includes('switches')}
         onExpandedChange={() => toggleCollapsed('switches')}
       >
         {Object.entries(switchesData).map(([key, value]) => (

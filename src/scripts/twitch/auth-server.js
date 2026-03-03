@@ -1,11 +1,12 @@
-import { ipcMain, BrowserWindow } from 'electron';
+import { BrowserWindow } from 'electron';
 import Logger from '../logging/logger';
 import { injectDefaults } from '../store/defaults';
 import { userAuthorization, authAPI } from './twitch-api';
 import { connectToEventSubs, disconnectEventSubs } from './event-subscriptions/eventsubs';
 import img from '../../assets/icon.png';
+import { getTranslationData } from '../lib/translation-picker';
 
-const { twitchAccountsConfig } = injectDefaults();
+const { appConfig, twitchAccountsConfig } = injectDefaults();
 
 const express = require('express');
 const app = express();
@@ -14,8 +15,8 @@ app.use(express.json());
 const port = import.meta.env.VITE_SERVERPORT;
 const client_id = import.meta.env.VITE_TWITCHCLIENTID;
 const client_secret = import.meta.env.VITE_TWITCHCLIENTSECRET;
-const bot_scopes = import.meta.env.VITE_BOT_SCOPES;
-const broadcaster_scopes = import.meta.env.VITE_BROADCASTER_SCOPES;
+const bot_scopes = import.meta.env.VITE_TWITCHBOT_SCOPES;
+const broadcaster_scopes = import.meta.env.VITE_TWITCHBROADCASTER_SCOPES;
 
 app.listen(port, () => {
   console.log(`Auth server listening at http://localhost:${port}`);
@@ -72,6 +73,7 @@ app.get('/oauth', async (req, res) => {
     }
 
     // Send data to the main process
+    // Search for the main window in all open windows. It should be only one window open, so it should be safe to take the first one.
     const mainWindow = BrowserWindow.getAllWindows()[0];
     mainWindow.webContents.send('send-oauth-data', { userType: type, data });
 
@@ -84,9 +86,11 @@ app.get('/oauth', async (req, res) => {
       connectEventSubs();
     }
 
+    const lng = appConfig.get('language') || 'en';
+
     res.send(`
       <!doctype html>
-      <html lang="en">
+      <html lang="${lng}">
         <head>
           <meta charset="UTF-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -97,8 +101,8 @@ app.get('/oauth', async (req, res) => {
             <div>
               <h1 class="type">${type.charAt(0).toUpperCase() + type.slice(1)}</h1>
             </div>
-            <h1 class="header">Authorization To Twitch Successful</h1>
-            <p class="sub">You can close this window now</p>
+            <h1 class="header">${getTranslationData({ lng, key: 'authorization.twitch.header' })}</h1>
+            <p class="sub">${getTranslationData({ lng, key: 'authorization.twitch.description' })}</p>
           </div>
         </body>
         <style>

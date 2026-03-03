@@ -44,7 +44,6 @@ const SwitcherSettings = () => {
 
   const toggleCollapsed = useCallback(
     async (card) => {
-      console.log('Toggling collapsed for card:', card);
       const next = collapsedIds.includes(card)
         ? collapsedIds.filter((id) => id !== card)
         : [...collapsedIds, card];

@@ -132,7 +132,7 @@ const Triggers = ({ collapsedIds, toggleCollapsed }) => {
     <CollapsibleCard
       title={'Triggers Settings'}
       subtitle={'Setup the trigger values for the switcher'}
-      expanded={collapsedIds.includes('trigger')}
+      expanded={!collapsedIds.includes('trigger')}
       onExpandedChange={() => toggleCollapsed('trigger')}
     >
       {TRIGGER_KEYS.map((key) => (

@@ -2,6 +2,20 @@
   "app": {
     "name": "Desktop Bitratenmonitor"
   },
+  "authorization": {
+    "twitch": {
+      "header": "Twitch Authentifizierung erfolgreich",
+      "description": "Fenster kann jetzt geschlossen werden"
+    },
+    "kick": {
+      "header": "Kick Authentifizierung erfolgreich",
+      "description": "Fenster kann jetzt geschlossen werden"
+    },
+    "youtube": {
+      "header": "YouTube Authentifizierung erfolgreich",
+      "description": "Fenster kann jetzt geschlossen werden"
+    }
+  },
   "welcome": {
     "title": "Desktop Bitratenmonitor",
     "description": "Datenquellen werden initialisiert ... das Dashboard erscheint automatisch, sobald die Startprüfungen abgeschlossen sind.",

@@ -114,7 +114,7 @@ const Scenes = ({ collapsedIds, toggleCollapsed }) => {
     <CollapsibleCard
       title={'Scenes Settings'}
       subtitle={'Setup your broadcasting software scenes here'}
-      expanded={collapsedIds.includes('scenes')}
+      expanded={!collapsedIds.includes('scenes')}
       onExpandedChange={() => toggleCollapsed('scenes')}
     >
       {Object.entries(scenesData).map(([key, value]) => (
