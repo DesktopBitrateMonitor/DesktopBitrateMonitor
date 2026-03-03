@@ -15,21 +15,22 @@ import { alpha } from '@mui/material/styles';
 import CollapsibleCard from '../../../../components/functional/CollapsibleCard';
 import { normalizeAlias } from '../../../../scripts/shared-functions';
 import InputEndAdornment from '../../../../components/feedback/InputEndAdornment';
-
-const ROLE_OPTIONS = [
-  { value: 'broadcaster', label: 'Broadcaster' },
-  { value: 'admin', label: 'Admin' },
-  { value: 'mod', label: 'Mod' },
-  { value: 'user', label: 'User' }
-];
+import { useTranslation } from 'react-i18next';
 
 const CommandPanel = ({ command, onChange, collapsible = true, expanded, onExpandedChange }) => {
+  const { t } = useTranslation();
   const [aliasDraft, setAliasDraft] = useState('');
   const [aliasError, setAliasError] = useState('');
 
   const aliasList = Array.isArray(command.cmd) ? command.cmd : [];
-  const title = command.label;
   const hasAliases = aliasList.length > 0;
+
+  const ROLE_OPTIONS = [
+    { value: 'broadcaster', label: t('platforms.commands.roles.broadcaster') },
+    { value: 'admin', label: t('platforms.commands.roles.admin') },
+    { value: 'mod', label: t('platforms.commands.roles.moderator') },
+    { value: 'user', label: t('platforms.commands.roles.user') }
+  ];
 
   const handleRoleChange = (_, nextRole) => {
     if (!nextRole || nextRole === command.requiredRole) {
@@ -53,11 +54,11 @@ const CommandPanel = ({ command, onChange, collapsible = true, expanded, onExpan
   const handleAliasAdd = () => {
     const normalized = normalizeAlias(aliasDraft);
     if (!normalized) {
-      setAliasError('Alias cannot be empty');
+      setAliasError(t('platforms.commands.aliasBox.error1'));
       return;
     }
     if (aliasList.some((alias) => alias.toLowerCase() === normalized.toLowerCase())) {
-      setAliasError('Alias already exists');
+      setAliasError(t('platforms.commands.aliasBox.error2'));
       return;
     }
     setAliasError('');
@@ -71,12 +72,12 @@ const CommandPanel = ({ command, onChange, collapsible = true, expanded, onExpan
 
   return (
     <CollapsibleCard
-      title={title}
-      subtitle={command.description || 'No description provided.'}
+      title={t(`platforms.commands.${command.action}.label`)}
+      subtitle={t(`platforms.commands.${command.action}.description`) || null}
       actions={
         <>
           <Typography variant="body2" color="text.secondary">
-            {command.enabled ? 'Enabled' : 'Disabled'}
+            {command.enabled ? t('app.global.enabled') : t('app.global.disabled')}
           </Typography>
           <Switch edge="end" checked={command.enabled} onChange={handleEnabledChange} />
         </>
@@ -109,7 +110,7 @@ const CommandPanel = ({ command, onChange, collapsible = true, expanded, onExpan
                   color="text.secondary"
                   sx={{ fontWeight: 600, letterSpacing: 0.4, textTransform: 'uppercase' }}
                 >
-                  Required Role
+                  {t('platforms.commands.roleDescription')}
                 </Typography>
                 <ToggleButtonGroup
                   exclusive
@@ -163,10 +164,12 @@ const CommandPanel = ({ command, onChange, collapsible = true, expanded, onExpan
                 </ToggleButtonGroup>
               </Stack>
               {typeof command.restricted !== 'undefined' && (
-                <Tooltip title="If restricted, only the broadcaster and admins can switch to the live scene">
+                <Tooltip title={t('platforms.commands.restrictedHint')}>
                   <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2 }}>
                     <Typography variant="body2" color="text.secondary">
-                      {command.restricted ? 'Restricted' : 'Not Restricted'}
+                      {command.restricted
+                        ? t('platforms.commands.restricted')
+                        : t('platforms.commands.notRestricted')}
                     </Typography>
                     <Switch checked={command.restricted} onChange={handleRestrictedChange} />
                   </Stack>
@@ -182,7 +185,7 @@ const CommandPanel = ({ command, onChange, collapsible = true, expanded, onExpan
             color="text.secondary"
             sx={{ fontWeight: 600, letterSpacing: 0.4, textTransform: 'uppercase' }}
           >
-            Aliases
+            {t('platforms.commands.subHeader')}
           </Typography>
           <Stack direction="row" gap={1} flexWrap="wrap" sx={{ mt: 1 }}>
             {aliasList.length ? (
@@ -196,14 +199,14 @@ const CommandPanel = ({ command, onChange, collapsible = true, expanded, onExpan
               ))
             ) : (
               <Typography variant="body2" color="text.secondary">
-                No aliases yet.
+                {t('platforms.commands.aliasBox.noAliases')}
               </Typography>
             )}
           </Stack>
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: 1.5 }}>
             <TextField
-              label="New alias"
-              placeholder="!command"
+              label={t('platforms.commands.aliasBox.label')}
+              placeholder={t('platforms.commands.aliasBox.placeholder')}
               value={aliasDraft}
               onChange={(event) => {
                 setAliasDraft(event.target.value);
@@ -216,13 +219,13 @@ const CommandPanel = ({ command, onChange, collapsible = true, expanded, onExpan
                 }
               }}
               error={Boolean(aliasError)}
-              helperText={aliasError || 'Prefix have to be included in Aliases'}
+              helperText={aliasError || t('platforms.commands.aliasBox.hint')}
               fullWidth
               slotProps={{
                 input: {
                   endAdornment: (
                     <InputEndAdornment
-                      title="Click to add alias or press enter"
+                      title={t('platforms.commands.aliasBox.inputAdornment')}
                       placement="top-start"
                       open={Boolean(aliasDraft)}
                       icon={<AddIcon fontSize="small" />}

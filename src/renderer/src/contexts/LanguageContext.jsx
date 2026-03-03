@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import i18n from '../translation';
 import { useAppConfigStore } from './DataContext';
+import { getTranslationData } from '../../../scripts/lib/translation-picker';
 
 const AVAILABLE_LANGUAGES = [
   { code: 'en', label: 'English' },
@@ -44,6 +45,14 @@ export const LanguageProvider = ({ children }) => {
         if (typeof window !== 'undefined' && window?.storeApi?.set) {
           await window.storeApi.set('app-config', 'language', nextLanguage);
         }
+
+        const languageData = getTranslationData({
+          lng: nextLanguage,
+          key: 'platforms.commands'
+        });
+
+        console.log('next language', nextLanguage);
+        console.log('languageData', languageData);
 
         const meta = AVAILABLE_LANGUAGES.find((lang) => lang.code === nextLanguage);
         return { success: true, language: nextLanguage, meta };

@@ -1,8 +1,12 @@
 {
   "app": {
-    "name": "Desktop Bitrate Monitor"
+    "name": "Desktop Bitrate Monitor",
+    "global": {
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    }
   },
-    "authorization": {
+  "authorization": {
     "twitch": {
       "header": "Twitch Authentication Successful",
       "description": "You can close this window now"
@@ -75,12 +79,98 @@
   },
   "platforms": {
     "twitch": {},
-    "youtube":{},
-    "kick":{},
-    "commands": {},
+    "youtube": {},
+    "kick": {},
+    "commands": {
+      "header": "Chat Commands",
+      "description": "Configure chat commands that can be used to trigger actions in the app.",
+      "restrictedHint": "If restricted, only the broadcaster and admins can switch to the live scene",
+      "restricted": "Restricted",
+      "notRestricted": "Not Restricted",
+      "searchBox": {
+        "label": "Search for Command",
+        "placeholder": "Title or text"
+      },
+      "roleDescription": "Minimum required role",
+      "subHeader": "Aliases",
+      "aliasBox": {
+        "label": "Add Alias",
+        "placeholder": "New Alias",
+        "hint": "Prefix must be included in the alias, e.g., !",
+        "noAliases": "No aliases available",
+        "error1": "Alias cannot be empty",
+        "error2": "Alias already exists",
+        "inputAdornment":"Click or press Enter to add"
+      },
+      "roles": {
+        "broadcaster": "Broadcaster",
+        "admin": "Admin",
+        "moderator": "Moderator",
+        "user": "All"
+      },
+      "startStream": {
+        "label": "Start Stream",
+        "description": "Starts the stream in the software to the platform"
+      },
+      "stopStream": {
+        "label": "Stop Stream",
+        "description": "Stops the stream in the software to the platform"
+      },
+      "addAdmin": {
+        "label": "Add Admin",
+        "description": "Adds a new admin, e.g., !addadmin username"
+      },
+      "removeAdmin": {
+        "label": "Remove Admin",
+        "description": "Removes an admin, e.g., !removeadmin username"
+      },
+      "switchToLive": {
+        "label": "Switch to Live Scene",
+        "description": "Switches to the live scene"
+      },
+      "switchToLow": {
+        "label": "Switch to Low-Bitrate Scene",
+        "description": "Switches to the low-bitrate scene"
+      },
+      "switchToOffline": {
+        "label": "Switch to Offline Scene",
+        "description": "Switches to the offline scene"
+      },
+      "switchToPrivacy": {
+        "label": "Switch to Privacy Scene",
+        "description": "Switches to the privacy scene"
+      },
+      "addMod": {
+        "label": "Add Moderator",
+        "description": "Adds a new moderator, e.g., !addmod username. The user does NOT need to be a Twitch moderator!"
+      },
+      "removeMod": {
+        "label": "Remove Moderator",
+        "description": "Removes a moderator, e.g., !removemod username"
+      },
+      "switchScene": {
+        "label": "Switch Scene",
+        "description": "Switches to any scene in the streaming software. Restrictive rules remain in place, the scene must be entered exactly, e.g., !ss scene gaming. Case sensitivity is not observed."
+      },
+      "refreshStream": {
+        "label": "Refresh Stream",
+        "description": "Attempts to refresh the stream"
+      },
+      "setTrigger": {
+        "label": "Set Trigger",
+        "description": "Sets the new value for switching to the low-bitrate scene, only numeric values are accepted"
+      },
+      "setRTrigger": {
+        "label": "Set Recovery Trigger",
+        "description": "Sets the new value for switching back to the live scene, only numeric values are accepted"
+      },
+      "bitrate": {
+        "label": "Get Bitrate",
+        "description": "Returns the current bitrate and speed"
+      }
+    },
     "messages": {
-      "searchBox": 
-      {
+      "searchBox": {
         "label": "Search messages",
         "placeholder": "Title or text"
       },

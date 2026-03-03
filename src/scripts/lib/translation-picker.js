@@ -1,4 +1,3 @@
-import { app } from 'electron';
 import de from '../../renderer/src/translation/locals/de.json';
 import en from '../../renderer/src/translation/locals/en.json';
 import { readJsonData } from './json-reader';
@@ -12,6 +11,22 @@ const pickLocale = (locale) => {
   return langs[normalized] || langs.en;
 };
 
+// Resolve the best available locale in both main and renderer contexts.
+const resolveSystemLocale = () => {
+  if (typeof navigator !== 'undefined' && navigator.language) {
+    return navigator.language;
+  }
+
+  try {
+    // In the main process Electron is available; in renderer this will throw and fall back.
+    // eslint-disable-next-line global-require
+    const { app } = require('electron');
+    return app?.getLocale?.();
+  } catch (_error) {
+    return undefined;
+  }
+};
+
 /**
  *
  * @param {String} lng - Language code (e.g., 'en', 'de'). If not provided, it will use the system's locale.
@@ -21,7 +36,7 @@ const pickLocale = (locale) => {
  */
 
 export function getTranslationData({ lng, key, fallbackValue }) {
-  const lang = pickLocale(lng ?? app?.getLocale?.());
+  const lang = pickLocale(lng ?? resolveSystemLocale());
 
   return readJsonData({ lng: lang, fallbackLng: langs.en, key, fallbackValue });
 }

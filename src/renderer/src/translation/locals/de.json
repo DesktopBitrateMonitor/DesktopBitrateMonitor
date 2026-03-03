@@ -1,6 +1,10 @@
 {
   "app": {
-    "name": "Desktop Bitratenmonitor"
+    "name": "Desktop Bitratenmonitor",
+    "global": {
+      "enabled": "Aktiviert",
+      "disabled": "Deaktiviert"
+    }
   },
   "authorization": {
     "twitch": {
@@ -77,7 +81,94 @@
     "twitch": {},
     "youtube": {},
     "kick": {},
-    "commands": {},
+    "commands": {
+      "header": "Chat Befehle ",
+      "description": "Bearbeite die Chat Befehle für die verschiedenen Aktionen der Anwendung.",
+      "restrictedHint": "Wenn eingeschränkt, können nur der StreamerIn und Admins zur Live-Szene wechseln",
+      "restricted": "Eingeschränkt",
+      "notRestricted": "Nicht eingeschränkt",
+      "searchBox": {
+        "label": "Befehl suchen",
+        "placeholder": "Titel oder Alias"
+      },
+      "roleDescription": "Mindestens erforderliche Rolle",
+      "subHeader": "Aliase",
+      "aliasBox": {
+        "label": "Alias hinzufügen",
+        "placeholder": "Neuer Alias",
+        "hint": "Prefix muss im Alias enthalten sein, z.B. !",
+        "noAliases": "Keine Aliase vorhanden",
+        "error1": "Alias darf nicht leer sein",
+        "error2": "Alias ist bereits vorhanden",
+        "inputAdornment":"Zum Hinzufügen klicken oder Enter drücken"
+      },
+      "roles": {
+        "broadcaster": "StreamerIn",
+        "admin": "Admin",
+        "moderator": "Moderator",
+        "user": "Alle"
+      },
+      "startStream": {
+        "label": "Start Stream",
+        "description": "Startet den Stream in der Software an die Plattform"
+      },
+      "stopStream": {
+        "label": "Stop Stream",
+        "description": "Stoppt den Stream in der Software an die Plattform"
+      },
+      "addAdmin": {
+        "label": "Admin hinzufügen",
+        "description": "Fügt einen neuen Admin hinzu, z.B. !addadmin username"
+      },
+      "removeAdmin": {
+        "label": "Admin entfernen",
+        "description": "Entfernt einen Admin, z.B. !removeadmin username"
+      },
+      "switchToLive": {
+        "label": "Zur Live-Szene",
+        "description": "Wechselt zur Live-Szene"
+      },
+      "switchToLow": {
+        "label": "Zur Low-Bitrate-Szene",
+        "description": "Wechselt zur Low-Bitrate-Szene"
+      },
+      "switchToOffline": {
+        "label": "Zur Offline-Szene",
+        "description": "Wechselt zur Offline-Szene"
+      },
+      "switchToPrivacy": {
+        "label": "Zur Pause/Privatsphäre-Szene",
+        "description": "Wechselt zur Pause/Privatsphäre-Szene"
+      },
+      "addMod": {
+        "label": "Moderator hinzufügen",
+        "description": "Fügt einen neuen Moderator hinzu, z.B. !addmod username. Der Benutzer muss KEIN Twitch-Moderator sein!"
+      },
+      "removeMod":{
+        "label": "Moderator entfernen",
+        "description": "Entfernt einen Moderator, z.B. !removemod username"
+      },
+      "switchScene":{
+        "label":"Szene Wechseln",
+        "description": "Wechselt zu einer beliebigen Szene in der Streaming Software. Einschränkende Regeln bleiben bestehen, die Szene muss exakt eingegeben werden, z.B. !ss szene gaming. Groß- und Kleinschreibung werden nicht beachtet."
+      },
+      "refreshStream":{
+        "label":"Stream aktualisieren",
+        "description": "Versucht den Stream zu aktualisieren"
+      },
+      "setTrigger":{
+        "label": "Trigger setzen",
+        "description": "Setzt den neuen Wert für den wechsel zur Low-Bitrate-Szene, nur Zahlenwerte akzeptiert"
+      },
+      "setRTrigger":{
+        "label": "Recovery Trigger setzen",
+        "description": "Setzt den neuen Wert für den wechsel zurück zur Live-Szene, nur Zahlenwerte akzeptiert"
+      },
+      "bitrate": {
+        "label": "Bitrate abrufen",
+        "description": "Gibt die aktuelle Bitrate und Geschwindigkeit zurück"
+      }
+    },
     "messages": {
       "searchBox": {
         "label": "Nachricht suchen",

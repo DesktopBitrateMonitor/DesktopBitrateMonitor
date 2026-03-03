@@ -38,7 +38,7 @@ const streamStateCache = {
   ttlMs: 500
 };
 
-const { appConfig, switcherConfig } = injectDefaults();
+const { appConfig, switcherConfig, streamingSoftwareConfig } = injectDefaults();
 
 // Hysteresis helper so we don't bounce bands when rTrigger > trigger.
 const computeBand = (bitrate, t, previous) => {
@@ -225,7 +225,6 @@ export async function switcherService(data, mainWindow = null) {
 }
 
 const checkStreamState = async () => {
-  const { streamingSoftwareConfig } = injectDefaults();
   const softwareSettings = streamingSoftwareConfig.get('');
 
   const currentSoftware = softwareSettings.currentType;

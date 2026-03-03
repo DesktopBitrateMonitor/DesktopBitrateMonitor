@@ -7,6 +7,10 @@ import RoleFilterControls from '../../../components/functional/RoleFilterControl
 import { sortTwitchCommands } from '../../../../../scripts/lib/shared-functions';
 import CommandPanel from './panels/CommandPanel';
 import { useAlert } from '../../../contexts/AlertContext';
+import { useTranslation } from 'react-i18next';
+
+//TODO: Change filtering because the title is not matching the command title in the command object anymore.
+// Maybe get all titles from the current translation language file and search trough them
 
 const CommandSettings = () => {
   const ALLOWED_SORTS = [
@@ -22,6 +26,8 @@ const CommandSettings = () => {
   const { commandsConfig, updateCommandsConfig } = useCommandsConfigStore();
 
   const { showAlert } = useAlert();
+
+  const { t } = useTranslation();
 
   const [layoutMode, setLayoutMode] = useState('grid');
   const [sortMode, setSortMode] = useState('none');
@@ -109,9 +115,9 @@ const CommandSettings = () => {
       const res = await window.storeApi.set('commands-config', 'commands', nextCommands);
 
       if (res.success) {
-        showAlert({ message: 'Command updated successfully', severity: 'success' });
+        showAlert({ message: t('alerts.saveSuccess'), severity: 'success' });
       } else {
-        showAlert({ message: 'Failed to update command', severity: 'error' });
+        showAlert({ message: t('alerts.saveError'), severity: 'error' });
       }
     },
     [updateCommandsConfig]
@@ -245,7 +251,6 @@ const CommandSettings = () => {
       <Box
         sx={{
           display: 'flex',
-          flexWrap: 'wrap',
           alignItems: 'center',
           justifyContent: 'space-between',
           gap: 1.5
@@ -253,18 +258,18 @@ const CommandSettings = () => {
       >
         <Box>
           <Typography variant="h5" sx={{ mb: 0.5 }}>
-            Command Settings
+            {t('platforms.commands.header')}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Edit and manage the Twitch commands for the application.
+            {t('platforms.commands.description')}
           </Typography>
         </Box>
 
         <Stack direction="row" spacing={1.5} alignItems="center">
           <TextField
             size="small"
-            label="Search commands"
-            placeholder="Title or alias"
+            label={t('platforms.commands.searchBox.label')}
+            placeholder={t('platforms.commands.searchBox.placeholder')}
             value={searchTerm}
             onChange={(event) => setSearchTerm(event.target.value)}
             sx={{ minWidth: { xs: '100%', sm: 240 } }}
