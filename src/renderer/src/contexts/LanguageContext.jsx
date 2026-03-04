@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import i18n from '../translation';
-import { useAppConfigStore } from './DataContext';
+import { useAppConfigStore, useCommandsConfigStore, useMessagesConfigStore } from './DataContext';
 import { getTranslationData } from '../../../scripts/lib/translation-picker';
 
 const AVAILABLE_LANGUAGES = [
@@ -12,6 +12,8 @@ const LanguageContext = createContext(null);
 
 export const LanguageProvider = ({ children }) => {
   const { appConfig, updateAppConfig } = useAppConfigStore();
+  const { commandsConfig, updateCommandsConfig } = useCommandsConfigStore();
+  const { messagesConfig, updateMessagesConfig } = useMessagesConfigStore();
   const [language, setLanguage] = useState(appConfig?.language || i18n.language || 'en');
 
   useEffect(() => {
@@ -46,13 +48,44 @@ export const LanguageProvider = ({ children }) => {
           await window.storeApi.set('app-config', 'language', nextLanguage);
         }
 
-        const languageData = getTranslationData({
-          lng: nextLanguage,
-          key: 'platforms.commands'
-        });
+        // Change the language for the config files.
+        // This has to be done because the search function looks for the label and the values
+        const [commandsLanguageData, messagesLanguageData] = await Promise.all([
+          getTranslationData({
+            lng: nextLanguage,
+            key: 'platforms.commands'
+          }),
+          getTranslationData({
+            lng: nextLanguage,
+            key: 'platforms.messages'
+          })
+        ]);
 
-        console.log('next language', nextLanguage);
-        console.log('languageData', languageData);
+        if (messagesLanguageData && commandsLanguageData) {
+          const messagesList = Array.isArray(messagesConfig?.messages) ? messagesConfig.messages : [];
+          const commandsList = Array.isArray(commandsConfig?.commands) ? commandsConfig.commands : [];
+          
+          const updatedMessages = messagesList.map((msg) => ({
+            ...msg,
+            label: messagesLanguageData[msg.action]?.[msg.event]?.label || msg.label
+          }));
+          updateMessagesConfig?.((prev) => ({
+            ...(prev || {}),
+            messages: updatedMessages
+          }));
+
+          const updatedCommands = commandsList.map((cmd) => ({
+            ...cmd,
+            label: commandsLanguageData[cmd.action]?.label || cmd.label
+          }));
+          updateCommandsConfig?.((prev) => ({
+            ...(prev || {}),
+            commands: updatedCommands
+          }));
+
+          await window.storeApi.set('messages-config', 'messages', updatedMessages);
+          await window.storeApi.set('commands-config', 'commands', updatedCommands);
+        }
 
         const meta = AVAILABLE_LANGUAGES.find((lang) => lang.code === nextLanguage);
         return { success: true, language: nextLanguage, meta };
@@ -61,7 +94,14 @@ export const LanguageProvider = ({ children }) => {
         return { success: false, error };
       }
     },
-    [language, updateAppConfig]
+    [
+      language,
+      updateAppConfig,
+      commandsConfig,
+      updateCommandsConfig,
+      messagesConfig,
+      updateMessagesConfig
+    ]
   );
 
   const value = useMemo(

@@ -44,6 +44,7 @@ export const adminCommands = [
     label: 'Switch to Live Scene',
     cmd:['!live'],
     description: 'Switches to the live scene.',
+    enabled: true
   },
   {
     id: generateId(),
@@ -52,6 +53,7 @@ export const adminCommands = [
     label: 'Switch to Low Scene',
     cmd:['!low'],
     description: 'Switches to the Low scene.',
+    enabled: true
   },
   {
     id: generateId(),
@@ -60,6 +62,7 @@ export const adminCommands = [
     label: 'Switch to Offline Scene',
     cmd:['!offline'],
     description: 'Switches to the offline scene.',
+    enabled: true
   },
   {
     id: generateId(),
@@ -68,6 +71,7 @@ export const adminCommands = [
     label: 'Switch to Privacy Scene',
     cmd:['!privacy'],
     description: 'Switches to the privacy scene.',
+    enabled: true
   },
   {
     id: generateId(),

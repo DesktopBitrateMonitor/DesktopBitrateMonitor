@@ -113,7 +113,7 @@
         "description": "Startet den Stream in der Software an die Plattform"
       },
       "stopStream": {
-        "label": "Stop Stream",
+        "label": "Stopp Stream",
         "description": "Stoppt den Stream in der Software an die Plattform"
       },
       "addAdmin": {

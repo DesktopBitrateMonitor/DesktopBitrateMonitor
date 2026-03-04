@@ -34,13 +34,25 @@ export function handleChatMessage(eventSub) {
   // Check if the command exists in the list of all aliases, otherwise ignore
   if (!allAliases.includes(commandName)) return;
 
+  // Find the command object based on the command name
   const commandObject = commandsArray.find((cmd) => cmd.cmd.includes(commandName));
   if (!commandObject) return;
 
+  // Check if the command is enabled, if not ignore
+  if (!commandObject.enabled) return;
+
+  // Check if the user has the required permissions to execute the command
   const requiredCommandRole = commandObject.requiredRole;
   if (!requiredCommandRole) return;
 
-  if (hasPermission({ event, requiredRole: requiredCommandRole })) {
+  // If the user has permissions, execute the command action
+  if (
+    hasPermission({
+      event,
+      requiredRole: requiredCommandRole,
+      restricted: commandObject.restricted
+    })
+  ) {
     const commandAction = commandObject.action;
     commandActions[commandAction](commandArg);
   }

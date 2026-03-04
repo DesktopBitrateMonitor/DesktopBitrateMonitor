@@ -7,7 +7,7 @@ import { injectDefaults } from '../../../store/defaults';
  * @returns true or false based on whether the user has the required permissions
  */
 
-export const hasPermission = ({ event, requiredRole }) => {
+export const hasPermission = ({ event, requiredRole, restricted }) => {
   const { broadcaster_user_id, chatter_user_id, user_type, badges } = event;
   const { twitchAccountsConfig } = injectDefaults();
 
@@ -15,12 +15,15 @@ export const hasPermission = ({ event, requiredRole }) => {
   const admins = twitchAccountsConfig.get('admins').map((admin) => admin.login);
   const mods = twitchAccountsConfig.get('mods').map((mod) => mod.login);
 
+  // 
   const isAdmin = admins.includes(event.chatter_user_login.toLowerCase());
   const isMod =
     mods.includes(event.chatter_user_login.toLowerCase()) ||
     (badges.length > 0 &&
       badges.some((badge) => badge.set_id === 'moderator' || badge.set_id === 'lead_moderator'));
 
+  // If the command is restricted, only allow broadcaster and admins to execute it
+  if (restricted) return isBroadcaster || isAdmin;
   // Broadcaster has all permissions, always return true
   if (isBroadcaster) return true;
   if (requiredRole === 'user') return true;
