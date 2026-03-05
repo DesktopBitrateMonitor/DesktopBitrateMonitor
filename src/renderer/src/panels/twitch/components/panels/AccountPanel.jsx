@@ -1,7 +1,9 @@
 import { Avatar, Box, Button, Stack, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import React from 'react';
 
 const AccountPanel = ({ data, accountType, login, logout }) => {
+  const {t} = useTranslation();
   return (
     <Box>
       {data?.id ? (
@@ -14,24 +16,24 @@ const AccountPanel = ({ data, accountType, login, logout }) => {
             />
             <Stack textAlign={'center'} justifyContent="center">
               <Typography variant="h6" sx={{ mt: 1 }}>
-                {data.display_name || 'Not logged in'}
+                {data.display_name || t('platforms.twitch.accounts.notLoggedIn')}
                 <Typography variant="body2" color="text.secondary">
-                  {accountType === 'broadcaster' ? 'Broadcaster Account' : 'Chatbot Account'}
+                  {accountType === 'broadcaster' ? t('platforms.twitch.accounts.broadcaster.header') : t('platforms.twitch.accounts.chatbot.header')}
                 </Typography>
               </Typography>
             </Stack>
             <Button sx={{ mt: 3 }} variant="outlined" color="error" onClick={logout}>
-              Logout
+              {t('platforms.twitch.accounts.button.logout')}
             </Button>
           </Stack>
         </Stack>
       ) : (
         <Stack alignItems="center" gap={1}>
           <Typography variant="body2" color="text.secondary">
-            Not logged in
+            {t('platforms.twitch.accounts.notLoggedIn')}
           </Typography>
           <Button variant="contained" onClick={login} sx={{ mt: 2 }}>
-            Login to Twitch
+            {t('platforms.twitch.accounts.button.login')}
           </Button>
         </Stack>
       )}

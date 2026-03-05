@@ -17,20 +17,7 @@ import ShieldMoonOutlinedIcon from '@mui/icons-material/ShieldMoonOutlined';
 import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
 import ToggleOnOutlinedIcon from '@mui/icons-material/ToggleOnOutlined';
 import ToggleOffOutlinedIcon from '@mui/icons-material/ToggleOffOutlined';
-
-const SORT_OPTIONS = [
-  { value: 'none', label: 'Default', icon: <SortOutlinedIcon fontSize="small" /> },
-  {
-    value: 'roleBroadcaster',
-    label: 'Broadcaster',
-    icon: <ShieldMoonOutlinedIcon fontSize="small" />
-  },
-  { value: 'roleAdmin', label: 'Admin', icon: <AdminPanelSettingsOutlinedIcon fontSize="small" /> },
-  { value: 'roleMod', label: 'Mod', icon: <GroupOutlinedIcon fontSize="small" /> },
-  { value: 'roleUser', label: 'User', icon: <PersonOutlineIcon fontSize="small" /> },
-  { value: 'enabled', label: 'Enabled', icon: <ToggleOnOutlinedIcon fontSize="small" /> },
-  { value: 'disabled', label: 'Disabled', icon: <ToggleOffOutlinedIcon fontSize="small" /> }
-];
+import { useTranslation } from 'react-i18next';
 
 const RoleSortControls = ({
   value = 'none',
@@ -38,6 +25,41 @@ const RoleSortControls = ({
   label = 'Sort',
   availableSorts = [0, 1, 2, 3, 4, 5, 6]
 }) => {
+  const { t } = useTranslation();
+  const SORT_OPTIONS = [
+    { value: 'none', label: 'Default', icon: <SortOutlinedIcon fontSize="small" /> },
+    {
+      value: 'roleBroadcaster',
+      label: t('platforms.sorting.broadcaster'),
+      icon: <ShieldMoonOutlinedIcon fontSize="small" />
+    },
+    {
+      value: 'roleAdmin',
+      label: t('platforms.sorting.admin'),
+      icon: <AdminPanelSettingsOutlinedIcon fontSize="small" />
+    },
+    {
+      value: 'roleMod',
+      label: t('platforms.sorting.moderator'),
+      icon: <GroupOutlinedIcon fontSize="small" />
+    },
+    {
+      value: 'roleUser',
+      label: t('platforms.sorting.user'),
+      icon: <PersonOutlineIcon fontSize="small" />
+    },
+    {
+      value: 'enabled',
+      label: t('app.global.enabled'),
+      icon: <ToggleOnOutlinedIcon fontSize="small" />
+    },
+    {
+      value: 'disabled',
+      label: t('app.global.disabled'),
+      icon: <ToggleOffOutlinedIcon fontSize="small" />
+    }
+  ];
+
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 

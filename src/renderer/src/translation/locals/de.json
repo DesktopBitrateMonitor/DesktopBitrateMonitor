@@ -78,7 +78,62 @@
     }
   },
   "platforms": {
-    "twitch": {},
+    "panels": {
+      "commands": "Chat Befehle",
+      "messages": "Nachrichten",
+      "users": "Benutzer",
+      "accounts": "Konten"
+    },
+    "twitch": {
+      "users": {
+        "header": "Benutzereinstellungen",
+        "description": "Verwalte Admin- und Mod-Benutzer. Diese Benutzer müssen keine tatsächlichen Twitch-Admins oder Moderatoren sein, dies sind nur Rollen innerhalb der App, die jedem Twitch-Benutzer zugewiesen werden können. ALLE deine Twitch-Moderatoren werden automatisch als Moderatoren in der App zugewiesen. Admins haben Zugriff auf alle Befehle, Mods haben Zugriff auf alle Befehle, außer denen, die nur für Admins eingeschränkt sind.",
+        "noAccountRegistered": "Bitte melde ein StreamerIn-Konto im Reiter 'Konten', um Admins und Mods zu verwalten",
+        "error1": "Benutzername darf nicht leer sein",
+        "error2": "Benutzerüberprüfung fehlgeschlagen",
+        "error3": "Benutzer ist bereits ein Admin",
+        "error4": "Benutzer ist bereits ein Mod",
+        "error5": "Benutzer kann derzeit nicht überprüft werden",
+        "inputAdornmentAdmin": "Klicken oder Enter drücken, um Admin hinzuzufügen",
+        "inputAdornmentMod": "Klicken oder Enter drücken, um Mod hinzuzufügen",
+        "inputBox": {
+          "label": "Twitch Benutzername",
+          "placeholder": "Benutzername"
+        },
+        "admins": {
+          "header": "Admins",
+          "description": "Admins können alle Admin- und niedrigeren Rollenbefehle verwenden"
+        },
+        "mods": {
+          "header": "Moderatoren",
+          "description": "Moderatoren können alle Mod- und niedrigeren Rollenbefehle verwenden, jedoch nicht die nur für Admins vorgesehenen Befehle"
+        }
+      },
+      "accounts": {
+        "header": "Kontoeinstellungen",
+        "description": "Melde dich hier mit deinem Broadcaster- und Bot-Konto an. Du kannst entscheiden, welches Konto Nachrichten im Twitch-Chat postet. Fallback ist das Broadcaster-Konto. Die Anwendung hört automatisch auf das Twitch-Konto des Broadcasters, wenn Twitch die aktivierte Plattform ist.",
+        "notLoggedIn": "Nicht angemeldet",
+        "broadcasterConnected": "Mit StreamerIn Konto verbunden",
+        "chatbotConnected": "Mit Chatbot Konto verbunden",
+        "loggedOutBroadcaster":"StreamerIn Konto erfolgreich abgemeldet, Tokens alle wiederrufen, Daten wurden gelöscht",
+        "loggedOutChatbot":"Chatbot Konto erfolgreich abgemeldet, Tokens alle wiederrufen, Daten wurden gelöscht",
+        "enabledChatbot":"Chatbot Konto wird für Nachrichten verwendet",
+        "disabledChatbot": "StreamerIn Konto wird für Nachrichten verwendet",
+        "failure": "Fehler beim wechseln des Kontos für Nachrichten",
+        "broadcaster": {
+          "header": "StreamerIn Konto",
+          "description": "Melde das StreamerIn Konto hier an"
+        },
+        "chatbot": {
+          "header": "Chatbot Konto",
+          "description": "Melde das Chatbot Konto hier an"
+        },
+        "button": {
+          "login": "Konto anmelden",
+          "logout": "Abmelden"
+        }
+      }
+    },
     "youtube": {},
     "kick": {},
     "commands": {
@@ -100,13 +155,13 @@
         "noAliases": "Keine Aliase vorhanden",
         "error1": "Alias darf nicht leer sein",
         "error2": "Alias ist bereits vorhanden",
-        "inputAdornment":"Zum Hinzufügen klicken oder Enter drücken"
+        "inputAdornment": "Zum Hinzufügen klicken oder Enter drücken"
       },
       "roles": {
         "broadcaster": "StreamerIn",
         "admin": "Admin",
         "moderator": "Moderator",
-        "user": "Alle"
+        "user": "User"
       },
       "startStream": {
         "label": "Start Stream",
@@ -144,23 +199,23 @@
         "label": "Moderator hinzufügen",
         "description": "Fügt einen neuen Moderator hinzu, z.B. !addmod username. Der Benutzer muss KEIN Twitch-Moderator sein!"
       },
-      "removeMod":{
+      "removeMod": {
         "label": "Moderator entfernen",
         "description": "Entfernt einen Moderator, z.B. !removemod username"
       },
-      "switchScene":{
-        "label":"Szene Wechseln",
+      "switchScene": {
+        "label": "Szene Wechseln",
         "description": "Wechselt zu einer beliebigen Szene in der Streaming Software. Einschränkende Regeln bleiben bestehen, die Szene muss exakt eingegeben werden, z.B. !ss szene gaming. Groß- und Kleinschreibung werden nicht beachtet."
       },
-      "refreshStream":{
-        "label":"Stream aktualisieren",
+      "refreshStream": {
+        "label": "Stream aktualisieren",
         "description": "Versucht den Stream zu aktualisieren"
       },
-      "setTrigger":{
+      "setTrigger": {
         "label": "Trigger setzen",
         "description": "Setzt den neuen Wert für den wechsel zur Low-Bitrate-Szene, nur Zahlenwerte akzeptiert"
       },
-      "setRTrigger":{
+      "setRTrigger": {
         "label": "Recovery Trigger setzen",
         "description": "Setzt den neuen Wert für den wechsel zurück zur Live-Szene, nur Zahlenwerte akzeptiert"
       },
@@ -328,6 +383,20 @@
       },
       "users": {},
       "accounts": {}
+    },
+    "sorting": {
+      "default": "Standard",
+      "broadcaster": "StreamerIn",
+      "admin": "Admin",
+      "moderator": "Mod",
+      "user": "User"
+    },
+    "filtering": {
+      "all": "Alle",
+      "broadcaster": "StreamerIn",
+      "admin": "Admin",
+      "moderator": "Mod",
+      "user": "User"
     }
   },
   "alerts": {

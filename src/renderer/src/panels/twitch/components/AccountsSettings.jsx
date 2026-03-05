@@ -5,9 +5,12 @@ import LayoutToggle from '../../../components/functional/LayoutToggle';
 import { useTwitchAccountsConfig } from '../../../contexts/DataContext';
 import { useAlert } from '../../../contexts/AlertContext';
 import AccountPanel from './panels/AccountPanel';
+import { useTranslation } from 'react-i18next';
 
 const AccountsSettings = () => {
   const { twitchAccountsConfig, updateTwitchAccountsConfig } = useTwitchAccountsConfig();
+
+  const { t } = useTranslation();
 
   const { showAlert } = useAlert();
 
@@ -36,10 +39,16 @@ const AccountsSettings = () => {
     window.authApi.setOauthData((data) => {
       if (data.userType === 'broadcaster') {
         setBroadcasterData(data.data);
-        showAlert({ message: 'Broadcaster account connected successfully!', severity: 'success' });
+        showAlert({
+          message: t('platforms.twitch.accounts.broadcasterConnected'),
+          severity: 'success'
+        });
       } else if (data.userType === 'bot') {
         setChatbotData(data.data);
-        showAlert({ message: 'Chatbot account connected successfully!', severity: 'success' });
+        showAlert({
+          message: t('platforms.twitch.accounts.chatbotConnected'),
+          severity: 'success'
+        });
       }
 
       updateTwitchAccountsConfig((prev) => ({
@@ -96,7 +105,7 @@ const AccountsSettings = () => {
         };
 
         showAlert({
-          message: `Successfully logged out from ${accountType} account. Token revoked, user data cleared.`,
+          message: accountType === "broadcaster" ? t('platforms.twitch.accounts.loggedOutBroadcaster') : t('platforms.twitch.accounts.loggedOutChatbot'),
           severity: 'success'
         });
 
@@ -130,12 +139,12 @@ const AccountsSettings = () => {
       const res = await window.storeApi.set('twitch-accounts-config', 'useBotAccount', useBot);
       if (res.success) {
         showAlert({
-          message: `Successfully ${useBot ? 'enabled' : 'disabled'} chatbot account usage.`,
+          message: useBot ? t('platforms.twitch.accounts.enabledChatbot') : t('platforms.twitch.accounts.disabledChatbot'),
           severity: 'success'
         });
       } else {
         showAlert({
-          message: `Failed to ${useBot ? 'enable' : 'disable'} chatbot account usage.`,
+          message: t('platforms.twitch.accounts.failure'),
           severity: 'error'
         });
       }

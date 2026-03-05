@@ -78,7 +78,62 @@
     }
   },
   "platforms": {
-    "twitch": {},
+    "panels": {
+      "commands": "Chat Commands",
+      "messages": "Chat Messages",
+      "users": "Users",
+      "accounts": "Accounts"
+    },
+    "twitch": {
+      "users": {
+        "header": "User Settings",
+        "description": "Manage admin and mod users. These users do not have to be actual Twitch admins or moderators, these are just roles within the app that can be assigned to any Twitch user. ALL your twitch moderators are automaticaly asigned as moderators in the app. Admins have access to all commands, mods have access to all commands except those that are restricted to admins only.",
+        "noAccountRegistered": "Please set a broadcaster acccount in the accounts tab to manage admins and mods",
+        "error1": "Username cannot be empty",
+        "error2": "User validation failed",
+        "error3": "User is already an admin",
+        "error4": "User is already a mod",
+        "error5": "Unable to validate user right now",
+        "inputAdornmentAdmin": "Click or press Enter to add admin",
+        "inputAdornmentMod": "Click or press Enter to add mod",
+        "inputBox": {
+          "label": "Twitch Username",
+          "placeholder": "Username"
+        },
+        "admins": {
+          "header": "Admins",
+          "description": "Admins are able to use all admin and lower role commands"
+        },
+        "mods": {
+          "header": "Moderators",
+          "description": "Moderators are able to use all mod and lower role commands, but not admin only commands"
+        }
+      },
+      "accounts": {
+        "header": "Account Settings",
+        "description": "Log in with your broadcaster and bot accounts here. You can choose which account posts messages in the Twitch chat. The fallback is the broadcaster account. The application automatically listens to the broadcaster's Twitch account when Twitch is the active platform.",
+        "notLoggedIn": "Not logged in",
+        "broadcasterConnected": "Connected to Broadcaster account",
+        "chatbotConnected": "Connected to Chatbot account",
+        "loggedOutBroadcaster":"Broadcaster account disconnected successfully, tokens are revoked, data deleted from the app",
+        "loggedOutChatbot":"Chatbot account disconnected successfully, tokens are revoked, data deleted from the app",
+        "enabledChatbot":"Chatbot account now in usage for messages",
+        "disabledChatbot": "Broadcaster account now in usage for mesages",
+        "failure": "Failed to change accounts",
+        "broadcaster": {
+          "header": "Broadcaster Account",
+          "description": "Log in with your broadcaster account here"
+        },
+        "chatbot": {
+          "header": "Chatbot Account",
+          "description": "Log in with your chatbot account here"
+        },
+        "button": {
+          "login": "Log in",
+          "logout": "Log out"
+        }
+      }
+    },
     "youtube": {},
     "kick": {},
     "commands": {
@@ -100,7 +155,7 @@
         "noAliases": "No aliases available",
         "error1": "Alias cannot be empty",
         "error2": "Alias already exists",
-        "inputAdornment":"Click or press Enter to add"
+        "inputAdornment": "Click or press Enter to add"
       },
       "roles": {
         "broadcaster": "Broadcaster",
@@ -329,9 +384,19 @@
       "users": {},
       "accounts": {}
     },
-    "alerts": {
-      "saveSuccess": "Data saved successfully",
-      "saveError": "Failed to save data"
+    "sorting": {
+      "default": "Standard",
+      "broadcaster": "StreamerIn",
+      "admin": "Admin",
+      "moderator": "Mod",
+      "user": "User"
+    },
+    "filtering": {
+      "all": "Alle",
+      "broadcaster": "Broadcaster",
+      "admin": "Admin",
+      "moderator": "Mod",
+      "user": "User"
     }
   },
   "alerts": {

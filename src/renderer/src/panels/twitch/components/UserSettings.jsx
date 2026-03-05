@@ -17,8 +17,10 @@ import CollapsibleCard from '../../../components/functional/CollapsibleCard';
 import LayoutToggle from '../../../components/functional/LayoutToggle';
 import InputEndAdornment from '../../../components/feedback/InputEndAdornment';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import { useTranslation } from 'react-i18next';
 
 const UserSettings = () => {
+  const { t } = useTranslation();
   const { twitchAccountsConfig, updateTwitchAccountsConfig } = useTwitchAccountsConfig();
   const { showAlert } = useAlert();
   const theme = useTheme();
@@ -70,11 +72,11 @@ const UserSettings = () => {
   const isUserInputValid = (value = '') => value.trim().replace(/\s/g, '').length > 0;
 
   const handleLayoutChange = useCallback(
-    (nextLayout) => {
+    async (nextLayout) => {
       if (!nextLayout || nextLayout === layoutMode) return;
       setLayoutMode(nextLayout);
       updateTwitchAccountsConfig((prev) => ({ ...(prev || {}), userLayout: nextLayout }));
-      window.storeApi.set('twitch-accounts-config', 'userLayout', nextLayout);
+      await window.storeApi.set('twitch-accounts-config', 'userLayout', nextLayout);
     },
     [twitchAccountsConfig, updateTwitchAccountsConfig]
   );
@@ -85,20 +87,20 @@ const UserSettings = () => {
 
   const handleAddUser = async (userType, user) => {
     if (!isUserInputValid(user)) {
-      showAlert({ message: 'Username cannot be empty', severity: 'error' });
+      showAlert({ message: t('platforms.twitch.users.error1'), severity: 'error' });
       return;
     }
     setIsValidating((prev) => ({ ...prev, [userType]: true }));
     try {
       const res = await window.authApi.validateUser(userType, user);
       if (res?.data?.user === undefined) {
-        showAlert({ message: 'User validation failed', severity: 'error' });
+        showAlert({ message: t('platforms.twitch.users.error2'), severity: 'error' });
         return;
       }
       const newUser = res.data.user;
       if (userType === 'admin') {
         if (adminsList.some((admin) => admin.id === newUser.id)) {
-          showAlert({ message: 'Admin already exists', severity: 'error' });
+          showAlert({ message: t('platforms.twitch.users.error3'), severity: 'error' });
           return;
         }
         const updatedAdmins = [...adminsList, newUser];
@@ -107,7 +109,7 @@ const UserSettings = () => {
         await window.storeApi.set('twitch-accounts-config', 'admins', updatedAdmins);
       } else if (userType === 'mod') {
         if (modsList.some((mod) => mod.id === newUser.id)) {
-          showAlert({ message: 'Mod already exists', severity: 'error' });
+          showAlert({ message: t('platforms.twitch.users.error4'), severity: 'error' });
           return;
         }
         const updatedMods = [...modsList, newUser];
@@ -119,7 +121,7 @@ const UserSettings = () => {
       (prev) => ({ ...prev, [userType]: '' });
     } catch (error) {
       console.error('validateUser failed', error);
-      showAlert({ message: 'Unable to validate user right now', severity: 'error' });
+      showAlert({ message: t('platforms.twitch.users.error5'), severity: 'error' });
     } finally {
       setIsValidating((prev) => ({ ...prev, [userType]: false }));
     }
@@ -139,17 +141,17 @@ const UserSettings = () => {
     }
   };
 
-  const validateUser = async (userType, userName) => {
-    if (!isUserInputValid(userName)) {
-      showAlert({ message: 'Username cannot be empty', severity: 'error' });
-      return;
-    }
-    const res = await window.authApi.validateUser(userType, userName);
-    if (res?.data?.user === undefined) {
-      showAlert({ message: 'User validation failed', severity: 'error' });
-      return;
-    }
-  };
+  // const validateUser = async (userType, userName) => {
+  //   if (!isUserInputValid(userName)) {
+  //     showAlert({ message: 'Username cannot be empty', severity: 'error' });
+  //     return;
+  //   }
+  //   const res = await window.authApi.validateUser(userType, userName);
+  //   if (res?.data?.user === undefined) {
+  //     showAlert({ message: 'User validation failed', severity: 'error' });
+  //     return;
+  //   }
+  // };
 
   const getInputAdornment = (userType, value) => {
     if (isValidating[userType]) {
@@ -168,7 +170,7 @@ const UserSettings = () => {
 
     return (
       <InputEndAdornment
-        title={isAdmin ? 'Hit Enter or click to Add Admin' : 'Hit Enter or click to Add Mod'}
+        title={isAdmin ? t('platforms.twitch.users.inputAdornmentAdmin') : t('platforms.twitch.users.inputAdornmentMod')}
         placement="top-start"
         open={Boolean(isUserInputValid(value))}
         color="secondary"
@@ -191,11 +193,10 @@ const UserSettings = () => {
       >
         <Box>
           <Typography variant="h5" sx={{ mb: 0.5 }}>
-            User Settings
+            {t('platforms.twitch.users.header')}
           </Typography>
           <Typography variant="body2" color="text.secondary" maxWidth={600}>
-            Manage admin and mod users. These users do not have to be moderators on Twitch; they are
-            only admins or moderators within the application.
+            {t('platforms.twitch.users.description')}
           </Typography>
         </Box>
 
@@ -220,14 +221,14 @@ const UserSettings = () => {
         {twitchAccountsConfig.broadcaster.login.length === 0 ? (
           <Box sx={{ mb: 2 }}>
             <Typography variant="body2" color="error.main">
-              Please set a broadcaster account in the Accounts Panel to manage admins and mods.
+              {t('platforms.twitch.users.noAccountRegistered')}
             </Typography>
           </Box>
         ) : (
           <>
             <CollapsibleCard
-              title={'Admins'}
-              subtitle={'Admins are able to use all admin and lower role commands'}
+              title={t('platforms.twitch.users.admins.header')}
+              subtitle={t('platforms.twitch.users.admins.description')}
               collapsible={false}
             >
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -262,7 +263,8 @@ const UserSettings = () => {
                   ))}
                 </Box>
                 <TextField
-                  label="Twitch Username"
+                  label={t('platforms.twitch.users.inputBox.label')}
+                  placeholder={t('platforms.twitch.users.inputBox.placeholder')}
                   onChange={(e) => handleInputChange('admin', e.target.value)}
                   value={users.admin}
                   disabled={isValidating.admin}
@@ -282,8 +284,8 @@ const UserSettings = () => {
             </CollapsibleCard>
 
             <CollapsibleCard
-              title={'Mods'}
-              subtitle={'Mods have moderation privileges within the application'}
+              title={t('platforms.twitch.users.mods.header')}
+              subtitle={t('platforms.twitch.users.mods.description')}
               collapsible={false}
             >
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -318,7 +320,8 @@ const UserSettings = () => {
                   ))}
                 </Box>
                 <TextField
-                  label="Twitch Username"
+                  label={t('platforms.twitch.users.inputBox.label')}
+                  placeholder={t('platforms.twitch.users.inputBox.placeholder')}
                   onChange={(e) => handleInputChange('mod', e.target.value)}
                   value={users.mod}
                   disabled={isValidating.mod}

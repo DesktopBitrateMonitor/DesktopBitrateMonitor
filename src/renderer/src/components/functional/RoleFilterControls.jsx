@@ -17,16 +17,7 @@ import ShieldMoonOutlinedIcon from '@mui/icons-material/ShieldMoonOutlined';
 import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
 import ToggleOnOutlinedIcon from '@mui/icons-material/ToggleOnOutlined';
 import ToggleOffOutlinedIcon from '@mui/icons-material/ToggleOffOutlined';
-
-const FILTER_OPTIONS = [
-  { value: 'all', label: 'All', icon: <FilterListOutlinedIcon fontSize="small" /> },
-  { value: 'broadcaster', label: 'Broadcaster', icon: <ShieldMoonOutlinedIcon fontSize="small" /> },
-  { value: 'admin', label: 'Admin', icon: <AdminPanelSettingsOutlinedIcon fontSize="small" /> },
-  { value: 'mod', label: 'Mod', icon: <GroupOutlinedIcon fontSize="small" /> },
-  { value: 'user', label: 'User', icon: <PersonOutlineIcon fontSize="small" /> },
-  { value: 'enabled', label: 'Enabled', icon: <ToggleOnOutlinedIcon fontSize="small" /> },
-  { value: 'disabled', label: 'Disabled', icon: <ToggleOffOutlinedIcon fontSize="small" /> }
-];
+import { useTranslation } from 'react-i18next';
 
 // value: 'all' | 'broadcaster' | 'admin' | 'mod' | 'user' | 'enabled' | 'disabled'
 const RoleFilterControls = ({
@@ -35,6 +26,46 @@ const RoleFilterControls = ({
   label = 'Filter',
   availableFilters = [0, 1, 2, 3, 4, 5, 6]
 }) => {
+  const { t } = useTranslation();
+
+  const FILTER_OPTIONS = [
+    {
+      value: 'all',
+      label: t('platforms.filtering.all'),
+      icon: <FilterListOutlinedIcon fontSize="small" />
+    },
+    {
+      value: 'broadcaster',
+      label: t('platforms.filtering.broadcaster'),
+      icon: <ShieldMoonOutlinedIcon fontSize="small" />
+    },
+    {
+      value: 'admin',
+      label: t('platforms.filtering.admin'),
+      icon: <AdminPanelSettingsOutlinedIcon fontSize="small" />
+    },
+    {
+      value: 'mod',
+      label: t('platforms.filtering.moderator'),
+      icon: <GroupOutlinedIcon fontSize="small" />
+    },
+    {
+      value: 'user',
+      label: t('platforms.filtering.user'),
+      icon: <PersonOutlineIcon fontSize="small" />
+    },
+    {
+      value: 'enabled',
+      label: t('app.global.enabled'),
+      icon: <ToggleOnOutlinedIcon fontSize="small" />
+    },
+    {
+      value: 'disabled',
+      label: t('app.global.disabled'),
+      icon: <ToggleOffOutlinedIcon fontSize="small" />
+    }
+  ];
+
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 

@@ -5,15 +5,17 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import EmojiMessagesIcon from '@mui/icons-material/QuestionAnswerOutlined';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-
-const TAB_CONFIG = [
-  { value: 'commandsettings', label: 'Commands', icon: ChatBubbleOutlineIcon },
-  { value: 'messagesettings', label: 'Messages', icon: EmojiMessagesIcon },
-  { value: 'usersettings', label: 'Users', icon: AdminPanelSettingsIcon },
-  { value: 'accountssettings', label: 'Accounts', icon: AccountCircleIcon }
-];
+import { useTranslation } from 'react-i18next';
 
 const TwitchSettings = () => {
+  const { t } = useTranslation();
+  const TAB_CONFIG = [
+    { value: 'commandsettings', label: t('platforms.panels.commands'), icon: ChatBubbleOutlineIcon },
+    { value: 'messagesettings', label: t('platforms.panels.messages'), icon: EmojiMessagesIcon },
+    { value: 'usersettings', label: t('platforms.panels.users'), icon: AdminPanelSettingsIcon },
+    { value: 'accountssettings', label: t('platforms.panels.accounts'), icon: AccountCircleIcon }
+  ];
+
   const location = useLocation();
   const navigate = useNavigate();
 
