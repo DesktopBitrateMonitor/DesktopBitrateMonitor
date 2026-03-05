@@ -106,7 +106,7 @@
         },
         "mods": {
           "header": "Moderators",
-          "description": "Moderators are able to use all mod and lower role commands, but not admin only commands"
+          "description": "Moderators are able to use all mod and lower role commands"
         }
       },
       "accounts": {
@@ -115,10 +115,10 @@
         "notLoggedIn": "Not logged in",
         "broadcasterConnected": "Connected to Broadcaster account",
         "chatbotConnected": "Connected to Chatbot account",
-        "loggedOutBroadcaster":"Broadcaster account disconnected successfully, tokens are revoked, data deleted from the app",
-        "loggedOutChatbot":"Chatbot account disconnected successfully, tokens are revoked, data deleted from the app",
-        "enabledChatbot":"Chatbot account now in usage for messages",
-        "disabledChatbot": "Broadcaster account now in usage for mesages",
+        "loggedOutBroadcaster": "Broadcaster account disconnected successfully, tokens are revoked, data deleted from the app",
+        "loggedOutChatbot": "Chatbot account disconnected successfully, tokens are revoked, data deleted from the app",
+        "enabledChatbot": "Chatbot account now in usage for messages",
+        "disabledChatbot": "Broadcaster account now in usage for messages",
         "failure": "Failed to change accounts",
         "broadcaster": {
           "header": "Broadcaster Account",
@@ -126,7 +126,8 @@
         },
         "chatbot": {
           "header": "Chatbot Account",
-          "description": "Log in with your chatbot account here"
+          "description": "Log in with your chatbot account here",
+          "hint": "Use the chatbot account to post messages in the chat"
         },
         "button": {
           "login": "Log in",

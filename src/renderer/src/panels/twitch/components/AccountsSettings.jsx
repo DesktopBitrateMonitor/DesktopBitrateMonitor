@@ -176,10 +176,10 @@ const AccountsSettings = () => {
       >
         <Box>
           <Typography variant="h5" sx={{ mb: 0.5 }}>
-            Account Settings
+            {t('platforms.twitch.accounts.header')}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Sign up and manage your Twitch accounts used for chatbot and broadcasting
+            {t('platforms.twitch.accounts.description')}
           </Typography>
         </Box>
 
@@ -202,8 +202,8 @@ const AccountsSettings = () => {
         }}
       >
         <CollapsibleCard
-          title={'Broadcaster'}
-          subtitle={'Login your broadcaster account here'}
+          title={t('platforms.twitch.accounts.broadcaster.header')}
+          subtitle={t('platforms.twitch.accounts.broadcaster.description')}
           collapsible={layoutMode === 'list'}
           expanded={!collapsedIds.includes('broadcaster')}
           onExpandedChange={() => toggleCollapsed('broadcaster')}
@@ -217,11 +217,11 @@ const AccountsSettings = () => {
         </CollapsibleCard>
 
         <CollapsibleCard
-          title={'Chatbot'}
-          subtitle={'Login your chatbot account here'}
+          title={t('platforms.twitch.accounts.chatbot.header')}
+          subtitle={t('platforms.twitch.accounts.chatbot.description')}
           actions={
             <Box>
-              <Tooltip title={'Use the chatbot account to post messages in the chat'}>
+              <Tooltip title={t('platforms.twitch.accounts.chatbot.hint')}>
                 <Typography variant="body2" color="text.secondary"></Typography>
                 <Switch
                   checked={twitchAccountsConfig.useBotAccount}

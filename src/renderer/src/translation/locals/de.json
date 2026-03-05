@@ -106,7 +106,7 @@
         },
         "mods": {
           "header": "Moderatoren",
-          "description": "Moderatoren können alle Mod- und niedrigeren Rollenbefehle verwenden, jedoch nicht die nur für Admins vorgesehenen Befehle"
+          "description": "Moderatoren können alle Mod- und niedrigeren Rollenbefehle verwenden"
         }
       },
       "accounts": {
@@ -115,9 +115,9 @@
         "notLoggedIn": "Nicht angemeldet",
         "broadcasterConnected": "Mit StreamerIn Konto verbunden",
         "chatbotConnected": "Mit Chatbot Konto verbunden",
-        "loggedOutBroadcaster":"StreamerIn Konto erfolgreich abgemeldet, Tokens alle wiederrufen, Daten wurden gelöscht",
-        "loggedOutChatbot":"Chatbot Konto erfolgreich abgemeldet, Tokens alle wiederrufen, Daten wurden gelöscht",
-        "enabledChatbot":"Chatbot Konto wird für Nachrichten verwendet",
+        "loggedOutBroadcaster": "StreamerIn Konto erfolgreich abgemeldet, Tokens alle wiederrufen, Daten wurden gelöscht",
+        "loggedOutChatbot": "Chatbot Konto erfolgreich abgemeldet, Tokens alle wiederrufen, Daten wurden gelöscht",
+        "enabledChatbot": "Chatbot Konto wird für Nachrichten verwendet",
         "disabledChatbot": "StreamerIn Konto wird für Nachrichten verwendet",
         "failure": "Fehler beim wechseln des Kontos für Nachrichten",
         "broadcaster": {
@@ -126,7 +126,8 @@
         },
         "chatbot": {
           "header": "Chatbot Konto",
-          "description": "Melde das Chatbot Konto hier an"
+          "description": "Melde das Chatbot Konto hier an",
+          "hint": "Verwende das Chatbot-Konto, um Nachrichten im Chat zu posten"
         },
         "button": {
           "login": "Konto anmelden",
