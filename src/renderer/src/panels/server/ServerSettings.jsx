@@ -5,16 +5,19 @@ import OpenIrlElement from './components/OpenIrlElement';
 import SrtLiveServerElement from './components/SrtLiveServerElement';
 import CollapsibleCard from '../../components/functional/CollapsibleCard.jsx';
 import BelaboxElement from './components/BelaboxElement.jsx';
-
-const SERVER_TYPES = [
-  { label: 'SrtLiveServer', value: 'srt-live-server', isDev: false },
-  { label: 'OpenIRL', value: 'openirl', isDev: false },
-  { label: 'Belabox', value: 'belabox', isDev: true }
-];
+import { useTranslation } from 'react-i18next';
 
 const isDev = import.meta.env.DEV;
 
 const ServerSettings = () => {
+  const {t} = useTranslation();
+
+  const SERVER_TYPES = [
+  { label: t('server.select.options.srtLiveServer'), value: 'srt-live-server', isDev: false },
+  { label: t('server.select.options.openIrl'), value: 'openirl', isDev: false },
+  { label: t('server.select.options.belabox'), value: 'belabox', isDev: true }
+];
+
   const { serverConfig, updateServerConfig } = useServerConfigStore();
 
   const [serverType, setServerType] = React.useState(serverConfig?.currentType);
@@ -45,17 +48,17 @@ const ServerSettings = () => {
       >
         <Box>
           <Typography variant="h5" sx={{ mb: 0.5 }}>
-            Server Settings
+           {t('server.header')}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Edit the settings for the streaming server to listen to the stats
+            {t('server.description')}
           </Typography>
         </Box>
         <FormControl>
-          <InputLabel>Server Type</InputLabel>
+          <InputLabel>{t('server.select.label')}</InputLabel>
           <Select
             id="server-type-label"
-            label="Server Type"
+            label={t('server.select.label')}
             value={serverType}
             sx={{ width: '200px' }}
             onChange={(e) => handleServerTypeChange(e.target.value)}
@@ -72,8 +75,8 @@ const ServerSettings = () => {
       </Box>
       {serverType === 'openirl' && (
         <CollapsibleCard
-          title={'OpenIRL Settings'}
-          subtitle={'Setup the the connection to OpenIRL stats endpoint'}
+          title={t('server.openIrl.header')}
+          subtitle={t('server.openIrl.description')}
           collapsible={false}
           defaultExpanded={true}
         >
@@ -82,8 +85,8 @@ const ServerSettings = () => {
       )}
       {serverType === 'srt-live-server' && (
         <CollapsibleCard
-          title={'SrtLiveServer Settings'}
-          subtitle={'Setup the the connection to SrtLiveServer stats endpoint'}
+          title={t('server.srtLiveServer.header')}
+          subtitle={t('server.srtLiveServer.description')}
           collapsible={false}
           defaultExpanded={true}
         >
@@ -92,8 +95,8 @@ const ServerSettings = () => {
       )}
       {serverType === 'belabox' && (
         <CollapsibleCard
-          title={'Belabox Settings'}
-          subtitle={'Setup the the connection to Belabox stats endpoint'}
+          title={t('server.belabox.header')}
+          subtitle={t('server.belabox.description')}
           collapsible={false}
           defaultExpanded={true}
         >

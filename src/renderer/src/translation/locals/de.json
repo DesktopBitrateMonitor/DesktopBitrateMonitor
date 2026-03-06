@@ -40,43 +40,6 @@
     "title": "Dashboard",
     "subtitle": "Überwache deine Stream-Bitrate und Leistung in Echtzeit."
   },
-  "generalSettings": {
-    "title": "Allgemeine Einstellungen",
-    "subtitle": "Konfiguriere hier allgemeine App-Einstellungen.",
-    "search": "Einstellung suchen",
-    "languageLabel": "App-Sprache",
-    "languageChanged": "Sprache auf {{language}} gesetzt.",
-    "languageError": "Sprache konnte nicht aktualisiert werden.",
-    "updateError": "Einstellung konnte nicht aktualisiert werden.",
-    "quitLabel": "App beim Schließen beenden",
-    "quitMessage": "Die App wird beim Schließen nun {{action}}.",
-    "actions": {
-      "quit": "beendet",
-      "minimize": "minimiert"
-    }
-  },
-  "logging": {
-    "title": "Protokolleinstellungen",
-    "subtitle": "Lege die Protokollpfade und -zustände fest",
-    "sessionCardTitle": "Sitzungsprotokolle",
-    "sessionCardSubtitle": "Konfiguriere die Einstellungen für Sitzungsprotokolle",
-    "actionsCardTitle": "Aktionsprotokolle",
-    "actionsCardSubtitle": "Konfiguriere die Einstellungen für Aktionsprotokolle",
-    "enabled": "Protokollierung aktiviert",
-    "disabled": "Protokollierung deaktiviert",
-    "sessionPathLabel": "Pfad für Sitzungsprotokolle",
-    "actionsPathLabel": "Pfad für Aktionsprotokolle",
-    "fileSizeLabel": "Dateigröße für Sitzungsprotokolle (MB)",
-    "saveTooltip": "Zum Speichern klicken oder Enter drücken",
-    "directoryDialogTitle": "Verzeichnis für {{label}} auswählen",
-    "validation": {
-      "pathEmpty": "Pfad darf nicht leer sein.",
-      "pathNoSpaces": "Pfad darf keine Leerzeichen enthalten.",
-      "fileSizeInteger": "Dateigröße muss eine ganze Zahl sein.",
-      "fileSizeRange": "Dateigröße muss zwischen 0 und 10 liegen.",
-      "fileSizeEmpty": "Dateigröße darf nicht leer sein."
-    }
-  },
   "platforms": {
     "panels": {
       "commands": "Chat Befehle",
@@ -398,6 +361,120 @@
       "admin": "Admin",
       "moderator": "Mod",
       "user": "User"
+    }
+  },
+  "server": {
+    "header": "Server Einstellungen",
+    "description": "Bearbeite die Einstellungen für den Streaming-Server, um die Statistiken zu überwachen",
+    "error1":"Stats URL darf nicht leer sein",
+    "error2":"Stats URL muss mit http:// oder https:// beginnen",
+    "error3":"Stats URL darf keine Leerzeichen enthalten",
+    "error4":"Publisher darf nicht leer sein",
+    "error5":"Publisher darf keine Leerzeichen enthalten",
+    "error6":"Name darf nicht leer sein",
+    "inputAdornment":"Zum speichern klicken oder Enter drücken",
+    "select": {
+      "label": "Server Typ",
+      "placeholder": "Server Typ",
+      "options": {
+        "srtLiveServer": "SrtLiveServer",
+        "openIrl": "OpenIRL",
+        "belabox": "Belabox"
+      }
+    },
+    "srtLiveServer": {
+      "header": "SrtLiveServer Einstellungen",
+      "description": "Konfiguriere die Einstellungen für die SrtLiveServer-Verbindung",
+      "nameBox": {
+        "label": "Server Name",
+        "placeholder": "SrtLiveServer",
+        "hint": "Der Name der Serverinstanz, z.B. SrtLiveServer"
+      },
+      "urlBox": {
+        "label": "Stats URL",
+        "placeholder": "http://xxx.xxx.xxx.xxx:8181/stats",
+        "hint": "Beispiel: http://<IP_ADRESSE>:<PORT>/stats"
+      },
+      "publisherBox": {
+        "label": "Publisher",
+        "placeholder": "Publisher",
+        "hint": "Beispiel: publish/live/dein_stream_key"
+      }
+    },
+    "openIrl": {
+      "header": "OpenIRL Einstellungen",
+      "description": "Konfiguriere die Einstellungen für die OpenIRL-Verbindung",
+      "nameBox": {
+        "label": "Server Name",
+        "placeholder": "OpenIRL",
+        "hint": "Der Name der Serverinstanz, z.B. OpenIRL"
+      },
+      "urlBox": {
+        "label": "Stats URL",
+        "placeholder": "http://xxx.xxx.xxx.xxx:8080/stats/play/live/test?legacy=1",
+        "hint": "Beispiel: (legacy ist eine Option) http://<IP_ADRESSE>:<PORT>/stats/play/live/<STREAM_ID>?legacy=1"
+      },
+      "publisherBox": {
+        "label": "Publisher",
+        "placeholder": "Publisher",
+        "hint": "Beispiel: live"
+      }
+    },
+    "belabox": {
+      "header": "Belabox Einstellungen",
+      "description": "Konfiguriere die Einstellungen für die Belabox-Verbindung",
+      "nameBox": {
+        "label": "Server Name",
+        "placeholder": "Belabox",
+        "hint": "Der Name der Serverinstanz, z.B. Belabox"
+      },
+      "urlBox": {
+        "label": "Stats URL",
+        "placeholder": "http://xxx.xxx.xxx.xxx:8080/api/stats",
+        "hint": "Beispiel: http://<IP_ADRESSE>:<PORT>/api/stats"
+      },
+      "publisherBox": {
+        "label": "Publisher",
+        "placeholder": "Publisher",
+        "hint": ""
+      }
+    }
+  },
+  "generalSettings": {
+    "title": "Allgemeine Einstellungen",
+    "subtitle": "Konfiguriere hier allgemeine App-Einstellungen.",
+    "search": "Einstellung suchen",
+    "languageLabel": "App-Sprache",
+    "languageChanged": "Sprache auf {{language}} gesetzt.",
+    "languageError": "Sprache konnte nicht aktualisiert werden.",
+    "updateError": "Einstellung konnte nicht aktualisiert werden.",
+    "quitLabel": "App beim Schließen beenden",
+    "quitMessage": "Die App wird beim Schließen nun {{action}}.",
+    "actions": {
+      "quit": "beendet",
+      "minimize": "minimiert"
+    }
+  },
+  "logging": {
+    "title": "Protokolleinstellungen",
+    "subtitle": "Lege die Protokollpfade und -zustände fest",
+    "sessionCardTitle": "Sitzungsprotokolle",
+    "sessionCardSubtitle": "Konfiguriere die Einstellungen für Sitzungsprotokolle",
+    "actionsCardTitle": "Aktionsprotokolle",
+    "actionsCardSubtitle": "Konfiguriere die Einstellungen für Aktionsprotokolle",
+    "enabled": "Protokollierung aktiviert",
+    "disabled": "Protokollierung deaktiviert",
+    "sessionPathLabel": "Pfad für Sitzungsprotokolle",
+    "actionsPathLabel": "Pfad für Aktionsprotokolle",
+    "fileSizeLabel": "Dateigröße für Sitzungsprotokolle (MB)",
+    "saveTooltip": "Zum Speichern klicken oder Enter drücken",
+    "directoryDialogTitle": "Verzeichnis für {{label}} auswählen",
+    "validation": {
+      "pathEmpty": "Pfad darf nicht leer sein.",
+      "pathNoSpaces": "Pfad darf keine Leerzeichen enthalten.",
+      "fileSizeInteger": "Dateigröße muss eine ganze Zahl sein.",
+      "fileSizeRange": "Dateigröße muss zwischen 0 und 10 liegen.",
+      "fileSizeEmpty": "Dateigröße darf nicht leer sein."
     }
   },
   "alerts": {

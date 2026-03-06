@@ -40,43 +40,6 @@
     "title": "Dashboard",
     "subtitle": "Monitor your stream bitrate and performance in real-time."
   },
-  "generalSettings": {
-    "title": "General Settings",
-    "subtitle": "Configure general application settings here.",
-    "search": "Search for setting",
-    "languageLabel": "App Language",
-    "languageChanged": "Language changed to {{language}}.",
-    "languageError": "Failed to update language.",
-    "updateError": "Failed to update setting.",
-    "quitLabel": "Quit app on close",
-    "quitMessage": "App will now {{action}} on close.",
-    "actions": {
-      "quit": "quit",
-      "minimize": "minimize"
-    }
-  },
-  "logging": {
-    "title": "Logging Settings",
-    "subtitle": "Set the logging paths and states",
-    "sessionCardTitle": "Session Logging Settings",
-    "sessionCardSubtitle": "Set the logging settings for session logs",
-    "actionsCardTitle": "Actions Logging Settings",
-    "actionsCardSubtitle": "Set the logging settings for actions logs",
-    "enabled": "Logging enabled",
-    "disabled": "Logging disabled",
-    "sessionPathLabel": "Session Logs Path",
-    "actionsPathLabel": "Actions Logs Path",
-    "fileSizeLabel": "Session Logs File Size (MB)",
-    "saveTooltip": "Click or press Enter to save changes",
-    "directoryDialogTitle": "Select directory for {{label}}",
-    "validation": {
-      "pathEmpty": "Path cannot be empty.",
-      "pathNoSpaces": "Path must not contain spaces.",
-      "fileSizeInteger": "File size must be an integer",
-      "fileSizeRange": "File size must be between 0 and 10.",
-      "fileSizeEmpty": "File size cannot be empty."
-    }
-  },
   "platforms": {
     "panels": {
       "commands": "Chat Commands",
@@ -398,6 +361,120 @@
       "admin": "Admin",
       "moderator": "Mod",
       "user": "User"
+    }
+  },
+  "server": {
+    "header": "Server Settings",
+    "description": "Edit the settings for the streaming server to listen to the stats",
+    "error1": "Stats URL cannot be empty",
+    "error2": "Stats URL must start with http:// or https://",
+    "error3": "Stats URL cannot contain spaces",
+    "error4": "Publisher cannot be empty",
+    "error5": "Publisher cannot contain spaces",
+    "error6": "Name cannot be empty",
+    "inputAdornment": "Click or press Enter to save",
+    "select": {
+      "label": "Server Type",
+      "placeholder": "Server Type",
+      "options": {
+        "srtLiveServer": "SrtLiveServer",
+        "openIrl": "OpenIRL",
+        "belabox": "Belabox"
+      }
+    },
+    "srtLiveServer": {
+      "header": "SrtLiveServer Settings",
+      "description": "Configure the settings for the SrtLiveServer connection",
+      "nameBox": {
+        "label": "Server Name",
+        "placeholder": "SrtLiveServer",
+        "hint": "The name of the server instance, e.g., SrtLiveServer"
+      },
+      "urlBox": {
+        "label": "Stats URL",
+        "placeholder": "http://xxx.xxx.xxx.xxx:8181/stats",
+        "hint": "Example: http://<IP_ADDRESS>:<PORT>/stats"
+      },
+      "publisherBox": {
+        "label": "Publisher",
+        "placeholder": "Publisher",
+        "hint": "Example: publish/live/your_stream_key"
+      }
+    },
+    "openIrl": {
+      "header": "OpenIRL Settings",
+      "description": "Configure the settings for the OpenIRL connection",
+      "nameBox": {
+        "label": "Server Name",
+        "placeholder": "OpenIRL",
+        "hint": "The name of the server instance, e.g., OpenIRL"
+      },
+      "urlBox": {
+        "label": "Stats URL",
+        "placeholder": "http://xxx.xxx.xxx.xxx:8080/stats/play/live/test?legacy=1",
+        "hint": "Example: (legacy is an option) http://<IP_ADDRESS>:<PORT>/stats/play/live/<STREAM_ID>?legacy=1"
+      },
+      "publisherBox": {
+        "label": "Publisher",
+        "placeholder": "Publisher",
+        "hint": "Example: live"
+      }
+    },
+    "belabox": {
+      "header": "Belabox Settings",
+      "description": "Configure the settings for the Belabox connection",
+      "nameBox": {
+        "label": "Server Name",
+        "placeholder": "Belabox",
+        "hint": "The name of the server instance, e.g., Belabox"
+      },
+      "urlBox": {
+        "label": "Stats URL",
+        "placeholder": "http://xxx.xxx.xxx.xxx:8080/api/stats",
+        "hint": "Example: http://<IP_ADDRESS>:<PORT>/api/stats"
+      },
+      "publisherBox": {
+        "label": "Publisher",
+        "placeholder": "Publisher",
+        "hint": ""
+      }
+    }
+  },
+  "generalSettings": {
+    "title": "General Settings",
+    "subtitle": "Configure general application settings here.",
+    "search": "Search for setting",
+    "languageLabel": "App Language",
+    "languageChanged": "Language changed to {{language}}.",
+    "languageError": "Failed to update language.",
+    "updateError": "Failed to update setting.",
+    "quitLabel": "Quit app on close",
+    "quitMessage": "App will now {{action}} on close.",
+    "actions": {
+      "quit": "quit",
+      "minimize": "minimize"
+    }
+  },
+  "logging": {
+    "title": "Logging Settings",
+    "subtitle": "Set the logging paths and states",
+    "sessionCardTitle": "Session Logging Settings",
+    "sessionCardSubtitle": "Set the logging settings for session logs",
+    "actionsCardTitle": "Actions Logging Settings",
+    "actionsCardSubtitle": "Set the logging settings for actions logs",
+    "enabled": "Logging enabled",
+    "disabled": "Logging disabled",
+    "sessionPathLabel": "Session Logs Path",
+    "actionsPathLabel": "Actions Logs Path",
+    "fileSizeLabel": "Session Logs File Size (MB)",
+    "saveTooltip": "Click or press Enter to save changes",
+    "directoryDialogTitle": "Select directory for {{label}}",
+    "validation": {
+      "pathEmpty": "Path cannot be empty.",
+      "pathNoSpaces": "Path must not contain spaces.",
+      "fileSizeInteger": "File size must be an integer",
+      "fileSizeRange": "File size must be between 0 and 10.",
+      "fileSizeEmpty": "File size cannot be empty."
     }
   },
   "alerts": {

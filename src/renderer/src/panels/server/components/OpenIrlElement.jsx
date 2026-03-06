@@ -4,8 +4,10 @@ import InputEndAdornment from '../../../components/feedback/InputEndAdornment';
 import SaveIcon from '@mui/icons-material/Save';
 import { useServerConfigStore } from '../../../contexts/DataContext';
 import { useAlert } from '../../../contexts/AlertContext';
+import { useTranslation } from 'react-i18next';
 
 const OpenIrlElement = () => {
+  const { t } = useTranslation();
   const { serverConfig, updateServerConfig } = useServerConfigStore();
   const { showAlert } = useAlert();
   const type = 'openirl';
@@ -62,24 +64,24 @@ const OpenIrlElement = () => {
   const validateTextField = (name, value) => {
     if (name === 'statsUrl') {
       if (!value.trim() || value.replace(/\s+/g, '').length === 0) {
-        return 'Stats URL cannot be empty.';
+        return t('server.error1');
       } else if (!value.startsWith('http://')) {
-        return 'Stats URL must start with http.';
+        return t('server.error2');
       } else if (value.includes(' ')) {
-        return 'Stats URL must not contain spaces.';
+        return t('server.error3');
       }
       return '';
     }
     if (name === 'publisher') {
       if (!value.trim() || value.replace(/\s+/g, '').length === 0) {
-        return 'Publisher cannot be empty.';
+        return t('server.error4');
       } else if (value.includes(' ')) {
-        return 'Publisher must not contain spaces.';
+        return t('server.error5');
       }
     }
     if (name === 'name') {
       if (!value.trim() || value.replace(/\s+/g, '').length === 0) {
-        return 'Name cannot be empty.';
+        return t('server.error6');
       }
       return '';
     }
@@ -110,9 +112,9 @@ const OpenIrlElement = () => {
         ...prev,
         [name]: false
       }));
-      showAlert({ message: 'Data saved successfully', severity: 'success' });
+      showAlert({ message: t('alerts.saveSuccess'), severity: 'success' });
     } else {
-      showAlert({ message: 'Failed to save data', severity: 'error' });
+      showAlert({ message: t('alerts.saveFailure'), severity: 'error' });
     }
   };
 
@@ -120,7 +122,8 @@ const OpenIrlElement = () => {
     <Box>
       <Stack gap={2}>
         <TextField
-          label="Server Name"
+          label={t('server.openIrl.nameBox.label')}
+          placeholder={t('server.openIrl.nameBox.placeholder')}
           value={serverData.name || ''}
           onChange={(e) => handleInputChange('name', e.target.value)}
           onKeyDown={(e) => {
@@ -131,12 +134,12 @@ const OpenIrlElement = () => {
           sx={{ width: '240px' }}
           required
           error={Boolean(errorMessages.name)}
-          helperText={errorMessages.name || 'The name of the server instance'}
+          helperText={errorMessages.name || t('server.openIrl.nameBox.hint')}
           slotProps={{
             input: {
               endAdornment: dirtyStates.name && errorMessages.name.length === 0 && (
                 <InputEndAdornment
-                  title="Click or press Enter to save changes"
+                  title={t('server.inputAdornment')}
                   placement="top-start"
                   open={Boolean(dirtyStates.name)}
                   color="success"
@@ -157,7 +160,8 @@ const OpenIrlElement = () => {
         >
           <TextField
             fullWidth
-            label="Stats URL"
+            label={t('server.openIrl.urlBox.label')}
+            placeholder={t('server.openIrl.urlBox.placeholder')}
             value={serverData.statsUrl || ''}
             onChange={(e) => handleInputChange('statsUrl', e.target.value)}
             onKeyDown={(e) => {
@@ -169,13 +173,13 @@ const OpenIrlElement = () => {
             error={Boolean(errorMessages.statsUrl)}
             helperText={
               errorMessages.statsUrl ||
-              'Example (legacy as option): http://<ip>:<port>/stats/play/live/<streamId>?legacy=1'
+              t('server.openIrl.urlBox.hint')
             }
             slotProps={{
               input: {
                 endAdornment: dirtyStates.statsUrl && errorMessages.statsUrl.length === 0 && (
                   <InputEndAdornment
-                    title="Click or press Enter to save changes"
+                    title={t('server.inputAdornment')}
                     placement="top-start"
                     open={Boolean(dirtyStates.statsUrl)}
                     color="success"
@@ -191,7 +195,8 @@ const OpenIrlElement = () => {
 
           <TextField
             fullWidth
-            label="Publisher"
+            label={t('server.openIrl.publisherBox.label')}
+            placeholder={t('server.openIrl.publisherBox.placeholder')}
             value={serverData.publisher || ''}
             onChange={(e) => handleInputChange('publisher', e.target.value)}
             onKeyDown={(e) => {
@@ -201,12 +206,12 @@ const OpenIrlElement = () => {
             }}
             required
             error={Boolean(errorMessages.publisher)}
-            helperText={errorMessages.publisher || 'Example: live'}
+            helperText={errorMessages.publisher || t('server.openIrl.publisherBox.hint')}
             slotProps={{
               input: {
                 endAdornment: dirtyStates.publisher && errorMessages.publisher.length === 0 && (
                   <InputEndAdornment
-                    title="Click or press Enter to save changes"
+                    title={t('server.inputAdornment')}
                     placement="top-start"
                     open={Boolean(dirtyStates.publisher)}
                     color="success"
