@@ -6,9 +6,11 @@ import Welcome from './pages/Welcome';
 import ServerSettings from './panels/server/ServerSettings';
 import AccountsSettings from './panels/accounts/AccountsSettings';
 import TwitchSettings from './panels/twitch/TwitchSettings';
+import KickSettings from './panels/kick/KickSettings';
 import CommandSettings from './panels/twitch/components/CommandSettings';
 import MessageSettings from './panels/twitch/components/MessageSettings';
 import TwitchAccountSettings from './panels/twitch/components/AccountsSettings';
+import KickAccountSettings from './panels/kick/components/AccountsSettings';
 import AppSettings from './panels/app/AppSettings';
 import AlertComponent from './components/feedback/AlertComponent';
 import { useAlert } from './contexts/AlertContext';
@@ -41,9 +43,19 @@ function App() {
                 <Route path="usersettings" element={<UserSettings />} />
                 <Route path="accountssettings" element={<TwitchAccountSettings />} />
               </Route>
+              <Route path="kick" element={<KickSettings />}>
+                <Route index element={<CommandSettings />} />
+                <Route path="commandsettings" element={<CommandSettings />} />
+                <Route path="messagesettings" element={<MessageSettings />} />
+                <Route path="usersettings" element={<UserSettings />} />
+                <Route path="accountssettings" element={<KickAccountSettings />} />
+              </Route>
             </Route>
 
-            <Route path="twitchsettings/*" element={<Navigate to="/dashboard/accountssettings/twitch" replace />} />
+            <Route
+              path="twitchsettings/*"
+              element={<Navigate to="/dashboard/accountssettings/twitch" replace />}
+            />
 
             <Route path="serversettings" element={<ServerSettings />} />
 

@@ -6,16 +6,30 @@
       "disabled": "Deaktiviert"
     }
   },
+  "alerts": {
+    "saveSuccess": "Daten erfolgreich gespeichert",
+    "saveError": "Daten konnten nicht gespeichert werden",
+    "deleteSuccess": "Erfolgreich gelöscht",
+    "deleteError": "Element konnte nicht gelöscht werden",
+    "saveStateSuccess": "{{key}} erfolgreich gespeichert",
+    "saveStateError": "{{key}} konnte nicht gespeichert werden"
+  },
   "authorization": {
     "twitch": {
+      "broadcaster": "StreamerIn",
+      "bot": "Chatbot",
       "header": "Twitch Authentifizierung erfolgreich",
       "description": "Fenster kann jetzt geschlossen werden"
     },
     "kick": {
+      "broadcaster": "StreamerIn",
+      "bot": "Chatbot",
       "header": "Kick Authentifizierung erfolgreich",
       "description": "Fenster kann jetzt geschlossen werden"
     },
     "youtube": {
+      "broadcaster": "StreamerIn",
+      "bot": "Chatbot",
       "header": "YouTube Authentifizierung erfolgreich",
       "description": "Fenster kann jetzt geschlossen werden"
     }
@@ -99,7 +113,57 @@
       }
     },
     "youtube": {},
-    "kick": {},
+    "kick": {
+      "users": {
+        "header": "Benutzereinstellungen",
+        "description": "Verwalte Admin- und Mod-Benutzer. Diese Benutzer müssen keine tatsächlichen Kick-Admins oder Moderatoren sein, dies sind nur Rollen innerhalb der App, die jedem Kick-Benutzer zugewiesen werden können. ALLE deine Kick-Moderatoren werden automatisch als Moderatoren in der App zugewiesen. Admins haben Zugriff auf alle Befehle, Mods haben Zugriff auf alle Befehle, außer denen, die nur für Admins eingeschränkt sind.",
+        "noAccountRegistered": "Bitte melde ein StreamerIn-Konto im Reiter 'Konten', um Admins und Mods zu verwalten",
+        "error1": "Benutzername darf nicht leer sein",
+        "error2": "Benutzerüberprüfung fehlgeschlagen",
+        "error3": "Benutzer ist bereits ein Admin",
+        "error4": "Benutzer ist bereits ein Mod",
+        "error5": "Benutzer kann derzeit nicht überprüft werden",
+        "inputAdornmentAdmin": "Klicken oder Enter drücken, um Admin hinzuzufügen",
+        "inputAdornmentMod": "Klicken oder Enter drücken, um Mod hinzuzufügen",
+        "inputBox": {
+          "label": "Kick Benutzername",
+          "placeholder": "Benutzername"
+        },
+        "admins": {
+          "header": "Admins",
+          "description": "Admins können alle Admin- und niedrigeren Rollenbefehle verwenden"
+        },
+        "mods": {
+          "header": "Moderatoren",
+          "description": "Moderatoren können alle Mod- und niedrigeren Rollenbefehle verwenden"
+        }
+      },
+      "accounts": {
+        "header": "Kontoeinstellungen",
+        "description": "Melde dich hier mit deinem Broadcaster- und Bot-Konto an. Du kannst entscheiden, welches Konto Nachrichten im Kick-Chat postet. Fallback ist das Broadcaster-Konto. Die Anwendung hört automatisch auf das Kick-Konto des Broadcasters, wenn Kick die aktivierte Plattform ist.",
+        "notLoggedIn": "Nicht angemeldet",
+        "broadcasterConnected": "Mit StreamerIn Konto verbunden",
+        "chatbotConnected": "Mit Chatbot Konto verbunden",
+        "loggedOutBroadcaster": "StreamerIn Konto erfolgreich abgemeldet, Tokens alle wiederrufen, Daten wurden gelöscht",
+        "loggedOutChatbot": "Chatbot Konto erfolgreich abgemeldet, Tokens alle wiederrufen, Daten wurden gelöscht",
+        "enabledChatbot": "Chatbot Konto wird für Nachrichten verwendet",
+        "disabledChatbot": "StreamerIn Konto wird für Nachrichten verwendet",
+        "failure": "Fehler beim wechseln des Kontos für Nachrichten",
+        "broadcaster": {
+          "header": "StreamerIn Konto",
+          "description": "Melde das StreamerIn Konto hier an"
+        },
+        "chatbot": {
+          "header": "Chatbot Konto",
+          "description": "Melde das Chatbot Konto hier an",
+          "hint": "Verwende das Chatbot-Konto, um Nachrichten im Chat zu posten"
+        },
+        "button": {
+          "login": "Konto anmelden",
+          "logout": "Abmelden"
+        }
+      }
+    },
     "commands": {
       "header": "Chat Befehle ",
       "description": "Bearbeite die Chat Befehle für die verschiedenen Aktionen der Anwendung.",
@@ -366,13 +430,13 @@
   "server": {
     "header": "Server Einstellungen",
     "description": "Bearbeite die Einstellungen für den Streaming-Server, um die Statistiken zu überwachen",
-    "error1":"Stats URL darf nicht leer sein",
-    "error2":"Stats URL muss mit http:// oder https:// beginnen",
-    "error3":"Stats URL darf keine Leerzeichen enthalten",
-    "error4":"Publisher darf nicht leer sein",
-    "error5":"Publisher darf keine Leerzeichen enthalten",
-    "error6":"Name darf nicht leer sein",
-    "inputAdornment":"Zum speichern klicken oder Enter drücken",
+    "error1": "Stats URL darf nicht leer sein",
+    "error2": "Stats URL muss mit http:// oder https:// beginnen",
+    "error3": "Stats URL darf keine Leerzeichen enthalten",
+    "error4": "Publisher darf nicht leer sein",
+    "error5": "Publisher darf keine Leerzeichen enthalten",
+    "error6": "Name darf nicht leer sein",
+    "inputAdornment": "Zum speichern klicken oder Enter drücken",
     "select": {
       "label": "Server Typ",
       "placeholder": "Server Typ",
@@ -440,19 +504,122 @@
       }
     }
   },
-  "generalSettings": {
-    "title": "Allgemeine Einstellungen",
-    "subtitle": "Konfiguriere hier allgemeine App-Einstellungen.",
-    "search": "Einstellung suchen",
-    "languageLabel": "App-Sprache",
-    "languageChanged": "Sprache auf {{language}} gesetzt.",
-    "languageError": "Sprache konnte nicht aktualisiert werden.",
-    "updateError": "Einstellung konnte nicht aktualisiert werden.",
-    "quitLabel": "App beim Schließen beenden",
-    "quitMessage": "Die App wird beim Schließen nun {{action}}.",
-    "actions": {
-      "quit": "beendet",
-      "minimize": "minimiert"
+  "software": {
+    "header": "Software Einstellungen",
+    "description": "Wähle und konfiguriere hier deine Streaming-Software-Einstellungen",
+    "error1": "Host darf nicht leer sein",
+    "error2": "Host darf keine Leerzeichen enthalten",
+    "error3": "Port muss zwischen 1000 und 65535 liegen",
+    "error4": "Name darf nicht leer sein",
+    "error5": "Passwort darf keine Leerzeichen enthalten",
+    "inputAdornment": "Zum Speichern klicken oder Enter drücken",
+    "reconnectSuccessMessage": "Erfolgreich mit der Streaming-Software verbunden",
+    "reconnectErrorMessage": "Verbindung zur Streaming-Software fehlgeschlagen: {{error}}",
+    "select": {
+      "label": "Software Typ",
+      "placeholder": "Software Typ",
+      "options": {
+        "obsStudio": "OBS Studio",
+        "streamlabsObs": "Streamlabs OBS",
+        "meldStudio": "MELD Studio"
+      }
+    },
+    "obsStudio": {
+      "header": "OBS Studio Einstellungen",
+      "description": "Konfiguriere die OBS-Verbindung",
+      "hostBox": {
+        "label": "OBS Websocket Host",
+        "placeholder": "z.B. localhost",
+        "hint": "Host sollte localhost oder eine öffentliche IP-Adresse sein"
+      },
+      "portBox": {
+        "label": "OBS Websocket Port",
+        "placeholder": "z.B. 4455",
+        "hint": "Der OBS Websocket Port"
+      },
+      "passwordBox": {
+        "label": "OBS Websocket Passwort",
+        "placeholder": "Dein OBS Websocket Passwort",
+        "hint": "Das Passwort für die OBS Websocket Verbindung"
+      }
+    },
+    "streamlabsObs": {
+      "header": "Streamlabs OBS Einstellungen",
+      "description": "Konfiguriere die Streamlabs OBS-Verbindung",
+      "hostBox": {
+        "label": "Streamlabs OBS Websocket Host",
+        "placeholder": "z.B. localhost",
+        "hint": "Host sollte localhost oder eine öffentliche IP-Adresse sein"
+      },
+      "portBox": {
+        "label": "Streamlabs OBS Websocket Port",
+        "placeholder": "z.B. 59650",
+        "hint": "Der Streamlabs OBS Websocket Port"
+      },
+      "passwordBox": {
+        "label": "API-Token",
+        "placeholder": "Dein Streamlabs OBS Websocket API-Token",
+        "hint": "Das API-Token für die Streamlabs OBS Websocket Verbindung"
+      }
+    },
+    "meldStudio": {
+      "header": "MELD Studio Einstellungen",
+      "description": "Konfiguriere die MELD Studio-Verbindung",
+      "hostBox": {
+        "label": "MELD Studio Websocket Host",
+        "placeholder": "z.B. localhost",
+        "hint": "Host sollte localhost oder eine öffentliche IP-Adresse sein"
+      },
+      "portBox": {
+        "label": "MELD Studio Websocket Port",
+        "placeholder": "z.B. 9090",
+        "hint": "Der MELD Studio Websocket Port"
+      },
+      "passwordBox": {
+        "label": "MELD Studio Websocket Passwort",
+        "placeholder": "Dein MELD Studio Websocket Passwort",
+        "hint": "Das Passwort für die MELD Studio Websocket Verbindung"
+      }
+    }
+  },
+  "switcher": {
+    "header": "Switcher Einstellungen",
+    "description": "Konfiguriere die Switcher-Einstellungen hier",
+    "inputAdornment": "Zum Speichern klicken oder Enter drücken",
+    "states": {
+      "header": "Switcher Zuständeinstellungen",
+      "description": "Lege die aktivierten Zustände des Switchers fest",
+      "enableSwitcher": "Switcher aktivieren",
+      "onlySwitchWhenLive": "Nur wechseln, wenn live",
+      "enableChatNotifications": "Chat-Benachrichtigungen aktivieren",
+      "switchToStartSceneOnStreamStart": "Wechsel zur Startszene beim Stream-Start",
+      "stopStreamAfterRaid": "Stream nach Raid stoppen"
+    },
+    "scenes": {
+      "header": "Szenen Einstellungen",
+      "description": "Konfiguriere die Szenen der Streaming-Software hier. Die Szenennamen müssen genau mit den Szenen in deiner Broadcasting-Software übereinstimmen (Groß-/Kleinschreibung wird nicht berücksichtigt)",
+      "error1": "{{scene}} darf nicht leer sein",
+      "error2": "{{scene}} darf nicht dieselbe wie die Privacy-Szene sein",
+      "liveScene": "Live-Szene",
+      "offlineScene": "Offline-Szene",
+      "lowBitrateScene": "Low-Bitrate-Szene",
+      "privacyScene": "Privacy-Szene",
+      "startScene": "Start-Szene"
+    },
+    "triggers": {
+      "header": "Auslöser Einstellungen",
+      "description": "Lege die Bitrate-Auslöser und Timeout-Werte für das Wechseln der Szenen fest",
+      "error1": "{{value}} muss einen Wert enthalten (oder 0)",
+      "error2": "{{value}} muss eine ganze Zahl sein",
+      "error3": "{{value}} muss kleiner als der Wiederherstellungs-Auslöser für Live sein",
+      "error4": "{{value}} muss größer als der Auslöser für niedrige Bitrate sein",
+      "error5": "{{value}} muss kleiner als sowohl der Auslöser für niedrige Bitrate als auch der Wiederherstellungs-Auslöser für Live sein",
+      "trigger": "Bitrate-Auslöser für niedrige Bitrate (kbps)",
+      "rTrigger": "Bitrate-Wiederherstellungs-Auslöser für Live (kbps)",
+      "offlineTrigger": "Offline-Auslöser für Offline (kbps)",
+      "switchToLiveTimeout": "Timeout für Wechsel zu Live (s)",
+      "switchToOfflineTimeout": "Timeout für Wechsel zu Offline (s)",
+      "switchToLowTimeout": "Timeout für Wechsel zu Low-Bitrate (s)"
     }
   },
   "logging": {
@@ -477,9 +644,20 @@
       "fileSizeEmpty": "Dateigröße darf nicht leer sein."
     }
   },
-  "alerts": {
-    "saveSuccess": "Daten erfolgreich gespeichert",
-    "saveError": "Daten konnten nicht gespeichert werden"
+  "generalSettings": {
+    "title": "Allgemeine Einstellungen",
+    "subtitle": "Konfiguriere hier allgemeine App-Einstellungen.",
+    "search": "Einstellung suchen",
+    "languageLabel": "App-Sprache",
+    "languageChanged": "Sprache auf {{language}} gesetzt.",
+    "languageError": "Sprache konnte nicht aktualisiert werden.",
+    "updateError": "Einstellung konnte nicht aktualisiert werden.",
+    "quitLabel": "App beim Schließen beenden",
+    "quitMessage": "Die App wird beim Schließen nun {{action}}.",
+    "actions": {
+      "quit": "beendet",
+      "minimize": "minimiert"
+    }
   },
   "defaults": {
     "messages": {

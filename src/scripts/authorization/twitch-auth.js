@@ -1,16 +1,15 @@
 import { BrowserWindow } from 'electron';
+import express from 'express';
 import Logger from '../logging/logger';
 import { injectDefaults } from '../store/defaults';
-import { userAuthorization, authAPI } from './twitch-api';
-import { connectToEventSubs, disconnectEventSubs } from './event-subscriptions/eventsubs';
+import { userAuthorization, authAPI } from '../twitch/twitch-api';
+import { connectToTwitchEventSubs, disconnectTwitchEventSubs } from '../twitch/event-subscriptions/eventsubs';
 import img from '../../assets/icon.png';
 import { getTranslationData } from '../lib/translation-picker';
 
 const { appConfig, twitchAccountsConfig } = injectDefaults();
 
-const express = require('express');
-const app = express();
-app.use(express.json());
+export const twitchRouter = express.Router();
 
 const port = import.meta.env.VITE_SERVERPORT;
 const client_id = import.meta.env.VITE_TWITCHCLIENTID;
@@ -18,19 +17,15 @@ const client_secret = import.meta.env.VITE_TWITCHCLIENTSECRET;
 const bot_scopes = import.meta.env.VITE_TWITCHBOT_SCOPES;
 const broadcaster_scopes = import.meta.env.VITE_TWITCHBROADCASTER_SCOPES;
 
-app.listen(port, () => {
-  console.log(`Auth server listening at http://localhost:${port}`);
-});
-
 const authBaseUrl = 'https://id.twitch.tv/oauth2';
 
 let type;
 
-export function startAuthorization(authType) {
+export function startTwitchAuthorization(authType) {
   type = authType;
   const qs = new URLSearchParams({
     client_id: client_id,
-    redirect_uri: `http://localhost:${port}/oauth`,
+    redirect_uri: `http://localhost:${port}/oauth/twitch`,
     response_type: 'code',
     scope: type === 'bot' ? bot_scopes : broadcaster_scopes,
     force_verify: true
@@ -38,7 +33,7 @@ export function startAuthorization(authType) {
   return `${authBaseUrl}/authorize?${qs}`;
 }
 
-app.get('/oauth', async (req, res) => {
+twitchRouter.get('/oauth/twitch', async (req, res) => {
   const { code } = req.query;
 
   const qs = new URLSearchParams({
@@ -46,7 +41,7 @@ app.get('/oauth', async (req, res) => {
     client_secret,
     code,
     grant_type: 'authorization_code',
-    redirect_uri: `http://localhost:${port}/oauth`
+    redirect_uri: `http://localhost:${port}/oauth/twitch`
   });
 
   try {
@@ -77,11 +72,11 @@ app.get('/oauth', async (req, res) => {
     const mainWindow = BrowserWindow.getAllWindows()[0];
     mainWindow.webContents.send('send-oauth-data', { userType: type, data });
 
-    if (type === 'broadcaster') {
+    if (type === 'broadcaster' && appConfig.get('activePlatform') === 'twitch') {
       async function connectEventSubs() {
-        disconnectEventSubs(mainWindow);
+        await disconnectTwitchEventSubs(mainWindow);
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        connectToEventSubs(client_id, mainWindow);
+        await connectToTwitchEventSubs(client_id, mainWindow);
       }
       connectEventSubs();
     }
@@ -99,7 +94,7 @@ app.get('/oauth', async (req, res) => {
           <div class="text-container">
             <img class="img" src=${img} alt="../../assets/icon.png" />
             <div>
-              <h1 class="type">${type.charAt(0).toUpperCase() + type.slice(1)}</h1>
+              <h1 class="type">${getTranslationData({ lng, key: `authorization.twitch.${type}` })}</h1>
             </div>
             <h1 class="header">${getTranslationData({ lng, key: 'authorization.twitch.header' })}</h1>
             <p class="sub">${getTranslationData({ lng, key: 'authorization.twitch.description' })}</p>

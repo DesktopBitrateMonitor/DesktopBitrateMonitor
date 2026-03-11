@@ -4,8 +4,10 @@ import InputEndAdornment from '../../../components/feedback/InputEndAdornment';
 import SaveIcon from '@mui/icons-material/Save';
 import { useServerConfigStore } from '../../../contexts/DataContext';
 import { useAlert } from '../../../contexts/AlertContext';
+import { useTranslation } from 'react-i18next';
 
 const BelaboxElement = ({}) => {
+  const { t } = useTranslation();
   const { serverConfig, updateServerConfig } = useServerConfigStore();
   const { showAlert } = useAlert();
   const type = 'belabox';
@@ -62,17 +64,24 @@ const BelaboxElement = ({}) => {
   const validateTextField = (name, value) => {
     if (name === 'statsUrl') {
       if (!value.trim() || value.replace(/\s+/g, '').length === 0) {
-        return 'Stats URL cannot be empty.';
+        return t('server.error1');
       } else if (!value.startsWith('http://')) {
-        return 'Stats URL must start with http.';
+        return t('server.error2');
       } else if (value.includes(' ')) {
-        return 'Stats URL must not contain spaces.';
+        return t('server.error3');
       }
       return '';
     }
+    if (name === 'publisher') {
+      if (!value.trim() || value.replace(/\s+/g, '').length === 0) {
+        return t('server.error4');
+      } else if (value.includes(' ')) {
+        return t('server.error5');
+      }
+    }
     if (name === 'name') {
       if (!value.trim() || value.replace(/\s+/g, '').length === 0) {
-        return 'Name cannot be empty.';
+        return t('server.error6');
       }
       return '';
     }
@@ -103,9 +112,9 @@ const BelaboxElement = ({}) => {
         ...prev,
         [name]: false
       }));
-      showAlert({ message: 'Data saved successfully', severity: 'success' });
+      showAlert({ message: t('alerts.saveSuccess'), severity: 'success' });
     } else {
-      showAlert({ message: 'Failed to save data', severity: 'error' });
+      showAlert({ message: t('alerts.saveError'), severity: 'error' });
     }
   };
 
@@ -113,7 +122,7 @@ const BelaboxElement = ({}) => {
     <Box>
       <Stack gap={2}>
         <TextField
-          label="Server Name"
+          label={t('server.belabox.nameBox.label')}
           value={serverData.name || ''}
           onChange={(e) => handleInputChange('name', e.target.value)}
           onKeyDown={(e) => {
@@ -124,12 +133,12 @@ const BelaboxElement = ({}) => {
           sx={{ width: '240px' }}
           required
           error={Boolean(errorMessages.name)}
-          helperText={errorMessages.name || 'The name of the server instance'}
+          helperText={errorMessages.name || t('server.belabox.nameBox.hint')}
           slotProps={{
             input: {
               endAdornment: dirtyStates.name && errorMessages.name.length === 0 && (
                 <InputEndAdornment
-                  title="Click or press Enter to save changes"
+                  title={t('server.inputAdornment')}
                   placement="top-start"
                   open={Boolean(dirtyStates.name)}
                   color="success"
@@ -141,36 +150,76 @@ const BelaboxElement = ({}) => {
           }}
         />
 
-        <TextField
-          fullWidth
-          label="Stats URL"
-          value={serverData.statsUrl || ''}
-          onChange={(e) => handleInputChange('statsUrl', e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              saveField('statsUrl');
-            }
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', sm: 'column', xl: 'row' },
+            gap: 2
           }}
-          required
-          error={Boolean(errorMessages.statsUrl)}
-          helperText={errorMessages.statsUrl || 'Example: http://<ip>:<port>/stats/<streamId>'}
-          slotProps={{
-            input: {
-              endAdornment: dirtyStates.statsUrl && errorMessages.statsUrl.length === 0 && (
-                <InputEndAdornment
-                  title="Click or press Enter to save changes"
-                  placement="top-start"
-                  open={Boolean(dirtyStates.statsUrl)}
-                  color="success"
-                  icon={<SaveIcon color="success" />}
-                  handleClick={(e) => {
-                    saveField('statsUrl');
-                  }}
-                />
-              )
-            }
-          }}
-        />
+        >
+          <TextField
+            fullWidth
+            label={t('server.belabox.urlBox.label')}
+            value={serverData.statsUrl || ''}
+            onChange={(e) => handleInputChange('statsUrl', e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                saveField('statsUrl');
+              }
+            }}
+            required
+            error={Boolean(errorMessages.statsUrl)}
+            helperText={errorMessages.statsUrl || t('server.belabox.urlBox.hint')}
+            slotProps={{
+              input: {
+                endAdornment: dirtyStates.statsUrl && errorMessages.statsUrl.length === 0 && (
+                  <InputEndAdornment
+                    title={t('server.inputAdornment')}
+                    placement="top-start"
+                    open={Boolean(dirtyStates.statsUrl)}
+                    color="success"
+                    icon={<SaveIcon color="success" />}
+                    handleClick={(e) => {
+                      saveField('statsUrl');
+                    }}
+                  />
+                )
+              }
+            }}
+          />
+
+          <TextField
+            fullWidth
+            label={t('server.srtLiveServer.publisherBox.label')}
+            placeholder={t('server.srtLiveServer.publisherBox.placeholder')}
+            value={serverData.publisher || ''}
+            onChange={(e) => handleInputChange('publisher', e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                saveField('publisher');
+              }
+            }}
+            required
+            error={Boolean(errorMessages.publisher)}
+            helperText={errorMessages.publisher || t('server.srtLiveServer.publisherBox.hint')}
+            slotProps={{
+              input: {
+                endAdornment: dirtyStates.publisher && errorMessages.publisher.length === 0 && (
+                  <InputEndAdornment
+                    title={t('server.inputAdornment')}
+                    placement="top-start"
+                    open={Boolean(dirtyStates.publisher)}
+                    color="success"
+                    icon={<SaveIcon color="success" />}
+                    handleClick={(e) => {
+                      saveField('publisher');
+                    }}
+                  />
+                )
+              }
+            }}
+          />
+        </Box>
       </Stack>
     </Box>
   );

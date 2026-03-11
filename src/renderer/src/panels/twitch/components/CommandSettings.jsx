@@ -9,9 +9,6 @@ import CommandPanel from './panels/CommandPanel';
 import { useAlert } from '../../../contexts/AlertContext';
 import { useTranslation } from 'react-i18next';
 
-//TODO: Change filtering because the title is not matching the command title in the command object anymore.
-// Maybe get all titles from the current translation language file and search trough them
-
 const CommandSettings = () => {
   const ALLOWED_SORTS = [
     'none',

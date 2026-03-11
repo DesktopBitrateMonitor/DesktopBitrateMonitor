@@ -5,19 +5,21 @@ import CollapsibleCard from '../../../components/functional/CollapsibleCard';
 import InputEndAdornment from '../../../components/feedback/InputEndAdornment';
 import NumericInput from '../../../components/functional/NumericInput';
 import { useSwitcherConfigStore } from '../../../contexts/DataContext';
-
-const FIELD_LABELS = {
-  trigger: 'Trigger to low (kbps)',
-  rTrigger: 'Reverse Trigger to live (kbps)',
-  offTrigger: 'Trigger to offline (kbps)',
-  triggerToLive: 'Switch To Live Timeout (s)',
-  triggerToLow: 'Switch To Low Timeout (s)',
-  triggerToOffline: 'Switch To Offline Timeout (s)'
-};
-
-const TRIGGER_KEYS = Object.keys(FIELD_LABELS);
+import { useTranslation } from 'react-i18next';
 
 const Triggers = ({ collapsedIds, toggleCollapsed }) => {
+  const { t } = useTranslation();
+  const FIELD_LABELS = {
+    trigger: t('switcher.triggers.trigger'),
+    rTrigger: t('switcher.triggers.rTrigger'),
+    offTrigger: t('switcher.triggers.offlineTrigger'),
+    triggerToLive: t('switcher.triggers.switchToLiveTimeout'),
+    triggerToLow: t('switcher.triggers.switchToLowTimeout'),
+    triggerToOffline: t('switcher.triggers.switchToOfflineTimeout')
+  };
+
+  const TRIGGER_KEYS = Object.keys(FIELD_LABELS);
+
   const { switcherConfig, updateSwitcherConfig } = useSwitcherConfigStore();
   const { showAlert } = useAlert();
 
@@ -60,20 +62,23 @@ const Triggers = ({ collapsedIds, toggleCollapsed }) => {
       name === 'triggerToLow' ||
       name === 'triggerToOffline'
     ) {
-      if (value.length === 0 || isNaN(triggerValue) || !Number.isInteger(triggerValue)) {
-        return `${FIELD_LABELS[name]} must be an integer.`;
+      if (value.length === 0) {
+        return t('switcher.triggers.error1', { value: FIELD_LABELS[name] });
+      }
+      if (isNaN(triggerValue) || !Number.isInteger(triggerValue)) {
+        return t('switcher.triggers.error2', { value: FIELD_LABELS[name] });
       }
       if (name === 'trigger' && triggersData.rTrigger <= triggerValue) {
-        return `${FIELD_LABELS[name]} must be lower than Reverse Trigger to live.`;
+        return t('switcher.triggers.error3', { value: FIELD_LABELS[name] });
       }
       if (name === 'rTrigger' && triggerValue <= triggersData.trigger) {
-        return `${FIELD_LABELS[name]} must be greater than Trigger to low.`;
+        return t('switcher.triggers.error4', { value: FIELD_LABELS[name] });
       }
       if (
         (name === 'offTrigger' && triggersData.trigger <= triggerValue) ||
         triggersData.rTrigger <= triggerValue
       ) {
-        return `${FIELD_LABELS[name]} must be lower than both Trigger to low and Reverse Trigger to live.`;
+        return t('switcher.triggers.error5', { value: FIELD_LABELS[name] });
       }
     }
     return '';
@@ -122,16 +127,16 @@ const Triggers = ({ collapsedIds, toggleCollapsed }) => {
         ...prev,
         [name]: false
       }));
-      showAlert({ message: 'Data saved successfully', severity: 'success' });
+      showAlert({ message: t('alerts.saveSuccess'), severity: 'success' });
     } else {
-      showAlert({ message: 'Failed to save data', severity: 'error' });
+      showAlert({ message: t('alerts.saveError'), severity: 'error' });
     }
   };
 
   return (
     <CollapsibleCard
-      title={'Triggers Settings'}
-      subtitle={'Setup the trigger values for the switcher'}
+      title={t('switcher.triggers.header')}
+      subtitle={t('switcher.triggers.description')}
       expanded={!collapsedIds.includes('trigger')}
       onExpandedChange={() => toggleCollapsed('trigger')}
     >
@@ -155,7 +160,7 @@ const Triggers = ({ collapsedIds, toggleCollapsed }) => {
             endAdornment:
               dirtyStates[key] && !errorMessages[key] ? (
                 <InputEndAdornment
-                  title="Click or press Enter to save changes"
+                  title={t('switcher.inputAdornment')}
                   placement="top-start"
                   open={Boolean(dirtyStates[key])}
                   color="success"

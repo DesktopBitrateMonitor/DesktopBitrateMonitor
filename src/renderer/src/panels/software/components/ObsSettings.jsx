@@ -7,8 +7,10 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useStreamingSoftwareConfigStore } from '../../../contexts/DataContext';
 import { useAlert } from '../../../contexts/AlertContext';
+import { useTranslation } from 'react-i18next';
 
 const ObsSettings = () => {
+  const { t } = useTranslation();
   const { streamingSoftwareConfig, updateStreamingSoftwareConfig } =
     useStreamingSoftwareConfigStore();
   const { showAlert } = useAlert();
@@ -64,27 +66,25 @@ const ObsSettings = () => {
   const validateTextField = (name, value) => {
     if (name === 'host') {
       if (!value.trim() || value.replace(/\s+/g, '').length === 0) {
-        return 'Host cannot be empty.';
+        return t('software.error1');
       } else if (value.includes(' ')) {
-        return 'Host must not contain spaces.';
+        return t('software.error2');
       }
     }
     if (name === 'port') {
       const portNumber = Number(value);
-      if (isNaN(portNumber) || !Number.isInteger(portNumber)) {
-        return 'Port must be an integer';
-      } else if (portNumber < 1000 || portNumber > 65535) {
-        return 'Port must be between 1000 and 65535.';
+      if (portNumber < 1000 || portNumber > 65535) {
+        return t('software.error3');
       }
     }
     if (name === 'name') {
       if (!value.trim() || value.replace(/\s+/g, '').length === 0) {
-        return 'Name cannot be empty.';
+        return t('software.error4');
       }
     }
     if (name === 'password') {
       if (value.includes(' ')) {
-        return 'Password must not contain spaces.';
+        return t('software.error5');
       }
     }
     return '';
@@ -114,18 +114,18 @@ const ObsSettings = () => {
         ...prev,
         [name]: false
       }));
-      showAlert({ message: 'Data saved successfully', severity: 'success' });
+      showAlert({ message: t('alerts.saveSuccess'), severity: 'success' });
     } else {
-      showAlert({ message: 'Failed to save data', severity: 'error' });
+      showAlert({ message: t('alerts.saveError'), severity: 'error' });
     }
 
     const reconnectRes = await window.servicesApi.reconnectBroadcastSoftware('obs-studio');
     console.log('reconnectRes', reconnectRes);
     if (reconnectRes.success) {
-      showAlert({ message: 'Reconnected to OBS successfully', severity: 'info' });
+      showAlert({ message: t('software.reconnectSuccessMessage'), severity: 'info' });
     } else {
       showAlert({
-        message: `Failed to reconnect to OBS: ${reconnectRes.error}`,
+        message: t('software.reconnectErrorMessage', { error: reconnectRes.error }),
         severity: 'error'
       });
     }
@@ -134,7 +134,8 @@ const ObsSettings = () => {
   return (
     <Stack gap={2}>
       <TextField
-        label="OBS WebSocket Host"
+        label={t('software.obsStudio.hostBox.label')}
+        placeholder={t('software.obsStudio.hostBox.placeholder')}
         name="host"
         value={softwareData.host || ''}
         onChange={(e) => handleInputChange('host', e.target.value)}
@@ -144,13 +145,13 @@ const ObsSettings = () => {
           }
         }}
         error={Boolean(errorMessages.host)}
-        helperText={errorMessages.host || 'Host should be localhost or IP address'}
+        helperText={errorMessages.host || t('software.obsStudio.hostBox.hint')}
         slotProps={{
           input: {
             endAdornment:
               dirtyStates.host && !errorMessages.host ? (
                 <InputEndAdornment
-                  title="Click or press Enter to save changes"
+                  title={t('software.inputAdornment')}
                   placement="top-start"
                   open={Boolean(dirtyStates.host)}
                   color="success"
@@ -164,7 +165,8 @@ const ObsSettings = () => {
         }}
       />
       <NumericInput
-        label="Port"
+        label={t('software.obsStudio.portBox.label')}
+        placeholder={t('software.obsStudio.portBox.placeholder')}
         name="port"
         min={1000}
         max={65535}
@@ -176,12 +178,12 @@ const ObsSettings = () => {
           }
         }}
         error={Boolean(errorMessages.port)}
-        helperText={errorMessages.port || ''}
+        helperText={errorMessages.port || t('software.obsStudio.portBox.hint')}
         slotProps={{
           endAdornment:
             dirtyStates.port && !errorMessages.port ? (
               <InputEndAdornment
-                title="Click or press Enter to save changes"
+                title={t('software.inputAdornment')}
                 placement="top-start"
                 open={Boolean(dirtyStates.port)}
                 color="success"
@@ -194,12 +196,13 @@ const ObsSettings = () => {
         }}
       />
       <TextField
-        label="Password"
+        label={t('software.obsStudio.passwordBox.label')}
+        placeholder={t('software.obsStudio.passwordBox.placeholder')}
         name="password"
         type={showPassword ? 'text' : 'password'}
         value={softwareData.password || ''}
         error={Boolean(errorMessages.password)}
-        helperText={errorMessages.password || 'Password for OBS WebSocket'}
+        helperText={errorMessages.password || t('software.obsStudio.passwordBox.hint')}
         onChange={(e) => handleInputChange('password', e.target.value)}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
@@ -212,7 +215,7 @@ const ObsSettings = () => {
               <InputAdornment position="end">
                 {dirtyStates.password && !errorMessages.password && (
                   <InputEndAdornment
-                    title="Click or press Enter to save changes"
+                    title={t('software.inputAdornment')}
                     placement="top-start"
                     open={Boolean(dirtyStates.password)}
                     color="success"

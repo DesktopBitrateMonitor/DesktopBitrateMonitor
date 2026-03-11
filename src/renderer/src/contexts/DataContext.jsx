@@ -24,6 +24,9 @@ const [MessagesConfigContext, useMessagesConfigInternal] =
 const [TwitchAccountsConfigContext, useTwitchAccountsConfigInternal] = createStoreContext(
   'TwitchAccountsConfigContext'
 );
+const [KickAccountsConfigContext, useKickAccountsConfigInternal] = createStoreContext(
+  'KickAccountsConfigContext'
+);
 const [ServerConfigContext, useServerConfigInternal] = createStoreContext('ServerConfigContext');
 const [StreamingSoftwareConfigContext, useStreamingSoftwareConfigInternal] = createStoreContext(
   'StreamingSoftwareConfigContext'
@@ -81,6 +84,7 @@ export const DataProvider = ({ children }) => {
   const commandsConfigStore = useStoreState('commands-config');
   const messagesConfigStore = useStoreState('messages-config');
   const twitchAccountsConfigStore = useStoreState('twitch-accounts-config');
+  const kickAccountsConfigStore = useStoreState('kick-accounts-config');
   const serverConfigStore = useStoreState('server-config');
   const streamingSoftwareConfigStore = useStoreState('streaming-software-config');
   const switcherConfigStore = useStoreState('switcher-config');
@@ -91,13 +95,15 @@ export const DataProvider = ({ children }) => {
         <CommandsConfigContext.Provider value={commandsConfigStore}>
           <MessagesConfigContext.Provider value={messagesConfigStore}>
             <TwitchAccountsConfigContext.Provider value={twitchAccountsConfigStore}>
-              <ServerConfigContext.Provider value={serverConfigStore}>
-                <StreamingSoftwareConfigContext.Provider value={streamingSoftwareConfigStore}>
-                  <SwitcherConfigContext.Provider value={switcherConfigStore}>
-                    {children}
-                  </SwitcherConfigContext.Provider>
-                </StreamingSoftwareConfigContext.Provider>
-              </ServerConfigContext.Provider>
+              <KickAccountsConfigContext.Provider value={kickAccountsConfigStore}>
+                <ServerConfigContext.Provider value={serverConfigStore}>
+                  <StreamingSoftwareConfigContext.Provider value={streamingSoftwareConfigStore}>
+                    <SwitcherConfigContext.Provider value={switcherConfigStore}>
+                      {children}
+                    </SwitcherConfigContext.Provider>
+                  </StreamingSoftwareConfigContext.Provider>
+                </ServerConfigContext.Provider>
+              </KickAccountsConfigContext.Provider>
             </TwitchAccountsConfigContext.Provider>
           </MessagesConfigContext.Provider>
         </CommandsConfigContext.Provider>
@@ -163,20 +169,6 @@ export const useMessagesConfigStore = () => {
   );
 };
 
-// export const useAccountsConfigStore = () => {
-//   const { config, loading, error, reload, updateLocal } = useAccountsConfigInternal();
-//   return useMemo(
-//     () => ({
-//       accountsConfig: config,
-//       loading,
-//       error,
-//       reloadAccountsConfig: reload,
-//       updateAccountsConfig: updateLocal
-//     }),
-//     [config, loading, error, reload, updateLocal]
-//   );
-// };
-
 export const useTwitchAccountsConfig = () => {
   const { config, loading, error, reload, updateLocal } = useTwitchAccountsConfigInternal();
   return useMemo(
@@ -186,6 +178,20 @@ export const useTwitchAccountsConfig = () => {
       error,
       reloadTwitchAccountsConfig: reload,
       updateTwitchAccountsConfig: updateLocal
+    }),
+    [config, loading, error, reload, updateLocal]
+  );
+};
+
+export const useKickAccountsConfig = () => {
+  const { config, loading, error, reload, updateLocal } = useKickAccountsConfigInternal();
+  return useMemo(
+    () => ({
+      kickAccountsConfig: config,
+      loading,
+      error,
+      reloadKickAccountsConfig: reload,
+      updateKickAccountsConfig: updateLocal
     }),
     [config, loading, error, reload, updateLocal]
   );
@@ -241,6 +247,7 @@ export const useAllStores = () => {
   const commands = useCommandsConfigStore();
   const messages = useMessagesConfigStore();
   const twitchAccounts = useTwitchAccountsConfig();
+  const kickAccounts = useKickAccountsConfig();
   const server = useServerConfigStore();
   const streaming = useStreamingSoftwareConfigStore();
   const switcher = useSwitcherConfigStore();
@@ -251,6 +258,7 @@ export const useAllStores = () => {
     commandsConfig: commands.commandsConfig,
     messagesConfig: messages.messagesConfig,
     twitchAccountsConfig: twitchAccounts.twitchAccountsConfig,
+    kickAccountsConfig: kickAccounts.kickAccountsConfig,
     serverConfig: server.serverConfig,
     streamingSoftwareConfig: streaming.streamingSoftwareConfig,
     switcherConfig: switcher.switcherConfig

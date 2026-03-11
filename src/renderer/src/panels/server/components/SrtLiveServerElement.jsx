@@ -4,8 +4,10 @@ import InputEndAdornment from '../../../components/feedback/InputEndAdornment';
 import SaveIcon from '@mui/icons-material/Save';
 import { useServerConfigStore } from '../../../contexts/DataContext';
 import { useAlert } from '../../../contexts/AlertContext';
+import { useTranslation } from 'react-i18next';
 
 const SrtLiveServerElement = () => {
+  const { t } = useTranslation();
   const { serverConfig, updateServerConfig } = useServerConfigStore();
   const { showAlert } = useAlert();
   const type = 'srt-live-server';
@@ -62,22 +64,24 @@ const SrtLiveServerElement = () => {
   const validateTextField = (name, value) => {
     if (name === 'statsUrl') {
       if (!value.trim() || value.replace(/\s+/g, '').length === 0) {
-        return 'Stats URL cannot be empty.';
+        return t('server.error1');
       } else if (!value.startsWith('http://')) {
-        return 'Stats URL must start with http.';
+        return t('server.error2');
       } else if (value.includes(' ')) {
-        return 'Stats URL must not contain spaces.';
+        return t('server.error3');
       }
       return '';
     }
     if (name === 'publisher') {
       if (!value.trim() || value.replace(/\s+/g, '').length === 0) {
-        return 'Publisher cannot be empty.';
+        return t('server.error4');
+      }else if (value.includes(' ')) {
+        return t('server.error5');
       }
     }
     if (name === 'name') {
       if (!value.trim() || value.replace(/\s+/g, '').length === 0) {
-        return 'Name cannot be empty.';
+        return t('server.error5');
       }
       return '';
     }
@@ -108,9 +112,9 @@ const SrtLiveServerElement = () => {
         ...prev,
         [name]: false
       }));
-      showAlert({ message: 'Data saved successfully', severity: 'success' });
+      showAlert({ message: t('alerts.success'), severity: 'success' });
     } else {
-      showAlert({ message: 'Failed to save data', severity: 'error' });
+      showAlert({ message: t('alerts.error'), severity: 'error' });
     }
   };
 
@@ -118,7 +122,8 @@ const SrtLiveServerElement = () => {
     <Box>
       <Stack gap={2}>
         <TextField
-          label="Server Name"
+          label={t('server.srtLiveServer.nameBox.label')}
+          placeholder={t('server.srtLiveServer.nameBox.placeholder')}
           value={serverData.name || ''}
           onChange={(e) => handleInputChange('name', e.target.value)}
           onKeyDown={(e) => {
@@ -129,12 +134,12 @@ const SrtLiveServerElement = () => {
           sx={{ width: '240px' }}
           required
           error={Boolean(errorMessages.name)}
-          helperText={errorMessages.name || 'The name of the server instance'}
+          helperText={errorMessages.name || t('server.srtLiveServer.nameBox.hint')}
           slotProps={{
             input: {
               endAdornment: dirtyStates.name && errorMessages.name.length === 0 && (
                 <InputEndAdornment
-                  title="Click or press Enter to save changes"
+                  title={t('server.inputAdornment')}
                   placement="top-start"
                   open={Boolean(dirtyStates.name)}
                   color="success"
@@ -155,7 +160,8 @@ const SrtLiveServerElement = () => {
         >
           <TextField
             fullWidth
-            label="Stats URL"
+            label={t('server.srtLiveServer.urlBox.label')}
+            placeholder={t('server.srtLiveServer.urlBox.placeholder')}
             value={serverData.statsUrl || ''}
             onChange={(e) => handleInputChange('statsUrl', e.target.value)}
             onKeyDown={(e) => {
@@ -165,12 +171,12 @@ const SrtLiveServerElement = () => {
             }}
             required
             error={Boolean(errorMessages.statsUrl)}
-            helperText={errorMessages.statsUrl || 'Example: http://<ip>:<port>/stats'}
+            helperText={errorMessages.statsUrl || t('server.srtLiveServer.urlBox.hint')}
             slotProps={{
               input: {
                 endAdornment: dirtyStates.statsUrl && errorMessages.statsUrl.length === 0 && (
                   <InputEndAdornment
-                    title="Click or press Enter to save changes"
+                    title={t('server.inputAdornment')}
                     placement="top-start"
                     open={Boolean(dirtyStates.statsUrl)}
                     color="success"
@@ -186,7 +192,8 @@ const SrtLiveServerElement = () => {
 
           <TextField
             fullWidth
-            label="Publisher"
+            label={t('server.srtLiveServer.publisherBox.label')}
+            placeholder={t('server.srtLiveServer.publisherBox.placeholder')}
             value={serverData.publisher || ''}
             onChange={(e) => handleInputChange('publisher', e.target.value)}
             onKeyDown={(e) => {
@@ -196,12 +203,12 @@ const SrtLiveServerElement = () => {
             }}
             required
             error={Boolean(errorMessages.publisher)}
-            helperText={errorMessages.publisher || 'Example: "publish/live/your_stream_key"'}
+            helperText={errorMessages.publisher || t('server.srtLiveServer.publisherBox.hint')}
             slotProps={{
               input: {
                 endAdornment: dirtyStates.publisher && errorMessages.publisher.length === 0 && (
                   <InputEndAdornment
-                    title="Click or press Enter to save changes"
+                    title={t('server.inputAdornment')}
                     placement="top-start"
                     open={Boolean(dirtyStates.publisher)}
                     color="success"

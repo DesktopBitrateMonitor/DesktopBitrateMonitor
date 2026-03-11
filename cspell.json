@@ -33,7 +33,8 @@
     "TWITCHCLIENTID",
     "TWITCHCLIENTSECRET",
     "twitchsettings",
-    "kbps"
+    "kbps",
+    "pkce"
   ],
   "ignoreWords": [],
   "import": []

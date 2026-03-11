@@ -1,6 +1,13 @@
 eventsub
 kbps
+KICKBOT
+KICKBROADCASTER
+KICKCLIENTID
+KICKCLIENTSECRET
 loggingsettings
+pkce
+TWITCHBOT
+TWITCHBROADCASTER
 unsub
 unsubs
 usersettings

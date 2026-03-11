@@ -1,5 +1,5 @@
 import { injectDefaults } from '../../store/defaults';
-import { hasPermission } from './lib';
+import { hasPermission } from '../lib';
 import { BrowserWindow } from 'electron';
 
 import {
@@ -9,25 +9,25 @@ import {
   refreshMediaSources
 } from '../../streaming-software/obs-api';
 import Logger from '../../logging/logger';
-import { getUsers } from '../twitch-api';
-import { twitchMessageService } from '../message-service/chat-messages';
 import globalInternalStore from '../../store/global-internal-store';
+import { kickMessageService } from '../messages-service/chat-messages';
 
-const { commandsConfig, twitchAccountsConfig, switcherConfig } = injectDefaults();
+const { commandsConfig, kickAccountsConfig, switcherConfig } = injectDefaults();
 
-export function handleChatMessage(eventSub) {
-  const event = eventSub.event;
-  const { source_broadcaster_user_id, broadcaster_user_id } = eventSub.event;
-  const message = event.message.text;
+export function handleChatMessage(rawMessage) {
+  const message = rawMessage.content;
   const args = message.split(' ');
   const commandName = args[0].toLowerCase();
-  const commandArg = args.splice(1).join(' ').toLowerCase();
+  const commandArg = args.slice(1).join(' ').toLowerCase();
 
   const commandsArray = commandsConfig.get('commands').map((cmd) => ({ ...cmd }));
   const allAliases = commandsArray.map((cmd) => cmd.cmd).flat();
 
+  console.log('Received Kick chat message event:', rawMessage);
+
   // Check if the message comes from the write channel
-  if (source_broadcaster_user_id && broadcaster_user_id !== source_broadcaster_user_id) return;
+  // Figure out if Kick has a multi chat feature and if so, how to identify the source channel of the message
+  // if (source_broadcaster_user_id && broadcaster_user_id !== source_broadcaster_user_id) return;
 
   // Check if the command exists in the list of all aliases, otherwise ignore
   if (!allAliases.includes(commandName)) return;
@@ -43,10 +43,9 @@ export function handleChatMessage(eventSub) {
   const requiredCommandRole = commandObject.requiredRole;
   if (!requiredCommandRole) return;
 
-  // If the user has permissions, execute the command action
   if (
     hasPermission({
-      event,
+      event: rawMessage,
       requiredRole: requiredCommandRole,
       restricted: commandObject.restricted
     })
@@ -60,26 +59,26 @@ const commandActions = {
   startStream: async () => {
     const res = await startStream();
     if (res.success) {
-      await twitchMessageService({ action: 'startStream', event: 'success' });
+      await kickMessageService({ action: 'startStream', event: 'success' });
       Logger.log('Stream started successfully.');
     } else {
-      await twitchMessageService({ action: 'startStream', event: 'error' });
+      await kickMessageService({ action: 'startStream', event: 'error' });
       Logger.error(`Failed to start stream: ${res.error}`);
     }
   },
   stopStream: async () => {
     const res = await stopStream();
     if (res.success) {
-      await twitchMessageService({ action: 'stopStream', event: 'success' });
+      await kickMessageService({ action: 'stopStream', event: 'success' });
       Logger.log('Stream stopped successfully.');
     } else {
-      await twitchMessageService({ action: 'stopStream', event: 'error' });
+      await kickMessageService({ action: 'stopStream', event: 'error' });
       Logger.error(`Failed to stop stream: ${res.error}`);
     }
   },
   addAdmin: async (user) => {
     if (typeof user !== 'string' || user.trim().replace(/\s/g, '') === '' || !isNaN(user)) {
-      await twitchMessageService({
+      await kickMessageService({
         action: 'addAdmin',
         event: 'error',
         variables: { user: 'undefined' }
@@ -87,12 +86,12 @@ const commandActions = {
       Logger.error('Invalid username provided for addAdmin command.');
       return;
     }
-    const access_token = twitchAccountsConfig.get('broadcaster.access_token');
-    const adminUsers = twitchAccountsConfig.get('admins');
+    const access_token = kickAccountsConfig.get('broadcaster.access_token');
+    const adminUsers = kickAccountsConfig.get('admins');
 
     for (const admin of adminUsers) {
       if (admin.login === user.toLowerCase()) {
-        await twitchMessageService({
+        await kickMessageService({
           action: 'addAdmin',
           event: 'alreadyAdmin',
           variables: { user }
@@ -105,7 +104,7 @@ const commandActions = {
     const userObj = await getUsers(access_token, { user_name: user }, 'broadcaster');
 
     adminUsers.push(userObj);
-    twitchAccountsConfig.set('admins', adminUsers);
+    kickAccountsConfig.set('admins', adminUsers);
 
     const mainWindow = BrowserWindow.getAllWindows()[0];
     mainWindow.webContents.send('update-twitch-user', {
@@ -114,12 +113,12 @@ const commandActions = {
       user: userObj
     });
 
-    await twitchMessageService({ action: 'addAdmin', event: 'success', variables: { user } });
+    await kickMessageService({ action: 'addAdmin', event: 'success', variables: { user } });
     return { success: true, data: userObj };
   },
   removeAdmin: async (user) => {
     if (typeof user !== 'string' || user.trim().replace(/\s/g, '') === '' || !isNaN(user)) {
-      await twitchMessageService({
+      await kickMessageService({
         action: 'removeAdmin',
         event: 'error',
         variables: { user: 'undefined' }
@@ -128,17 +127,17 @@ const commandActions = {
       return;
     }
 
-    const adminUsers = twitchAccountsConfig.get('admins');
+    const adminUsers = kickAccountsConfig.get('admins');
     const userIndex = adminUsers.findIndex(
       (admin) => admin.login.toLowerCase() === user.toLowerCase()
     );
     if (userIndex === -1) {
-      await twitchMessageService({ action: 'removeAdmin', event: 'notFound', variables: { user } });
+      await kickMessageService({ action: 'removeAdmin', event: 'notFound', variables: { user } });
       Logger.error(`${user} is not an admin.`);
       return;
     }
     const removedUser = adminUsers.splice(userIndex, 1)[0];
-    twitchAccountsConfig.set('admins', adminUsers);
+    kickAccountsConfig.set('admins', adminUsers);
 
     const mainWindow = BrowserWindow.getAllWindows()[0];
     mainWindow.webContents.send('update-twitch-user', {
@@ -146,7 +145,7 @@ const commandActions = {
       action: 'remove',
       user: removedUser
     });
-    await twitchMessageService({
+    await kickMessageService({
       action: 'removeAdmin',
       event: 'success',
       variables: { user: removedUser.login }
@@ -155,7 +154,7 @@ const commandActions = {
   },
   addMod: async (user) => {
     if (typeof user !== 'string' || user.trim().replace(/\s/g, '') === '' || !isNaN(user)) {
-      await twitchMessageService({
+      await kickMessageService({
         action: 'addMod',
         event: 'error',
         variables: { user: 'undefined' }
@@ -163,12 +162,12 @@ const commandActions = {
       Logger.error('Invalid username provided for addMod command.');
       return;
     }
-    const access_token = twitchAccountsConfig.get('broadcaster.access_token');
-    const modUsers = twitchAccountsConfig.get('mods');
+    const access_token = kickAccountsConfig.get('broadcaster.access_token');
+    const modUsers = kickAccountsConfig.get('mods');
 
     for (const mod of modUsers) {
       if (mod.login === user.toLowerCase()) {
-        await twitchMessageService({ action: 'addMod', event: 'alreadyMod', variables: { user } });
+        await kickMessageService({ action: 'addMod', event: 'alreadyMod', variables: { user } });
         Logger.error(`${user} is already a mod.`);
         return;
       }
@@ -177,7 +176,7 @@ const commandActions = {
     const userObj = await getUsers(access_token, { user_name: user }, 'broadcaster');
 
     modUsers.push(userObj);
-    twitchAccountsConfig.set('mods', modUsers);
+    kickAccountsConfig.set('mods', modUsers);
 
     const mainWindow = BrowserWindow.getAllWindows()[0];
     mainWindow.webContents.send('update-twitch-user', {
@@ -185,12 +184,12 @@ const commandActions = {
       action: 'add',
       user: userObj
     });
-    await twitchMessageService({ action: 'addMod', event: 'success', variables: { user } });
+    await kickMessageService({ action: 'addMod', event: 'success', variables: { user } });
     return { success: true, data: userObj };
   },
   removeMod: async (user) => {
     if (typeof user !== 'string' || user.trim().replace(/\s/g, '') === '' || !isNaN(user)) {
-      await twitchMessageService({
+      await kickMessageService({
         action: 'removeMod',
         event: 'error',
         variables: { user: 'undefined' }
@@ -199,15 +198,15 @@ const commandActions = {
       return;
     }
 
-    const modUsers = twitchAccountsConfig.get('mods');
+    const modUsers = kickAccountsConfig.get('mods');
     const userIndex = modUsers.findIndex((mod) => mod.login.toLowerCase() === user.toLowerCase());
     if (userIndex === -1) {
-      await twitchMessageService({ action: 'removeMod', event: 'notFound', variables: { user } });
+      await kickMessageService({ action: 'removeMod', event: 'notFound', variables: { user } });
       Logger.error(`${user} is not a mod.`);
       return;
     }
     const removedUser = modUsers.splice(userIndex, 1)[0];
-    twitchAccountsConfig.set('mods', modUsers);
+    kickAccountsConfig.set('mods', modUsers);
     const mainWindow = BrowserWindow.getAllWindows()[0];
     mainWindow.webContents.send('update-twitch-user', {
       type: 'mod',
@@ -215,7 +214,7 @@ const commandActions = {
       user: removedUser
     });
 
-    await twitchMessageService({
+    await kickMessageService({
       action: 'removeMod',
       event: 'success',
       variables: { user: removedUser.login }
@@ -227,10 +226,10 @@ const commandActions = {
     const res = await setCurrentProgramScene(scene);
     if (res.success) {
       console.log(scene);
-      await twitchMessageService({ action: 'switchScene', event: 'success', variables: { scene } });
+      await kickMessageService({ action: 'switchScene', event: 'success', variables: { scene } });
       Logger.log('Switched to low scene.');
     } else {
-      await twitchMessageService({ action: 'switchScene', event: 'error', variables: { scene } });
+      await kickMessageService({ action: 'switchScene', event: 'error', variables: { scene } });
       Logger.error(`Failed to switch to low scene: ${res.error}`);
     }
   },
@@ -238,9 +237,9 @@ const commandActions = {
     const scene = switcherConfig.get('sceneLive');
     const res = await setCurrentProgramScene(scene);
     if (res.success) {
-      await twitchMessageService({ action: 'switchScene', event: 'success', variables: { scene } });
+      await kickMessageService({ action: 'switchScene', event: 'success', variables: { scene } });
     } else {
-      await twitchMessageService({ action: 'switchScene', event: 'error', variables: { scene } });
+      await kickMessageService({ action: 'switchScene', event: 'error', variables: { scene } });
       Logger.error(`Failed to switch to live scene: ${res.error}`);
     }
   },
@@ -248,10 +247,10 @@ const commandActions = {
     const scene = switcherConfig.get('sceneOffline');
     const res = await setCurrentProgramScene(scene);
     if (res.success) {
-      await twitchMessageService({ action: 'switchScene', event: 'success', variables: { scene } });
+      await kickMessageService({ action: 'switchScene', event: 'success', variables: { scene } });
       Logger.log('Switched to offline scene.');
     } else {
-      await twitchMessageService({ action: 'switchScene', event: 'error', variables: { scene } });
+      await kickMessageService({ action: 'switchScene', event: 'error', variables: { scene } });
       Logger.error(`Failed to switch to offline scene: ${res.error}`);
     }
   },
@@ -260,16 +259,16 @@ const commandActions = {
     const res = await setCurrentProgramScene(scene);
 
     if (res.success) {
-      await twitchMessageService({ action: 'switchScene', event: 'success', variables: { scene } });
+      await kickMessageService({ action: 'switchScene', event: 'success', variables: { scene } });
       Logger.log('Switched to privacy scene.');
     } else {
-      await twitchMessageService({ action: 'switchScene', event: 'error', variables: { scene } });
+      await kickMessageService({ action: 'switchScene', event: 'error', variables: { scene } });
       Logger.error(`Failed to switch to privacy scene: ${res.error}`);
     }
   },
   switchScene: async (sceneName) => {
     if (typeof sceneName !== 'string' || sceneName.trim().replace(/\s/g, '') === '') {
-      await twitchMessageService({
+      await kickMessageService({
         action: 'switchScene',
         event: 'error',
         variables: { scene: 'undefined' }
@@ -280,14 +279,14 @@ const commandActions = {
     const res = await setCurrentProgramScene(sceneName);
 
     if (res.success) {
-      await twitchMessageService({
+      await kickMessageService({
         action: 'switchScene',
         event: 'success',
         variables: { scene: sceneName }
       });
       Logger.log(`Switched to scene: ${sceneName}`);
     } else {
-      await twitchMessageService({
+      await kickMessageService({
         action: 'switchScene',
         event: 'error',
         variables: { scene: sceneName }
@@ -296,15 +295,15 @@ const commandActions = {
     }
   },
   refreshStream: async () => {
-    await twitchMessageService({ action: 'refreshStream', event: 'try' });
+    await kickMessageService({ action: 'refreshStream', event: 'try' });
 
     const res = await refreshMediaSources();
 
     if (res.success) {
-      await twitchMessageService({ action: 'refreshStream', event: 'success' });
+      await kickMessageService({ action: 'refreshStream', event: 'success' });
       Logger.log('Media sources refreshed successfully.');
     } else {
-      await twitchMessageService({ action: 'refreshStream', event: 'error' });
+      await kickMessageService({ action: 'refreshStream', event: 'error' });
       Logger.error(`Failed to refresh media sources: ${res.error}`);
     }
   },
@@ -314,7 +313,7 @@ const commandActions = {
       triggerValue.trim().replace(/\s/g, '') === '' ||
       isNaN(triggerValue)
     ) {
-      await twitchMessageService({
+      await kickMessageService({
         action: 'setTrigger',
         event: 'error',
         variables: { trigger: 'undefined' }
@@ -323,7 +322,7 @@ const commandActions = {
       return;
     }
     switcherConfig.set('bitrateTrigger', triggerValue);
-    await twitchMessageService({
+    await kickMessageService({
       action: 'setTrigger',
       event: 'success',
       variables: { trigger: triggerValue }
@@ -335,56 +334,28 @@ const commandActions = {
       rTriggerValue.trim().replace(/\s/g, '') === '' ||
       isNaN(rTriggerValue)
     ) {
-      await twitchMessageService({
+      await kickMessageService({
         action: 'setRTrigger',
         event: 'error',
         variables: { rtrigger: 'undefined' }
       });
     }
     switcherConfig.set('rTrigger', rTriggerValue);
-    await twitchMessageService({
+    await kickMessageService({
       action: 'setRTrigger',
       event: 'success',
       variables: { rtrigger: rTriggerValue }
     });
   },
   bitrate: async () => {
-    // Return the current bitrate value to the chat
-    // const serverData = serverConfig.get('');
-    // const serverType = serverData.currentType;
-    // const stats = await fetchStats(serverData.statsUrl);
-    // let res;
-
     const { stats } = globalInternalStore.get();
 
-    await twitchMessageService({
+    console.log('Current bitrate stats:', stats);
+
+    await kickMessageService({
       action: 'bitrate',
       event: 'success',
       variables: { bitrate: stats.bitrate, speed: stats.rtt }
     });
-
-    // if (serverType === 'openirl') {
-    //   res = await formatStatsOpenIrl(stats);
-    // }
-    // if (serverType === 'srt-live-server') {
-    //   res = await formatStatsOpenIrl(stats);
-    // }
-    // if (serverType === 'belabox') {
-    //   // Implement when belabox format function is available
-    // }
-
-    // if (res.success) {
-    //   const currentBitrate = res.data.bitrate;
-    //   await messageService({
-    //     action: 'bitrate',
-    //     event: 'success',
-    //     variables: { bitrate: currentBitrate, speed: res.data.rtt }
-    //   });
-    // } else {
-    //   await messageService({
-    //     action: 'bitrate',
-    //     event: 'error'
-    //   });
-    // }
   }
 };

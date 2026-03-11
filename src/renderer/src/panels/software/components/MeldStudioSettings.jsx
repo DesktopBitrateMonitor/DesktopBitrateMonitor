@@ -7,8 +7,10 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useStreamingSoftwareConfigStore } from '../../../contexts/DataContext';
 import { useAlert } from '../../../contexts/AlertContext';
+import { useTranslation } from 'react-i18next';
 
 const MeldStudioSettings = () => {
+  const { t } = useTranslation();
   const { streamingSoftwareConfig, updateStreamingSoftwareConfig } =
     useStreamingSoftwareConfigStore();
   const { showAlert } = useAlert();
@@ -64,27 +66,25 @@ const MeldStudioSettings = () => {
   const validateTextField = (name, value) => {
     if (name === 'host') {
       if (!value.trim() || value.replace(/\s+/g, '').length === 0) {
-        return 'Host cannot be empty.';
+        return t('software.error1');
       } else if (value.includes(' ')) {
-        return 'Host must not contain spaces.';
+        return t('software.error2');
       }
     }
     if (name === 'port') {
       const portNumber = Number(value);
-      if (isNaN(portNumber) || !Number.isInteger(portNumber)) {
-        return 'Port must be an integer';
-      } else if (portNumber < 1000 || portNumber > 65535) {
-        return 'Port must be between 1000 and 65535.';
+      if (portNumber < 1000 || portNumber > 65535) {
+        return t('software.error3');
       }
     }
     if (name === 'name') {
       if (!value.trim() || value.replace(/\s+/g, '').length === 0) {
-        return 'Name cannot be empty.';
+        return t('software.error4');
       }
     }
     if (name === 'password') {
       if (value.includes(' ')) {
-        return 'Password must not contain spaces.';
+        return t('software.error5');
       }
     }
     return '';
@@ -114,16 +114,17 @@ const MeldStudioSettings = () => {
         ...prev,
         [name]: false
       }));
-      showAlert({ message: 'Data saved successfully', severity: 'success' });
+      showAlert({ message: t('alerts.saveSuccess'), severity: 'success' });
     } else {
-      showAlert({ message: 'Failed to save data', severity: 'error' });
+      showAlert({ message: t('alerts.saveError'), severity: 'error' });
     }
   };
 
   return (
     <Stack gap={2}>
       <TextField
-        label="Meld Studio WebSocket Host"
+        label={t('software.meldStudio.hostBox.label')}
+        placeholder={t('software.meldStudio.hostBox.placeholder')}
         name="host"
         value={softwareData.host || ''}
         onChange={(e) => handleInputChange('host', e.target.value)}
@@ -133,13 +134,13 @@ const MeldStudioSettings = () => {
           }
         }}
         error={Boolean(errorMessages.host)}
-        helperText={errorMessages.host || 'Host should be localhost or IP address'}
+        helperText={errorMessages.host || t('software.meldStudio.hostBox.hint')}
         slotProps={{
           input: {
             endAdornment:
               dirtyStates.host && !errorMessages.host ? (
                 <InputEndAdornment
-                  title="Click or press Enter to save changes"
+                  title={t('software.inputAdornment')}
                   placement="top-start"
                   open={Boolean(dirtyStates.host)}
                   color="success"
@@ -153,7 +154,8 @@ const MeldStudioSettings = () => {
         }}
       />
       <NumericInput
-        label="Port"
+        label={t('software.meldStudio.portBox.label')}
+        placeholder={t('software.meldStudio.portBox.placeholder')}
         name="port"
         min={1000}
         max={65535}
@@ -165,12 +167,12 @@ const MeldStudioSettings = () => {
           }
         }}
         error={Boolean(errorMessages.port)}
-        helperText={errorMessages.port || ''}
+        helperText={errorMessages.port || t('software.meldStudio.portBox.hint')}
         slotProps={{
           endAdornment:
             dirtyStates.port && !errorMessages.port ? (
               <InputEndAdornment
-                title="Click or press Enter to save changes"
+                title={t('software.inputAdornment')}
                 placement="top-start"
                 open={Boolean(dirtyStates.port)}
                 color="success"
@@ -183,12 +185,13 @@ const MeldStudioSettings = () => {
         }}
       />
       <TextField
-        label="Password"
+        label={t('software.meldStudio.passwordBox.label')}
+        placeholder={t('software.meldStudio.passwordBox.placeholder')}
         name="password"
         type={showPassword ? 'text' : 'password'}
         value={softwareData.password || ''}
         error={Boolean(errorMessages.password)}
-        helperText={errorMessages.password || 'Password for Meld Studio WebSocket'}
+        helperText={errorMessages.password || t('software.meldStudio.passwordBox.hint')}
         onChange={(e) => handleInputChange('password', e.target.value)}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
@@ -201,7 +204,7 @@ const MeldStudioSettings = () => {
               <InputAdornment position="end">
                 {dirtyStates.password && !errorMessages.password && (
                   <InputEndAdornment
-                    title="Click or press Enter to save changes"
+                    title={t('software.inputAdornment')}
                     placement="top-start"
                     open={Boolean(dirtyStates.password)}
                     color="success"

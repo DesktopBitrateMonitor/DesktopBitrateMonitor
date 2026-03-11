@@ -31,6 +31,7 @@ import { useAppConfigStore } from '../../contexts/DataContext';
 import { useTranslation } from 'react-i18next';
 import ConnectionStates from '../../panels/dashboard/components/ConnectionStates';
 import TwitchIcon from '../../assets/icons/TwitchIcon';
+import KickIcon from '../../assets/icons/KickIcon';
 
 const isDev = import.meta.env.DEV;
 
@@ -83,18 +84,18 @@ const NAV_ITEMS = [
 const PLATFORM_ROUTES = [
   { id: 'twitch', label: 'Twitch', path: `${ACCOUNTS_PATH}/twitch`, icon: TwitchIcon },
   {
+    id: 'kick',
+    label: 'Kick',
+    path: `${ACCOUNTS_PATH}/kick`,
+    icon: KickIcon,
+    disabled: false,
+    development: false
+  },
+  {
     id: 'youtube',
     label: 'YouTube (coming soon)',
     path: `${ACCOUNTS_PATH}/youtube`,
     icon: YouTubeIcon,
-    disabled: true,
-    development: true
-  },
-  {
-    id: 'kick',
-    label: 'Kick (coming soon)',
-    path: `${ACCOUNTS_PATH}/kick`,
-    icon: SportsEsportsIcon,
     disabled: true,
     development: true
   }
@@ -175,6 +176,8 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
 
   const handleActivePlatformChange = useCallback(
     (platformId) => async (event) => {
+      if (platformId === activePlatform) return;
+
       const active = event.target.checked;
       console.log('Setting active platform to', active ? platformId : null);
       updateAppConfig((prev) => ({
@@ -182,8 +185,9 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
         activePlatform: platformId
       }));
       await window.storeApi.set('app-config', 'activePlatform', platformId);
+      await window.servicesApi.connectToActivePlatform(platformId);
     },
-    [updateAppConfig]
+    [activePlatform, updateAppConfig]
   );
 
   return (
@@ -354,7 +358,8 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
                         key={platform.id}
                         onChange={handleActivePlatformChange(platform.id)}
                         checked={activePlatform === platform.id}
-                        disabled={activePlatform === platform.id}
+                        name={platform.id}
+                        // disabled={activePlatform === platform.id}
                       />
                       <ListItemButton
                         key={platform.path}

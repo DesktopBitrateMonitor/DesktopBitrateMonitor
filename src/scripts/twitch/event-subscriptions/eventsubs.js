@@ -20,7 +20,7 @@ let reconnecting = false;
 const { twitchAccountsConfig } = injectDefaults();
 
 // Main entry
-export async function connectToEventSubs(clientId, mainWindow = null) {
+export async function connectToTwitchEventSubs(clientId, mainWindow = null) {
   if (!clientId) {
     Logger.error('Twitch client ID is required before connecting to EventSub.');
     return;
@@ -110,7 +110,7 @@ async function connectOnce(clientId, bc, mainWindow = null) {
 }
 
 // Disconnect + cleanup
-export async function disconnectEventSubs(mainWindow = null) {
+export async function disconnectTwitchEventSubs(mainWindow = null) {
   Logger.info('Manual disconnect from EventSub...');
   mainWindow?.webContents.send('twitch-eventsub-connection', {
     success: true,

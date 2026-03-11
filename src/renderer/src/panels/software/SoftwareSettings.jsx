@@ -5,16 +5,19 @@ import ObsSettings from './components/ObsSettings.jsx';
 import CollapsibleCard from '../../components/functional/CollapsibleCard.jsx';
 import StreamlabsObsSettings from './components/StreamlabsObsSettings.jsx';
 import MeldStudioSettings from './components/MeldStudioSettings.jsx';
-
-const SOFTWARES = [
-  { label: 'OBS Studio', value: 'obs-studio', isDev: false },
-  { label: 'Streamlabs OBS', value: 'streamlabs-obs', isDev: true },
-  { label: 'MELD Studio', value: 'meld-studio', isDev: true }
-];
+import { useTranslation } from 'react-i18next';
 
 const isDev = import.meta.env.DEV;
 
 const SoftwareSettings = () => {
+  const { t } = useTranslation();
+
+  const SOFTWARES = [
+    { label: t('software.select.options.obsStudio'), value: 'obs-studio', isDev: false },
+    { label: t('software.select.options.streamlabsObs'), value: 'streamlabs-obs', isDev: true },
+    { label: t('software.select.options.meldStudio'), value: 'meld-studio', isDev: true }
+  ];
+
   const { streamingSoftwareConfig, updateStreamingSoftwareConfig } =
     useStreamingSoftwareConfigStore();
 
@@ -47,17 +50,17 @@ const SoftwareSettings = () => {
       >
         <Box>
           <Typography variant="h5" sx={{ mb: 0.5 }}>
-            Software Settings
+            {t('software.header')}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Choose and configure your streaming software settings here
+            {t('software.description')}
           </Typography>
         </Box>
         <FormControl>
-          <InputLabel>Software Type</InputLabel>
+          <InputLabel>{t('software.select.label')}</InputLabel>
           <Select
             id="software-type-label"
-            label="Software Type"
+            label={t('software.select.label')}
             value={softwareType}
             sx={{ width: '200px' }}
             onChange={(e) => handleSoftwareTypeChange(e.target.value)}
@@ -85,8 +88,8 @@ const SoftwareSettings = () => {
       >
         {softwareType === 'obs-studio' && (
           <CollapsibleCard
-            title={' OBS Studio Settings'}
-            subtitle={'Setup the connection to OBS'}
+            title={t('software.obsStudio.header')}
+            subtitle={t('software.obsStudio.description')}
             collapsible={false}
             defaultExpanded={true}
           >
@@ -95,8 +98,8 @@ const SoftwareSettings = () => {
         )}
         {softwareType === 'streamlabs-obs' && (
           <CollapsibleCard
-            title={' Streamlabs OBS Settings'}
-            subtitle={'Setup the connection to Streamlabs OBS'}
+            title={t('software.streamlabsObs.header')}
+            subtitle={t('software.streamlabsObs.description')}
             collapsible={false}
             defaultExpanded={true}
           >
@@ -105,8 +108,8 @@ const SoftwareSettings = () => {
         )}
         {softwareType === 'meld-studio' && (
           <CollapsibleCard
-            title={' MELD Studio Settings'}
-            subtitle={'Setup the connection to MELD Studio'}
+            title={t('software.meldStudio.header')}
+            subtitle={t('software.meldStudio.description')}
             collapsible={false}
             defaultExpanded={true}
           >

@@ -3,17 +3,19 @@ import React, { useCallback } from 'react';
 import CollapsibleCard from '../../../components/functional/CollapsibleCard';
 import { useAlert } from '../../../contexts/AlertContext';
 import { useSwitcherConfigStore } from '../../../contexts/DataContext';
+import { useTranslation } from 'react-i18next';
 
 const Switches = ({ collapsedIds, toggleCollapsed }) => {
+  const { t } = useTranslation();
   const { switcherConfig, updateSwitcherConfig } = useSwitcherConfigStore();
   const { showAlert } = useAlert();
 
   const SWITCH_MAPPINGS = {
-    switcherEnabled: 'Enable Switcher',
-    onlySwitchWhenLive: 'Only Switch When Live',
-    enableChatNotifications: 'Enable Chat Notifications',
-    switchToStartSceneOnStreamStart: 'Switch to Start Scene on Stream Start',
-    stopStreamAfterRaid: 'Stop Stream After Raid'
+    switcherEnabled: t('switcher.states.enableSwitcher'),
+    onlySwitchWhenLive: t('switcher.states.onlySwitchWhenLive'),
+    enableChatNotifications: t('switcher.states.enableChatNotifications'),
+    switchToStartSceneOnStreamStart: t('switcher.states.switchToStartSceneOnStreamStart'),
+    stopStreamAfterRaid: t('switcher.states.stopStreamAfterRaid')
   };
 
   const switchesData = {
@@ -34,12 +36,12 @@ const Switches = ({ collapsedIds, toggleCollapsed }) => {
       const res = await window.storeApi.set('switcher-config', key, value);
       if (res.success) {
         showAlert({
-          message: `${SWITCH_MAPPINGS[key]} updated successfully`,
+          message: t('alerts.saveStateSuccess', { key: SWITCH_MAPPINGS[key] }),
           severity: 'success'
         });
       } else {
         showAlert({
-          message: `Failed to update ${SWITCH_MAPPINGS[key]}`,
+          message: t('alerts.saveStateError', { key: SWITCH_MAPPINGS[key] }),
           severity: 'error'
         });
       }
@@ -49,8 +51,8 @@ const Switches = ({ collapsedIds, toggleCollapsed }) => {
   return (
     <Box>
       <CollapsibleCard
-        title={'Switcher state Settings'}
-        subtitle={'Setup the switcher enabled states'}
+        title={t('switcher.states.header')}
+        subtitle={t('switcher.states.description')}
         expanded={!collapsedIds.includes('switches')}
         onExpandedChange={() => toggleCollapsed('switches')}
       >

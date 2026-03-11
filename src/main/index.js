@@ -10,6 +10,7 @@ import { initializeAuthIpc } from './ipc-handler/auth-ipc-handler';
 import { initializeLoggerIpc } from './ipc-handler/logger-ipc-handler';
 import { initializeServices } from './lib/initialize-services';
 import { initializeServicesIpc } from './ipc-handler/services-ipc-handler';
+import '../scripts/authorization/auth-server';
 
 const { appConfig } = injectDefaults();
 
@@ -37,8 +38,6 @@ function createWindow(displayIsAvailable = false) {
       devTools: is.dev
     }
   });
-
-  console.log(app.getLocale());
 
   mainWindow.on('ready-to-show', () => {
     // Automatically open DevTools in development mode

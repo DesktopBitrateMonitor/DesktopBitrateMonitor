@@ -10,6 +10,7 @@ export const createMuiTheme = (themeDef) => {
       mode: isLight ? 'light' : 'dark',
       primary: { main: colors.primary || '#6366F1' },
       secondary: { main: colors.secondary || '#06B6D4' },
+      kick: { main: colors.kick || '#00E701' },
       background: {
         default: colors.background || (isLight ? '#F8FAFC' : '#0F172A'),
         paper: colors.surface || (isLight ? '#FFFFFF' : '#1E293B')

@@ -15,7 +15,7 @@ export async function initializeLoggerIpc(ipcMain) {
   const reader = new CsvReader();
 
   isLoggerIpcInitialized = true;
-  Logger.log('Registering Logger IPC Handlers');
+  Logger.log('Initializing Logger IPC');
 
   ipcMain.handle('create-log-file', (event, fullPath, content) => {
     return writer.writeRow(fullPath, content);

@@ -232,7 +232,7 @@ export async function sendChatMessage(
 }
 
 /**
- * @typedef revokeAccessToken
+ * @typedef revokeTwitchAccessToken
  * @prop {string} access_token
  */
 
@@ -242,7 +242,7 @@ export async function sendChatMessage(
  * @returns Status 200 on success, 400 on error
  */
 
-export async function revokeAccessToken(access_token) {
+export async function revokeTwitchAccessToken(access_token) {
   try {
     const qs = new URLSearchParams({
       client_id,

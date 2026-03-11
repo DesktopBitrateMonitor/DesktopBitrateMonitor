@@ -109,6 +109,38 @@ export const injectDefaults = () => {
     }
   });
 
+  const kickAccountsConfig = new Store({
+    name: 'kick-accounts-config',
+    defaults: {
+      broadcaster: {
+        id: '',
+        login: '',
+        display_name: '',
+        access_token: '',
+        refresh_token: '',
+        scopes: [],
+        profile_image_url: '',
+        channelId: '',
+        chatroomId: ''
+      },
+      bot: {
+        id: '',
+        login: '',
+        display_name: '',
+        access_token: '',
+        refresh_token: '',
+        scopes: [],
+        profile_image_url: ''
+      },
+      layout: 'list',
+      userLayout: 'list',
+      collapsed: [],
+      useBotAccount: false,
+      admins: [],
+      mods: []
+    }
+  });
+
   const commandsConfig = new Store({
     name: 'commands-config',
     defaults: {
@@ -146,12 +178,12 @@ export const injectDefaults = () => {
       'srt-live-server': {
         name: 'SrtLiveServer',
         statsUrl: 'http://xxx.xxx.xxx.xxx:8080/stats',
-        publisher: 'publish/live/your_stream_key'
+        publisher: 'publish/live/key_xxxxxxx'
       },
       belabox: {
         name: 'Belabox',
-        statsUrl: '',
-        publisher: ''
+        statsUrl: 'http://xxx.xxx.xxx.xxx:8080/stats',
+        publisher: 'publish/live/key_xxxxxxx'
       }
     }
   });
@@ -223,6 +255,7 @@ export const injectDefaults = () => {
     commandsConfig,
     messagesConfig,
     twitchAccountsConfig,
+    kickAccountsConfig,
     serverConfig,
     streamingSoftwareConfig,
     switcherConfig

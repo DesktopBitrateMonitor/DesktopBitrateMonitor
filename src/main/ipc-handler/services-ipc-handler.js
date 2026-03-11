@@ -1,6 +1,6 @@
 import Logger from '../../scripts/logging/logger';
 import { reconnectToOBS } from '../../scripts/streaming-software/obs-api';
-import { startFetchingServerStats } from '../lib/initialize-services';
+import { connectToActivePlatform, startFetchingServerStats } from '../lib/initialize-services';
 
 let isServicesInitialized = false;
 
@@ -9,6 +9,8 @@ export async function initializeServicesIpc(ipcMain, mainWindow = null) {
     Logger.warn('Services IPC already initialized, skipping...');
     return;
   }
+
+  Logger.log('Initializing Services IPC');
 
   isServicesInitialized = true;
 
@@ -26,7 +28,7 @@ export async function initializeServicesIpc(ipcMain, mainWindow = null) {
     }
   });
 
-  ipcMain.handle('restart-service', async (event, serviceName) => {
+  ipcMain.handle('restart-stats-fetcher-service', async (event, serviceName) => {
     switch (serviceName) {
       case 'server-stats-fetcher':
         const res = await startFetchingServerStats(mainWindow);
@@ -35,5 +37,10 @@ export async function initializeServicesIpc(ipcMain, mainWindow = null) {
         Logger.warn(`Unknown service name: ${serviceName}`);
         break;
     }
+  });
+
+  ipcMain.handle('connect-to-active-platform', async (event, platform) => {
+    console.log(`Received request to connect to active platform: ${platform}`);
+    await connectToActivePlatform(mainWindow, platform);
   });
 }

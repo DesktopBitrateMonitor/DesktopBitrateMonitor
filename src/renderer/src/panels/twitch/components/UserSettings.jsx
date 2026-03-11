@@ -92,7 +92,7 @@ const UserSettings = () => {
     }
     setIsValidating((prev) => ({ ...prev, [userType]: true }));
     try {
-      const res = await window.authApi.validateUser(userType, user);
+      const res = await window.authApi.validateTwitchUser(userType, user);
       if (res?.data?.user === undefined) {
         showAlert({ message: t('platforms.twitch.users.error2'), severity: 'error' });
         return;

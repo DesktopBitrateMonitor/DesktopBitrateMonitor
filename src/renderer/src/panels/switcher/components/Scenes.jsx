@@ -6,16 +6,18 @@ import { Box, TextField } from '@mui/material';
 import InputEndAdornment from '../../../components/feedback/InputEndAdornment';
 import { useAlert } from '../../../contexts/AlertContext';
 import { useSwitcherConfigStore } from '../../../contexts/DataContext';
-
-const SCENE_KEYS = [
-  { key: 'sceneLive', label: 'Live Scene' },
-  { key: 'sceneOffline', label: 'Offline Scene' },
-  { key: 'sceneLow', label: 'Low Scene' },
-  { key: 'scenePrivacy', label: 'Privacy Scene' },
-  { key: 'sceneStart', label: 'Start Scene' }
-];
+import { useTranslation } from 'react-i18next';
 
 const Scenes = ({ collapsedIds, toggleCollapsed }) => {
+  const { t } = useTranslation();
+  const SCENE_KEYS = [
+    { key: 'sceneLive', label: t('switcher.scenes.liveScene') },
+    { key: 'sceneOffline', label: t('switcher.scenes.offlineScene') },
+    { key: 'sceneLow', label: t('switcher.scenes.lowBitrateScene') },
+    { key: 'scenePrivacy', label: t('switcher.scenes.privacyScene') },
+    { key: 'sceneStart', label: t('switcher.scenes.startScene') }
+  ];
+
   const { switcherConfig, updateSwitcherConfig } = useSwitcherConfigStore();
   const { showAlert } = useAlert();
 
@@ -54,7 +56,17 @@ const Scenes = ({ collapsedIds, toggleCollapsed }) => {
       name === 'sceneStart'
     ) {
       if (value.replace(/\s+/g, ' ').trim() === '') {
-        return `${SCENE_KEYS.find((scene) => scene.key === name)?.label || name} cannot be empty.`;
+        return t('switcher.scenes.error1', {
+          scene: SCENE_KEYS.find((scene) => scene.key === name)?.label || name
+        });
+      }
+      if (
+        name !== 'scenePrivacy' &&
+        scenesData.scenePrivacy.toLowerCase() === value.toLowerCase()
+      ) {
+        return t('switcher.scenes.error2', {
+          scene: SCENE_KEYS.find((scene) => scene.key === name)?.label || name
+        });
       }
     }
     return '';
@@ -104,16 +116,16 @@ const Scenes = ({ collapsedIds, toggleCollapsed }) => {
         ...prev,
         [name]: false
       }));
-      showAlert({ message: 'Data saved successfully', severity: 'success' });
+      showAlert({ message: t('alerts.saveSuccess'), severity: 'success' });
     } else {
-      showAlert({ message: 'Failed to save data', severity: 'error' });
+      showAlert({ message: t('alerts.saveError'), severity: 'error' });
     }
   };
 
   return (
     <CollapsibleCard
-      title={'Scenes Settings'}
-      subtitle={'Setup your broadcasting software scenes here'}
+      title={t('switcher.scenes.header')}
+      subtitle={t('switcher.scenes.description')}
       expanded={!collapsedIds.includes('scenes')}
       onExpandedChange={() => toggleCollapsed('scenes')}
     >
@@ -137,7 +149,7 @@ const Scenes = ({ collapsedIds, toggleCollapsed }) => {
                 endAdornment:
                   dirtyStates[key] && !errorMessages[key] ? (
                     <InputEndAdornment
-                      title="Click or press Enter to save changes"
+                      title={t('switcher.inputAdornment')}
                       placement="top-start"
                       open={Boolean(dirtyStates[key])}
                       color="success"

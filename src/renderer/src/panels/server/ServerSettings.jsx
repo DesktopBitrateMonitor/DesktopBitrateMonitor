@@ -30,7 +30,7 @@ const ServerSettings = () => {
         currentType: nextType
       }));
       await window.storeApi.set('server-config', 'currentType', nextType);
-      await window.servicesApi.restartService('server-stats-fetcher');
+      await window.servicesApi.restartStatsFetcherService('server-stats-fetcher');
     },
     [updateServerConfig]
   );

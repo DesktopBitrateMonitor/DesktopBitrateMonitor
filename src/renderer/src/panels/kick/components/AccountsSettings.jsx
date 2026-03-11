@@ -2,14 +2,13 @@ import { Box, Stack, Switch, Tooltip, Typography } from '@mui/material';
 import React, { use, useCallback, useEffect } from 'react';
 import CollapsibleCard from '../../../components/functional/CollapsibleCard';
 import LayoutToggle from '../../../components/functional/LayoutToggle';
-import { useTwitchAccountsConfig } from '../../../contexts/DataContext';
+import { useKickAccountsConfig } from '../../../contexts/DataContext';
 import { useAlert } from '../../../contexts/AlertContext';
 import AccountPanel from './panels/AccountPanel';
 import { useTranslation } from 'react-i18next';
 
 const AccountsSettings = () => {
-  const { twitchAccountsConfig, updateTwitchAccountsConfig } = useTwitchAccountsConfig();
-
+  const { kickAccountsConfig, updateKickAccountsConfig } = useKickAccountsConfig();
   const { t } = useTranslation();
 
   const { showAlert } = useAlert();
@@ -20,52 +19,52 @@ const AccountsSettings = () => {
   const [collapsedIds, setCollapsedIds] = React.useState([]);
 
   useEffect(() => {
-    const storedLayout = twitchAccountsConfig?.layout;
+    const storedLayout = kickAccountsConfig?.layout;
     if (storedLayout === 'grid' || storedLayout === 'list') {
       setLayoutMode(storedLayout);
     } else {
       setLayoutMode('list');
     }
 
-    setBroadcasterData(twitchAccountsConfig?.broadcaster);
-    setChatbotData(twitchAccountsConfig?.bot);
+    setBroadcasterData(kickAccountsConfig?.broadcaster);
+    setChatbotData(kickAccountsConfig?.bot);
 
-    const savedCollapsed = Array.isArray(twitchAccountsConfig?.collapsed)
-      ? twitchAccountsConfig.collapsed
+    const savedCollapsed = Array.isArray(kickAccountsConfig?.collapsed)
+      ? kickAccountsConfig.collapsed
       : [];
     setCollapsedIds(savedCollapsed);
 
     // Listen for OAuth data updates and update the frontend state accordingly
-    window.authApi.setTwitchOauthData((data) => {
+    window.authApi.setKickOauthData((data) => {
       if (data.userType === 'broadcaster') {
         setBroadcasterData(data.data);
         showAlert({
-          message: t('platforms.twitch.accounts.broadcasterConnected'),
+          message: t('platforms.kick.accounts.broadcasterConnected'),
           severity: 'success'
         });
       } else if (data.userType === 'bot') {
         setChatbotData(data.data);
         showAlert({
-          message: t('platforms.twitch.accounts.chatbotConnected'),
+          message: t('platforms.kick.accounts.chatbotConnected'),
           severity: 'success'
         });
       }
 
-      updateTwitchAccountsConfig((prev) => ({
+      updateKickAccountsConfig((prev) => ({
         ...(prev || {}),
         [data.userType]: data.data
       }));
     });
-  }, [twitchAccountsConfig]);
+  }, [kickAccountsConfig]);
 
   const handleLayoutChange = useCallback(
     (nextLayout) => {
       if (!nextLayout || nextLayout === layoutMode) return;
       setLayoutMode(nextLayout);
-      updateTwitchAccountsConfig((prev) => ({ ...(prev || {}), layout: nextLayout }));
-      window.storeApi.set('twitch-accounts-config', 'layout', nextLayout);
+      updateKickAccountsConfig((prev) => ({ ...(prev || {}), layout: nextLayout }));
+      window.storeApi.set('kick-accounts-config', 'layout', nextLayout);
     },
-    [twitchAccountsConfig, updateTwitchAccountsConfig]
+    [kickAccountsConfig, updateKickAccountsConfig]
   );
 
   const toggleCollapsed = useCallback(
@@ -75,25 +74,25 @@ const AccountsSettings = () => {
         : [...collapsedIds, accountType];
       setCollapsedIds(next);
 
-      updateTwitchAccountsConfig((prev) => ({
+      updateKickAccountsConfig((prev) => ({
         ...(prev || {}),
         collapsed: next
       }));
 
-      await window.storeApi.set('twitch-accounts-config', 'collapsed', next);
+      await window.storeApi.set('kick-accounts-config', 'collapsed', next);
     },
-    [collapsedIds, updateTwitchAccountsConfig]
+    [collapsedIds, updateKickAccountsConfig]
   );
 
   const handleLogin = async (accountType) => {
-    await window.authApi.startTwitchAuthProcess(accountType);
+    await window.authApi.startKickAuthProcess(accountType);
   };
 
   const handleLogout = useCallback(
     async (accountType) => {
-      const res = await window.authApi.revokeTwitchAccessToken(accountType);
+      const res = await window.authApi.revokeKickAccessToken(accountType);
 
-      if (res.status === 400) {
+      if (res.status === 200) {
         const data = {
           id: '',
           login: '',
@@ -101,60 +100,66 @@ const AccountsSettings = () => {
           access_token: '',
           refresh_token: '',
           scopes: [],
-          profile_image_url: ''
+          profile_image_url: '',
+          ...(accountType === 'broadcaster' ? { channelId: '', chatroomId: '' } : {})
         };
 
         showAlert({
-          message: accountType === "broadcaster" ? t('platforms.twitch.accounts.loggedOutBroadcaster') : t('platforms.twitch.accounts.loggedOutChatbot'),
+          message:
+            accountType === 'broadcaster'
+              ? t('platforms.kick.accounts.loggedOutBroadcaster')
+              : t('platforms.kick.accounts.loggedOutChatbot'),
           severity: 'success'
         });
 
-        await window.storeApi.set(`twitch-accounts-config`, accountType, data);
+        await window.storeApi.set(`kick-accounts-config`, accountType, data);
 
         if (accountType === 'broadcaster') {
           setBroadcasterData(null);
           // Disable chatbot usage when broadcaster logs out
-          await window.storeApi.set('twitch-accounts-config', 'useBotAccount', false);
-          updateTwitchAccountsConfig((prev) => ({
+          await window.storeApi.set('kick-accounts-config', 'useBotAccount', false);
+          updateKickAccountsConfig((prev) => ({
             ...(prev || {}),
             [accountType]: data,
             useBotAccount: false
           }));
         } else {
           setChatbotData(null);
-          updateTwitchAccountsConfig((prev) => ({
+          updateKickAccountsConfig((prev) => ({
             ...(prev || {}),
             [accountType]: data
           }));
         }
       }
     },
-    [chatbotData, broadcasterData, twitchAccountsConfig, updateTwitchAccountsConfig]
+    [chatbotData, broadcasterData, kickAccountsConfig, updateKickAccountsConfig]
   );
 
   const handleSwitchChange = useCallback(
     async (event) => {
       const useBot = event.target.checked;
 
-      const res = await window.storeApi.set('twitch-accounts-config', 'useBotAccount', useBot);
+      const res = await window.storeApi.set('kick-accounts-config', 'useBotAccount', useBot);
       if (res.success) {
         showAlert({
-          message: useBot ? t('platforms.twitch.accounts.enabledChatbot') : t('platforms.twitch.accounts.disabledChatbot'),
+          message: useBot
+            ? t('platforms.kick.accounts.enabledChatbot')
+            : t('platforms.kick.accounts.disabledChatbot'),
           severity: 'success'
         });
       } else {
         showAlert({
-          message: t('platforms.twitch.accounts.failure'),
+          message: t('platforms.kick.accounts.failure'),
           severity: 'error'
         });
       }
 
-      updateTwitchAccountsConfig((prev) => ({
+      updateKickAccountsConfig((prev) => ({
         ...(prev || {}),
         useBotAccount: useBot
       }));
     },
-    [twitchAccountsConfig, updateTwitchAccountsConfig]
+    [kickAccountsConfig, updateKickAccountsConfig]
   );
 
   return (
@@ -168,7 +173,6 @@ const AccountsSettings = () => {
       <Box
         sx={{
           display: 'flex',
-          flexWrap: 'wrap',
           alignItems: 'center',
           justifyContent: 'space-between',
           gap: 1.5
@@ -176,10 +180,10 @@ const AccountsSettings = () => {
       >
         <Box>
           <Typography variant="h5" sx={{ mb: 0.5 }}>
-            {t('platforms.twitch.accounts.header')}
+            {t('platforms.kick.accounts.header')}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {t('platforms.twitch.accounts.description')}
+            {t('platforms.kick.accounts.description')}
           </Typography>
         </Box>
 
@@ -202,8 +206,8 @@ const AccountsSettings = () => {
         }}
       >
         <CollapsibleCard
-          title={t('platforms.twitch.accounts.broadcaster.header')}
-          subtitle={t('platforms.twitch.accounts.broadcaster.description')}
+          title={t('platforms.kick.accounts.broadcaster.header')}
+          subtitle={t('platforms.kick.accounts.broadcaster.description')}
           collapsible={layoutMode === 'list'}
           expanded={!collapsedIds.includes('broadcaster')}
           onExpandedChange={() => toggleCollapsed('broadcaster')}
@@ -217,14 +221,14 @@ const AccountsSettings = () => {
         </CollapsibleCard>
 
         <CollapsibleCard
-          title={t('platforms.twitch.accounts.chatbot.header')}
-          subtitle={t('platforms.twitch.accounts.chatbot.description')}
+          title={t('platforms.kick.accounts.chatbot.header')}
+          subtitle={t('platforms.kick.accounts.chatbot.description')}
           actions={
             <Box>
-              <Tooltip title={t('platforms.twitch.accounts.chatbot.hint')}>
+              <Tooltip title={t('platforms.kick.accounts.chatbot.hint')}>
                 <Typography variant="body2" color="text.secondary"></Typography>
                 <Switch
-                  checked={twitchAccountsConfig.useBotAccount}
+                  checked={kickAccountsConfig.useBotAccount}
                   onChange={handleSwitchChange}
                   disabled={!broadcasterData?.id}
                 />

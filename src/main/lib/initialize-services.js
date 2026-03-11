@@ -1,19 +1,32 @@
+import {
+  disconnectKickEventSub,
+  connectToKickEventSub
+} from '../../scripts/kick/event-subscriptions/eventsubs';
 import Logger from '../../scripts/logging/logger';
 import { startFetchingStats, stopFetchingStats } from '../../scripts/stats-watcher/stats-fetcher';
 import { injectDefaults } from '../../scripts/store/defaults';
 import { startOBSConnectionLoop } from '../../scripts/streaming-software/obs-api';
 import {
-  connectToEventSubs,
-  disconnectEventSubs
+  connectToTwitchEventSubs,
+  disconnectTwitchEventSubs
 } from '../../scripts/twitch/event-subscriptions/eventsubs';
 
-const { twitchAccountsConfig, streamingSoftwareConfig, serverConfig } = injectDefaults();
+const {
+  appConfig,
+  twitchAccountsConfig,
+  kickAccountsConfig,
+  streamingSoftwareConfig,
+  serverConfig
+} = injectDefaults();
 const client_id = import.meta.env.VITE_TWITCHCLIENTID;
 
 export async function initializeServices(mainWindow = null) {
-  await connectToTwitchChannel(mainWindow);
+  Logger.log('Connecting streaming software');
   await connectStreamingSoftware(mainWindow);
+  Logger.log('Starting server stats fetching');
   await startFetchingServerStats(mainWindow);
+  Logger.log('Connecting active platform');
+  await connectToActivePlatform(mainWindow, appConfig.get('activePlatform'));
 }
 
 export async function startFetchingServerStats(mainWindow = null) {
@@ -35,24 +48,32 @@ export async function connectStreamingSoftware(mainWindow) {
   }
 }
 
-export async function connectToTwitchChannel(mainWindow = null) {
-  const channelToConnect = twitchAccountsConfig.get('broadcaster.login');
-  if (channelToConnect.length === 0) {
-    Logger.log('No Twitch channel found in twitchAccountsConfig. Skipping Twitch connection.');
-    return;
+export async function connectToActivePlatform(mainWindow, platform) {
+  // Disconnect from all platforms first to ensure a clean slate before reconnecting
+  Logger.info('Cleanup all platform connections before reconnecting to the selected platform...');
+  disconnectTwitchEventSubs(mainWindow);
+  disconnectKickEventSub(mainWindow);
+
+  // Add a short delay to ensure all disconnections are processed before attempting new connections
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  if (platform === 'twitch') {
+    const twitchChannelToConnect = twitchAccountsConfig.get('broadcaster.login');
+    if (twitchChannelToConnect.length === 0) {
+      Logger.log('No Twitch channel found in twitchAccountsConfig. Skipping Twitch connection.');
+      return;
+    }
+    await connectToTwitchEventSubs(client_id, mainWindow);
   }
-
-  try {
-    Logger.log('Cleaning up existing EventSub connections before establishing a new one.');
-    disconnectEventSubs(mainWindow);
-
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    Logger.log(`Connecting to Twitch channel: ${channelToConnect}`);
-    connectToEventSubs(client_id, mainWindow);
-  } catch (error) {
-    Logger.log(
-      `Error connecting to Twitch channel ID: ${channelToConnect}. Error: ${error.message}`
-    );
+  if (platform === 'kick') {
+    const kickChannelToConnect = kickAccountsConfig.get('broadcaster.login');
+    if (kickChannelToConnect.length === 0) {
+      Logger.log('No Kick channel found in kickAccountsConfig. Skipping Kick connection.');
+      return;
+    }
+    await connectToKickEventSub(mainWindow);
+  }
+  if (platform === 'youtube') {
+    Logger.log('YouTube connection not implemented yet.');
   }
 }
