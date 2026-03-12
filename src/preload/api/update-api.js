@@ -1,9 +1,13 @@
 import { ipcRenderer } from 'electron';
 
 export const updateApi = {
-  updateAvailable: (callback) => {
-    ipcRenderer.on('update-available', (event, info) => {
-      callback(info);
-    });
-  }
+  onUpdateWatcher: (callback) => {
+    const listener = (_event, payload) => {
+      callback(payload);
+    };
+
+    ipcRenderer.on('update-watcher', listener);
+    return () => ipcRenderer.removeListener('update-watcher', listener);
+  },
+  startUpdate: () => ipcRenderer.send('update-app')
 };

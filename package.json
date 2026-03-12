@@ -1,9 +1,9 @@
 {
-  "name": "desktop-bitrate-monitor_v2",
-  "version": "1.0.0",
-  "description": "An Electron application with React",
+  "name": "desktop-bitrate-monitor",
+  "version": "0.0.1",
+  "description": "An Electron app to listen for SRT(LA) stream stats",
   "main": "./out/main/index.js",
-  "author": "example.com",
+  "author": "yinks87",
   "homepage": "https://electron-vite.org",
   "scripts": {
     "format": "prettier --write .",

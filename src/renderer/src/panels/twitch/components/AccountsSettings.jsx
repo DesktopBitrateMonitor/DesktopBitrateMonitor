@@ -16,7 +16,7 @@ const AccountsSettings = () => {
 
   const [broadcasterData, setBroadcasterData] = React.useState(null);
   const [chatbotData, setChatbotData] = React.useState(null);
-  const [layoutMode, setLayoutMode] = React.useState('grid');
+  const [layoutMode, setLayoutMode] = React.useState(twitchAccountsConfig?.layout || 'list');
   const [collapsedIds, setCollapsedIds] = React.useState([]);
 
   useEffect(() => {
@@ -105,7 +105,10 @@ const AccountsSettings = () => {
         };
 
         showAlert({
-          message: accountType === "broadcaster" ? t('platforms.twitch.accounts.loggedOutBroadcaster') : t('platforms.twitch.accounts.loggedOutChatbot'),
+          message:
+            accountType === 'broadcaster'
+              ? t('platforms.twitch.accounts.loggedOutBroadcaster')
+              : t('platforms.twitch.accounts.loggedOutChatbot'),
           severity: 'success'
         });
 
@@ -139,7 +142,9 @@ const AccountsSettings = () => {
       const res = await window.storeApi.set('twitch-accounts-config', 'useBotAccount', useBot);
       if (res.success) {
         showAlert({
-          message: useBot ? t('platforms.twitch.accounts.enabledChatbot') : t('platforms.twitch.accounts.disabledChatbot'),
+          message: useBot
+            ? t('platforms.twitch.accounts.enabledChatbot')
+            : t('platforms.twitch.accounts.disabledChatbot'),
           severity: 'success'
         });
       } else {
@@ -168,7 +173,6 @@ const AccountsSettings = () => {
       <Box
         sx={{
           display: 'flex',
-          flexWrap: 'wrap',
           alignItems: 'center',
           justifyContent: 'space-between',
           gap: 1.5

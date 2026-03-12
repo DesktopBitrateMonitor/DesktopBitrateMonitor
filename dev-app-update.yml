@@ -1,3 +1,4 @@
-provider: generic
-url: https://example.com/auto-updates
-updaterCacheDirName: desktop-bitrate-monitor_v2-updater
+provider: github
+owner: Yinks87
+repo: desktop-bitrate-monitor
+updaterCacheDirName: desktop-bitrate-monitor-updater

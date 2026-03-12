@@ -10,7 +10,7 @@ import { disconnectKickEventSub } from '../../scripts/kick/event-subscriptions/e
 
 let isAuthIpcInitialized = false;
 
-const { twitchAccountsConfig } = injectDefaults();
+const { twitchAccountsConfig, kickAccountsConfig } = injectDefaults();
 
 export async function initializeAuthIpc(ipcMain) {
   if (isAuthIpcInitialized) {
@@ -39,6 +39,7 @@ export async function initializeAuthIpc(ipcMain) {
     const access_token = twitchAccountsConfig.get('broadcaster.access_token');
 
     const user = await getUsers(access_token, { user_name: userName }, 'broadcaster');
+    console.log('twitch user:', user);
     return { success: true, data: { user: user, userType } };
   });
 
@@ -56,7 +57,8 @@ export async function initializeAuthIpc(ipcMain) {
   });
 
   ipcMain.handle('validate-kick-user', async (event, userType, userName) => {
-    const user = await getUser(userName);
+    const access_token = kickAccountsConfig.get('broadcaster.access_token');
+    const user = await getUser(access_token, userName);
     return { success: true, data: { user: user, userType } };
   });
 }

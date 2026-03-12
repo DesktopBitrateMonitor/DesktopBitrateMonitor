@@ -25,7 +25,7 @@ const TwitchUserSettings = () => {
   const { showAlert } = useAlert();
   const theme = useTheme();
 
-  const [layoutMode, setLayoutMode] = React.useState('grid');
+  const [layoutMode, setLayoutMode] = React.useState(twitchAccountsConfig?.userLayout || 'list');
   const [users, setUsers] = React.useState({ admin: '', mod: '' });
   const [adminsList, setAdminsList] = React.useState(twitchAccountsConfig?.admins ?? []);
   const [modsList, setModsList] = React.useState(twitchAccountsConfig?.mods ?? []);
@@ -140,18 +140,6 @@ const TwitchUserSettings = () => {
       window.storeApi.set('twitch-accounts-config', 'mods', updatedMods);
     }
   };
-
-  // const validateUser = async (userType, userName) => {
-  //   if (!isUserInputValid(userName)) {
-  //     showAlert({ message: 'Username cannot be empty', severity: 'error' });
-  //     return;
-  //   }
-  //   const res = await window.authApi.validateUser(userType, userName);
-  //   if (res?.data?.user === undefined) {
-  //     showAlert({ message: 'User validation failed', severity: 'error' });
-  //     return;
-  //   }
-  // };
 
   const getInputAdornment = (userType, value) => {
     if (isValidating[userType]) {

@@ -1,4 +1,5 @@
 import { app, shell, BrowserWindow, ipcMain, screen, Tray, Menu } from 'electron';
+import { autoUpdater } from 'electron-updater';
 import { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/icon.png?asset';
@@ -18,6 +19,16 @@ let mainWindow;
 let tray = null;
 let isQuitting = false;
 
+// TODO: Only check on app start for updates
+// User should only decide for:
+// 1. Auto-check for updates (if false, user can manually check for updates in the app)
+// 2. Auto-install updates (if false, user can manually install updates when they are downloaded)
+// 3. Install updates on quit (if true, app will check for updates and install them when the app is quit.). In this case disable autoRunAppAfterInstall.
+
+autoUpdater.autoDownload = false; // Disable automatic downloading of updates
+autoUpdater.autoInstallOnAppQuit = false;
+autoUpdater.autoRunAppAfterInstall = true;
+
 function createWindow(displayIsAvailable = false) {
   // Create the browser window.
   mainWindow = new BrowserWindow({
@@ -29,7 +40,8 @@ function createWindow(displayIsAvailable = false) {
     minHeight: 700,
     show: false,
     autoHideMenuBar: true,
-    title: `Desktop-Bitrate-Monitor_v2 (${app.getVersion()})`,
+    // titleBarStyle: 'hidden',
+    title: `Desktop Bitrate Monitor (${app.getVersion()})`,
     icon: windowIcon,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
@@ -50,6 +62,7 @@ function createWindow(displayIsAvailable = false) {
       }
     }
 
+    autoUpdater.checkForUpdates();
     mainWindow.show();
   });
 
@@ -140,7 +153,7 @@ app.whenReady().then(() => {
       }
     }
   ]);
-  tray.setToolTip('Desktop Bitrate Monitor v2');
+  tray.setToolTip('Desktop Bitrate Monitor');
   tray.setContextMenu(contextMenu);
   tray.on('double-click', () => mainWindow.show());
 });
@@ -183,7 +196,7 @@ function updateCurrentDisplay() {
 async function registerIpcHandlers() {
   // Initialize IPC handlers
   await initializeElectronStoreIpc(ipcMain);
-  await initializeUpdateIpc(ipcMain);
+  await initializeUpdateIpc(ipcMain, mainWindow);
   await initializeAuthIpc(ipcMain);
   await initializeLoggerIpc(ipcMain);
   await initializeServicesIpc(ipcMain, mainWindow);

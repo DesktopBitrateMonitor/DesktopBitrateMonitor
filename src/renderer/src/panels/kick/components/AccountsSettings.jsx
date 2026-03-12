@@ -15,7 +15,7 @@ const AccountsSettings = () => {
 
   const [broadcasterData, setBroadcasterData] = React.useState(null);
   const [chatbotData, setChatbotData] = React.useState(null);
-  const [layoutMode, setLayoutMode] = React.useState('grid');
+  const [layoutMode, setLayoutMode] = React.useState(kickAccountsConfig?.layout || 'list');
   const [collapsedIds, setCollapsedIds] = React.useState([]);
 
   useEffect(() => {

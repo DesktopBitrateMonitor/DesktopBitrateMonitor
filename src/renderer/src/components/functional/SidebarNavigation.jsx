@@ -32,6 +32,7 @@ import { useTranslation } from 'react-i18next';
 import ConnectionStates from '../../panels/dashboard/components/ConnectionStates';
 import TwitchIcon from '../../assets/icons/TwitchIcon';
 import KickIcon from '../../assets/icons/KickIcon';
+import appImage from '../../../../assets/icon.png';
 
 const isDev = import.meta.env.DEV;
 
@@ -233,9 +234,12 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
               }}
             >
               {!collapsed && (
-                <Typography variant="subtitle1" fontWeight={600} noWrap>
-                  {t('navigation.brand')}
-                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 0.5 }}>
+                  <img src={appImage} alt="app_image" style={{ height: '32px' }} />
+                  <Typography variant="subtitle1" fontWeight={600} noWrap>
+                    {t('navigation.brand')}
+                  </Typography>
+                </Box>
               )}
 
               <IconButton size="small" onClick={() => handleCollapsedChange(!collapsed)}>

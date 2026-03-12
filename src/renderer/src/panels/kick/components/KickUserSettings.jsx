@@ -24,7 +24,7 @@ const KickUserSettings = () => {
   const { showAlert } = useAlert();
   const theme = useTheme();
 
-  const [layoutMode, setLayoutMode] = React.useState('grid');
+  const [layoutMode, setLayoutMode] = React.useState(kickAccountsConfig?.userLayout || 'list');
   const [users, setUsers] = React.useState({ admin: '', mod: '' });
   const [adminsList, setAdminsList] = React.useState(kickAccountsConfig?.admins ?? []);
   const [modsList, setModsList] = React.useState(kickAccountsConfig?.mods ?? []);
@@ -96,6 +96,7 @@ const KickUserSettings = () => {
         showAlert({ message: t('platforms.kick.users.error2'), severity: 'error' });
         return;
       }
+
       const newUser = res.data.user;
       if (userType === 'admin') {
         if (adminsList.some((admin) => admin.id === newUser.id)) {
@@ -157,7 +158,11 @@ const KickUserSettings = () => {
 
     return (
       <InputEndAdornment
-        title={isAdmin ? t('platforms.kick.users.inputAdornmentAdmin') : t('platforms.kick.users.inputAdornmentMod')}
+        title={
+          isAdmin
+            ? t('platforms.kick.users.inputAdornmentAdmin')
+            : t('platforms.kick.users.inputAdornmentMod')
+        }
         placement="top-start"
         open={Boolean(isUserInputValid(value))}
         color="secondary"

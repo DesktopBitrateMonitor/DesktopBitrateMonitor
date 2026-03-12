@@ -20,7 +20,7 @@ export async function kickMessageService({ action, event, variables = {} }) {
   const broadcaster_id = kickConfig.broadcaster.id;
   const bot_id = kickConfig.bot.id;
   const useBotAccount = kickConfig.useBotAccount;
-  const accountType = 'user';
+  const accountType = bot_id !== '' && useBotAccount ? 'bot' : 'broadcaster';
   const access_token =
     bot_id !== '' && useBotAccount
       ? kickConfig.bot.access_token

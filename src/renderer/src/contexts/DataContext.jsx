@@ -1,4 +1,12 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, {
+  createContext,
+  memo,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 
 // Generic hook for a single store snapshot (one config file)
 const createStoreContext = (displayName) => {
@@ -78,37 +86,35 @@ const useStoreState = (file) => {
   );
 };
 
-export const DataProvider = ({ children }) => {
-  const appConfigStore = useStoreState('app-config');
-  const loggingConfigStore = useStoreState('logging-config');
-  const commandsConfigStore = useStoreState('commands-config');
-  const messagesConfigStore = useStoreState('messages-config');
-  const twitchAccountsConfigStore = useStoreState('twitch-accounts-config');
-  const kickAccountsConfigStore = useStoreState('kick-accounts-config');
-  const serverConfigStore = useStoreState('server-config');
-  const streamingSoftwareConfigStore = useStoreState('streaming-software-config');
-  const switcherConfigStore = useStoreState('switcher-config');
+// Isolate each store in its own memoized provider so unrelated store updates do not re-render siblings
+const StoreProvider = memo(function StoreProvider({ Provider, file, children }) {
+  const storeState = useStoreState(file);
+  return <Provider value={storeState}>{children}</Provider>;
+});
 
-  return (
-    <AppConfigContext.Provider value={appConfigStore}>
-      <LoggingConfigContext.Provider value={loggingConfigStore}>
-        <CommandsConfigContext.Provider value={commandsConfigStore}>
-          <MessagesConfigContext.Provider value={messagesConfigStore}>
-            <TwitchAccountsConfigContext.Provider value={twitchAccountsConfigStore}>
-              <KickAccountsConfigContext.Provider value={kickAccountsConfigStore}>
-                <ServerConfigContext.Provider value={serverConfigStore}>
-                  <StreamingSoftwareConfigContext.Provider value={streamingSoftwareConfigStore}>
-                    <SwitcherConfigContext.Provider value={switcherConfigStore}>
-                      {children}
-                    </SwitcherConfigContext.Provider>
-                  </StreamingSoftwareConfigContext.Provider>
-                </ServerConfigContext.Provider>
-              </KickAccountsConfigContext.Provider>
-            </TwitchAccountsConfigContext.Provider>
-          </MessagesConfigContext.Provider>
-        </CommandsConfigContext.Provider>
-      </LoggingConfigContext.Provider>
-    </AppConfigContext.Provider>
+export const DataProvider = ({ children }) => {
+  const providers = useMemo(
+    () => [
+      { Provider: AppConfigContext.Provider, file: 'app-config' },
+      { Provider: LoggingConfigContext.Provider, file: 'logging-config' },
+      { Provider: CommandsConfigContext.Provider, file: 'commands-config' },
+      { Provider: MessagesConfigContext.Provider, file: 'messages-config' },
+      { Provider: TwitchAccountsConfigContext.Provider, file: 'twitch-accounts-config' },
+      { Provider: KickAccountsConfigContext.Provider, file: 'kick-accounts-config' },
+      { Provider: ServerConfigContext.Provider, file: 'server-config' },
+      { Provider: StreamingSoftwareConfigContext.Provider, file: 'streaming-software-config' },
+      { Provider: SwitcherConfigContext.Provider, file: 'switcher-config' }
+    ],
+    []
+  );
+
+  return providers.reduceRight(
+    (acc, { Provider, file }) => (
+      <StoreProvider key={file} Provider={Provider} file={file}>
+        {acc}
+      </StoreProvider>
+    ),
+    children
   );
 };
 

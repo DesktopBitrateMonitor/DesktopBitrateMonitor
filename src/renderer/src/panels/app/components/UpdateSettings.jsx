@@ -4,6 +4,7 @@ import { useAlert } from '../../../contexts/AlertContext';
 import { Box, Button, Stack, Switch, Typography } from '@mui/material';
 import CollapsibleCard from '../../../components/functional/CollapsibleCard';
 import SyncIcon from '@mui/icons-material/Sync';
+import UpdateCard from '../../../components/feedback/UpdateCard';
 
 const SWITCH_MAPPINGS = {
   autoCheckForUpdates: 'Auto-check for updates',
@@ -172,6 +173,8 @@ const UpdateSettings = () => {
             {SWITCH_MAPPINGS.installOnStart}
           </Typography>
         </Box>
+
+        <UpdateCard />
       </CollapsibleCard>
     </Box>
   );

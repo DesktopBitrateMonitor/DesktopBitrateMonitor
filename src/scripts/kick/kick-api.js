@@ -234,28 +234,37 @@ export async function validateAndProceed(access_token, accountType, callback) {
 
 /**
  * @param {string} username The username of the Kick user to fetch.
- * @return {Promise<{success: boolean, data: getUser|null, error: string|null}>} The result of the user fetch operation.
+ * @return {object|null} The result of the user fetch operation.
  */
 
-export async function getUser(username) {
-  try {
+export async function getUser(access_token, username) {
+  return await validateAndProceed(access_token, 'broadcaster', async (validToken) => {
     const res = await fetchChannelMeta(username);
-    console.log(res);
-    if (!res) {
-      Logger.log(`No user data found for ${username}`);
-      return { success: false, data: null, error: 'User not found' };
-    }
-    const userData = {
-      id: res.user.id,
-      login: res.user.username,
-      display_name: res.user.username,
-      profile_image_url: res.user.profile_pic
+    if (!res) return null;
+
+    const userId = res?.user_id;
+
+    const qs = new URLSearchParams({
+      id: userId
+    });
+
+    const {
+      data: { data }
+    } = await kickApi.get(`/v1/users?${qs}`, {
+      headers: {
+        Authorization: `Bearer ${validToken}`
+      }
+    });
+
+    const returnData = {
+      id: data[0].user_id,
+      login: data[0].name,
+      display_name: data[0].name,
+      profile_image_url: data[0].profile_picture
     };
-    return { success: true, data: userData, error: null };
-  } catch (error) {
-    Logger.error(`Error fetching Kick users: ${error.message}`);
-    return { success: false, data: null, error: error.message };
-  }
+
+    return returnData || null;
+  });
 }
 
 /**
@@ -301,7 +310,7 @@ export async function sendChatMessage(access_token, accountType, broadcaster_use
   return await validateAndProceed(access_token, accountType, async (validToken) => {
     const body = {
       broadcaster_user_id,
-      type: accountType === 'bot' ? 'bot' : 'user',
+      type: 'user',
       content: message
     };
     try {

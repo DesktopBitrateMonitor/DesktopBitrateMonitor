@@ -1,5 +1,5 @@
-appId: com.electron.app
-productName: desktop-bitrate-monitor_v2
+appId: desktop-bitrate-monitor
+productName: Desktop Bitrate Monitor
 directories:
   buildResources: build
 files:
@@ -11,7 +11,7 @@ files:
 asarUnpack:
   - resources/**
 win:
-  executableName: desktop-bitrate-monitor_v2
+  executableName: Desktop Bitrate Monitor
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
@@ -38,7 +38,9 @@ appImage:
   artifactName: ${name}-${version}.${ext}
 npmRebuild: false
 publish:
-  provider: generic
-  url: https://example.com/auto-updates
+  provider: github
+  owner: Yinks87
+  repo: desktop-bitrate-monitor
+  url: https://github.com/Yinks87/desktop-bitrate-monitor/releases
 electronDownload:
   mirror: https://npmmirror.com/mirrors/electron/
