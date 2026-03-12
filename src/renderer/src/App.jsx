@@ -21,7 +21,8 @@ import SoftwareSettings from './panels/software/SoftwareSettings';
 import SwitcherSettings from './panels/switcher/SwitcherSettings';
 import LoggingSettings from './panels/logging/LoggingSettings';
 import Main from './panels/dashboard/main';
-import UserSettings from './panels/twitch/components/UserSettings';
+import TwitchUserSettings from './panels/twitch/components/TwitchUserSettings';
+import KickUserSettings from './panels/kick/components/KickUserSettings';
 
 function App() {
   const { alerts } = useAlert();
@@ -40,14 +41,14 @@ function App() {
                 <Route index element={<CommandSettings />} />
                 <Route path="commandsettings" element={<CommandSettings />} />
                 <Route path="messagesettings" element={<MessageSettings />} />
-                <Route path="usersettings" element={<UserSettings />} />
+                <Route path="usersettings" element={<TwitchUserSettings />} />
                 <Route path="accountssettings" element={<TwitchAccountSettings />} />
               </Route>
               <Route path="kick" element={<KickSettings />}>
                 <Route index element={<CommandSettings />} />
                 <Route path="commandsettings" element={<CommandSettings />} />
                 <Route path="messagesettings" element={<MessageSettings />} />
-                <Route path="usersettings" element={<UserSettings />} />
+                <Route path="usersettings" element={<KickUserSettings />} />
                 <Route path="accountssettings" element={<KickAccountSettings />} />
               </Route>
             </Route>

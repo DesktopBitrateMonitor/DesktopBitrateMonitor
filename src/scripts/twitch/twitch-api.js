@@ -60,7 +60,10 @@ export async function getAccessToken(refresh_token) {
     const { data } = await authAPI.post(`/token?${qs}`);
     return data;
   } catch (error) {
-    Logger.error('Token validation error:', error.response ? error.response.data : error.message);
+    Logger.error(
+      'Twitch Token validation error:',
+      error.response ? error.response.data : error.message
+    );
     return null;
   }
 }
@@ -79,7 +82,7 @@ export async function doTokenValidationProcess(access_token, accountType) {
     const refresh_token = selectedConfig.refresh_token;
     const newAccessToken = await getAccessToken(refresh_token);
     if (newAccessToken) {
-      Logger.log(`Access token refreshed...`);
+      Logger.log(`Twitch Access Token refreshed...`);
 
       twitchAccountsConfig.set(`${accountType}`, {
         ...selectedConfig,
@@ -88,7 +91,7 @@ export async function doTokenValidationProcess(access_token, accountType) {
       });
       return { access_token: newAccessToken.access_token, success: true };
     } else {
-      Logger.log(`Failed to refresh access token...`);
+      Logger.error(`Failed to refresh Twitch access token...`);
       return { access_token: null, success: false };
     }
   }
@@ -101,7 +104,7 @@ export async function validateAndProceed(access_token, accountType, callback) {
     accountType
   );
   if (!success) {
-    throw new Error('Unable to validate or refresh access token.');
+    throw new Error('Unable to validate Twitch or refresh access token.');
   }
   return await callback(validToken);
 }

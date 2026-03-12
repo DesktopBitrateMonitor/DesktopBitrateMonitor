@@ -71,8 +71,6 @@ kickRouter.get('/oauth/kick', async (req, res) => {
 
     const user = await userAuthorization(access_token);
 
-    console.log(user);
-
     const data = {
       id: user.user_id,
       login: user.name,

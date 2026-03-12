@@ -3,7 +3,6 @@ import { useAlert } from '../../../contexts/AlertContext';
 import {
   Avatar,
   Box,
-  Button,
   Chip,
   CircularProgress,
   Stack,
@@ -12,62 +11,62 @@ import {
   useTheme
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
-import { useTwitchAccountsConfig } from '../../../contexts/DataContext';
+import { useKickAccountsConfig } from '../../../contexts/DataContext';
 import CollapsibleCard from '../../../components/functional/CollapsibleCard';
 import LayoutToggle from '../../../components/functional/LayoutToggle';
 import InputEndAdornment from '../../../components/feedback/InputEndAdornment';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { useTranslation } from 'react-i18next';
 
-const UserSettings = () => {
+const KickUserSettings = () => {
   const { t } = useTranslation();
-  const { twitchAccountsConfig, updateTwitchAccountsConfig } = useTwitchAccountsConfig();
+  const { kickAccountsConfig, updateKickAccountsConfig } = useKickAccountsConfig();
   const { showAlert } = useAlert();
   const theme = useTheme();
 
   const [layoutMode, setLayoutMode] = React.useState('grid');
   const [users, setUsers] = React.useState({ admin: '', mod: '' });
-  const [adminsList, setAdminsList] = React.useState(twitchAccountsConfig?.admins ?? []);
-  const [modsList, setModsList] = React.useState(twitchAccountsConfig?.mods ?? []);
+  const [adminsList, setAdminsList] = React.useState(kickAccountsConfig?.admins ?? []);
+  const [modsList, setModsList] = React.useState(kickAccountsConfig?.mods ?? []);
   const [isValidating, setIsValidating] = React.useState({ admin: false, mod: false });
 
   useEffect(() => {
-    const storedLayout = twitchAccountsConfig?.userLayout;
+    const storedLayout = kickAccountsConfig?.userLayout;
     if (storedLayout === 'grid' || storedLayout === 'list') {
       setLayoutMode(storedLayout);
     } else {
       setLayoutMode('list');
     }
 
-    setAdminsList(twitchAccountsConfig?.admins);
-    setModsList(twitchAccountsConfig?.mods);
-  }, [twitchAccountsConfig]);
+    setAdminsList(kickAccountsConfig?.admins);
+    setModsList(kickAccountsConfig?.mods);
+  }, [kickAccountsConfig]);
 
   useEffect(() => {
-    window.authApi.updateTwitchUser((data) => {
+    window.authApi.updateKickUser((data) => {
       if (data?.type === 'admin') {
         if (data?.action === 'add') {
           const updatedAdmins = [...adminsList, data.user];
           setAdminsList(updatedAdmins);
-          updateTwitchAccountsConfig((prev) => ({ ...(prev || {}), admins: updatedAdmins }));
+          updateKickAccountsConfig((prev) => ({ ...(prev || {}), admins: updatedAdmins }));
         } else if (data?.action === 'remove') {
           const updatedAdmins = adminsList.filter((admin) => admin.id !== data.user.id);
           setAdminsList(updatedAdmins);
-          updateTwitchAccountsConfig((prev) => ({ ...(prev || {}), admins: updatedAdmins }));
+          updateKickAccountsConfig((prev) => ({ ...(prev || {}), admins: updatedAdmins }));
         }
       } else if (data?.type === 'mod') {
         if (data?.action === 'add') {
           const updatedMods = [...modsList, data.user];
           setModsList(updatedMods);
-          updateTwitchAccountsConfig((prev) => ({ ...(prev || {}), mods: updatedMods }));
+          updateKickAccountsConfig((prev) => ({ ...(prev || {}), mods: updatedMods }));
         } else if (data?.action === 'remove') {
           const updatedMods = modsList.filter((mod) => mod.id !== data.user.id);
           setModsList(updatedMods);
-          updateTwitchAccountsConfig((prev) => ({ ...(prev || {}), mods: updatedMods }));
+          updateKickAccountsConfig((prev) => ({ ...(prev || {}), mods: updatedMods }));
         }
       }
     });
-  }, [updateTwitchAccountsConfig, adminsList, modsList]);
+  }, [updateKickAccountsConfig, adminsList, modsList]);
 
   const isUserInputValid = (value = '') => value.trim().replace(/\s/g, '').length > 0;
 
@@ -75,10 +74,10 @@ const UserSettings = () => {
     async (nextLayout) => {
       if (!nextLayout || nextLayout === layoutMode) return;
       setLayoutMode(nextLayout);
-      updateTwitchAccountsConfig((prev) => ({ ...(prev || {}), userLayout: nextLayout }));
-      await window.storeApi.set('twitch-accounts-config', 'userLayout', nextLayout);
+      updateKickAccountsConfig((prev) => ({ ...(prev || {}), userLayout: nextLayout }));
+      await window.storeApi.set('kick-accounts-config', 'userLayout', nextLayout);
     },
-    [twitchAccountsConfig, updateTwitchAccountsConfig]
+    [kickAccountsConfig, updateKickAccountsConfig]
   );
 
   const handleInputChange = (userType, value) => {
@@ -87,41 +86,41 @@ const UserSettings = () => {
 
   const handleAddUser = async (userType, user) => {
     if (!isUserInputValid(user)) {
-      showAlert({ message: t('platforms.twitch.users.error1'), severity: 'error' });
+      showAlert({ message: t('platforms.kick.users.error1'), severity: 'error' });
       return;
     }
     setIsValidating((prev) => ({ ...prev, [userType]: true }));
     try {
-      const res = await window.authApi.validateTwitchUser(userType, user);
+      const res = await window.authApi.validateKickUser(userType, user);
       if (res?.data?.user === undefined) {
-        showAlert({ message: t('platforms.twitch.users.error2'), severity: 'error' });
+        showAlert({ message: t('platforms.kick.users.error2'), severity: 'error' });
         return;
       }
       const newUser = res.data.user;
       if (userType === 'admin') {
         if (adminsList.some((admin) => admin.id === newUser.id)) {
-          showAlert({ message: t('platforms.twitch.users.error3'), severity: 'error' });
+          showAlert({ message: t('platforms.kick.users.error3'), severity: 'error' });
           return;
         }
         const updatedAdmins = [...adminsList, newUser];
         setAdminsList(updatedAdmins);
-        updateTwitchAccountsConfig((prev) => ({ ...(prev || {}), admins: updatedAdmins }));
-        await window.storeApi.set('twitch-accounts-config', 'admins', updatedAdmins);
+        updateKickAccountsConfig((prev) => ({ ...(prev || {}), admins: updatedAdmins }));
+        await window.storeApi.set('kick-accounts-config', 'admins', updatedAdmins);
       } else if (userType === 'mod') {
         if (modsList.some((mod) => mod.id === newUser.id)) {
-          showAlert({ message: t('platforms.twitch.users.error4'), severity: 'error' });
+          showAlert({ message: t('platforms.kick.users.error4'), severity: 'error' });
           return;
         }
         const updatedMods = [...modsList, newUser];
         setModsList(updatedMods);
-        updateTwitchAccountsConfig((prev) => ({ ...(prev || {}), mods: updatedMods }));
-        await window.storeApi.set('twitch-accounts-config', 'mods', updatedMods);
+        updateKickAccountsConfig((prev) => ({ ...(prev || {}), mods: updatedMods }));
+        await window.storeApi.set('kick-accounts-config', 'mods', updatedMods);
       }
       setUsers((prev) => ({ ...prev, [userType]: '' }));
       (prev) => ({ ...prev, [userType]: '' });
     } catch (error) {
       console.error('validateUser failed', error);
-      showAlert({ message: t('platforms.twitch.users.error5'), severity: 'error' });
+      showAlert({ message: t('platforms.kick.users.error5'), severity: 'error' });
     } finally {
       setIsValidating((prev) => ({ ...prev, [userType]: false }));
     }
@@ -131,27 +130,15 @@ const UserSettings = () => {
     if (userType === 'admin') {
       const updatedAdmins = adminsList.filter((admin) => admin.id !== user.id);
       setAdminsList(updatedAdmins);
-      updateTwitchAccountsConfig((prev) => ({ ...(prev || {}), admins: updatedAdmins }));
-      window.storeApi.set('twitch-accounts-config', 'admins', updatedAdmins);
+      updateKickAccountsConfig((prev) => ({ ...(prev || {}), admins: updatedAdmins }));
+      window.storeApi.set('kick-accounts-config', 'admins', updatedAdmins);
     } else if (userType === 'mod') {
       const updatedMods = modsList.filter((mod) => mod.id !== user.id);
       setModsList(updatedMods);
-      updateTwitchAccountsConfig((prev) => ({ ...(prev || {}), mods: updatedMods }));
-      window.storeApi.set('twitch-accounts-config', 'mods', updatedMods);
+      updateKickAccountsConfig((prev) => ({ ...(prev || {}), mods: updatedMods }));
+      window.storeApi.set('kick-accounts-config', 'mods', updatedMods);
     }
   };
-
-  // const validateUser = async (userType, userName) => {
-  //   if (!isUserInputValid(userName)) {
-  //     showAlert({ message: 'Username cannot be empty', severity: 'error' });
-  //     return;
-  //   }
-  //   const res = await window.authApi.validateUser(userType, userName);
-  //   if (res?.data?.user === undefined) {
-  //     showAlert({ message: 'User validation failed', severity: 'error' });
-  //     return;
-  //   }
-  // };
 
   const getInputAdornment = (userType, value) => {
     if (isValidating[userType]) {
@@ -170,7 +157,7 @@ const UserSettings = () => {
 
     return (
       <InputEndAdornment
-        title={isAdmin ? t('platforms.twitch.users.inputAdornmentAdmin') : t('platforms.twitch.users.inputAdornmentMod')}
+        title={isAdmin ? t('platforms.kick.users.inputAdornmentAdmin') : t('platforms.kick.users.inputAdornmentMod')}
         placement="top-start"
         open={Boolean(isUserInputValid(value))}
         color="secondary"
@@ -193,10 +180,10 @@ const UserSettings = () => {
       >
         <Box>
           <Typography variant="h5" sx={{ mb: 0.5 }}>
-            {t('platforms.twitch.users.header')}
+            {t('platforms.kick.users.header')}
           </Typography>
           <Typography variant="body2" color="text.secondary" maxWidth={600}>
-            {t('platforms.twitch.users.description')}
+            {t('platforms.kick.users.description')}
           </Typography>
         </Box>
 
@@ -218,17 +205,17 @@ const UserSettings = () => {
                 }
         }}
       >
-        {twitchAccountsConfig.broadcaster.login.length === 0 ? (
+        {kickAccountsConfig.broadcaster.login.length === 0 ? (
           <Box sx={{ mb: 2 }}>
             <Typography variant="body2" color="error.main">
-              {t('platforms.twitch.users.noAccountRegistered')}
+              {t('platforms.kick.users.noAccountRegistered')}
             </Typography>
           </Box>
         ) : (
           <>
             <CollapsibleCard
-              title={t('platforms.twitch.users.admins.header')}
-              subtitle={t('platforms.twitch.users.admins.description')}
+              title={t('platforms.kick.users.admins.header')}
+              subtitle={t('platforms.kick.users.admins.description')}
               collapsible={false}
             >
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -263,8 +250,8 @@ const UserSettings = () => {
                   ))}
                 </Box>
                 <TextField
-                  label={t('platforms.twitch.users.inputBox.label')}
-                  placeholder={t('platforms.twitch.users.inputBox.placeholder')}
+                  label={t('platforms.kick.users.inputBox.label')}
+                  placeholder={t('platforms.kick.users.inputBox.placeholder')}
                   onChange={(e) => handleInputChange('admin', e.target.value)}
                   value={users.admin}
                   disabled={isValidating.admin}
@@ -284,8 +271,8 @@ const UserSettings = () => {
             </CollapsibleCard>
 
             <CollapsibleCard
-              title={t('platforms.twitch.users.mods.header')}
-              subtitle={t('platforms.twitch.users.mods.description')}
+              title={t('platforms.kick.users.mods.header')}
+              subtitle={t('platforms.kick.users.mods.description')}
               collapsible={false}
             >
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -320,8 +307,8 @@ const UserSettings = () => {
                   ))}
                 </Box>
                 <TextField
-                  label={t('platforms.twitch.users.inputBox.label')}
-                  placeholder={t('platforms.twitch.users.inputBox.placeholder')}
+                  label={t('platforms.kick.users.inputBox.label')}
+                  placeholder={t('platforms.kick.users.inputBox.placeholder')}
                   onChange={(e) => handleInputChange('mod', e.target.value)}
                   value={users.mod}
                   disabled={isValidating.mod}
@@ -346,4 +333,4 @@ const UserSettings = () => {
   );
 };
 
-export default UserSettings;
+export default KickUserSettings;

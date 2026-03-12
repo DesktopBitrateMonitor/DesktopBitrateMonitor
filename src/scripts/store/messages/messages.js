@@ -16,6 +16,8 @@ const pickLocale = (locale) => {
 const getMessage = (lng, key, fallbackValue) =>
   readJsonData({ lng, fallbackLng: langs.en, key, fallbackValue });
 
+// Make sure to use the system language if the app starts first time on a system
+
 export const buildMessages = (locale) => {
   const lng = pickLocale(locale ?? app?.getLocale?.());
   const gm = (key, fallback) => getMessage(lng, key, fallback);

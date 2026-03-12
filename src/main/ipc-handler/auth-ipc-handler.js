@@ -2,7 +2,7 @@ import { shell } from 'electron';
 import Logger from '../../scripts/logging/logger';
 import { startTwitchAuthorization } from '../../scripts/authorization/twitch-auth';
 import { getUsers, revokeTwitchAccessToken } from '../../scripts/twitch/twitch-api';
-import { revokeKickAccessToken } from '../../scripts/kick/kick-api';
+import { getUser, revokeKickAccessToken } from '../../scripts/kick/kick-api';
 import { injectDefaults } from '../../scripts/store/defaults';
 import { disconnectTwitchEventSubs } from '../../scripts/twitch/event-subscriptions/eventsubs';
 import { startKickAuthorization } from '../../scripts/authorization/kick-auth';
@@ -53,5 +53,10 @@ export async function initializeAuthIpc(ipcMain) {
     const res = await revokeKickAccessToken(accessToken);
     await disconnectKickEventSub();
     return res;
+  });
+
+  ipcMain.handle('validate-kick-user', async (event, userType, userName) => {
+    const user = await getUser(userName);
+    return { success: true, data: { user: user, userType } };
   });
 }

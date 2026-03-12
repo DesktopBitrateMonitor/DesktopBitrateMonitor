@@ -4,7 +4,8 @@
     "global": {
       "enabled": "Enabled",
       "disabled": "Disabled"
-    }
+    },
+    "backend": {}
   },
   "alerts": {
     "saveSuccess": "Data saved successfully",
@@ -611,9 +612,9 @@
       "description": "Setup the bitrate triggers and timeout values for switching scenes",
       "error1": "{{value}} is required",
       "error2": "{{value}} must be an integer",
-      "error2": "{{value}} must be lower than Reverse Trigger to live",
-      "error3": "{{value}} must be greater than Trigger to low",
-      "error4": "{{value}} must be lower than both Trigger to Low and Reverse Trigger to live",
+      "error3": "{{value}} must be lower than Reverse Trigger to live",
+      "error4": "{{value}} must be greater than Trigger to low",
+      "error5": "{{value}} must be lower than both Trigger to Low and Reverse Trigger to live",
       "trigger": "Bitrate Trigger to low (kbps)",
       "rTrigger": "Bitrate Recovery Trigger to live (kbps)",
       "offlineTrigger": "Offline Trigger to offline (kbps)",
