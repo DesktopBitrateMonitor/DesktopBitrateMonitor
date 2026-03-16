@@ -39,7 +39,6 @@ export async function initializeAuthIpc(ipcMain) {
     const access_token = twitchAccountsConfig.get('broadcaster.access_token');
 
     const user = await getUsers(access_token, { user_name: userName }, 'broadcaster');
-    console.log('twitch user:', user);
     return { success: true, data: { user: user, userType } };
   });
 

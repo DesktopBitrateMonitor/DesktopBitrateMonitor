@@ -1,11 +1,11 @@
 import React from 'react';
 
-const TwitchIcon = ({ props }) => (
+const TwitchIcon = ({ props, width= 26, height = 26 }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     {...props}
-    width="26"
-    height="26"
+    width={width}
+    height={height}
     fill="currentColor"
     className="bi bi-twitch"
     viewBox="0 0 16 16"

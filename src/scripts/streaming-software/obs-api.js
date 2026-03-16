@@ -199,7 +199,6 @@ export async function setCurrentProgramScene(scene) {
       }
     });
     if (sceneExists) {
-      //TODO: check if there is any response from the obs.call function
       await obs.call('SetCurrentProgramScene', { sceneName: sceneToSwitch });
       Logger.success(`Successfully switched to scene ${sceneToSwitch}`);
       return { success: true, data: null, error: null };
@@ -215,7 +214,7 @@ export async function setCurrentProgramScene(scene) {
 
 let isRefreshing = false;
 
-export async function refreshMediaSources() {
+export async function fixMediaSources() {
   if (isRefreshing) {
     Logger.error('Refreshing is already running...');
     return { success: false, data: null, error: null };
@@ -224,64 +223,110 @@ export async function refreshMediaSources() {
   isRefreshing = true;
 
   try {
-    const scenes = await obs.call('GetSceneList');
-    const items = await obs.call('GetSceneItemList', {
-      sceneName: scenes.currentProgramSceneName
-    });
+    const currentScene = await obs.call('GetCurrentProgramScene');
 
-    const activeItems = [];
-    // Filter for ffmpeg_sources
-    for (const i of items.sceneItems) {
-      if (i.sceneItemEnabled === true && i.inputKind === 'ffmpeg_source') {
-        // Get the url path from the input
-        const inputSettings = await obs.call('GetInputSettings', {
-          inputName: i.sourceName
+    // Collect active media inputs (ffmpeg/vlc) from the current scene and nested scenes/groups
+    const visited = new Set();
+    const sources = await collectMediaSources(currentScene.currentProgramSceneName, visited, false);
+
+    let refreshed = 0;
+    for (const source of sources) {
+      // Refresh by reapplying empty settings, forcing OBS to reopen the input
+
+      // Get current settings to preserve them during the refresh
+      const settingsResp = await obs.call('GetInputSettings', {
+        inputName: source.sourceName
+      });
+
+      try {
+        await obs.call('SetInputSettings', {
+          inputName: source.sourceName,
+          inputSettings: settingsResp.inputSettings,
+          overlay: false
         });
-
-        // Check if the item has a srt, srtla or rtmp feed on it
-        const input = inputSettings.inputSettings.input || '';
-        if (input.toLowerCase().startsWith('rtmp') || input.toLowerCase().startsWith('srt')) {
-          activeItems.push({
-            sourceName: i.sourceName,
-            sceneItemId: i.sceneItemId,
-            sceneName: scenes.currentProgramSceneName
-          });
-        }
+        refreshed += 1;
+      } catch (err) {
+        Logger.error(`Failed to refresh media source ${source.sourceName}: ${err}`);
       }
     }
-    // Disable all items at once
-    await Promise.all(
-      activeItems.map((item) =>
-        obs.call('SetSceneItemEnabled', {
-          sceneName: item.sceneName,
-          sceneItemId: item.sceneItemId,
-          sceneItemEnabled: false
-        })
-      )
-    );
 
-    // Timeout for 2 seconde
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    // Enable all items at once
-    await Promise.all(
-      activeItems.map((item) =>
-        obs.call('SetSceneItemEnabled', {
-          sceneName: item.sceneName,
-          sceneItemId: item.sceneItemId,
-          sceneItemEnabled: true
-        })
-      )
-    );
-    Logger.success('Refreshed all relevant sources');
-    return { success: true };
+    Logger.success(`Refreshed ${refreshed} media source(s)`);
+    return { success: true, data: { refreshed }, error: null };
   } catch (error) {
-    Logger.error('Refreshing failed');
-    return { success: false };
+    Logger.error('Refreshing media sources failed');
+    return { success: false, data: null, error };
   } finally {
     isRefreshing = false;
   }
 }
+
+// export async function refreshMediaSources() {
+//   if (isRefreshing) {
+//     Logger.error('Refreshing is already running...');
+//     return { success: false, data: null, error: null };
+//   }
+
+//   isRefreshing = true;
+
+//   try {
+//     const scenes = await obs.call('GetSceneList');
+//     const items = await obs.call('GetSceneItemList', {
+//       sceneName: scenes.currentProgramSceneName
+//     });
+
+//     const activeItems = [];
+//     // Filter for ffmpeg_sources
+//     for (const i of items.sceneItems) {
+//       if (i.sceneItemEnabled === true && i.inputKind === 'ffmpeg_source') {
+//         // Get the url path from the input
+//         const inputSettings = await obs.call('GetInputSettings', {
+//           inputName: i.sourceName
+//         });
+
+//         // Check if the item has a srt, srtla or rtmp feed on it
+//         const input = inputSettings.inputSettings.input || '';
+//         if (input.toLowerCase().startsWith('rtmp') || input.toLowerCase().startsWith('srt')) {
+//           activeItems.push({
+//             sourceName: i.sourceName,
+//             sceneItemId: i.sceneItemId,
+//             sceneName: scenes.currentProgramSceneName
+//           });
+//         }
+//       }
+//     }
+//     // Disable all items at once
+//     await Promise.all(
+//       activeItems.map((item) =>
+//         obs.call('SetSceneItemEnabled', {
+//           sceneName: item.sceneName,
+//           sceneItemId: item.sceneItemId,
+//           sceneItemEnabled: false
+//         })
+//       )
+//     );
+
+//     // Timeout for 2 seconde
+//     await new Promise((resolve) => setTimeout(resolve, 2000));
+
+//     // Enable all items at once
+//     await Promise.all(
+//       activeItems.map((item) =>
+//         obs.call('SetSceneItemEnabled', {
+//           sceneName: item.sceneName,
+//           sceneItemId: item.sceneItemId,
+//           sceneItemEnabled: true
+//         })
+//       )
+//     );
+//     Logger.success('Refreshed all relevant sources');
+//     return { success: true };
+//   } catch (error) {
+//     Logger.error('Refreshing failed');
+//     return { success: false };
+//   } finally {
+//     isRefreshing = false;
+//   }
+// }
 
 export async function getSceneItemList(scene) {
   try {
@@ -290,7 +335,7 @@ export async function getSceneItemList(scene) {
     });
     return { success: true, data: items, error: null };
   } catch (error) {
-    Logger.err(`Error getting scene item list: ${error.message}`);
+    Logger.error(`Error getting scene item list: ${error.message}`);
     return { success: false, data: null, error: error };
   }
 }
@@ -302,7 +347,7 @@ export async function getInputSettings(sourceName) {
     });
     return { success: true, data: inputSettings, error: null };
   } catch (error) {
-    Logger.err(`Error getting input settings: ${error.message}`);
+    Logger.error(`Error getting input settings: ${error.message}`);
     return { success: false, data: null, error: error };
   }
 }
@@ -312,7 +357,92 @@ export async function getCurrentProgramScene() {
     const scenes = await obs.call('GetCurrentProgramScene');
     return { success: true, data: scenes, error: null };
   } catch (error) {
-    Logger.err(`Error getting current program scene: ${error.message}`);
+    Logger.error(`Error getting current program scene: ${error.message}`);
     return { success: false, data: null, error: error };
   }
+}
+
+async function collectMediaSources(sceneName, visited, isGroup) {
+  const key = `${isGroup ? 'group' : 'scene'}:${sceneName}`.toLowerCase();
+  if (visited.has(key)) return [];
+  visited.add(key);
+
+  const request = isGroup ? 'GetGroupSceneItemList' : 'GetSceneItemList';
+  const items = await obs.call(request, { sceneName });
+
+  const results = [];
+
+  for (const item of items.sceneItems) {
+    if (item?.sceneItemEnabled !== true) {
+      continue;
+    }
+
+    // Recurse into nested scenes or groups
+    if (item.sourceType === 'OBS_SOURCE_TYPE_SCENE') {
+      const nested = await collectMediaSources(item.sourceName, visited, false);
+      results.push(...nested);
+      continue;
+    }
+
+    if (item.sourceType === 'OBS_SOURCE_TYPE_GROUP') {
+      const nested = await collectMediaSources(item.sourceName, visited, true);
+      results.push(...nested);
+      continue;
+    }
+
+    if (
+      !item.inputKind ||
+      (item.inputKind !== 'ffmpeg_source' && item.inputKind !== 'vlc_source')
+    ) {
+      continue;
+    }
+
+    // Check media state to ensure the source is active
+    const status = await obs.call('GetMediaInputStatus', { inputName: item.sourceName });
+    const state = status.mediaState;
+    if (
+      !['OBS_MEDIA_STATE_PLAYING', 'OBS_MEDIA_STATE_BUFFERING', 'OBS_MEDIA_STATE_OPENING'].includes(
+        state
+      )
+    ) {
+      continue;
+    }
+
+    // Inspect settings to confirm it is a network input
+    const settingsResp = await obs.call('GetInputSettings', { inputName: item.sourceName });
+    const settings = settingsResp.inputSettings || {};
+
+    const urls = [];
+    if (item.inputKind === 'ffmpeg_source' && typeof settings.input === 'string') {
+      urls.push(settings.input.toLowerCase());
+    }
+    if (item.inputKind === 'vlc_source' && Array.isArray(settings.playlist)) {
+      for (const entry of settings.playlist) {
+        if (entry?.value) {
+          urls.push(String(entry.value).toLowerCase());
+        }
+      }
+    }
+
+    const isNetwork = urls.some(
+      (u) =>
+        u.startsWith('rtmp') ||
+        u.startsWith('srt') ||
+        u.startsWith('udp') ||
+        u.startsWith('rist') ||
+        u.startsWith('rtsp')
+    );
+
+    if (!isNetwork) {
+      continue;
+    }
+
+    results.push({
+      sceneName,
+      sourceName: item.sourceName,
+      inputKind: item.inputKind
+    });
+  }
+
+  return results;
 }

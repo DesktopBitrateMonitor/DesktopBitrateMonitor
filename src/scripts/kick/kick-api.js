@@ -233,6 +233,7 @@ export async function validateAndProceed(access_token, accountType, callback) {
  */
 
 /**
+ * @param {string} access_token The access token to use for authentication.
  * @param {string} username The username of the Kick user to fetch.
  * @return {object|null} The result of the user fetch operation.
  */
@@ -241,7 +242,6 @@ export async function getUser(access_token, username) {
   return await validateAndProceed(access_token, 'broadcaster', async (validToken) => {
     const res = await fetchChannelMeta(username);
     if (!res) return null;
-
     const userId = res?.user_id;
 
     const qs = new URLSearchParams({

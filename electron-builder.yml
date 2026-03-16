@@ -1,7 +1,8 @@
 appId: desktop-bitrate-monitor
 productName: Desktop Bitrate Monitor
 directories:
-  buildResources: build
+  # Point to our existing resources folder where icons live
+  buildResources: resources
 files:
   - '!**/.vscode/*'
   - '!src/*'
@@ -12,6 +13,8 @@ asarUnpack:
   - resources/**
 win:
   executableName: Desktop Bitrate Monitor
+  # Use the .ico inside the resources directory for Windows shortcuts
+  icon: resources/icon.ico
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
@@ -41,6 +44,6 @@ publish:
   provider: github
   owner: Yinks87
   repo: desktop-bitrate-monitor
-  url: https://github.com/Yinks87/desktop-bitrate-monitor/releases
+  releaseType: release
 electronDownload:
   mirror: https://npmmirror.com/mirrors/electron/

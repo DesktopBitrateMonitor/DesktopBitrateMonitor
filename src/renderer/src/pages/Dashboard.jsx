@@ -23,8 +23,10 @@ const Dashboard = () => {
           width: '100%',
           display: 'flex',
           flexDirection: 'column',
-          overflow: 'hidden',
-          minHeight: 0
+          overflowX: 'hidden',
+          overflowY: 'auto',
+          minHeight: 0,
+          maxHeight: '100vh'
         }}
       >
         <Outlet />

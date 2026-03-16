@@ -2,12 +2,12 @@ import { injectDefaults } from '../store/defaults';
 import Logger from '../logging/logger';
 import {
   getCurrentScene,
-  getSceneList,
   getStreamState,
-  refreshMediaSources,
-  setCurrentProgramScene
+  setCurrentProgramScene,
+  fixMediaSources
 } from '../streaming-software/obs-api';
 import { twitchMessageService } from '../twitch/message-service/chat-messages';
+import { kickMessageService } from '../kick/messages-service/chat-messages';
 
 // TODO: Implement different streaming software support
 
@@ -169,7 +169,7 @@ export async function switcherService(data, mainWindow = null) {
         }
 
         if (key === 'live') {
-          const refRes = await refreshMediaSources();
+          const refRes = await fixMediaSources();
           if (!refRes.success) {
             Logger.error('Failed to refresh media sources after switching to live scene');
           }
@@ -183,6 +183,7 @@ export async function switcherService(data, mainWindow = null) {
         if (vars.enableChatNotifications) {
           Logger.log(`Switched to ${key.toUpperCase()} scene`);
 
+          // Send chat message on scene switch if enabled
           if (platform === 'twitch') {
             await twitchMessageService({
               action: 'switchScene',
@@ -191,8 +192,14 @@ export async function switcherService(data, mainWindow = null) {
             });
             Logger.log(`Automatic switch to scene ${key}`);
           }
-
-          // Schedule chat notification here (after successful switch)
+          if (platform === 'kick') {
+            await kickMessageService({
+              action: 'switchScene',
+              event: 'success',
+              variables: { scene: targetScene }
+            });
+            Logger.log(`Automatic switch to scene ${key}`);
+          }
         }
       },
       Number(delaySeconds) * 1000

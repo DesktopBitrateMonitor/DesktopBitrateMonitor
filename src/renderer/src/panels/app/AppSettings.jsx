@@ -4,16 +4,19 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import TuneIcon from '@mui/icons-material/Tune';
 import SyncAltIcon from '@mui/icons-material/SyncAlt';
 import ColorLensIcon from '@mui/icons-material/ColorLens';
-
-const TAB_CONFIG = [
-  { value: 'generalsettings', label: 'General', icon: TuneIcon },
-  { value: 'stylesettings', label: 'Style', icon: ColorLensIcon },
-  { value: 'updatesettings', label: 'Updates', icon: SyncAltIcon }
-];
+import { useTranslation } from 'react-i18next';
 
 const AppSettings = () => {
   const location = useLocation();
   const navigate = useNavigate();
+
+  const { t } = useTranslation();
+
+  const TAB_CONFIG = [
+    { value: 'generalsettings', label: t('appSettings.panels.general'), icon: TuneIcon },
+    { value: 'stylesettings', label: t('appSettings.panels.style'), icon: ColorLensIcon },
+    { value: 'updatesettings', label: t('appSettings.panels.update'), icon: SyncAltIcon }
+  ];
 
   const activeValue = useMemo(() => {
     const parts = location.pathname.split('/').filter(Boolean);

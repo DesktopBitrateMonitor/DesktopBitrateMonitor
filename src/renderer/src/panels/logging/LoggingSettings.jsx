@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useAppConfigStore } from '../../contexts/DataContext';
+import { useLoggingConfigStore } from '../../contexts/DataContext';
 import { useAlert } from '../../contexts/AlertContext';
 import CollapsibleCard from '../../components/functional/CollapsibleCard';
 import SaveIcon from '@mui/icons-material/Save';
@@ -11,18 +11,18 @@ import AdsClickIcon from '@mui/icons-material/AdsClick';
 import { useTranslation } from 'react-i18next';
 
 const LoggingSettings = () => {
-  const { appConfig, updateAppConfig } = useAppConfigStore();
+  const { loggingConfig, updateLoggingConfig } = useLoggingConfigStore();
   const { showAlert } = useAlert();
   const { t } = useTranslation();
 
   const [layoutMode, setLayoutMode] = useState('grid');
 
   const [loggingData, setLoggingData] = useState({
-    sessionLogsPath: appConfig?.paths?.sessionLogsPath,
-    actionsLogsPath: appConfig?.paths?.actionsLogsPath,
-    sessionLogsFileSize: appConfig?.paths?.sessionLogsFileSize,
-    logActions: appConfig?.paths?.logActions,
-    logSessions: appConfig?.paths?.logSessions
+    sessionLogsPath: loggingConfig?.sessionLogsPath,
+    actionsLogsPath: loggingConfig?.actionsLogsPath,
+    sessionLogsFileSize: loggingConfig?.sessionLogsFileSize,
+    logActions: loggingConfig?.logActions,
+    logSessions: loggingConfig?.logSessions
   });
 
   const [errorMessages, setErrorMessages] = useState({
@@ -38,38 +38,32 @@ const LoggingSettings = () => {
   });
 
   const [oldDataDraft, setOldDataDraft] = useState({
-    sessionLogsPath: appConfig?.paths?.sessionLogsPath,
-    actionsLogsPath: appConfig?.paths?.actionsLogsPath,
-    sessionLogsFileSize: appConfig?.paths?.sessionLogsFileSize
+    sessionLogsPath: loggingConfig?.sessionLogsPath,
+    actionsLogsPath: loggingConfig?.actionsLogsPath,
+    sessionLogsFileSize: loggingConfig?.sessionLogsFileSize
   });
 
   useEffect(() => {
-    const storedLayout = appConfig?.paths?.layout;
+    const storedLayout = loggingConfig?.layout;
     if (storedLayout === 'grid' || storedLayout === 'list') {
       setLayoutMode(storedLayout);
     } else {
       setLayoutMode('grid');
     }
-  }, [appConfig]);
+  }, [loggingConfig]);
 
   const persistLayoutMode = useCallback(
     async (nextLayout) => {
       setLayoutMode(nextLayout);
 
-      updateAppConfig((prev) => ({
+      updateLoggingConfig((prev) => ({
         ...(prev || {}),
-        paths: {
-          ...(prev?.paths || {}),
-          layout: nextLayout
-        }
+        layout: nextLayout
       }));
 
-      await window.storeApi.set('app-config', 'paths', {
-        ...(appConfig?.paths || {}),
-        layout: nextLayout
-      });
+      await window.storeApi.set('logging-config', 'layout', nextLayout);
     },
-    [updateAppConfig]
+    [updateLoggingConfig]
   );
 
   const handleLayoutChange = useCallback(
@@ -84,19 +78,19 @@ const LoggingSettings = () => {
     (name, value) => {
       if (name === 'sessionLogsPath' || name === 'actionsLogsPath') {
         if (!value.trim() || value.replace(/\s+/g, '').length === 0) {
-          return t('logging.validation.pathEmpty');
+          return t('logging.settings.validation.pathEmpty');
         } else if (value.includes(' ')) {
-          return t('logging.validation.pathNoSpaces');
+          return t('logging.settings.validation.pathNoSpaces');
         }
       }
       if (name === 'sessionLogsFileSize') {
         const fileSizeNumber = Number(value);
         if (isNaN(fileSizeNumber) || !Number.isInteger(fileSizeNumber)) {
-          return t('logging.validation.fileSizeInteger');
+          return t('logging.settings.validation.fileSizeInteger');
         } else if (fileSizeNumber < 0 || fileSizeNumber > 10) {
-          return t('logging.validation.fileSizeRange');
+          return t('logging.settings.validation.fileSizeRange');
         } else if (value.length === 0) {
-          return t('logging.validation.fileSizeEmpty');
+          return t('logging.settings.validation.fileSizeEmpty');
         }
       }
       return '';
@@ -133,18 +127,12 @@ const LoggingSettings = () => {
     if (errorMessages[name] !== '') return;
     if (oldDataDraft[name] === loggingData[name]) return;
 
-    const res = await window.storeApi.set('app-config', 'paths', {
-      ...appConfig['paths'],
-      [name]: loggingData[name]
-    });
+    const res = await window.storeApi.set('logging-config', name, loggingData[name]);
 
     if (res.success) {
-      updateAppConfig((prev) => ({
+      updateLoggingConfig((prev) => ({
         ...(prev || {}),
-        paths: {
-          ...(prev?.['paths'] || {}),
-          [name]: loggingData[name]
-        }
+        [name]: loggingData[name]
       }));
       setOldDataDraft((prev) => ({
         ...prev,
@@ -163,17 +151,11 @@ const LoggingSettings = () => {
   const changeLoggingState = useCallback(
     async (name, value) => {
       if (loggingData[name] === value) return;
-      const res = await window.storeApi.set('app-config', 'paths', {
-        ...appConfig['paths'],
-        [name]: value
-      });
+      const res = await window.storeApi.set('logging-config', name, value);
       if (res.success) {
-        updateAppConfig((prev) => ({
+        updateLoggingConfig((prev) => ({
           ...(prev || {}),
-          paths: {
-            ...(prev?.['paths'] || {}),
-            [name]: value
-          }
+          [name]: value
         }));
         setLoggingData((prev) => ({
           ...prev,
@@ -184,14 +166,16 @@ const LoggingSettings = () => {
         showAlert({ message: t('alerts.saveError'), severity: 'error' });
       }
     },
-    [appConfig, loggingData, showAlert, t, updateAppConfig]
+    [loggingConfig, loggingData, showAlert, t, updateLoggingConfig]
   );
 
   const handleOpenFileDialog = async (name) => {
     const selectedLabel =
-      name === 'actionsLogsPath' ? t('logging.actionsPathLabel') : t('logging.sessionPathLabel');
+      name === 'actionsLogsPath'
+        ? t('logging.settings.actionsPathLabel')
+        : t('logging.settings.sessionPathLabel');
     const options = {
-      title: t('logging.directoryDialogTitle', { label: selectedLabel }),
+      title: t('logging.settings.directoryDialogTitle', { label: selectedLabel }),
       defaultPath: loggingData[name] || undefined,
       properties: ['openDirectory', 'createDirectory']
     };
@@ -202,10 +186,7 @@ const LoggingSettings = () => {
         ...prev,
         [name]: selectedPath
       }));
-      await window.storeApi.set('app-config', 'paths', {
-        ...appConfig['paths'],
-        [name]: selectedPath
-      });
+      await window.storeApi.set('logging-config', name, selectedPath);
     }
   };
 
@@ -222,10 +203,10 @@ const LoggingSettings = () => {
       >
         <Box>
           <Typography variant="h5" sx={{ mb: 0.5 }}>
-            {t('logging.title')}
+            {t('logging.settings.header')}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {t('logging.subtitle')}
+            {t('logging.settings.description')}
           </Typography>
         </Box>
         <LayoutToggle value={layoutMode} onChange={handleLayoutChange} />
@@ -257,14 +238,16 @@ const LoggingSettings = () => {
           }}
         >
           <CollapsibleCard
-            title={t('logging.sessionCardTitle')}
-            subtitle={t('logging.sessionCardSubtitle')}
+            title={t('logging.settings.sessionCardHeader')}
+            subtitle={t('logging.settings.sessionCardDescription')}
             collapsible={false}
             defaultExpanded={true}
             actions={
               <>
                 <Typography variant="body2" color="text.secondary">
-                  {loggingData.logSessions ? t('logging.enabled') : t('logging.disabled')}
+                  {loggingData.logSessions
+                    ? t('logging.settings.enabled')
+                    : t('logging.settings.disabled')}
                 </Typography>
                 <Switch
                   checked={loggingData.logSessions}
@@ -279,7 +262,7 @@ const LoggingSettings = () => {
                   '& .MuiInputBase-root': { cursor: 'pointer' },
                   '& .MuiInputBase-input': { cursor: 'pointer' }
                 }}
-                label={t('logging.sessionPathLabel')}
+                label={t('logging.settings.sessionPathLabel')}
                 name="sessionLogsPath"
                 value={loggingData.sessionLogsPath}
                 onClick={() => handleOpenFileDialog('sessionLogsPath')}
@@ -300,10 +283,10 @@ const LoggingSettings = () => {
               <NumericInput
                 sx={{ mb: 2 }}
                 key={'sessionLogsFileSize'}
-                label={t('logging.fileSizeLabel')}
+                label={t('logging.settings.fileSizeLabel')}
                 name={'sessionLogsFileSize'}
                 value={loggingData.sessionLogsFileSize}
-                min={0}
+                min={1}
                 onChange={(e) => handleInputChange('sessionLogsFileSize', e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
@@ -316,7 +299,7 @@ const LoggingSettings = () => {
                   endAdornment:
                     dirtyStates['sessionLogsFileSize'] && !errorMessages['sessionLogsFileSize'] ? (
                       <InputEndAdornment
-                        title={t('logging.saveTooltip')}
+                        title={t('logging.settings.saveTooltip')}
                         placement="top-start"
                         open={Boolean(dirtyStates['sessionLogsFileSize'])}
                         color="success"
@@ -330,14 +313,16 @@ const LoggingSettings = () => {
           </CollapsibleCard>
 
           <CollapsibleCard
-            title={t('logging.actionsCardTitle')}
-            subtitle={t('logging.actionsCardSubtitle')}
+            title={t('logging.settings.actionsCardHeader')}
+            subtitle={t('logging.settings.actionsCardDescription')}
             collapsible={false}
             defaultExpanded={true}
             actions={
               <>
                 <Typography variant="body2" color="text.secondary">
-                  {loggingData.logActions ? t('logging.enabled') : t('logging.disabled')}
+                  {loggingData.logActions
+                    ? t('logging.settings.enabled')
+                    : t('logging.settings.disabled')}
                 </Typography>
                 <Switch
                   checked={loggingData.logActions}
@@ -352,7 +337,7 @@ const LoggingSettings = () => {
                 '& .MuiInputBase-input': { cursor: 'pointer' }
               }}
               fullWidth
-              label={t('logging.actionsPathLabel')}
+              label={t('logging.settings.actionsPathLabel')}
               name="actionsLogsPath"
               onClick={(e) => handleOpenFileDialog('actionsLogsPath')}
               value={loggingData.actionsLogsPath}

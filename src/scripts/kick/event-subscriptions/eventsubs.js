@@ -201,23 +201,6 @@ async function subscribeToChat() {
   }
 }
 
-// function handleChatMessageEvent(rawData) {
-//   console.log(JSON.parse(rawData));
-//   const event = safeJsonParse(rawData);
-//   if (!event) {
-//     return;
-//   }
-
-//   const messageType = event.kind || event.type;
-//   if (messageType !== 'message') {
-//     return;
-//   }
-
-//   const sender = event.sender?.slug || 'unknown';
-//   const text = event.content || '';
-//   Logger.info(`[Kick][${sender}] ${text}`);
-// }
-
 async function cleanupWebSocket() {
   stopHeartbeatMonitor();
   if (ws) {

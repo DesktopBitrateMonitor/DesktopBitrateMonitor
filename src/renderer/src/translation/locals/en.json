@@ -280,13 +280,13 @@
           "hint": ""
         }
       },
-      "endStream": {
+      "stopStream": {
         "success": {
-          "label": "Stream Ended Message",
+          "label": "Stream Stopped Message",
           "hint": ""
         },
         "error": {
-          "label": "Stream End Error Message",
+          "label": "Stream Stop Error Message",
           "hint": ""
         }
       },
@@ -624,18 +624,18 @@
     }
   },
   "logging": {
-    "title": "Logging Settings",
-    "subtitle": "Set the logging paths and states",
-    "sessionCardTitle": "Session Logging Settings",
-    "sessionCardSubtitle": "Set the logging settings for session logs",
-    "actionsCardTitle": "Actions Logging Settings",
-    "actionsCardSubtitle": "Set the logging settings for actions logs",
+    "header": "Logging Settings",
+    "description": "Set the logging paths and states",
+    "sessionCardHeader": "Session Logging Settings",
+    "sessionCardDescription": "Set the logging settings for session logs",
+    "actionsCardHeader": "Actions Logging Settings",
+    "actionsCardDescription": "Set the logging settings for actions logs",
     "enabled": "Logging enabled",
     "disabled": "Logging disabled",
     "sessionPathLabel": "Session Logs Path",
     "actionsPathLabel": "Actions Logs Path",
     "fileSizeLabel": "Session Logs File Size (MB)",
-    "saveTooltip": "Click or press Enter to save changes",
+    "saveTooltip": "Click to save changes",
     "directoryDialogTitle": "Select directory for {{label}}",
     "validation": {
       "pathEmpty": "Path cannot be empty.",
@@ -643,24 +643,89 @@
       "fileSizeInteger": "File size must be an integer",
       "fileSizeRange": "File size must be between 0 and 10.",
       "fileSizeEmpty": "File size cannot be empty."
+    },
+    "filtering": {
+      "all": "All",
+      "log": "Log",
+      "info": "Info",
+      "warning": "Warning",
+      "error": "Error",
+      "success": "Success"
     }
   },
-  "generalSettings": {
-    "title": "General Settings",
-    "subtitle": "Configure general application settings here.",
-    "search": "Search for setting",
-    "languageLabel": "App Language",
-    "languageChanged": "Language changed to {{language}}.",
-    "languageError": "Failed to update language.",
-    "updateError": "Failed to update setting.",
-    "quitLabel": "Quit app on close",
-    "quitMessage": "App will now {{action}} on close.",
-    "actions": {
-      "quit": "quit",
-      "minimize": "minimize"
+  "appSettings": {
+    "panels": {
+      "general": "General",
+      "style": "Style",
+      "update": "Update"
+    },
+    "general": {
+      "header": "General App Settings",
+      "description": "Configure general application settings here",
+      "language": {
+        "select": {
+          "label": "App Language",
+          "placeholder": "App Language",
+          "options": {
+            "en": "English",
+            "de": "German"
+          }
+        }
+      },
+      "quitState": {
+        "label": "App behavior on close",
+        "quit": "Quit",
+        "minimize": "Minimize"
+      }
+    },
+    "style": {
+      "header": "Style Settings",
+      "description": "Configure the appearance of the application here",
+      "theme": {
+        "label": "App Theme",
+        "placeholder": "App Theme",
+        "options": {
+          "light": "Light",
+          "dark": "Dark",
+          "system": "System Default"
+        }
+      }
+    },
+    "update": {
+      "settings": {
+        "header": "Update Settings",
+        "description": "Manage application updates here",
+        "autoCheckForUpdates": "Auto-Check for Updates",
+        "autoInstallUpdates": "Auto-Install Updates",
+        "lastCheck": "Last Check {{timestamp}}",
+        "neverChecked": "Never checked for updates"
+      },
+      "dialog": {
+        "updateAvailable": {
+          "header": "Update Available",
+          "released": "Released",
+          "fileSize": "File Size",
+          "releaseNotes": "Release Notes",
+          "noReleaseNotes": "No release notes available",
+          "installButton": "Install",
+          "laterButton": "Later"
+        },
+        "updateApp": {
+          "header": "Installing update...",
+          "description": "Download starts immediately. Once the download is complete, the update will be installed."
+        },
+        "downloadProgress": {
+          "header": "Downloading update...",
+          "progress": "Download Progress: {{progress}}%",
+          "speed": "Download Speed: {{speed}}/s"
+        },
+        "noUpdateAvailable": {
+          "header": "No Update Available",
+          "description": "You are already using the latest version of the app."
+        }
+      }
     }
   },
-
   "defaults": {
     "messages": {
       "global": {
@@ -671,9 +736,9 @@
         "success": "Stream started successfully!",
         "error": "Failed to start the stream."
       },
-      "endStream": {
-        "success": "Stream has ended. Thanks for watching!",
-        "error": "Failed to end the stream."
+      "stopStream": {
+        "success": "Stream has stopped. Thanks for watching!",
+        "error": "Failed to stop the stream."
       },
       "raid": {
         "success": "Follow us to twitch.tv/${channel} for more content!",

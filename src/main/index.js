@@ -5,6 +5,7 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/icon.png?asset';
 import windowIcon from '../assets/icon.ico?asset';
 import { injectDefaults } from '../scripts/store/defaults';
+import Logger from '../scripts/logging/logger';
 import { initializeElectronStoreIpc } from './ipc-handler/store-ipc-handler';
 import { initializeUpdateIpc } from './ipc-handler/update-ipc-handler';
 import { initializeAuthIpc } from './ipc-handler/auth-ipc-handler';
@@ -15,33 +16,32 @@ import '../scripts/authorization/auth-server';
 
 const { appConfig } = injectDefaults();
 
+const config = appConfig.get('');
+
 let mainWindow;
 let tray = null;
 let isQuitting = false;
 
-// TODO: Only check on app start for updates
-// User should only decide for:
-// 1. Auto-check for updates (if false, user can manually check for updates in the app)
-// 2. Auto-install updates (if false, user can manually install updates when they are downloaded)
-// 3. Install updates on quit (if true, app will check for updates and install them when the app is quit.). In this case disable autoRunAppAfterInstall.
+// TODO: Fix automatic install updates on app start if appConfig.autoInstallUpdates is true
+// TODO: If the app is running, don't allow multiple instances. Focus the existing instance instead of opening a new one.
 
 autoUpdater.autoDownload = false; // Disable automatic downloading of updates
-autoUpdater.autoInstallOnAppQuit = false;
 autoUpdater.autoRunAppAfterInstall = true;
+autoUpdater.autoInstallOnAppQuit = false;
 
 function createWindow(displayIsAvailable = false) {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: appConfig.get('size.width') || 1200,
-    height: appConfig.get('size.height') || 700,
-    x: displayIsAvailable ? appConfig.get('position.x') : 0,
-    y: displayIsAvailable ? appConfig.get('position.y') : 0,
+    width: config.size.width || 1200,
+    height: config.size.height || 700,
+    x: displayIsAvailable ? config.position.x : 0,
+    y: displayIsAvailable ? config.position.y : 0,
     minWidth: 1200,
     minHeight: 700,
     show: false,
     autoHideMenuBar: true,
     // titleBarStyle: 'hidden',
-    title: `Desktop Bitrate Monitor (${app.getVersion()})`,
+    title: `Desktop Bitrate Monitor (${app.getVersion()}) - BETA`,
     icon: windowIcon,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
@@ -50,6 +50,9 @@ function createWindow(displayIsAvailable = false) {
       devTools: is.dev
     }
   });
+
+  // Let logger relay messages to the renderer window
+  Logger.setMainWindow(mainWindow);
 
   mainWindow.on('ready-to-show', () => {
     // Automatically open DevTools in development mode
@@ -62,7 +65,6 @@ function createWindow(displayIsAvailable = false) {
       }
     }
 
-    autoUpdater.checkForUpdates();
     mainWindow.show();
   });
 
@@ -107,7 +109,7 @@ function createWindow(displayIsAvailable = false) {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   // Set app user model id for windows
 
   const displayIsAvailable = checkDisplayIsAvailable(appConfig.get('screen.id'));
@@ -156,6 +158,26 @@ app.whenReady().then(() => {
   tray.setToolTip('Desktop Bitrate Monitor');
   tray.setContextMenu(contextMenu);
   tray.on('double-click', () => mainWindow.show());
+
+  const autoCheckForUpdates = config.autoCheckForUpdates;
+  const autoInstallUpdates = config.autoInstallUpdates;
+
+  if (autoCheckForUpdates) {
+    Logger.info('Checking for updates...');
+    const updateCheck = await autoUpdater.checkForUpdates();
+
+    if (updateCheck) {
+      Logger.info(`Update check result: ${JSON.stringify(updateCheck)}`);
+    }
+
+    appConfig.set('lastUpdateCheck', new Date().toISOString());
+
+    if (autoInstallUpdates) {
+      autoUpdater.on('update-downloaded', () => {
+        autoUpdater.quitAndInstall();
+      });
+    }
+  }
 });
 
 app.on('before-quit', () => {
@@ -196,10 +218,10 @@ function updateCurrentDisplay() {
 async function registerIpcHandlers() {
   // Initialize IPC handlers
   await initializeElectronStoreIpc(ipcMain);
-  await initializeUpdateIpc(ipcMain, mainWindow);
   await initializeAuthIpc(ipcMain);
   await initializeLoggerIpc(ipcMain);
   await initializeServicesIpc(ipcMain, mainWindow);
+  await initializeUpdateIpc(ipcMain, mainWindow);
 
   // Initialize other services
   await initializeServices(mainWindow);

@@ -158,7 +158,11 @@ const TwitchUserSettings = () => {
 
     return (
       <InputEndAdornment
-        title={isAdmin ? t('platforms.twitch.users.inputAdornmentAdmin') : t('platforms.twitch.users.inputAdornmentMod')}
+        title={
+          isAdmin
+            ? t('platforms.twitch.users.inputAdornmentAdmin')
+            : t('platforms.twitch.users.inputAdornmentMod')
+        }
         placement="top-start"
         open={Boolean(isUserInputValid(value))}
         color="secondary"

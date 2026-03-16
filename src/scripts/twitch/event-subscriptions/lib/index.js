@@ -15,7 +15,6 @@ export const hasPermission = ({ event, requiredRole, restricted }) => {
   const admins = twitchAccountsConfig.get('admins').map((admin) => admin.login);
   const mods = twitchAccountsConfig.get('mods').map((mod) => mod.login);
 
-  // 
   const isAdmin = admins.includes(event.chatter_user_login.toLowerCase());
   const isMod =
     mods.includes(event.chatter_user_login.toLowerCase()) ||

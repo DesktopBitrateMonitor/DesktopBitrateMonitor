@@ -4,6 +4,8 @@ import { DataProvider } from './contexts/DataContext.jsx';
 import { LanguageProvider } from './contexts/LanguageContext.jsx';
 import { ConnectionStatesProvider } from './contexts/ConnectionStatesContext.jsx';
 import { UpdateProvider } from './contexts/UpdateContext.jsx';
+import { LoggerProvider } from './contexts/LoggerContext.jsx';
+import { StreamStatsProvider } from './contexts/StreamStatsContext.jsx';
 
 /**
  * Root component that wraps the entire application with global providers
@@ -15,11 +17,15 @@ const RootProvider = ({ children }) => {
     <ThemeModeProvider>
       <AlertProvider>
         <UpdateProvider>
-          <DataProvider>
-            <ConnectionStatesProvider>
-              <LanguageProvider>{children}</LanguageProvider>
-            </ConnectionStatesProvider>
-          </DataProvider>
+          <LoggerProvider>
+            <DataProvider>
+              <StreamStatsProvider>
+                <ConnectionStatesProvider>
+                  <LanguageProvider>{children}</LanguageProvider>
+                </ConnectionStatesProvider>
+              </StreamStatsProvider>
+            </DataProvider>
+          </LoggerProvider>
         </UpdateProvider>
       </AlertProvider>
     </ThemeModeProvider>

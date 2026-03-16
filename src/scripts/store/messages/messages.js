@@ -62,20 +62,20 @@ export const buildMessages = (locale) => {
     {
       id: generateId(),
       group: 'stream',
-      action: 'endStream',
+      action: 'stopStream',
       event: 'success',
       enabled: true,
-      label:'Stream Ended Message',
-      message: gm('defaults.messages.endStream.success')
+      label:'Stream Stopped Message',
+      message: gm('defaults.messages.stopStream.success')
     },
     {
       id: generateId(),
       group: 'stream',
-      action: 'endStream',
+      action: 'stopStream',
       event: 'error',
       enabled: true,
-      label:'Stream End Error Message',
-      message: gm('defaults.messages.endStream.error')
+      label:'Stream Stop Error Message',
+      message: gm('defaults.messages.stopStream.error')
     },
     {
       id: generateId(),

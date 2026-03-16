@@ -19,6 +19,13 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
  */
 
 const NumericInput = React.forwardRef(function NumericInput(props, ref) {
+  const preventEnterDefault = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  };
+
   const {
     value,
     onChange,
@@ -170,11 +177,8 @@ const NumericInput = React.forwardRef(function NumericInput(props, ref) {
             stepper(1);
           }}
           disabled={disabled || (typeof max === 'number' && Number(value) >= max)}
-          onKeyDown={() => {
-            if (e.key === 'Enter') {
-              return;
-            }
-          }}
+          onKeyDown={preventEnterDefault}
+          // onKeyUp={preventEnterDefault}
         >
           <KeyboardArrowUpIcon fontSize="inherit" />
         </Button>
@@ -184,11 +188,8 @@ const NumericInput = React.forwardRef(function NumericInput(props, ref) {
             stepper(-1);
           }}
           disabled={disabled || (typeof min === 'number' && Number(value) <= min)}
-          onKeyDown={() => {
-            if (e.key === 'Enter') {
-              return;
-            }
-          }}
+          onKeyDown={preventEnterDefault}
+          // onKeyUp={preventEnterDefault}
         >
           <KeyboardArrowDownIcon fontSize="inherit" />
         </Button>

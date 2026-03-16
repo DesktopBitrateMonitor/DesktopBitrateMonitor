@@ -6,7 +6,7 @@ import {
   startStream,
   stopStream,
   setCurrentProgramScene,
-  refreshMediaSources
+  fixMediaSources
 } from '../../streaming-software/obs-api';
 import Logger from '../../logging/logger';
 import { getUsers } from '../twitch-api';
@@ -298,7 +298,7 @@ const commandActions = {
   refreshStream: async () => {
     await twitchMessageService({ action: 'refreshStream', event: 'try' });
 
-    const res = await refreshMediaSources();
+    const res = await fixMediaSources();
 
     if (res.success) {
       await twitchMessageService({ action: 'refreshStream', event: 'success' });
@@ -349,11 +349,6 @@ const commandActions = {
     });
   },
   bitrate: async () => {
-    // Return the current bitrate value to the chat
-    // const serverData = serverConfig.get('');
-    // const serverType = serverData.currentType;
-    // const stats = await fetchStats(serverData.statsUrl);
-    // let res;
 
     const { stats } = globalInternalStore.get();
 
@@ -362,29 +357,5 @@ const commandActions = {
       event: 'success',
       variables: { bitrate: stats.bitrate, speed: stats.rtt }
     });
-
-    // if (serverType === 'openirl') {
-    //   res = await formatStatsOpenIrl(stats);
-    // }
-    // if (serverType === 'srt-live-server') {
-    //   res = await formatStatsOpenIrl(stats);
-    // }
-    // if (serverType === 'belabox') {
-    //   // Implement when belabox format function is available
-    // }
-
-    // if (res.success) {
-    //   const currentBitrate = res.data.bitrate;
-    //   await messageService({
-    //     action: 'bitrate',
-    //     event: 'success',
-    //     variables: { bitrate: currentBitrate, speed: res.data.rtt }
-    //   });
-    // } else {
-    //   await messageService({
-    //     action: 'bitrate',
-    //     event: 'error'
-    //   });
-    // }
   }
 };

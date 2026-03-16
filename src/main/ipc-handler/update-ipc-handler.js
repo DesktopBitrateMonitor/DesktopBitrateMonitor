@@ -24,28 +24,34 @@ export async function initializeUpdateIpc(ipcMain, mainWindow) {
   Logger.info('Initializing Update IPC');
 
   ipcMain.on('update-app', () => {
-    sendUpdateState({ status: 'processing', data: null });
+    sendUpdateState({ status: 'update-app', data: null });
     autoUpdater.downloadUpdate();
   });
 
+  ipcMain.on('check-for-updates', () => {
+    sendUpdateState({ status: 'check-for-updates', data: null });
+    console.log('Manually checking for updates...');
+    autoUpdater.checkForUpdates();
+  });
+
   autoUpdater.on('checking-for-update', () => {
-    sendUpdateState({ status: 'checking', data: null });
+    sendUpdateState({ status: 'checking-for-update', data: null });
   });
 
   autoUpdater.on('update-available', (info) => {
-    sendUpdateState({ status: 'available', data: info });
+    sendUpdateState({ status: 'update-available', data: info });
   });
 
-  autoUpdater.on('update-not-available', (info) => {
-    sendUpdateState({ status: 'not-available', data: info || null });
+  autoUpdater.on('update-not-available', () => {
+    sendUpdateState({ status: 'update-not-available', data: null });
   });
 
-  autoUpdater.on('download-progress', (progress) => {
-    sendUpdateState({ status: 'processing', data: progress });
+  autoUpdater.on('download-progress', (data) => {
+    sendUpdateState({ status: 'download-progress', data: data });
   });
 
   autoUpdater.on('update-downloaded', (info) => {
-    sendUpdateState({ status: 'downloaded', data: info });
+    sendUpdateState({ status: 'update-downloaded', data: info });
     autoUpdater.quitAndInstall();
   });
 

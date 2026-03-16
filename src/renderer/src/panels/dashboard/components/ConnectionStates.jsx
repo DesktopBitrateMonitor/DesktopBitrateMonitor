@@ -1,10 +1,8 @@
 import React from 'react';
-import { Box, Paper, Stack, Tooltip, Typography } from '@mui/material';
+import { Box, Stack, Tooltip, Typography } from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
 import StorageRoundedIcon from '@mui/icons-material/StorageRounded';
-import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
 import DesktopWindowsRoundedIcon from '@mui/icons-material/DesktopWindowsRounded';
-import WifiRoundedIcon from '@mui/icons-material/WifiRounded';
 import { useConnectionStates } from '../../../contexts/ConnectionStatesContext.jsx';
 
 const STATUS_META = {
@@ -56,7 +54,9 @@ const ConnectionTile = ({
   type,
   typeKey = 'server',
   status = 'unknown',
-  isLive = false
+  isLive = false,
+  speed = null,
+  bitrate = null
 }) => {
   const theme = useTheme();
   const meta = STATUS_META[status];
@@ -72,6 +72,7 @@ const ConnectionTile = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          width: '100%',
           borderRadius: 1.5,
           border: '1px solid',
           borderColor: 'divider',
@@ -123,6 +124,15 @@ const ConnectionTile = ({
                     ? meta.label
                     : null}
             </Typography>
+            {(bitrate !== null || speed !== null) && (
+              <Typography
+                variant="caption"
+                sx={{ fontWeight: 500, color: 'text.secondary', lineHeight: 1 }}
+                noWrap
+              >
+                {`${bitrate ?? 0} kbps${speed !== null ? ` | ${speed} kB/s` : ''}`}
+              </Typography>
+            )}
             {isLive ? (
               <Stack
                 sx={{ position: 'absolute', top: 1, left: 5 }}
@@ -160,6 +170,15 @@ const ConnectionTile = ({
                 >
                   LIVE
                 </Typography>
+                {bitrate !== null ||
+                  (speed !== null && (
+                    <Typography
+                      variant="caption"
+                      sx={{ fontWeight: 500, color: 'text.secondary', ml: 'auto' }}
+                    >
+                      {`${bitrate} kbps | ${speed} kB/s`}
+                    </Typography>
+                  ))}
               </Stack>
             ) : null}
           </Box>
@@ -183,63 +202,35 @@ const ConnectionTile = ({
 };
 
 const ConnectionStates = ({ isMenu = false }) => {
-  const { statuses, serverType, softwareType, broadcastState, feedStatus } = useConnectionStates();
+  const { statuses, serverType, softwareType, broadcastState } = useConnectionStates();
 
   return (
-    <Paper
+    <Box
       sx={{
-        p: 2,
-        borderRadius: 1.5,
-        border: '1px solid',
-        borderColor: 'divider',
-        minHeight: 0
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 1.25,
+        width: '100%'
       }}
     >
-      <Stack spacing={1.5}>
-        <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
-          <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-            Connection States
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Live status
-          </Typography>
-        </Stack>
-
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: {
-              xs: 'repeat(2, minmax(0, 1fr))',
-              sm: isMenu ? 'repeat(2, minmax(0, 1fr))' : 'repeat(4, minmax(0, 1fr))'
-            },
-            gap: 1
-          }}
-        >
-          <ConnectionTile
-            icon={<StorageRoundedIcon />}
-            type={serverType}
-            typeKey="server"
-            label="Server Connection"
-            status={statuses.server}
-          />
-          <ConnectionTile icon={<PersonRoundedIcon />} label="User" status={statuses.chat} />
-          <ConnectionTile
-            icon={<DesktopWindowsRoundedIcon />}
-            label={'Streaming Software'}
-            typeKey="software"
-            isLive={broadcastState}
-            type={softwareType}
-            status={statuses.software}
-          />
-          <ConnectionTile
-            icon={<WifiRoundedIcon />}
-            label="Stream Feed"
-            typeKey="feed"
-            status={feedStatus}
-          />
-        </Box>
-      </Stack>
-    </Paper>
+      <ConnectionTile
+        icon={<StorageRoundedIcon />}
+        type={serverType}
+        typeKey="server"
+        label="Server Connection"
+        status={statuses.server}
+      />
+      <ConnectionTile
+        icon={<DesktopWindowsRoundedIcon />}
+        label={'Streaming Software'}
+        typeKey="software"
+        isLive={broadcastState}
+        type={softwareType}
+        status={statuses.software}
+      />
+    </Box>
   );
 };
 

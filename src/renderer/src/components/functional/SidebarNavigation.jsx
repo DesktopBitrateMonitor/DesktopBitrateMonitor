@@ -23,13 +23,11 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import StorageIcon from '@mui/icons-material/Storage';
 import Settings from '@mui/icons-material/Settings';
 import FeedIcon from '@mui/icons-material/Feed';
-import InsightsOutlinedIcon from '@mui/icons-material/InsightsOutlined';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import { useAppConfigStore } from '../../contexts/DataContext';
 import { useTranslation } from 'react-i18next';
-import ConnectionStates from '../../panels/dashboard/components/ConnectionStates';
 import TwitchIcon from '../../assets/icons/TwitchIcon';
 import KickIcon from '../../assets/icons/KickIcon';
 import appImage from '../../../../assets/icon.png';
@@ -42,43 +40,50 @@ const NAV_ITEMS = [
     translationKey: 'navigation.dashboard',
     path: '/dashboard',
     icon: SpaceDashboardOutlinedIcon,
-    matchPrefix: false
+    matchPrefix: false,
+    development: false
   },
   {
     translationKey: 'navigation.platformsSettings',
     path: ACCOUNTS_PATH,
     icon: ManageAccountsIcon,
-    matchPrefix: true
+    matchPrefix: true,
+    development: false
   },
   {
     translationKey: 'navigation.serverSettings',
     path: '/dashboard/serversettings',
     icon: StorageIcon,
-    matchPrefix: false
+    matchPrefix: false,
+    development: false
   },
   {
     translationKey: 'navigation.softwareSettings',
     path: '/dashboard/softwaresettings',
     icon: ComputerIcon,
-    matchPrefix: false
+    matchPrefix: false,
+    development: false
   },
   {
     translationKey: 'navigation.switcherSettings',
     path: '/dashboard/switchersettings',
     icon: SyncIcon,
-    matchPrefix: false
+    matchPrefix: false,
+    development: false
   },
   {
     translationKey: 'navigation.loggingSettings',
     path: '/dashboard/loggingsettings',
     icon: FeedIcon,
-    matchPrefix: false
+    matchPrefix: false,
+    development: true
   },
   {
     translationKey: 'navigation.appSettings',
     path: '/dashboard/appsettings',
     icon: Settings,
-    matchPrefix: true
+    matchPrefix: true,
+    development: false
   }
 ];
 
@@ -116,7 +121,6 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
   const { appConfig, updateAppConfig } = useAppConfigStore();
 
   const [collapsed, setCollapsed] = useState(initialCollapsed);
-  const [statsAnchorEl, setStatsAnchorEl] = useState(null);
   const [accountsAnchorEl, setAccountsAnchorEl] = useState(null);
   const activePlatform = appConfig?.activePlatform || null;
   const drawerWidth = collapsed ? DRAWER_WIDTH.collapsed : DRAWER_WIDTH.expanded;
@@ -136,14 +140,6 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
   const handleNavigate = (path) => {
     if (location.pathname === path) return;
     navigate(path);
-  };
-
-  const isStatsMenuOpen = Boolean(statsAnchorEl);
-  const handleOpenStatsMenu = (event) => {
-    setStatsAnchorEl(event.currentTarget);
-  };
-  const handleCloseStatsMenu = () => {
-    setStatsAnchorEl(null);
   };
 
   const isAccountsMenuOpen = Boolean(accountsAnchorEl);
@@ -227,21 +223,12 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
               sx={{
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: collapsed ? 'center' : 'space-between',
+                justifyContent: collapsed ? 'center' : 'flex-end',
                 px: collapsed ? 1 : 2,
                 py: 2,
                 transition: spacingTransition
               }}
             >
-              {!collapsed && (
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, ml: 0.5 }}>
-                  <img src={appImage} alt="app_image" style={{ height: '32px' }} />
-                  <Typography variant="subtitle1" fontWeight={600} noWrap>
-                    {t('navigation.brand')}
-                  </Typography>
-                </Box>
-              )}
-
               <IconButton size="small" onClick={() => handleCollapsedChange(!collapsed)}>
                 {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
               </IconButton>
@@ -261,6 +248,7 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
               }}
             >
               {NAV_ITEMS.map((item) => {
+                if (item.development && !isDev) return null;
                 const Icon = item.icon;
                 const isActive = item.matchPrefix
                   ? location.pathname === item.path || location.pathname.startsWith(`${item.path}/`)
@@ -386,82 +374,28 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
           <Box>
             <Divider flexItem orientation="horizontal" sx={{ mt: 1 }} />
 
-            <Box sx={{ p: 1 }}>
-              {collapsed ? (
-                <Tooltip title="Stats" placement="right" arrow>
-                  <IconButton
-                    aria-label="Open stats menu"
-                    onClick={handleOpenStatsMenu}
-                    sx={{
-                      display: 'flex',
-                      mx: 'auto',
-                      width: 48,
-                      height: 48,
-                      borderRadius: 2
-                    }}
-                  >
-                    <InsightsOutlinedIcon />
-                  </IconButton>
-                </Tooltip>
-              ) : (
-                <ListItemButton
-                  aria-label="Open stats menu"
-                  onClick={handleOpenStatsMenu}
-                  selected={isStatsMenuOpen}
-                  sx={{
-                    minHeight: 48,
-                    justifyContent: 'flex-start',
-                    px: 2.5,
-                    py: 1,
-                    borderRadius: 2,
-                    mx: 1,
-                    transition: spacingTransition
-                  }}
-                >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      mr: 2,
-                      color: isStatsMenuOpen ? 'primary.main' : 'text.secondary',
-                      '& .MuiSvgIcon-root': { fontSize: 26 }
-                    }}
-                  >
-                    <InsightsOutlinedIcon />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="Connections"
-                    slotProps={{ primary: { fontWeight: 500 } }}
-                  />
-                </ListItemButton>
+            <Box
+              sx={{
+                p: 2,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: collapsed ? 'center' : 'flex-start',
+                gap: 1.25,
+                transition: spacingTransition
+              }}
+            >
+              <img
+                src={appImage}
+                alt="app_logo"
+                style={{ height: collapsed ? '28px' : '32px', width: 'auto' }}
+              />
+              {!collapsed && (
+                <Typography variant="subtitle2" fontWeight={700} noWrap>
+                  {t('navigation.brand')}
+                </Typography>
               )}
             </Box>
           </Box>
-
-          <Popover
-            open={isStatsMenuOpen}
-            anchorEl={statsAnchorEl}
-            onClose={handleCloseStatsMenu}
-            keepMounted
-            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-            transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-            slotProps={{
-              paper: {
-                sx: {
-                  mt: -1,
-                  ml: 1,
-                  p: 1,
-                  borderRadius: 1.5,
-                  border: '1px solid',
-                  borderColor: 'divider',
-                  backgroundImage: 'none',
-                  width: { xs: 320, sm: 560 },
-                  maxWidth: 'calc(100vw - 96px)'
-                }
-              }
-            }}
-          >
-            <ConnectionStates isMenu />
-          </Popover>
         </Box>
       </Drawer>
     </Box>

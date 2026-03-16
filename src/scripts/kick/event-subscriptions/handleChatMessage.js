@@ -6,11 +6,12 @@ import {
   startStream,
   stopStream,
   setCurrentProgramScene,
-  refreshMediaSources
+  fixMediaSources
 } from '../../streaming-software/obs-api';
 import Logger from '../../logging/logger';
 import globalInternalStore from '../../store/global-internal-store';
 import { kickMessageService } from '../messages-service/chat-messages';
+import { getUser } from '../kick-api';
 
 const { commandsConfig, kickAccountsConfig, switcherConfig } = injectDefaults();
 
@@ -23,7 +24,6 @@ export function handleChatMessage(rawMessage) {
   const commandsArray = commandsConfig.get('commands').map((cmd) => ({ ...cmd }));
   const allAliases = commandsArray.map((cmd) => cmd.cmd).flat();
 
-  console.log('Received Kick chat message event:', rawMessage);
 
   // Check if the message comes from the write channel
   // Figure out if Kick has a multi chat feature and if so, how to identify the source channel of the message
@@ -101,13 +101,13 @@ const commandActions = {
       }
     }
 
-    const userObj = await getUsers(access_token, { user_name: user }, 'broadcaster');
+    const userObj = await getUser(access_token, user);
 
     adminUsers.push(userObj);
     kickAccountsConfig.set('admins', adminUsers);
 
     const mainWindow = BrowserWindow.getAllWindows()[0];
-    mainWindow.webContents.send('update-twitch-user', {
+    mainWindow.webContents.send('update-kick-user', {
       type: 'admin',
       action: 'add',
       user: userObj
@@ -140,7 +140,7 @@ const commandActions = {
     kickAccountsConfig.set('admins', adminUsers);
 
     const mainWindow = BrowserWindow.getAllWindows()[0];
-    mainWindow.webContents.send('update-twitch-user', {
+    mainWindow.webContents.send('update-kick-user', {
       type: 'admin',
       action: 'remove',
       user: removedUser
@@ -173,13 +173,13 @@ const commandActions = {
       }
     }
 
-    const userObj = await getUsers(access_token, { user_name: user }, 'broadcaster');
+    const userObj = await getUser(access_token, user);
 
     modUsers.push(userObj);
     kickAccountsConfig.set('mods', modUsers);
 
     const mainWindow = BrowserWindow.getAllWindows()[0];
-    mainWindow.webContents.send('update-twitch-user', {
+    mainWindow.webContents.send('update-kick-user', {
       type: 'mod',
       action: 'add',
       user: userObj
@@ -208,7 +208,7 @@ const commandActions = {
     const removedUser = modUsers.splice(userIndex, 1)[0];
     kickAccountsConfig.set('mods', modUsers);
     const mainWindow = BrowserWindow.getAllWindows()[0];
-    mainWindow.webContents.send('update-twitch-user', {
+    mainWindow.webContents.send('update-kick-user', {
       type: 'mod',
       action: 'remove',
       user: removedUser
@@ -297,7 +297,7 @@ const commandActions = {
   refreshStream: async () => {
     await kickMessageService({ action: 'refreshStream', event: 'try' });
 
-    const res = await refreshMediaSources();
+    const res = await fixMediaSources();
 
     if (res.success) {
       await kickMessageService({ action: 'refreshStream', event: 'success' });

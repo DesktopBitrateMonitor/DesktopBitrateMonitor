@@ -53,18 +53,8 @@ export const injectDefaults = () => {
       },
       onQuit: 'quit',
       activePlatform: 'twitch',
-      paths: {
-        layout: 'grid',
-        sessionLogsPath: defaultSessionLoggingPath,
-        sessionLogsFileSize: 5,
-        actionsLogsPath: defaultActionsLoggingPath,
-        logActions: true,
-        logSessions: true
-      },
       autoCheckForUpdates: true,
       autoInstallUpdates: true,
-      installOnQuit: false,
-      installOnStart: true,
       lastUpdateCheck: null
     }
   });
@@ -72,10 +62,15 @@ export const injectDefaults = () => {
   const loggingConfig = new Store({
     name: 'logging-config',
     defaults: {
-      feedLogs: true,
-      feedLogsPath: '',
-      actionLogs: true,
-      actionLogsPath: ''
+      layout: 'list',
+      filter: 'all',
+      sort: 'none',
+      sessionLogsPath: defaultSessionLoggingPath,
+      sessionLogsFileSize: 5,
+      actionsLogsPath: defaultActionsLoggingPath,
+      logActions: true,
+      logSessions: true,
+      messageMode: 'simple' // 'simple' or 'detailed'
     }
   });
 
@@ -100,8 +95,8 @@ export const injectDefaults = () => {
         scopes: [],
         profile_image_url: ''
       },
-      layout: 'list',
-      userLayout: 'list',
+      layout: 'grid',
+      userLayout: 'grid',
       collapsed: [],
       useBotAccount: false,
       admins: [],
@@ -132,8 +127,8 @@ export const injectDefaults = () => {
         scopes: [],
         profile_image_url: ''
       },
-      layout: 'list',
-      userLayout: 'list',
+      layout: 'grid',
+      userLayout: 'grid',
       collapsed: [],
       useBotAccount: false,
       admins: [],

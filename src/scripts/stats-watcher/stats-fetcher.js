@@ -56,8 +56,8 @@ export async function startFetchingStats(
         response.error = stats?.stats || 'Failed to fetch stats from the server';
       }
 
-      if (mainWindow) {
-        mainWindow?.webContents.send('server-connected', response);
+      if (mainWindow?.webContents && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send('server-connected', response);
       }
 
       if (serverType === 'openirl') {

@@ -1,7 +1,9 @@
-import { Stack, Typography, FormControl, Select, MenuItem } from '@mui/material';
+import { Stack, FormControl, Select, MenuItem, InputLabel } from '@mui/material';
 import { useThemeMode } from '../contexts/ThemeContext';
+import { useTranslation } from 'react-i18next';
 
 const ThemeSelector = () => {
+  const { t } = useTranslation();
   const { mode, toggleMode } = useThemeMode();
 
   const handleChange = (event) => {
@@ -11,14 +13,12 @@ const ThemeSelector = () => {
 
   return (
     <Stack m={1} direction="row" alignItems="center" spacing={1.5}>
-      <Typography variant="subtitle2" color="text.secondary">
-        Theme
-      </Typography>
-      <FormControl size="small" sx={{ minWidth: 120 }}>
-        <Select value={mode} onChange={handleChange} aria-label="Select theme mode">
-          <MenuItem value="light">Light</MenuItem>
-          <MenuItem value="dark">Dark</MenuItem>
-          <MenuItem value="system">System</MenuItem>
+      <FormControl size="small" sx={{ minWidth: 180 }}>
+        <InputLabel>{t('appSettings.style.theme.label')}</InputLabel>
+        <Select value={mode} onChange={handleChange} label={t('appSettings.style.theme.label')}>
+          <MenuItem value="light">{t('appSettings.style.theme.options.light')}</MenuItem>
+          <MenuItem value="dark">{t('appSettings.style.theme.options.dark')}</MenuItem>
+          <MenuItem value="system">{t('appSettings.style.theme.options.system')}</MenuItem>
         </Select>
       </FormControl>
     </Stack>

@@ -5,7 +5,7 @@
       "enabled": "Aktiviert",
       "disabled": "Deaktiviert"
     },
-    "backend":{}
+    "backend": {}
   },
   "alerts": {
     "saveSuccess": "Daten erfolgreich gespeichert",
@@ -280,13 +280,13 @@
           "hint": ""
         }
       },
-      "endStream": {
+      "stopStream": {
         "success": {
-          "label": "Stream beendet Nachricht",
+          "label": "Stream gestoppt Nachricht",
           "hint": ""
         },
         "error": {
-          "label": "Stream beenden Fehler Nachricht",
+          "label": "Stream stoppen Fehler Nachricht",
           "hint": ""
         }
       },
@@ -624,40 +624,107 @@
     }
   },
   "logging": {
-    "title": "Protokolleinstellungen",
-    "subtitle": "Lege die Protokollpfade und -zustände fest",
-    "sessionCardTitle": "Sitzungsprotokolle",
-    "sessionCardSubtitle": "Konfiguriere die Einstellungen für Sitzungsprotokolle",
-    "actionsCardTitle": "Aktionsprotokolle",
-    "actionsCardSubtitle": "Konfiguriere die Einstellungen für Aktionsprotokolle",
-    "enabled": "Protokollierung aktiviert",
-    "disabled": "Protokollierung deaktiviert",
-    "sessionPathLabel": "Pfad für Sitzungsprotokolle",
-    "actionsPathLabel": "Pfad für Aktionsprotokolle",
-    "fileSizeLabel": "Dateigröße für Sitzungsprotokolle (MB)",
-    "saveTooltip": "Zum Speichern klicken oder Enter drücken",
-    "directoryDialogTitle": "Verzeichnis für {{label}} auswählen",
-    "validation": {
-      "pathEmpty": "Pfad darf nicht leer sein.",
-      "pathNoSpaces": "Pfad darf keine Leerzeichen enthalten.",
-      "fileSizeInteger": "Dateigröße muss eine ganze Zahl sein.",
-      "fileSizeRange": "Dateigröße muss zwischen 0 und 10 liegen.",
-      "fileSizeEmpty": "Dateigröße darf nicht leer sein."
+    "settings": {
+      "header": "Protokolleinstellungen",
+      "description": "Lege die Protokollpfade und -zustände fest",
+      "sessionCardHeader": "Sitzungsprotokolle",
+      "sessionCardDescription": "Konfiguriere die Einstellungen für Sitzungsprotokolle",
+      "actionsCardHeader": "Aktionsprotokolle",
+      "actionsCardDescription": "Konfiguriere die Einstellungen für Aktionsprotokolle",
+      "enabled": "Protokollierung aktiviert",
+      "disabled": "Protokollierung deaktiviert",
+      "sessionPathLabel": "Pfad für Sitzungsprotokolle",
+      "actionsPathLabel": "Pfad für Aktionsprotokolle",
+      "fileSizeLabel": "Dateigröße für Sitzungsprotokolle (MB)",
+      "saveTooltip": "Zum Speichern klicken",
+      "directoryDialogTitle": "Verzeichnis für {{label}} auswählen",
+      "validation": {
+        "pathEmpty": "Pfad darf nicht leer sein.",
+        "pathNoSpaces": "Pfad darf keine Leerzeichen enthalten.",
+        "fileSizeInteger": "Dateigröße muss eine ganze Zahl sein.",
+        "fileSizeRange": "Dateigröße muss zwischen 0 und 10 liegen.",
+        "fileSizeEmpty": "Dateigröße darf nicht leer sein."
+      }
+    },
+    "filtering": {
+      "all": "Alle",
+      "info": "Info",
+      "warning": "Warnung",
+      "error": "Fehler",
+      "success": "Erfolg"
     }
   },
-  "generalSettings": {
-    "title": "Allgemeine Einstellungen",
-    "subtitle": "Konfiguriere hier allgemeine App-Einstellungen.",
-    "search": "Einstellung suchen",
-    "languageLabel": "App-Sprache",
-    "languageChanged": "Sprache auf {{language}} gesetzt.",
-    "languageError": "Sprache konnte nicht aktualisiert werden.",
-    "updateError": "Einstellung konnte nicht aktualisiert werden.",
-    "quitLabel": "App beim Schließen beenden",
-    "quitMessage": "Die App wird beim Schließen nun {{action}}.",
-    "actions": {
-      "quit": "beendet",
-      "minimize": "minimiert"
+  "appSettings": {
+    "panels": {
+      "general": "Allgemein",
+      "style": "Erscheinung",
+      "update": "Updates"
+    },
+    "general": {
+      "header": "Allgemeine App-Einstellungen",
+      "description": "Konfiguriere hier allgemeine App-Einstellungen",
+      "language": {
+        "select": {
+          "label": "App-Sprache",
+          "placeholder": "App-Sprache",
+          "options": {
+            "en": "Englisch",
+            "de": "Deutsch"
+          }
+        }
+      },
+      "quitState": {
+        "label": "App-Verhalten beim Schließen",
+        "quit": "Beenden",
+        "minimize": "Minimieren"
+      }
+    },
+    "style": {
+      "header": "Erscheinung",
+      "description": "Konfiguriere hier das Erscheinungsbild der Anwendung",
+      "theme": {
+        "label": "App-Theme",
+        "placeholder": "App-Theme",
+        "options": {
+          "light": "Hell",
+          "dark": "Dunkel",
+          "system": "System Standard"
+        }
+      }
+    },
+    "update": {
+      "settings": {
+        "header": "Update-Einstellungen",
+        "description": "Verwalte hier die Anwendungsupdates",
+        "autoCheckForUpdates": "Automatisch nach Updates suchen",
+        "autoInstallUpdates": "Updates automatisch installieren",
+        "lastCheck": "Letzte Überprüfung {{timestamp}}",
+        "neverChecked0": "Nie überprüft"
+      },
+      "dialog": {
+        "updateAvailable": {
+          "header": "Update Verfügbar",
+          "released": "Veröffentlicht",
+          "fileSize": " Dateigröße",
+          "releaseNotes": "Versionshinweise",
+          "noReleaseNotes": "Keine Versionshinweise verfügbar",
+          "installButton": "Installieren",
+          "laterButton": "Später"
+        },
+        "updateApp": {
+          "header": "Update wird installiert...",
+          "description": "Der Download beginnt sofort. Sobald der Download abgeschlossen ist, wird das Update installiert."
+        },
+        "downloadProgress": {
+          "header": "Update wird heruntergeladen...",
+          "progress": "Download-Fortschritt: {{progress}}%",
+          "speed": "Download-Geschwindigkeit: {{speed}}/s"
+        },
+        "noUpdateAvailable": {
+          "header": "Kein Update verfügbar",
+          "description": "Du verwendest bereits die neueste Version der App."
+        }
+      }
     }
   },
   "defaults": {
@@ -670,9 +737,9 @@
         "success": "Stream erfolgreich gestartet",
         "error": "Fehler beim Starten des Streams"
       },
-      "endStream": {
-        "success": "Stream erfolgreich beendet",
-        "error": "Fehler beim Beenden des Streams"
+      "stopStream": {
+        "success": "Stream erfolgreich gestoppt",
+        "error": "Fehler beim Stoppen des Streams"
       },
       "raid": {
         "success": "Folgt mit uns zu twitch.tv/${channel} für mehr Unterhaltung!",
@@ -680,7 +747,7 @@
       },
       "refreshStream": {
         "success": "Stream erfolgreich aktualisiert",
-        "try": "Versuche den stream zu aktu1alisieren ...",
+        "try": "Versuche den Stream zu aktualisieren ...",
         "error": "Fehler beim Aktualisieren des Streams"
       },
       "bitrate": {
