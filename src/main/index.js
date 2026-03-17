@@ -22,12 +22,39 @@ let mainWindow;
 let tray = null;
 let isQuitting = false;
 
-// TODO: Fix automatic install updates on app start if appConfig.autoInstallUpdates is true
+// TODO: Fix automatic install updates on app start if appConfig.autoInstallUpdates is true and autoCheckForUpdates is true
 // TODO: If the app is running, don't allow multiple instances. Focus the existing instance instead of opening a new one.
 
-autoUpdater.autoDownload = false; // Disable automatic downloading of updates
+// Ensure that only a single instance of the application is running
+const gotLock = app.requestSingleInstanceLock();
+if (!gotLock) {
+  app.quit();
+  process.exit(0);
+}
+
+const autoCheckForUpdates = config.autoCheckForUpdates;
+const autoInstallUpdates = config.autoInstallUpdates;
+const shouldAutoInstallOnStart = autoCheckForUpdates && autoInstallUpdates;
+
+autoUpdater.autoDownload = shouldAutoInstallOnStart;
 autoUpdater.autoRunAppAfterInstall = true;
 autoUpdater.autoInstallOnAppQuit = false;
+
+if (shouldAutoInstallOnStart) {
+  autoUpdater.on('update-available', (info) => {
+    Logger.info(`Update available: ${info?.version}. Auto-install enabled, starting download.`);
+  });
+
+  autoUpdater.on('update-downloaded', () => {
+    Logger.info('Update downloaded. Auto-install enabled, quitting to install.');
+    isQuitting = true;
+    autoUpdater.quitAndInstall();
+  });
+
+  autoUpdater.on('error', (error) => {
+    Logger.error(`Auto-update error: ${error?.message || error}`);
+  });
+}
 
 function createWindow(displayIsAvailable = false) {
   // Create the browser window.
@@ -106,6 +133,13 @@ function createWindow(displayIsAvailable = false) {
   }
 }
 
+app.on('second-instance', () => {
+  if (mainWindow?.idDestroyed()) return createWindow();
+  if (mainWindow.isMinimized()) mainWindow.restore();
+  mainWindow?.show();
+  mainWindow?.focus();
+});
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -158,26 +192,6 @@ app.whenReady().then(async () => {
   tray.setToolTip('Desktop Bitrate Monitor');
   tray.setContextMenu(contextMenu);
   tray.on('double-click', () => mainWindow.show());
-
-  const autoCheckForUpdates = config.autoCheckForUpdates;
-  const autoInstallUpdates = config.autoInstallUpdates;
-
-  if (autoCheckForUpdates) {
-    Logger.info('Checking for updates...');
-    const updateCheck = await autoUpdater.checkForUpdates();
-
-    if (updateCheck) {
-      Logger.info(`Update check result: ${JSON.stringify(updateCheck)}`);
-    }
-
-    appConfig.set('lastUpdateCheck', new Date().toISOString());
-
-    if (autoInstallUpdates) {
-      autoUpdater.on('update-downloaded', () => {
-        autoUpdater.quitAndInstall();
-      });
-    }
-  }
 });
 
 app.on('before-quit', () => {

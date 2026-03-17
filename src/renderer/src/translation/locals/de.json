@@ -699,7 +699,8 @@
         "autoCheckForUpdates": "Automatisch nach Updates suchen",
         "autoInstallUpdates": "Updates automatisch installieren",
         "lastCheck": "Letzte Überprüfung {{timestamp}}",
-        "neverChecked0": "Nie überprüft"
+        "neverChecked0": "Nie überprüft",
+        "viewReleaseNotes": "Versionshinweise"
       },
       "dialog": {
         "updateAvailable": {

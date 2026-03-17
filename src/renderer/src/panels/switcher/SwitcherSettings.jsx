@@ -4,7 +4,7 @@ import LayoutToggle from '../../components/functional/LayoutToggle';
 import Scenes from './components/Scenes.jsx';
 import Switches from './components/Switches.jsx';
 import Triggers from './components/Triggers.jsx';
-import { Box, Typography } from '@mui/material';
+import { Box, Divider, Typography } from '@mui/material';
 
 const SwitcherSettings = () => {
   const { switcherConfig, updateSwitcherConfig } = useSwitcherConfigStore();
@@ -83,6 +83,7 @@ const SwitcherSettings = () => {
       <Box
         sx={{
           flex: '1 1 0',
+          borderTop: (theme) => `1px solid ${theme.palette.divider}`,
           pt: 2,
           px: 1.5,
           pb: 1.5,

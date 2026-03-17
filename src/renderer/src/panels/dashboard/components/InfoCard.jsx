@@ -9,7 +9,7 @@ const InfoCard = ({ title, content, hint = null, sx, ...props }) => {
 
   return (
     <Card
-      elevation={0}
+      elevation={1}
       sx={{
         position: 'relative',
         overflow: 'hidden',
@@ -20,8 +20,7 @@ const InfoCard = ({ title, content, hint = null, sx, ...props }) => {
           t.palette.mode === 'dark'
             ? `radial-gradient(circle at top left, ${accent}, ${alpha(t.palette.background.paper, 0.92)} 45%)`
             : `radial-gradient(circle at top left, ${accent}, ${alpha(t.palette.background.paper, 0.98)} 55%)`,
-        boxShadow: (t) =>
-          `0 16px 42px ${alpha(t.palette.common.black, t.palette.mode === 'dark' ? 0.42 : 0.16)}`,
+
         minWidth: 260,
         ...sx
       }}
@@ -63,7 +62,10 @@ const InfoCard = ({ title, content, hint = null, sx, ...props }) => {
           sx={{
             borderRadius: 1.5,
             p: 1.5,
-            backgroundColor: alpha(theme.palette.background.default, theme.palette.mode === 'dark' ? 0.35 : 0.5),
+            backgroundColor: alpha(
+              theme.palette.background.default,
+              theme.palette.mode === 'dark' ? 0.35 : 0.5
+            ),
             border: '1px solid',
             borderColor: alpha(theme.palette.divider, 0.6)
           }}

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useAppConfigStore } from '../../../contexts/DataContext';
 import { useAlert } from '../../../contexts/AlertContext';
 import { Box, Button, Stack, Switch, Typography } from '@mui/material';
@@ -18,9 +18,10 @@ const UpdateSettings = ({ setOpenUpdateCard }) => {
   const { setExampleData } = useUpdate();
   const { showAlert } = useAlert();
 
-  const [updateData, setUpdateData] = React.useState({
+  const [updateData, setUpdateData] = useState({
     autoCheckForUpdates: appConfig.autoCheckForUpdates,
     autoInstallUpdates: appConfig.autoInstallUpdates,
+    installOnQuit: appConfig.installOnQuit,
     lastUpdateCheck: appConfig.lastUpdateCheck
   });
 
@@ -80,6 +81,11 @@ const UpdateSettings = ({ setOpenUpdateCard }) => {
     setOpenUpdateCard(true);
   };
 
+  const openReleaseNotes = async () => {
+    const url = `https://github.com/yinks87/desktop-bitrate-monitor/releases/`;
+    await window.updateApi.openExternal(url);
+  };
+
   return (
     <Box>
       <CollapsibleCard
@@ -87,6 +93,13 @@ const UpdateSettings = ({ setOpenUpdateCard }) => {
         subtitle={t('appSettings.update.settings.description')}
         defaultExpanded={true}
         collapsible={false}
+        actions={
+          <Box>
+            <Button variant="outlined" onClick={() => openReleaseNotes()}>
+              {t('appSettings.update.settings.viewReleaseNotes')}
+            </Button>
+          </Box>
+        }
       >
         <Box key={'autoCheckForUpdates'}>
           <Stack direction={'row'} alignItems={'center'}>

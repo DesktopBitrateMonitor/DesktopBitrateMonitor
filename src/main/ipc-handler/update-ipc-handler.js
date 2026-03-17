@@ -1,3 +1,4 @@
+import { app, shell } from 'electron';
 import Logger from '../../scripts/logging/logger';
 import { autoUpdater } from 'electron-updater';
 
@@ -32,6 +33,14 @@ export async function initializeUpdateIpc(ipcMain, mainWindow) {
     sendUpdateState({ status: 'check-for-updates', data: null });
     console.log('Manually checking for updates...');
     autoUpdater.checkForUpdates();
+  });
+
+  ipcMain.on('open-external', (event, url) => {
+    const appendedUrl = url + app.getVersion();
+    console.log(appendedUrl);
+    if (url) {
+      shell.openExternal(appendedUrl);
+    }
   });
 
   autoUpdater.on('checking-for-update', () => {

@@ -698,7 +698,8 @@
         "autoCheckForUpdates": "Auto-Check for Updates",
         "autoInstallUpdates": "Auto-Install Updates",
         "lastCheck": "Last Check {{timestamp}}",
-        "neverChecked": "Never checked for updates"
+        "neverChecked": "Never checked for updates",
+        "viewReleaseNotes": "Release Notes"
       },
       "dialog": {
         "updateAvailable": {

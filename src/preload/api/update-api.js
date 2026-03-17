@@ -7,5 +7,6 @@ export const updateApi = {
     });
   },
   startUpdate: () => ipcRenderer.send('update-app'),
-  checkForUpdates: () => ipcRenderer.send('check-for-updates')
+  checkForUpdates: () => ipcRenderer.send('check-for-updates'),
+  openExternal: (url) => ipcRenderer.send('open-external', url)
 };

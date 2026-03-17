@@ -55,7 +55,8 @@ export const injectDefaults = () => {
       activePlatform: 'twitch',
       autoCheckForUpdates: true,
       autoInstallUpdates: true,
-      lastUpdateCheck: null
+      lastUpdateCheck: null,
+      layout: {}
     }
   });
 
