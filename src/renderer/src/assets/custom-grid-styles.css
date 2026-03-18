@@ -1,0 +1,15 @@
+.react-grid-item.react-grid-placeholder {
+  background: #6365f131;
+  border: 1px dashed #6366f1;
+  box-shadow: inset #6366f1 0px 0px 10px 0px;
+  opacity: 0.2;
+  border-radius: 4px;
+}
+
+.react-grid-item > .react-resizable-handle {
+  background: none;
+}
+
+.react-grid-item > .react-resizable-handle::after {
+  border-color: #6366f1;
+}

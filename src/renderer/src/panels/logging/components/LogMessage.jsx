@@ -1,6 +1,19 @@
 import React, { useMemo } from 'react';
 import { Box, Chip, Stack, Typography } from '@mui/material';
 
+const typeColorMap = {
+  error: 'error',
+  warning: 'warning',
+  success: 'success',
+  info: 'info',
+  log: 'default'
+};
+
+const sourceColorMap = {
+  backend: 'secondary',
+  frontend: 'primary'
+};
+
 const LogMessage = ({ log }) => {
   const formattedTimestamp = useMemo(() => {
     const date = log.timestamp ? new Date(log.timestamp) : null;
@@ -8,6 +21,11 @@ const LogMessage = ({ log }) => {
     if (!time || Number.isNaN(time)) return '—';
     return date.toLocaleString();
   }, [log.timestamp]);
+
+  const type = log.type || 'log';
+  const source = log.source || 'unknown';
+  const typeColor = typeColorMap[type] || 'default';
+  const sourceColor = sourceColorMap[source] || 'default';
 
   return (
     <Box
@@ -25,8 +43,18 @@ const LogMessage = ({ log }) => {
     >
       <Stack direction="row" spacing={1} alignItems="center" justifyContent="space-between">
         <Stack direction="row" spacing={1} alignItems="center">
-          <Chip label={log.type || 'log'} size="small" color="primary" variant="outlined" />
-          <Chip label={log.source || 'unknown'} size="small" variant="outlined" />
+          <Chip
+            label={type}
+            size="small"
+            color={typeColor}
+            variant={typeColor === 'default' ? 'outlined' : 'filled'}
+          />
+          <Chip
+            label={source}
+            size="small"
+            color={sourceColor}
+            variant={sourceColor === 'default' ? 'outlined' : 'filled'}
+          />
         </Stack>
         <Typography variant="caption" color="text.secondary">
           {formattedTimestamp}

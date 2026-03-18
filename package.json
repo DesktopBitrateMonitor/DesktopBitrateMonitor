@@ -1,6 +1,6 @@
 {
   "name": "desktop-bitrate-monitor",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "An Electron app to listen for SRT(LA) stream stats",
   "main": "./out/main/index.js",
   "author": "yinks87",

@@ -1,8 +1,86 @@
 import React, { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  Box,
+  Button,
+  Divider,
+  IconButton,
+  ListItemIcon,
+  ListItemText,
+  ListSubheader,
+  Menu,
+  MenuItem,
+  Stack,
+  TextField,
+  Typography
+} from '@mui/material';
+import { alpha } from '@mui/material/styles';
+import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined';
+import SortOutlinedIcon from '@mui/icons-material/SortOutlined';
+import LabelOutlinedIcon from '@mui/icons-material/LabelOutlined';
+import LanOutlinedIcon from '@mui/icons-material/LanOutlined';
+import ComputerOutlinedIcon from '@mui/icons-material/ComputerOutlined';
+import ArrowDownwardOutlinedIcon from '@mui/icons-material/ArrowDownwardOutlined';
+import ArrowUpwardOutlinedIcon from '@mui/icons-material/ArrowUpwardOutlined';
 import { useLogger } from '../../contexts/LoggerContext';
 import LogMessage from './components/LogMessage';
-import { useNavigate } from 'react-router-dom';
-import { Box, Button, Divider, MenuItem, Stack, TextField, Typography } from '@mui/material';
+
+const menuButtonSx = {
+  color: (theme) => theme.palette.text.secondary,
+  border: (theme) => `1px solid ${alpha(theme.palette.divider, 0.6)}`,
+  borderRadius: 2,
+  backgroundColor: (theme) =>
+    alpha(theme.palette.background.paper, theme.palette.mode === 'light' ? 0.8 : 0.4),
+  '&:hover': {
+    backgroundColor: (theme) => alpha(theme.palette.text.primary, 0.08)
+  }
+};
+
+const MenuControl = ({ icon, label, value, options, onChange, ariaLabel }) => {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleOpen = (event) => setAnchorEl(event.currentTarget);
+  const handleClose = () => setAnchorEl(null);
+  const handleSelect = (next) => {
+    handleClose();
+    if (next === undefined || next === null) return;
+    onChange?.(next);
+  };
+
+  return (
+    <Stack direction="row" spacing={1.5} alignItems="center">
+      <IconButton
+        aria-label={ariaLabel || label}
+        onClick={handleOpen}
+        size="small"
+        sx={menuButtonSx}
+      >
+        {icon}
+      </IconButton>
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        keepMounted
+        PaperProps={{ onMouseLeave: handleClose }}
+      >
+        <ListSubheader>{label}</ListSubheader>
+        <Divider variant="middle" sx={{ mb: 1 }} />
+        {options.map((option) => (
+          <MenuItem
+            key={option.value}
+            selected={value === option.value}
+            onClick={() => handleSelect(option.value)}
+          >
+            {option.icon ? <ListItemIcon>{option.icon}</ListItemIcon> : null}
+            <ListItemText>{option.label}</ListItemText>
+          </MenuItem>
+        ))}
+      </Menu>
+    </Stack>
+  );
+};
 
 const LoggingFeed = () => {
   const { logs } = useLogger();
@@ -17,6 +95,37 @@ const LoggingFeed = () => {
     const uniqueTypes = new Set(logs.map((log) => log.type || 'log'));
     return ['all', ...Array.from(uniqueTypes)];
   }, [logs]);
+
+  const typeOptions = useMemo(
+    () =>
+      availableTypes.map((type) => ({
+        value: type,
+        label: type === 'all' ? 'All types' : type,
+        icon: type === 'all' ? (
+          <FilterListOutlinedIcon fontSize="small" />
+        ) : (
+          <LabelOutlinedIcon fontSize="small" />
+        )
+      })),
+    [availableTypes]
+  );
+
+  const sourceOptions = useMemo(
+    () => [
+      { value: 'all', label: 'All sources', icon: <FilterListOutlinedIcon fontSize="small" /> },
+      { value: 'backend', label: 'Backend', icon: <LanOutlinedIcon fontSize="small" /> },
+      { value: 'frontend', label: 'Frontend', icon: <ComputerOutlinedIcon fontSize="small" /> }
+    ],
+    []
+  );
+
+  const sortOptions = useMemo(
+    () => [
+      { value: 'desc', label: 'Newest first', icon: <ArrowDownwardOutlinedIcon fontSize="small" /> },
+      { value: 'asc', label: 'Oldest first', icon: <ArrowUpwardOutlinedIcon fontSize="small" /> }
+    ],
+    []
+  );
 
   const filteredLogs = useMemo(() => {
     const needle = search.trim().toLowerCase();
@@ -53,7 +162,7 @@ const LoggingFeed = () => {
         </Typography>
       </Stack>
 
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} alignItems="stretch">
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} alignItems="center">
         <TextField
           size="small"
           label="Search"
@@ -63,42 +172,34 @@ const LoggingFeed = () => {
           fullWidth
         />
 
-        <TextField
-          size="small"
-          select
-          label="Type"
-          value={typeFilter}
-          onChange={(event) => setTypeFilter(event.target.value)}
-        >
-          {availableTypes.map((type) => (
-            <MenuItem key={type} value={type}>
-              {type === 'all' ? 'All types' : type}
-            </MenuItem>
-          ))}
-        </TextField>
+        <Stack direction="row" spacing={1} alignItems="center" >
+          <MenuControl
+            icon={<FilterListOutlinedIcon fontSize="small" />}
+            label="Filter by type"
+            value={typeFilter}
+            options={typeOptions}
+            onChange={setTypeFilter}
+            ariaLabel="Filter logs by type"
+          />
 
-        <TextField
-          size="small"
-          select
-          label="Source"
-          value={sourceFilter}
-          onChange={(event) => setSourceFilter(event.target.value)}
-        >
-          <MenuItem value="all">All sources</MenuItem>
-          <MenuItem value="backend">Backend</MenuItem>
-          <MenuItem value="frontend">Frontend</MenuItem>
-        </TextField>
+          <MenuControl
+            icon={<FilterListOutlinedIcon fontSize="small" />}
+            label="Filter by source"
+            value={sourceFilter}
+            options={sourceOptions}
+            onChange={setSourceFilter}
+            ariaLabel="Filter logs by source"
+          />
 
-        <TextField
-          size="small"
-          select
-          label="Sort"
-          value={sortDirection}
-          onChange={(event) => setSortDirection(event.target.value)}
-        >
-          <MenuItem value="desc">Newest first</MenuItem>
-          <MenuItem value="asc">Oldest first</MenuItem>
-        </TextField>
+          <MenuControl
+            icon={<SortOutlinedIcon fontSize="small" />}
+            label="Sort order"
+            value={sortDirection}
+            options={sortOptions}
+            onChange={setSortDirection}
+            ariaLabel="Sort logs"
+          />
+        </Stack>
       </Stack>
 
       <Divider />

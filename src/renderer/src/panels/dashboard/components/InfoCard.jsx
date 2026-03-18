@@ -1,6 +1,7 @@
 import React from 'react';
 import { alpha, useTheme } from '@mui/material/styles';
 import { Box, Card, Stack, Typography } from '@mui/material';
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 
 const InfoCard = ({ title, content, hint = null, sx, ...props }) => {
   const theme = useTheme();
@@ -21,7 +22,7 @@ const InfoCard = ({ title, content, hint = null, sx, ...props }) => {
             ? `radial-gradient(circle at top left, ${accent}, ${alpha(t.palette.background.paper, 0.92)} 45%)`
             : `radial-gradient(circle at top left, ${accent}, ${alpha(t.palette.background.paper, 0.98)} 55%)`,
 
-        minWidth: 260,
+        minWidth: 180,
         ...sx
       }}
       {...props}
@@ -37,13 +38,11 @@ const InfoCard = ({ title, content, hint = null, sx, ...props }) => {
 
       <Stack spacing={2} sx={{ position: 'relative', p: 2.5 }}>
         <Stack direction="row" spacing={1.5} alignItems="center">
-          <Box
+          <DragIndicatorIcon
             sx={{
-              width: 12,
-              height: 12,
-              borderRadius: '50%',
-              background: theme.palette.primary.main,
-              boxShadow: `0 0 0 6px ${alpha(theme.palette.primary.main, 0.12)}`
+              color: theme.palette.primary.main,
+              opacity: 0.9,
+              cursor: 'grab'
             }}
           />
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>

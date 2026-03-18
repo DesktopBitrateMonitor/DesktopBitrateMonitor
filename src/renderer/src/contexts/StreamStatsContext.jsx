@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 const StreamStatsContext = createContext(null);
 StreamStatsContext.displayName = 'StreamStatsContext';
@@ -11,6 +11,8 @@ const INITIAL_STATS = {
 
 export const StreamStatsProvider = ({ children }) => {
   const [stats, setStats] = useState(INITIAL_STATS);
+  const [totalUptime, setTotalUptime] = useState(0);
+  const lastUptimeRef = useRef(0);
 
   useEffect(() => {
     const api = window?.statesApi;
@@ -29,6 +31,13 @@ export const StreamStatsProvider = ({ children }) => {
       const nextUptime = Number(incoming?.uptime) || 0;
 
       setStats({ bitrate: nextBitrate, rtt: nextRtt, uptime: nextUptime });
+
+      // accumulate uptime across page changes (resets only on app restart)
+      const delta = Math.max(nextUptime - (lastUptimeRef.current || 0), 0);
+      if (delta > 0) {
+        setTotalUptime((prev) => prev + delta);
+      }
+      lastUptimeRef.current = nextUptime;
     });
 
     return () => {
@@ -40,7 +49,7 @@ export const StreamStatsProvider = ({ children }) => {
     };
   }, []);
 
-  const value = useMemo(() => ({ stats }), [stats]);
+  const value = useMemo(() => ({ stats, totalUptime }), [stats, totalUptime]);
 
   return <StreamStatsContext.Provider value={value}>{children}</StreamStatsContext.Provider>;
 };

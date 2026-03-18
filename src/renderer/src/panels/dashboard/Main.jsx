@@ -10,49 +10,32 @@ import FeedChart from './components/FeedChart';
 import InfoCard from './components/InfoCard';
 import TwitchIcon from '../../assets/icons/TwitchIcon';
 import KickIcon from '../../assets/icons/KickIcon';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
+import '../../assets/custom-grid-styles.css';
 import ReactGridLayout, {
   useContainerWidth,
   useResponsiveLayout,
   verticalCompactor
 } from 'react-grid-layout';
+import { defaultLayout } from './components/layout-default';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
-const breakpoints = { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 };
+const breakpoints = { lg: 1400, md: 996, sm: 768, xs: 480, xxs: 0 };
 const colsConfig = { lg: 16, md: 10, sm: 8, xs: 6, xxs: 6 };
 
 const createInitialLayouts = () => ({
-  lg: [
-    { i: 'feedChart', x: 0, y: 0, w: 9, h: 12, minW: 9, minH: 12 },
-    { i: 'connectionStates', x: 9, y: 0, w: 3, h: 8, minW: 3, minH: 8 },
-    { i: 'activePlatform', x: 12, y: 0, w: 3, h: 5, minW: 3, minH: 5 }
-  ],
-  md: [
-    { i: 'feedChart', x: 0, y: 0, w: 9, h: 12, minW: 9, minH: 12 },
-    { i: 'connectionStates', x: 9, y: 0, w: 3, h: 8, minW: 3, minH: 8 },
-    { i: 'activePlatform', x: 12, y: 0, w: 3, h: 5, minW: 3, minH: 5 }
-  ],
-  sm: [
-    { i: 'feedChart', x: 0, y: 0, w: 9, h: 12, minW: 9, minH: 12 },
-    { i: 'connectionStates', x: 0, y: 12, w: 3, h: 8, minW: 3, minH: 8 },
-    { i: 'activePlatform', x: 0, y: 18, w: 3, h: 5, minW: 3, minH: 5 }
-  ],
-  xs: [
-    { i: 'feedChart', x: 0, y: 0, w: 9, h: 12, minW: 9, minH: 12 },
-    { i: 'connectionStates', x: 0, y: 12, w: 3, h: 8, minW: 3, minH: 8 },
-    { i: 'activePlatform', x: 0, y: 20, w: 3, h: 5, minW: 3, minH: 5 }
-  ],
-  xxs: [
-    { i: 'feedChart', x: 0, y: 0, w: 9, h: 12, minW: 9, minH: 12 },
-    { i: 'connectionStates', x: 0, y: 12, w: 3, h: 8, minW: 3, minH: 8 },
-    { i: 'activePlatform', x: 0, y: 18, w: 3, h: 5, minW: 3, minH: 5 }
-  ]
+  ...defaultLayout
 });
 
 const Main = () => {
+  const { t } = useTranslation();
   const { appConfig } = useAppConfigStore();
   const { kickAccountsConfig } = useKickAccountsConfig();
   const { twitchAccountsConfig } = useTwitchAccountsConfig();
+  const navigate = useNavigate();
 
   const { width, containerRef, mounted } = useContainerWidth();
 
@@ -114,10 +97,10 @@ const Main = () => {
       >
         <Box>
           <Typography variant="h5" sx={{ mb: 0.5 }}>
-            Dashboard
+            {t('dashboard.header')}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Overview of your current stream status and settings
+            {t('dashboard.description')}
           </Typography>
         </Box>
       </Box>
@@ -144,45 +127,67 @@ const Main = () => {
               compactor={compactor}
               onLayoutChange={handleLayoutChange}
             >
-              <Box key={'feedChart'} sx={{ height: '100%', minHeight: 0 }}>
+              <Box key={'feedChart'} sx={{ height: '100%' }}>
                 <InfoCard
                   className={'draggable-handle'}
-                  title={'Feed Chart'}
+                  title={t('dashboard.feedChart.header')}
                   sx={{ height: '100%' }}
                   content={<FeedChart />}
                 />
               </Box>
-              <Box key={'connectionStates'} sx={{ height: '100%', minHeight: 0 }}>
+              <Box key={'connectionStates'} sx={{ height: '100%' }}>
                 <InfoCard
                   className={'draggable-handle'}
-                  title={'Connection States'}
+                  title={t('dashboard.connectionStates.header')}
                   sx={{ height: '100%' }}
                   content={<ConnectionStates />}
                 />
               </Box>
-              <Box key={'activePlatform'} sx={{ height: '100%', minHeight: 0 }}>
+
+              <Box key={'activePlatform'} sx={{ height: '100%' }}>
                 <InfoCard
                   className={'draggable-handle'}
-                  title={'Active Platform'}
+                  title={t('dashboard.activePlatform.header')}
                   sx={{ height: '100%' }}
                   content={
                     <Box display="flex" flexDirection={'column'} alignItems="center" gap={1}>
-                      {broadcasterConnected ? (
-                        <>
-                          {activePlatform === 'twitch' ? (
-                            <TwitchIcon height={48} width={48} />
-                          ) : (
-                            <KickIcon height={48} width={48} />
-                          )}
-                        </>
-                      ) : (
+                      <>
+                        {activePlatform === 'twitch' ? (
+                          <TwitchIcon height={48} width={48} />
+                        ) : (
+                          <KickIcon height={48} width={48} />
+                        )}
+                      </>
+                      {!broadcasterConnected ? (
                         <Typography variant="body1" textAlign={'center'}>
-                          No broadcaster connected <br /> for the selected platform
+                          {t('dashboard.activePlatform.noData')}
+                        </Typography>
+                      ) : (
+                        <Typography variant="h6" color="text.primary">
+                          {activePlatform === 'twitch' ? twitchBroadcaster : kickBroadcaster}
                         </Typography>
                       )}
-                      <Typography variant="h6" color="text.primary">
-                        {activePlatform === 'twitch' ? twitchBroadcaster : kickBroadcaster}
-                      </Typography>
+                    </Box>
+                  }
+                />
+              </Box>
+
+              <Box key={'logs'} sx={{ height: '100%' }}>
+                <InfoCard
+                  className={'draggable-handle'}
+                  title={t('dashboard.logs.header')}
+                  sx={{ height: '100%' }}
+                  content={
+                    <Box
+                      display="flex"
+                      flexDirection={'column'}
+                      alignItems="center"
+                      gap={1}
+                      height="100%"
+                      justifyContent="center"
+                      onClick={() => navigate('/dashboard/logs')}
+                    >
+                      <ReceiptLongIcon sx={{ cursor: 'pointer', height: 104, fontSize: 64 }} />
                     </Box>
                   }
                 />

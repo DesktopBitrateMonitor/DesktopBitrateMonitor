@@ -4,24 +4,7 @@ import { alpha, useTheme } from '@mui/material/styles';
 import StorageRoundedIcon from '@mui/icons-material/StorageRounded';
 import DesktopWindowsRoundedIcon from '@mui/icons-material/DesktopWindowsRounded';
 import { useConnectionStates } from '../../../contexts/ConnectionStatesContext.jsx';
-
-const STATUS_META = {
-  connected: { label: 'Connected', tone: 'success' },
-  connecting: { label: 'Connecting', tone: 'warning' },
-  asynchronous: { label: 'Asynchronous', tone: 'warning' },
-  disconnected: { label: 'Disconnected', tone: 'error' },
-  unknown: { label: 'Unknown', tone: 'neutral' }
-};
-
-const SERVER_NAME_MAP = {
-  openirl: 'Open IRL',
-  'srt-live-server': 'SRT Live Server'
-};
-
-const BROADCAST_SOFTWARE_NAME_MAP = {
-  'obs-studio': 'OBS Studio',
-  'streamlabs-obs': 'Streamlabs OBS'
-};
+import { useTranslation } from 'react-i18next';
 
 const getToneColors = (theme, tone) => {
   switch (tone) {
@@ -58,15 +41,41 @@ const ConnectionTile = ({
   speed = null,
   bitrate = null
 }) => {
+  const { t } = useTranslation();
+
+  const STATUS_META = {
+    connected: { label: t('dashboard.connectionStates.states.connected'), tone: 'success' },
+    connecting: { label: t('dashboard.connectionStates.states.connecting'), tone: 'warning' },
+    asynchronous: { label: t('dashboard.connectionStates.states.asynchronous'), tone: 'warning' },
+    disconnected: { label: t('dashboard.connectionStates.states.disconnected'), tone: 'error' },
+    unknown: { label: t('dashboard.connectionStates.states.unknown'), tone: 'neutral' }
+  };
+
+  const SERVER_NAME_MAP = {
+    openirl: t('dashboard.connectionStates.serverNames.openIrl'),
+    'srt-live-server': t('dashboard.connectionStates.serverNames.srtLiveServer'),
+    belabox: t('dashboard.connectionStates.serverNames.belabox')
+  };
+
+  const BROADCAST_SOFTWARE_NAME_MAP = {
+    'obs-studio': t('dashboard.connectionStates.softwareNames.obsStudio'),
+    'streamlabs-obs': t('dashboard.connectionStates.softwareNames.streamlabsObs'),
+    'meld-studio': t('dashboard.connectionStates.softwareNames.meldStudio')
+  };
+
   const theme = useTheme();
   const meta = STATUS_META[status];
   const colors = getToneColors(theme, meta.tone);
 
   return (
-    <Tooltip title={`${label}: ${meta.label}`} placement="top" arrow>
+    <Tooltip
+      title={t('dashboard.connectionStates.label', { label, meta: meta.label })}
+      placement="top"
+      arrow
+    >
       <Box
         role="group"
-        aria-label={`${label} connection ${meta.label}`}
+        aria-label={t('dashboard.connectionStates.label', { label, meta: meta.label })}
         sx={{
           position: 'relative',
           display: 'flex',
@@ -202,6 +211,7 @@ const ConnectionTile = ({
 };
 
 const ConnectionStates = ({ isMenu = false }) => {
+  const { t } = useTranslation();
   const { statuses, serverType, softwareType, broadcastState } = useConnectionStates();
 
   return (
@@ -219,12 +229,12 @@ const ConnectionStates = ({ isMenu = false }) => {
         icon={<StorageRoundedIcon />}
         type={serverType}
         typeKey="server"
-        label="Server Connection"
+        label={t('dashboard.connectionStates.serverTileLabel')}
         status={statuses.server}
       />
       <ConnectionTile
         icon={<DesktopWindowsRoundedIcon />}
-        label={'Streaming Software'}
+        label={t('dashboard.connectionStates.softwareTileLabel')}
         typeKey="software"
         isLive={broadcastState}
         type={softwareType}

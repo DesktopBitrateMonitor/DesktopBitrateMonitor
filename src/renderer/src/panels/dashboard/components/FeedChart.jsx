@@ -4,13 +4,17 @@ import { alpha, useTheme } from '@mui/material/styles';
 import { Box, Card, Stack, Tooltip, Typography } from '@mui/material';
 import SpeedRoundedIcon from '@mui/icons-material/SpeedRounded';
 import TimelineRoundedIcon from '@mui/icons-material/TimelineRounded';
+import ScheduleRoundedIcon from '@mui/icons-material/ScheduleRounded';
+import AllInclusiveRoundedIcon from '@mui/icons-material/AllInclusiveRounded';
 import { useStreamStats } from '../../../contexts/StreamStatsContext.jsx';
+import { useTranslation } from 'react-i18next';
 
 const MAX_POINTS = 60;
 
 const FeedChart = () => {
   const theme = useTheme();
-  const { stats } = useStreamStats();
+  const { t } = useTranslation();
+  const { stats, totalUptime } = useStreamStats();
 
   const [history, setHistory] = useState([]);
   const [startTs, setStartTs] = useState(null);
@@ -26,11 +30,9 @@ const FeedChart = () => {
     setMaxY((prev) => Math.max(prev, stats.bitrate || 0));
   }, [stats.bitrate, stats.rtt, startTs]);
 
-  const { chartData, durationSec } = useMemo(() => {
-    if (!history.length || !startTs) return { chartData: [], durationSec: 0 };
-    const mapped = history.map((p) => ({ x: (p.ts - startTs) / 1000, y: p.bitrate ?? 0 }));
-    const duration = (history[history.length - 1].ts - startTs) / 1000;
-    return { chartData: mapped, durationSec: duration };
+  const chartData = useMemo(() => {
+    if (!history.length || !startTs) return [];
+    return history.map((p) => ({ x: (p.ts - startTs) / 1000, y: p.bitrate ?? 0 }));
   }, [history, startTs]);
 
   const formatStopwatch = (seconds) => {
@@ -45,7 +47,7 @@ const FeedChart = () => {
   return (
     <div>
       <Stack direction="row" spacing={2} alignItems="center">
-        <Tooltip title="Current bitrate">
+        <Tooltip title={t('dashboard.feedChart.bitrateToolTip')} arrow>
           <Stack direction="row" spacing={0.75} alignItems="center">
             <TimelineRoundedIcon fontSize="small" color="primary" />
             <Typography variant="body2" sx={{ fontWeight: 600 }}>
@@ -53,11 +55,29 @@ const FeedChart = () => {
             </Typography>
           </Stack>
         </Tooltip>
-        <Tooltip title="Current speed (rtt)">
+        <Tooltip title={t('dashboard.feedChart.speedToolTip')} arrow>
           <Stack direction="row" spacing={0.75} alignItems="center">
             <SpeedRoundedIcon fontSize="small" color="secondary" />
             <Typography variant="body2" sx={{ fontWeight: 600 }}>
               {`${stats.rtt ?? 0} ms`}
+            </Typography>
+          </Stack>
+        </Tooltip>
+
+        <Tooltip title={t('dashboard.feedChart.uptimeToolTip') || 'Stream uptime'} arrow>
+          <Stack direction="row" spacing={0.75} alignItems="center">
+            <ScheduleRoundedIcon fontSize="small" color="success" />
+            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+              {formatStopwatch(stats.uptime ?? 0)}
+            </Typography>
+          </Stack>
+        </Tooltip>
+
+        <Tooltip title={t('dashboard.feedChart.totalUptimeToolTip') || 'Total uptime (this session)'} arrow>
+          <Stack direction="row" spacing={0.75} alignItems="center">
+            <AllInclusiveRoundedIcon fontSize="small" color="primary" />
+            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+              {formatStopwatch(totalUptime)}
             </Typography>
           </Stack>
         </Tooltip>
@@ -71,24 +91,21 @@ const FeedChart = () => {
             series={[
               {
                 data: chartData.map((p) => p.y),
-                color: theme.palette.primary.main,
                 showMark: false,
-                label: 'Bitrate (kbps)',
-                // area: true
+                label: 'Bitrate (kbps)'
               }
             ]}
-            xAxis={[
-              {
-                  data: chartData.map((p) => p.x),
-                scaleType: 'linear',
-                  valueFormatter: (v) => formatStopwatch(v),
-                  label: 'Elapsed time'
-              }
-            ]}
+            // xAxis={[{}]}
             yAxis={[
               {
                 min: 0,
-                max: maxY || undefined
+                max: maxY + 1000 || undefined,
+                colorMap: {
+                  type: 'continuous',
+                  min: 0,
+                  max: 6500 || undefined,
+                  color: ['red', 'green']
+                }
               }
             ]}
             grid={{ vertical: true, horizontal: true }}
@@ -116,7 +133,7 @@ const FeedChart = () => {
             }}
           >
             <Typography variant="body2" color="text.secondary">
-              Waiting for feed data...
+              {t('dashboard.feedChart.noData')}
             </Typography>
           </Box>
         )}

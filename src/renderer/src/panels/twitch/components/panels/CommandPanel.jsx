@@ -191,10 +191,27 @@ const CommandPanel = ({ command, onChange, collapsible = true, expanded, onExpan
             {aliasList.length ? (
               aliasList.map((alias) => (
                 <Chip
-                  size="small"
+                  // size="small"
                   key={alias}
                   label={alias}
+                  color="primary"
+                  variant="filled"
                   onDelete={() => handleAliasRemove(alias)}
+                  sx={{
+                    fontWeight: 700,
+                    letterSpacing: 0.25,
+                    backgroundColor: (theme) =>
+                      alpha(theme.palette.primary.main, theme.palette.mode === 'light' ? 0.16 : 0.32),
+                    border: (theme) => `1px solid ${alpha(theme.palette.primary.main, 0.6)}`,
+                    color: (theme) => theme.palette.primary.contrastText,
+                    boxShadow: (theme) => `0 1px 6px ${alpha(theme.palette.primary.main, 0.35)}`,
+                    '& .MuiChip-deleteIcon': {
+                      color: (theme) => theme.palette.error.light,
+                      '&:hover': {
+                        color: (theme) => theme.palette.error.main
+                      }
+                    }
+                  }}
                 />
               ))
             ) : (

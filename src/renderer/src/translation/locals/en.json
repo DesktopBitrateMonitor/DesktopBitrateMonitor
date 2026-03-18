@@ -52,8 +52,45 @@
     "appSettings": "App Settings"
   },
   "dashboard": {
-    "title": "Dashboard",
-    "subtitle": "Monitor your stream bitrate and performance in real-time."
+    "header": "Dashboard",
+    "description": "Monitor your stream bitrate and performance in real-time.",
+    "feedChart": {
+      "header": "Bitrate Live Feed Chart",
+      "bitrateToolTip": "Current Bitrate",
+      "speedToolTip": "Current Speed",
+      "description": "Real-time bitrate feed from your server.",
+      "noData": "Waiting for data..."
+    },
+    "connectionStates": {
+      "header": "Connection States",
+      "label": "{{label}}: {{meta}}",
+      "serverTileLabel": "Server Connection",
+      "softwareTileLabel": "Streaming Software",
+      "states": {
+        "connected": "Connected",
+        "connecting": "Connecting",
+        "asynchronous": "Asynchronous",
+        "disconnected": "Disconnected",
+        "unknown": "Unknown"
+      },
+      "serverNames": {
+        "openIrl": "OpenIRL",
+        "srtLiveServer": "Srt Live Server"
+      },
+      "softwareNames": {
+        "obsStudio": "OBS Studio",
+        "streamlabsObs": "Streamlabs OBS",
+        "meldStudio": "MELD Studio"
+      }
+    },
+    "activePlatform": {
+      "header": "Active Platform",
+      "description": "The currently active streaming platform",
+      "noData": "No broadcaster connected for the selected platform"
+    },
+    "logs": {
+      "header": "Recent Logs"
+    }
   },
   "platforms": {
     "panels": {
