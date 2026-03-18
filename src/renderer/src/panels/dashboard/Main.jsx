@@ -19,33 +19,33 @@ import ReactGridLayout, {
 } from 'react-grid-layout';
 
 const breakpoints = { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 };
-const colsConfig = { lg: 12, md: 10, sm: 8, xs: 6, xxs: 4 };
+const colsConfig = { lg: 16, md: 10, sm: 8, xs: 6, xxs: 6 };
 
 const createInitialLayouts = () => ({
   lg: [
-    { i: 'feedChart', x: 0, y: 0, w: 6, h: 12, minW: 4, minH: 8 },
-    { i: 'connectionStates', x: 6, y: 0, w: 3, h: 6, minW: 3, minH: 4 },
-    { i: 'activePlatform', x: 9, y: 0, w: 3, h: 4, minW: 3, minH: 3 }
+    { i: 'feedChart', x: 0, y: 0, w: 9, h: 12, minW: 9, minH: 12 },
+    { i: 'connectionStates', x: 9, y: 0, w: 3, h: 8, minW: 3, minH: 8 },
+    { i: 'activePlatform', x: 12, y: 0, w: 3, h: 5, minW: 3, minH: 5 }
   ],
   md: [
-    { i: 'feedChart', x: 0, y: 0, w: 6, h: 12, minW: 4, minH: 8 },
-    { i: 'connectionStates', x: 6, y: 0, w: 4, h: 6, minW: 3, minH: 4 },
-    { i: 'activePlatform', x: 0, y: 12, w: 10, h: 4, minW: 3, minH: 3 }
+    { i: 'feedChart', x: 0, y: 0, w: 9, h: 12, minW: 9, minH: 12 },
+    { i: 'connectionStates', x: 9, y: 0, w: 3, h: 8, minW: 3, minH: 8 },
+    { i: 'activePlatform', x: 12, y: 0, w: 3, h: 5, minW: 3, minH: 5 }
   ],
   sm: [
-    { i: 'feedChart', x: 0, y: 0, w: 8, h: 12, minW: 4, minH: 8 },
-    { i: 'connectionStates', x: 0, y: 12, w: 8, h: 6, minW: 3, minH: 4 },
-    { i: 'activePlatform', x: 0, y: 18, w: 8, h: 4, minW: 3, minH: 3 }
+    { i: 'feedChart', x: 0, y: 0, w: 9, h: 12, minW: 9, minH: 12 },
+    { i: 'connectionStates', x: 0, y: 12, w: 3, h: 8, minW: 3, minH: 8 },
+    { i: 'activePlatform', x: 0, y: 18, w: 3, h: 5, minW: 3, minH: 5 }
   ],
   xs: [
-    { i: 'feedChart', x: 0, y: 0, w: 6, h: 12, minW: 4, minH: 8 },
-    { i: 'connectionStates', x: 0, y: 12, w: 6, h: 6, minW: 3, minH: 4 },
-    { i: 'activePlatform', x: 0, y: 18, w: 6, h: 4, minW: 3, minH: 3 }
+    { i: 'feedChart', x: 0, y: 0, w: 9, h: 12, minW: 9, minH: 12 },
+    { i: 'connectionStates', x: 0, y: 12, w: 3, h: 8, minW: 3, minH: 8 },
+    { i: 'activePlatform', x: 0, y: 20, w: 3, h: 5, minW: 3, minH: 5 }
   ],
   xxs: [
-    { i: 'feedChart', x: 0, y: 0, w: 4, h: 12, minW: 3, minH: 8 },
-    { i: 'connectionStates', x: 0, y: 12, w: 4, h: 6, minW: 3, minH: 4 },
-    { i: 'activePlatform', x: 0, y: 18, w: 4, h: 4, minW: 3, minH: 3 }
+    { i: 'feedChart', x: 0, y: 0, w: 9, h: 12, minW: 9, minH: 12 },
+    { i: 'connectionStates', x: 0, y: 12, w: 3, h: 8, minW: 3, minH: 8 },
+    { i: 'activePlatform', x: 0, y: 18, w: 3, h: 5, minW: 3, minH: 5 }
   ]
 });
 
@@ -69,25 +69,36 @@ const Main = () => {
     breakpoints,
     cols: colsConfig,
     layouts,
-    compactor,
-    onLayoutChange: (nextLayout, nextLayouts) => setLayouts(nextLayouts)
+    compactor
   });
 
   useEffect(() => {
-    setActivePlatform(appConfig?.activePlatform);
+    if (!appConfig) return;
+
+    setActivePlatform(appConfig.activePlatform);
     setKickBroadcaster(kickAccountsConfig?.broadcaster?.display_name);
     setTwitchBroadcaster(twitchAccountsConfig?.broadcaster?.display_name);
-    if (appConfig?.activePlatform === 'kick') {
+
+    if (appConfig.activePlatform === 'kick') {
       setBroadcasterConnected(kickAccountsConfig?.broadcaster?.login !== '');
     }
 
-    if (appConfig?.activePlatform === 'twitch') {
+    if (appConfig.activePlatform === 'twitch') {
       setBroadcasterConnected(twitchAccountsConfig?.broadcaster?.login !== '');
     }
-  }, [kickAccountsConfig, twitchAccountsConfig, appConfig.activePlatform]);
+
+    const storedLayouts = appConfig.layout?.dashboardLayout;
+    if (storedLayouts && !Array.isArray(storedLayouts)) {
+      setLayouts((prev) => ({ ...prev, ...storedLayouts }));
+    }
+  }, [appConfig, kickAccountsConfig, twitchAccountsConfig]);
 
   const handleLayoutChange = (nextLayout) => {
-    setLayouts((prev) => ({ ...prev, [breakpoint]: nextLayout }));
+    setLayouts((prev) => {
+      const nextLayouts = { ...prev, [breakpoint]: nextLayout };
+      window.storeApi.set('app-config', 'layout.dashboardLayout', nextLayouts);
+      return nextLayouts;
+    });
   };
 
   return (
@@ -128,7 +139,7 @@ const Main = () => {
             <ReactGridLayout
               width={width}
               layout={layout}
-              gridConfig={{ cols, rowHeight: 30, margin: [16, 16] }}
+              gridConfig={{ cols, rowHeight: 24, margin: [16, 16] }}
               dragConfig={{ handle: '.draggable-handle' }}
               compactor={compactor}
               onLayoutChange={handleLayoutChange}

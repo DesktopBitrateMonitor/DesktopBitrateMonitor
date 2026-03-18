@@ -33,8 +33,14 @@ const FeedChart = () => {
     return { chartData: mapped, durationSec: duration };
   }, [history, startTs]);
 
-  const useMinutes = durationSec >= 60;
-  const timeScaleFactor = useMinutes ? 1 / 60 : 1;
+  const formatStopwatch = (seconds) => {
+    const total = Math.max(seconds, 0);
+    const h = Math.floor(total / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    const s = Math.floor(total % 60);
+    const two = (n) => n.toString().padStart(2, '0');
+    return h > 0 ? `${two(h)}:${two(m)}:${two(s)}` : `${two(m)}:${two(s)}`;
+  };
 
   return (
     <div>
@@ -60,7 +66,7 @@ const FeedChart = () => {
       <Box>
         {chartData.length ? (
           <LineChart
-            height={260}
+            height={300}
             skipAnimation
             series={[
               {
@@ -73,11 +79,10 @@ const FeedChart = () => {
             ]}
             xAxis={[
               {
-                  data: chartData.map((p) => p.x * timeScaleFactor),
+                  data: chartData.map((p) => p.x),
                 scaleType: 'linear',
-                  valueFormatter: (v) =>
-                    useMinutes ? `${Math.max(v, 0).toFixed(1)}m` : `${Math.max(v, 0).toFixed(0)}s`,
-                  label: useMinutes ? 'Time (minutes)' : 'Time (seconds)'
+                  valueFormatter: (v) => formatStopwatch(v),
+                  label: 'Elapsed time'
               }
             ]}
             yAxis={[
