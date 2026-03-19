@@ -54,7 +54,7 @@ export const injectDefaults = () => {
       onQuit: 'quit',
       activePlatform: 'twitch',
       autoCheckForUpdates: true,
-      autoInstallUpdates: true,
+      autoInstallUpdates: false,
       lastUpdateCheck: null,
       layout: {}
     }
@@ -168,7 +168,7 @@ export const injectDefaults = () => {
       currentType: 'srt-live-server',
       openirl: {
         name: 'OpenIRL',
-        statsUrl: 'http://xxx.xxx.xxx.xxx:8080/stats/play/live/test?legacy=1',
+        statsUrl: 'http://xxx.xxx.xxx.xxx:8080/stats/play/live/key_xxxxxxx?legacy=1',
         publisher: 'live'
       },
       'srt-live-server': {

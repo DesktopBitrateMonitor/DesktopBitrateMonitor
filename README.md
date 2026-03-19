@@ -1,34 +1,12 @@
-# desktop-bitrate-monitor_v2
+<div align="center">
+  <h1>
+    DESKTOP <span color="teal">BITRATE</span> MONITOR
+  </h1>
+  <h2>
+    A Desktop app to listen for SRT ingest server stats and change scenes in your broadcasting software.
+  </h2>
+</div>
 
-An Electron application with React
-
-## Recommended IDE Setup
-
-- [VSCode](https://code.visualstudio.com/) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
-
-## Project Setup
-
-### Install
-
-```bash
-$ npm install
-```
-
-### Development
-
-```bash
-$ npm run dev
-```
-
-### Build
-
-```bash
-# For windows
-$ npm run build:win
-
-# For macOS
-$ npm run build:mac
-
-# For Linux
-$ npm run build:linux
-```
+### Why Desktop-Bitrate-Monitor
+* User friendly interface
+* Multi platform support (Twitch, Kick) 
