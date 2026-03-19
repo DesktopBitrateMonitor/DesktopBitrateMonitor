@@ -58,6 +58,9 @@
       "header": "Bitrate Live Feed Chart",
       "bitrateToolTip": "Aktuelle Bitrate",
       "speedToolTip": "Aktuelle Geschwindigkeit",
+      "uptimeToolTip": "Stream Uptime: Nur seit dem Start des aktuellen Feeds",
+      "totalUptimeToolTip": "Gesamt-Uptime: Summe aller Feed-Uptimes seit der ersten erkannten Verbindung seit dem Start der App",
+
       "description": "Echtzeit-Bitrate-Feed von deinem Server.",
       "noData": "Warten auf Daten..."
     },
@@ -75,7 +78,8 @@
       },
       "serverNames": {
         "openIrl": "OpenIRL",
-        "srtLiveServer": "Srt Live Server"
+        "srtLiveServer": "Srt Live Server",
+        "belabox": "Belabox"
       },
       "softwareNames": {
         "obsStudio": "OBS Studio",
@@ -291,6 +295,8 @@
       }
     },
     "messages": {
+      "header": "Chat Nachrichten",
+      "description": "Bearbeite die Chat Nachrichten für die verschiedenen Aktionen der Anwendung.",
       "searchBox": {
         "label": "Nachricht suchen",
         "placeholder": "Titel oder Text"
@@ -689,6 +695,17 @@
       "warning": "Warnung",
       "error": "Fehler",
       "success": "Erfolg"
+    },
+    "export":{
+      "header":"Speicherort wählen",
+      "cancelledMessage":"Export abgebrochen",
+      "errorMessage":"Fehler beim Exportieren der Protokolle: {{error}}",
+      "successMessage":"Protokolle erfolgreich exportiert nach: {{path}}",
+      "filter"  :{
+        "txt":"Textdateien (*.txt)",
+        "csv":"CSV-Dateien (*.csv)"
+      }
+
     }
   },
   "appSettings": {

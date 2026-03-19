@@ -135,12 +135,14 @@ const UpdateCard = ({ open = true, onClose }) => {
         onClose={onClose}
         fullWidth
         maxWidth="md"
-        PaperProps={{
-          sx: (theme) => ({
-            borderRadius: 3,
-            border: `1px solid ${alpha(theme.palette.divider, 0.45)}`,
-            overflow: 'hidden'
-          })
+        slotProps={{
+          paper: {
+            sx: (theme) => ({
+              borderRadius: 3,
+              border: `1px solid ${alpha(theme.palette.divider, 0.45)}`,
+              overflow: 'hidden'
+            })
+          }
         }}
       >
         <DialogTitle sx={{ px: 3, pt: 2.5, pb: 1.5 }}>
@@ -208,11 +210,13 @@ const UpdateCard = ({ open = true, onClose }) => {
       <Dialog
         open={open}
         onClose={onClose}
-        PaperProps={{
-          sx: (theme) => ({
-            borderRadius: 3,
-            border: `1px solid ${alpha(theme.palette.divider, 0.45)}`
-          })
+        slotProps={{
+          paper: {
+            sx: (theme) => ({
+              borderRadius: 3,
+              border: `1px solid ${alpha(theme.palette.divider, 0.45)}`
+            })
+          }
         }}
       >
         <DialogTitle sx={{ px: 3, pt: 2.5, pb: 1.5 }}>
@@ -232,11 +236,13 @@ const UpdateCard = ({ open = true, onClose }) => {
       <Dialog
         open={open}
         onClose={onClose}
-        PaperProps={{
-          sx: (theme) => ({
-            borderRadius: 3,
-            border: `1px solid ${alpha(theme.palette.divider, 0.45)}`
-          })
+        slotProps={{
+          paper: {
+            sx: (theme) => ({
+              borderRadius: 3,
+              border: `1px solid ${alpha(theme.palette.divider, 0.45)}`
+            })
+          }
         }}
       >
         <DialogTitle sx={{ px: 3, pt: 2.5, pb: 1.5 }}>Downloading update...</DialogTitle>
@@ -273,11 +279,13 @@ const UpdateCard = ({ open = true, onClose }) => {
     <Dialog
       open={open}
       onClose={onClose}
-      PaperProps={{
-        sx: (theme) => ({
-          borderRadius: 3,
-          border: `1px solid ${alpha(theme.palette.divider, 0.45)}`
-        })
+      slotProps={{
+        paper: {
+          sx: (theme) => ({
+            borderRadius: 3,
+            border: `1px solid ${alpha(theme.palette.divider, 0.45)}`
+          })
+        }
       }}
     >
       <DialogTitle sx={{ px: 3, pt: 2.5, pb: 1.5 }}>

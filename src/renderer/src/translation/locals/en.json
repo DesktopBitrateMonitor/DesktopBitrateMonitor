@@ -58,6 +58,8 @@
       "header": "Bitrate Live Feed Chart",
       "bitrateToolTip": "Current Bitrate",
       "speedToolTip": "Current Speed",
+      "uptimeToolTip": "Stream Uptime: Only since the current feed has been started",
+      "totalUptimeToolTip": "Total Uptime: sum of all feed uptimes since first connection detected since app start",
       "description": "Real-time bitrate feed from your server.",
       "noData": "Waiting for data..."
     },
@@ -75,7 +77,8 @@
       },
       "serverNames": {
         "openIrl": "OpenIRL",
-        "srtLiveServer": "Srt Live Server"
+        "srtLiveServer": "Srt Live Server",
+        "belabox": "Belabox"
       },
       "softwareNames": {
         "obsStudio": "OBS Studio",
@@ -291,6 +294,8 @@
       }
     },
     "messages": {
+      "header": "Chat Messages",
+      "description": "Configure messages that are posted in the chat when actions are triggered.",
       "searchBox": {
         "label": "Search messages",
         "placeholder": "Title or text"
@@ -661,25 +666,27 @@
     }
   },
   "logging": {
-    "header": "Logging Settings",
-    "description": "Set the logging paths and states",
-    "sessionCardHeader": "Session Logging Settings",
-    "sessionCardDescription": "Set the logging settings for session logs",
-    "actionsCardHeader": "Actions Logging Settings",
-    "actionsCardDescription": "Set the logging settings for actions logs",
-    "enabled": "Logging enabled",
-    "disabled": "Logging disabled",
-    "sessionPathLabel": "Session Logs Path",
-    "actionsPathLabel": "Actions Logs Path",
-    "fileSizeLabel": "Session Logs File Size (MB)",
-    "saveTooltip": "Click to save changes",
-    "directoryDialogTitle": "Select directory for {{label}}",
-    "validation": {
-      "pathEmpty": "Path cannot be empty.",
-      "pathNoSpaces": "Path must not contain spaces.",
-      "fileSizeInteger": "File size must be an integer",
-      "fileSizeRange": "File size must be between 0 and 10.",
-      "fileSizeEmpty": "File size cannot be empty."
+    "settings": {
+      "header": "Logging Settings",
+      "description": "Set the logging paths and states",
+      "sessionCardHeader": "Session Logging Settings",
+      "sessionCardDescription": "Set the logging settings for session logs",
+      "actionsCardHeader": "Actions Logging Settings",
+      "actionsCardDescription": "Set the logging settings for actions logs",
+      "enabled": "Logging enabled",
+      "disabled": "Logging disabled",
+      "sessionPathLabel": "Session Logs Path",
+      "actionsPathLabel": "Actions Logs Path",
+      "fileSizeLabel": "Session Logs File Size (MB)",
+      "saveTooltip": "Click to save changes",
+      "directoryDialogTitle": "Select directory for {{label}}",
+      "validation": {
+        "pathEmpty": "Path cannot be empty.",
+        "pathNoSpaces": "Path must not contain spaces.",
+        "fileSizeInteger": "File size must be an integer",
+        "fileSizeRange": "File size must be between 0 and 10.",
+        "fileSizeEmpty": "File size cannot be empty."
+      }
     },
     "filtering": {
       "all": "All",
@@ -688,6 +695,16 @@
       "warning": "Warning",
       "error": "Error",
       "success": "Success"
+    },
+    "export": {
+      "header": "Choose Export Location",
+      "cancelledMessage": "Export cancelled",
+      "errorMessage": "Error exporting logs: {{error}}",
+      "successMessage": "Logs successfully exported to: {{path}}",
+      "filter": {
+        "txt": "Text files (*.txt)",
+        "csv": "CSV files (*.csv)"
+      }
     }
   },
   "appSettings": {

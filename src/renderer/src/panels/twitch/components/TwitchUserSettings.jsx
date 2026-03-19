@@ -18,6 +18,7 @@ import LayoutToggle from '../../../components/functional/LayoutToggle';
 import InputEndAdornment from '../../../components/feedback/InputEndAdornment';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { useTranslation } from 'react-i18next';
+import TwitchIcon from '../../../assets/icons/TwitchIcon';
 
 const TwitchUserSettings = () => {
   const { t } = useTranslation();
@@ -184,9 +185,12 @@ const TwitchUserSettings = () => {
         }}
       >
         <Box>
-          <Typography variant="h5" sx={{ mb: 0.5 }}>
-            {t('platforms.twitch.users.header')}
-          </Typography>
+          <Stack direction={'row'} alignItems={'center'} gap={1}>
+            <TwitchIcon />
+            <Typography variant="h5" sx={{ mb: 0.5 }}>
+              {t('platforms.twitch.users.header')}
+            </Typography>
+          </Stack>
           <Typography variant="body2" color="text.secondary" maxWidth={600}>
             {t('platforms.twitch.users.description')}
           </Typography>

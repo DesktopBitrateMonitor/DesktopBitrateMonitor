@@ -85,11 +85,6 @@ function App() {
               </Route>
             </Route>
 
-            <Route
-              path="twitchsettings/*"
-              element={<Navigate to="/dashboard/accountssettings/twitch" replace />}
-            />
-
             <Route path="serversettings" element={<ServerSettings />} />
 
             <Route path="appsettings" element={<AppSettings />}>

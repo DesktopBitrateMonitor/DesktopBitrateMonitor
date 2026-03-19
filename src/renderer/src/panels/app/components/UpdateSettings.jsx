@@ -4,7 +4,6 @@ import { useAlert } from '../../../contexts/AlertContext';
 import { Box, Button, Stack, Switch, Typography } from '@mui/material';
 import CollapsibleCard from '../../../components/functional/CollapsibleCard';
 import SyncIcon from '@mui/icons-material/Sync';
-import UpdateCard from '../../../components/feedback/UpdateCard';
 import { useTranslation } from 'react-i18next';
 import { useUpdate } from '../../../contexts/UpdateContext';
 import { exampleData } from '../../../components/feedback/update-example';

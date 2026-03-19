@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import path from 'path';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -22,8 +23,12 @@ import LanOutlinedIcon from '@mui/icons-material/LanOutlined';
 import ComputerOutlinedIcon from '@mui/icons-material/ComputerOutlined';
 import ArrowDownwardOutlinedIcon from '@mui/icons-material/ArrowDownwardOutlined';
 import ArrowUpwardOutlinedIcon from '@mui/icons-material/ArrowUpwardOutlined';
+import DownloadIcon from '@mui/icons-material/Download';
 import { useLogger } from '../../contexts/LoggerContext';
 import LogMessage from './components/LogMessage';
+import { useLoggingConfigStore } from '../../contexts/DataContext';
+import { useAlert } from '../../contexts/AlertContext';
+import { useTranslation } from 'react-i18next';
 
 const menuButtonSx = {
   color: (theme) => theme.palette.text.secondary,
@@ -83,13 +88,21 @@ const MenuControl = ({ icon, label, value, options, onChange, ariaLabel }) => {
 };
 
 const LoggingFeed = () => {
+  const { t } = useTranslation();
   const { logs } = useLogger();
+  const { loggingConfig } = useLoggingConfigStore();
+  const { showAlert } = useAlert();
   const navigate = useNavigate();
 
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
   const [sourceFilter, setSourceFilter] = useState('all');
   const [sortDirection, setSortDirection] = useState('desc');
+  const [logPath, setLogPath] = useState();
+
+  useEffect(() => {
+    setLogPath(loggingConfig?.actionsLogsPath);
+  }, [loggingConfig]);
 
   const availableTypes = useMemo(() => {
     const uniqueTypes = new Set(logs.map((log) => log.type || 'log'));
@@ -101,11 +114,12 @@ const LoggingFeed = () => {
       availableTypes.map((type) => ({
         value: type,
         label: type === 'all' ? 'All types' : type,
-        icon: type === 'all' ? (
-          <FilterListOutlinedIcon fontSize="small" />
-        ) : (
-          <LabelOutlinedIcon fontSize="small" />
-        )
+        icon:
+          type === 'all' ? (
+            <FilterListOutlinedIcon fontSize="small" />
+          ) : (
+            <LabelOutlinedIcon fontSize="small" />
+          )
       })),
     [availableTypes]
   );
@@ -121,7 +135,11 @@ const LoggingFeed = () => {
 
   const sortOptions = useMemo(
     () => [
-      { value: 'desc', label: 'Newest first', icon: <ArrowDownwardOutlinedIcon fontSize="small" /> },
+      {
+        value: 'desc',
+        label: 'Newest first',
+        icon: <ArrowDownwardOutlinedIcon fontSize="small" />
+      },
       { value: 'asc', label: 'Oldest first', icon: <ArrowUpwardOutlinedIcon fontSize="small" /> }
     ],
     []
@@ -153,6 +171,31 @@ const LoggingFeed = () => {
       });
   }, [logs, search, typeFilter, sourceFilter, sortDirection]);
 
+  const openSaveFileDialog = async () => {
+    const options = {
+      title: t('logging.export.header'),
+      defaultPath: logPath + '\\logs_' + new Date().toISOString().replace(/[:.]/g, '-') + '.txt',
+      filters: [
+        { name: t('logging.export.filter.txt'), extensions: ['txt'] },
+        { name: t('logging.export.filter.csv'), extensions: ['csv'] }
+      ]
+    };
+    const result = await window.loggerApi.saveFileDialog(options);
+
+    const parsedLogs = logs.map((log) => ({
+      date: new Date(log.timestamp).toLocaleDateString(),
+      time: new Date(log.timestamp).toLocaleTimeString(),
+      message: log.message
+    }));
+
+    console.log(parsedLogs);
+
+    if (result.canceled) {
+      showAlert({ message: t('logging.export.cancelledMessage'), severity: 'info' });
+      return;
+    }
+  };
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, height: '100%', p: 1 }}>
       <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
@@ -172,7 +215,11 @@ const LoggingFeed = () => {
           fullWidth
         />
 
-        <Stack direction="row" spacing={1} alignItems="center" >
+        <IconButton onClick={openSaveFileDialog}>
+          <DownloadIcon fontSize="small" />
+        </IconButton>
+
+        <Stack direction="row" spacing={1} alignItems="center">
           <MenuControl
             icon={<FilterListOutlinedIcon fontSize="small" />}
             label="Filter by type"

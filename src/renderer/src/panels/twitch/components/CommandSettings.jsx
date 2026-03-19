@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { act, useCallback, useEffect, useMemo, useState } from 'react';
 import { Box, Stack, TextField, Typography } from '@mui/material';
 import { useCommandsConfigStore } from '../../../contexts/DataContext';
 import LayoutToggle from '../../../components/functional/LayoutToggle';
@@ -8,6 +8,9 @@ import { sortTwitchCommands } from '../../../../../scripts/lib/shared-functions'
 import CommandPanel from './panels/CommandPanel';
 import { useAlert } from '../../../contexts/AlertContext';
 import { useTranslation } from 'react-i18next';
+import TwitchIcon from '../../../assets/icons/TwitchIcon';
+import KickIcon from '../../../assets/icons/KickIcon';
+import { useLocation } from 'react-router-dom';
 
 const CommandSettings = () => {
   const ALLOWED_SORTS = [
@@ -21,6 +24,13 @@ const CommandSettings = () => {
   ];
 
   const { commandsConfig, updateCommandsConfig } = useCommandsConfigStore();
+  const location = useLocation();
+
+  // Determine platform from route to select appropriate icon
+  const platformRout = location.pathname.split('/')[3] || '';
+  let PlatformIcon;
+  if (platformRout === 'twitch') PlatformIcon = TwitchIcon;
+  if (platformRout === 'kick') PlatformIcon = KickIcon;
 
   const { showAlert } = useAlert();
 
@@ -254,9 +264,12 @@ const CommandSettings = () => {
         }}
       >
         <Box>
-          <Typography variant="h5" sx={{ mb: 0.5 }}>
-            {t('platforms.commands.header')}
-          </Typography>
+          <Stack direction={'row'} alignItems={'center'} gap={1}>
+            {<PlatformIcon />}
+            <Typography variant="h5" sx={{ mb: 0.5 }}>
+              {t('platforms.commands.header')}
+            </Typography>
+          </Stack>
           <Typography variant="body2" color="text.secondary">
             {t('platforms.commands.description')}
           </Typography>
