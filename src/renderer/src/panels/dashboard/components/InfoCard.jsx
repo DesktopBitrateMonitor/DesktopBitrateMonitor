@@ -3,7 +3,7 @@ import { alpha, useTheme } from '@mui/material/styles';
 import { Box, Card, Stack, Typography } from '@mui/material';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 
-const InfoCard = ({ title, content, hint = null, sx, ...props }) => {
+const InfoCard = ({ title, content, hint = null, showHandles = false, sx, ...props }) => {
   const theme = useTheme();
   const border = theme.palette.divider;
   const accent = alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.18 : 0.12);
@@ -38,13 +38,15 @@ const InfoCard = ({ title, content, hint = null, sx, ...props }) => {
 
       <Stack spacing={2} sx={{ position: 'relative', p: 2.5 }}>
         <Stack direction="row" spacing={1.5} alignItems="center">
-          <DragIndicatorIcon
-            sx={{
-              color: theme.palette.primary.main,
-              opacity: 0.9,
-              cursor: 'grab'
-            }}
-          />
+          {showHandles && (
+            <DragIndicatorIcon
+              sx={{
+                color: theme.palette.primary.main,
+                opacity: 0.9,
+                cursor: 'grab'
+              }}
+            />
+          )}
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
             <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
               {title}

@@ -68,7 +68,11 @@ const MenuControl = ({ icon, label, value, options, onChange, ariaLabel }) => {
         open={open}
         onClose={handleClose}
         keepMounted
-        PaperProps={{ onMouseLeave: handleClose }}
+        slotProps={{
+          paper: {
+            onMouseLeave: handleClose
+          }
+        }}
       >
         <ListSubheader>{label}</ListSubheader>
         <Divider variant="middle" sx={{ mb: 1 }} />

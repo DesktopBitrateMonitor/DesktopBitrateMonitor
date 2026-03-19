@@ -1,4 +1,13 @@
-import { Box, Typography } from '@mui/material';
+import {
+  Box,
+  Divider,
+  ListItemIcon,
+  ListItemText,
+  ListSubheader,
+  Menu,
+  MenuItem,
+  Typography
+} from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import {
   useAppConfigStore,
@@ -11,6 +20,9 @@ import InfoCard from './components/InfoCard';
 import TwitchIcon from '../../assets/icons/TwitchIcon';
 import KickIcon from '../../assets/icons/KickIcon';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import LockIcon from '@mui/icons-material/Lock';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
+import ViewComfyIcon from '@mui/icons-material/ViewComfy';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import '../../assets/custom-grid-styles.css';
@@ -32,7 +44,7 @@ const createInitialLayouts = () => ({
 
 const Main = () => {
   const { t } = useTranslation();
-  const { appConfig } = useAppConfigStore();
+  const { appConfig, updateAppConfig } = useAppConfigStore();
   const { kickAccountsConfig } = useKickAccountsConfig();
   const { twitchAccountsConfig } = useTwitchAccountsConfig();
   const navigate = useNavigate();
@@ -46,6 +58,10 @@ const Main = () => {
   const [kickBroadcaster, setKickBroadcaster] = React.useState('');
   const [twitchBroadcaster, setTwitchBroadcaster] = React.useState('');
   const [broadcasterConnected, setBroadcasterConnected] = React.useState(false);
+  const [contextMenuPosition, setContextMenuPosition] = useState(null);
+  const [elementsMenuAnchor, setElementsMenuAnchor] = useState(null);
+  const [lockLayoutState, setLockLayoutState] = useState(true);
+  const [showHandles, setShowHandles] = useState(false);
 
   const { layout, breakpoint, cols } = useResponsiveLayout({
     width,
@@ -79,13 +95,112 @@ const Main = () => {
   const handleLayoutChange = (nextLayout) => {
     setLayouts((prev) => {
       const nextLayouts = { ...prev, [breakpoint]: nextLayout };
+      // TODO: Only update coords, don't update any static or moved properties
       window.storeApi.set('app-config', 'layout.dashboardLayout', nextLayouts);
       return nextLayouts;
     });
+    updateAppConfig((prev) => ({
+      ...prev,
+      layout: { ...prev.layout, dashboardLayout: nextLayout }
+    }));
+  };
+
+  const handleOpenContextMenu = (event) => {
+    event.preventDefault();
+    setContextMenuPosition({ mouseX: event.clientX + 2, mouseY: event.clientY - 6 });
+    setElementsMenuAnchor(null);
+  };
+
+  const handleCloseContextMenu = () => {
+    setContextMenuPosition(null);
+    setElementsMenuAnchor(null);
+  };
+
+  const handleOpenElementsMenu = (event) => setElementsMenuAnchor(event.currentTarget);
+  const handleCloseElementsMenu = () => {
+    setContextMenuPosition(null);
+    setElementsMenuAnchor(null);
+  };
+
+  const toggleLockLayout = () => {
+    const nextLockState = !lockLayoutState;
+
+    // TODO: DO NOT update anything in the store only set the props in the current layout.
+    // So this secures, the real layout data only is saved on the layout changed function, which is called after layout changes
+
+    setLayouts((prev) => {
+      const nextLayouts = Object.fromEntries(
+        Object.entries(prev || {}).map(([key, items]) => [
+          key,
+          items.map((item) => ({ ...item, static: nextLockState }))
+        ])
+      );
+      return nextLayouts;
+    });
+
+    if(!nextLockState) {
+      // TODO: Update the layout here in the appConfig, so after changing the pages
+      // the layout loads in newest state!
+    }
+
+    setShowHandles(!nextLockState);
+    setLockLayoutState(nextLockState);
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, flex: 1, minHeight: 0 }}>
+    <Box
+      sx={{ display: 'flex', flexDirection: 'column', gap: 3, flex: 1, minHeight: 0 }}
+      onContextMenu={handleOpenContextMenu}
+    >
+      <Menu
+        open={Boolean(contextMenuPosition)}
+        onClose={handleCloseContextMenu}
+        anchorReference="anchorPosition"
+        anchorPosition={
+          contextMenuPosition
+            ? { top: contextMenuPosition.mouseY, left: contextMenuPosition.mouseX }
+            : undefined
+        }
+      >
+        <ListSubheader>{t('dashboard.contextMenu.header')}</ListSubheader>
+        <Divider variant="middle" sx={{ mb: 1 }} />
+        <MenuItem
+          aria-haspopup="true"
+          onMouseEnter={handleOpenElementsMenu}
+          onClick={handleOpenElementsMenu}
+        >
+          <ListItemIcon>
+            <ViewComfyIcon />
+          </ListItemIcon>
+          <ListItemText>
+            {t('dashboard.contextMenu.toggleLayoutAdjustment', {
+              defaultValue: 'Elements'
+            })}
+          </ListItemText>
+        </MenuItem>
+      </Menu>
+
+      <Menu
+        anchorEl={elementsMenuAnchor}
+        open={Boolean(elementsMenuAnchor)}
+        onClose={handleCloseElementsMenu}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+        slotProps={{
+          list: {
+            onMouseLeave: handleCloseElementsMenu
+          }
+        }}
+      >
+        <MenuItem onClick={() => toggleLockLayout()}>
+          <ListItemIcon>{lockLayoutState ? <LockOpenIcon /> : <LockIcon />}</ListItemIcon>
+          <ListItemText>
+            {lockLayoutState
+              ? t('dashboard.contextMenu.unlockLayout')
+              : t('dashboard.contextMenu.lockLayout')}
+          </ListItemText>
+        </MenuItem>
+      </Menu>
       <Box
         sx={{
           display: 'flex',
@@ -131,6 +246,7 @@ const Main = () => {
                 <InfoCard
                   className={'draggable-handle'}
                   title={t('dashboard.feedChart.header')}
+                  showHandles={showHandles}
                   sx={{ height: '100%' }}
                   content={<FeedChart />}
                 />
@@ -139,6 +255,7 @@ const Main = () => {
                 <InfoCard
                   className={'draggable-handle'}
                   title={t('dashboard.connectionStates.header')}
+                  showHandles={showHandles}
                   sx={{ height: '100%' }}
                   content={<ConnectionStates />}
                 />
@@ -148,6 +265,7 @@ const Main = () => {
                 <InfoCard
                   className={'draggable-handle'}
                   title={t('dashboard.activePlatform.header')}
+                  showHandles={showHandles}
                   sx={{ height: '100%' }}
                   content={
                     <Box display="flex" flexDirection={'column'} alignItems="center" gap={1}>
@@ -176,6 +294,7 @@ const Main = () => {
                 <InfoCard
                   className={'draggable-handle'}
                   title={t('dashboard.logs.header')}
+                  showHandles={showHandles}
                   sx={{ height: '100%' }}
                   content={
                     <Box

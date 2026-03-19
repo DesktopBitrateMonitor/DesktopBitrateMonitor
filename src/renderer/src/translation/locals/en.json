@@ -54,6 +54,12 @@
   "dashboard": {
     "header": "Dashboard",
     "description": "Monitor your stream bitrate and performance in real-time.",
+    "contextMenu": {
+      "header": "Context Menu",
+      "toggleLayoutAdjustment": "Layout Adjustment",
+      "unlockLayout": "Unlock Layout",
+      "lockLayout": "Lock Layout"
+    },
     "feedChart": {
       "header": "Bitrate Live Feed Chart",
       "bitrateToolTip": "Current Bitrate",

@@ -54,6 +54,12 @@
   "dashboard": {
     "header": "Dashboard",
     "description": "Überwache deine Stream-Bitrate und Leistung in Echtzeit.",
+    "contextMenu": {
+      "header": "Kontextmenü",
+      "toggleLayoutAdjustment": "Layout-Anpassung",
+      "unlockLayout": "Layout entsperren",
+      "lockLayout": "Layout sperren"
+    },
     "feedChart": {
       "header": "Bitrate Live Feed Chart",
       "bitrateToolTip": "Aktuelle Bitrate",
@@ -696,16 +702,15 @@
       "error": "Fehler",
       "success": "Erfolg"
     },
-    "export":{
-      "header":"Speicherort wählen",
-      "cancelledMessage":"Export abgebrochen",
-      "errorMessage":"Fehler beim Exportieren der Protokolle: {{error}}",
-      "successMessage":"Protokolle erfolgreich exportiert nach: {{path}}",
-      "filter"  :{
-        "txt":"Textdateien (*.txt)",
-        "csv":"CSV-Dateien (*.csv)"
+    "export": {
+      "header": "Speicherort wählen",
+      "cancelledMessage": "Export abgebrochen",
+      "errorMessage": "Fehler beim Exportieren der Protokolle: {{error}}",
+      "successMessage": "Protokolle erfolgreich exportiert nach: {{path}}",
+      "filter": {
+        "txt": "Textdateien (*.txt)",
+        "csv": "CSV-Dateien (*.csv)"
       }
-
     }
   },
   "appSettings": {
