@@ -63,7 +63,7 @@ function createWindow(displayIsAvailable = false) {
     height: config.size.height || 700,
     x: displayIsAvailable ? config.position.x : 0,
     y: displayIsAvailable ? config.position.y : 0,
-    minWidth: 1200,
+    minWidth: 900,
     minHeight: 700,
     show: false,
     autoHideMenuBar: true,
@@ -134,7 +134,7 @@ function createWindow(displayIsAvailable = false) {
 }
 
 app.on('second-instance', () => {
-  if (mainWindow?.idDestroyed()) return createWindow();
+  if (mainWindow?.isDestroyed()) return createWindow();
   if (mainWindow.isMinimized()) mainWindow.restore();
   mainWindow?.show();
   mainWindow?.focus();
