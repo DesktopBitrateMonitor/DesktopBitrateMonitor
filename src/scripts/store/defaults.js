@@ -5,6 +5,7 @@ import { modCommands } from './commands/mod-commands';
 import { userCommands } from './commands/user-commands';
 import { buildMessages } from './messages/messages';
 import Store from './store';
+import { defaultLayout } from '../../renderer/src/panels/dashboard/components/layout-default';
 
 const defaultSessionLoggingPath = path.join(
   app.getPath('documents'),
@@ -56,7 +57,9 @@ export const injectDefaults = () => {
       autoCheckForUpdates: true,
       autoInstallUpdates: true,
       lastUpdateCheck: null,
-      layout: {}
+      layout: {
+        dashboardLayout: { ...defaultLayout }
+      }
     }
   });
 

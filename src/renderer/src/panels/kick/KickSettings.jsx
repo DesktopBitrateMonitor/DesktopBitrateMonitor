@@ -10,7 +10,11 @@ import { useTranslation } from 'react-i18next';
 const KickSettings = () => {
   const { t } = useTranslation();
   const TAB_CONFIG = [
-    { value: 'commandsettings', label: t('platforms.panels.commands'), icon: ChatBubbleOutlineIcon },
+    {
+      value: 'commandsettings',
+      label: t('platforms.panels.commands'),
+      icon: ChatBubbleOutlineIcon
+    },
     { value: 'messagesettings', label: t('platforms.panels.messages'), icon: EmojiMessagesIcon },
     { value: 'usersettings', label: t('platforms.panels.users'), icon: AdminPanelSettingsIcon },
     { value: 'accountssettings', label: t('platforms.panels.accounts'), icon: AccountCircleIcon }

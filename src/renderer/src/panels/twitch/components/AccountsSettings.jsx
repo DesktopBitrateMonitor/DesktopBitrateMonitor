@@ -6,6 +6,7 @@ import { useTwitchAccountsConfig } from '../../../contexts/DataContext';
 import { useAlert } from '../../../contexts/AlertContext';
 import AccountPanel from './panels/AccountPanel';
 import { useTranslation } from 'react-i18next';
+import TwitchIcon from '../../../assets/icons/TwitchIcon';
 
 const AccountsSettings = () => {
   const { twitchAccountsConfig, updateTwitchAccountsConfig } = useTwitchAccountsConfig();
@@ -179,9 +180,12 @@ const AccountsSettings = () => {
         }}
       >
         <Box>
-          <Typography variant="h5" sx={{ mb: 0.5 }}>
-            {t('platforms.twitch.accounts.header')}
-          </Typography>
+          <Stack direction={'row'} alignItems={'center'} gap={1}>
+            <TwitchIcon />
+            <Typography variant="h5" sx={{ mb: 0.5 }}>
+              {t('platforms.twitch.accounts.header')}
+            </Typography>
+          </Stack>
           <Typography variant="body2" color="text.secondary">
             {t('platforms.twitch.accounts.description')}
           </Typography>

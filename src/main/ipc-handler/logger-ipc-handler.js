@@ -36,6 +36,16 @@ export async function initializeLoggerIpc(ipcMain) {
     }
   });
 
+  ipcMain.handle('save-file-dialog', (event, options) => {
+    try {
+      const res = dialog.showSaveDialog(options);
+      return res;
+    } catch (error) {
+      Logger.error(`Error in save-file-dialog IPC handler: ${error.message}`);
+      return { success: false, error: error.message };
+    }
+  });
+
   ipcMain.handle('get-log-file-size-mb', (event, fullPath) => {
     // return fileHandler.getFileSizeInMB(fullPath);
   });

@@ -17,6 +17,7 @@ import LayoutToggle from '../../../components/functional/LayoutToggle';
 import InputEndAdornment from '../../../components/feedback/InputEndAdornment';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { useTranslation } from 'react-i18next';
+import KickIcon from '../../../assets/icons/KickIcon';
 
 const KickUserSettings = () => {
   const { t } = useTranslation();
@@ -184,9 +185,12 @@ const KickUserSettings = () => {
         }}
       >
         <Box>
-          <Typography variant="h5" sx={{ mb: 0.5 }}>
-            {t('platforms.kick.users.header')}
-          </Typography>
+          <Stack direction={'row'} alignItems={'center'} gap={1}>
+            <KickIcon />
+            <Typography variant="h5" sx={{ mb: 0.5 }}>
+              {t('platforms.kick.users.header')}
+            </Typography>
+          </Stack>
           <Typography variant="body2" color="text.secondary" maxWidth={600}>
             {t('platforms.kick.users.description')}
           </Typography>
