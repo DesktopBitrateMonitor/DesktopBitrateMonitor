@@ -59,7 +59,17 @@ export function handleChatMessage(eventSub) {
 const commandActions = {
   startStream: async () => {
     const res = await startStream();
+    const config = switcherConfig.get('');
     if (res.success) {
+      if (config.switchToStartSceneOnStreamStart) {
+        const startScene = config.sceneStart;
+        const sceneRes = await setCurrentProgramScene(startScene);
+        if (sceneRes.success) {
+          Logger.log(`Switched to start scene: ${startScene}`);
+        } else {
+          Logger.error(`Failed to switch to start scene ${startScene}: ${sceneRes.error}`);
+        }
+      }
       await twitchMessageService({ action: 'startStream', event: 'success' });
       Logger.log('Stream started successfully.');
     } else {
@@ -349,7 +359,6 @@ const commandActions = {
     });
   },
   bitrate: async () => {
-
     const { stats } = globalInternalStore.get();
 
     await twitchMessageService({

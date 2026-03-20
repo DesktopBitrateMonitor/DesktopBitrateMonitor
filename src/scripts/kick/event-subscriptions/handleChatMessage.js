@@ -24,7 +24,6 @@ export function handleChatMessage(rawMessage) {
   const commandsArray = commandsConfig.get('commands').map((cmd) => ({ ...cmd }));
   const allAliases = commandsArray.map((cmd) => cmd.cmd).flat();
 
-
   // Check if the message comes from the write channel
   // Figure out if Kick has a multi chat feature and if so, how to identify the source channel of the message
   // if (source_broadcaster_user_id && broadcaster_user_id !== source_broadcaster_user_id) return;
@@ -58,7 +57,17 @@ export function handleChatMessage(rawMessage) {
 const commandActions = {
   startStream: async () => {
     const res = await startStream();
+    const config = switcherConfig.get('');
     if (res.success) {
+      if (config.switchToStartSceneOnStreamStart) {
+        const startScene = config.sceneStart;
+        const sceneRes = await setCurrentProgramScene(startScene);
+        if (sceneRes.success) {
+          Logger.log(`Switched to start scene: ${startScene}`);
+        } else {
+          Logger.error(`Failed to switch to start scene ${startScene}: ${sceneRes.error}`);
+        }
+      }
       await kickMessageService({ action: 'startStream', event: 'success' });
       Logger.log('Stream started successfully.');
     } else {

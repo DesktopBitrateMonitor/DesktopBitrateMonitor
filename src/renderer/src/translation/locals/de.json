@@ -58,7 +58,7 @@
       "header": "Kontextmenü",
       "toggleLayoutAdjustment": "Layout-Anpassung",
       "unlockLayout": "Layout entsperren",
-      "lockLayout": "Layout sperren"
+      "lockLayout": "Sperren und Speichern"
     },
     "feedChart": {
       "header": "Bitrate Live Feed Chart",

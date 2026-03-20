@@ -95,7 +95,6 @@ const Main = () => {
   const handleLayoutChange = (nextLayout) => {
     setLayouts((prev) => {
       const nextLayouts = { ...prev, [breakpoint]: nextLayout };
-      // TODO: Only update coords, don't update any static or moved properties
       window.storeApi.set('app-config', 'layout.dashboardLayout', nextLayouts);
       return nextLayouts;
     });
@@ -125,9 +124,6 @@ const Main = () => {
   const toggleLockLayout = () => {
     const nextLockState = !lockLayoutState;
 
-    // TODO: DO NOT update anything in the store only set the props in the current layout.
-    // So this secures, the real layout data only is saved on the layout changed function, which is called after layout changes
-
     setLayouts((prev) => {
       const nextLayouts = Object.fromEntries(
         Object.entries(prev || {}).map(([key, items]) => [
@@ -137,11 +133,6 @@ const Main = () => {
       );
       return nextLayouts;
     });
-
-    if(!nextLockState) {
-      // TODO: Update the layout here in the appConfig, so after changing the pages
-      // the layout loads in newest state!
-    }
 
     setShowHandles(!nextLockState);
     setLockLayoutState(nextLockState);
