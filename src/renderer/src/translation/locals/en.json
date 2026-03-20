@@ -649,6 +649,7 @@
       "description": "Setup the broadcasting software scenes here. The scene names must match exactly with the scenes in your broadcasting software (case insensitive)",
       "error1": "{{scene}} cannot be empty",
       "error2": "{{scene}} cannot be the same as Privacy Scene",
+      "error3": "Privacy Scene has to be unique",
       "liveScene": "Live Scene",
       "offlineScene": "Offline Scene",
       "lowBitrateScene": "Low-Bitrate Scene",

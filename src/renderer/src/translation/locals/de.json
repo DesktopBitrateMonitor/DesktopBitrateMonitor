@@ -650,6 +650,7 @@
       "description": "Konfiguriere die Szenen der Streaming-Software hier. Die Szenennamen müssen genau mit den Szenen in deiner Broadcasting-Software übereinstimmen (Groß-/Kleinschreibung wird nicht berücksichtigt)",
       "error1": "{{scene}} darf nicht leer sein",
       "error2": "{{scene}} darf nicht dieselbe wie die Privacy-Szene sein",
+      "error3": "Privacy-Szene muss eindeutig sein",
       "liveScene": "Live-Szene",
       "offlineScene": "Offline-Szene",
       "lowBitrateScene": "Low-Bitrate-Szene",

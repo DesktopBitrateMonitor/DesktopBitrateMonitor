@@ -68,6 +68,11 @@ const Scenes = ({ collapsedIds, toggleCollapsed }) => {
           scene: SCENE_KEYS.find((scene) => scene.key === name)?.label || name
         });
       }
+      if(name === 'scenePrivacy' && SCENE_KEYS.find((scene) => scene.key !== 'scenePrivacy' && scenesData[scene.key].toLowerCase() === value.toLowerCase())) {
+        return t('switcher.scenes.error3', {
+          scene: SCENE_KEYS.find((scene) => scene.key === name)?.label || name
+        });
+      }
     }
     return '';
   };
