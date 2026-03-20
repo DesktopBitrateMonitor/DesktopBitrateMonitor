@@ -192,9 +192,6 @@ const LoggingFeed = () => {
       message: log.message
     }));
 
-    console.log(result);
-    console.log(parsedLogs);
-
     if (result.canceled) {
       showAlert({ message: t('logging.export.cancelledMessage'), severity: 'info' });
       return;

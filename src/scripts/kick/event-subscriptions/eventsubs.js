@@ -20,6 +20,8 @@ let pingIntervalMs = ACTIVITY_TIMEOUT_FALLBACK_MS;
 let heartbeatTimeoutMs = HEARTBEAT_TIMEOUT_MS;
 let channelMeta = null;
 
+const isDev = import.meta.env.DEV;
+
 const { kickAccountsConfig } = injectDefaults();
 
 export async function connectToKickEventSub(mainWindow = null) {
@@ -126,6 +128,10 @@ async function processMessage(rawMessage, mainWindow = null) {
   const message = safeJsonParse(rawMessage);
   if (!message) {
     return;
+  }
+  
+  if (!isDev) {
+    console.log('Received Kick message:', message.data);
   }
 
   switch (message.event) {
