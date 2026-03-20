@@ -220,7 +220,7 @@ export const injectDefaults = () => {
       trigger: 400,
       rTrigger: 1200,
       offTrigger: 0,
-      triggerToLive: 3,
+      triggerToLive: 0,
       triggerToLow: 3,
       triggerToOffline: 3,
       sceneLive: 'LIVE',
