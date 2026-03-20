@@ -663,12 +663,30 @@
       "error3": "{{value}} must be lower than Reverse Trigger to live",
       "error4": "{{value}} must be greater than Trigger to low",
       "error5": "{{value}} must be lower than both Trigger to Low and Reverse Trigger to live",
-      "trigger": "Bitrate Trigger to low (kbps)",
-      "rTrigger": "Bitrate Recovery Trigger to live (kbps)",
-      "offlineTrigger": "Offline Trigger to offline (kbps)",
-      "switchToLiveTimeout": "Switch to Live Timeout (s)",
-      "switchToOfflineTimeout": "Switch to Offline Timeout (s)",
-      "switchToLowTimeout": "Switch to Low-Bitrate Timeout (s)"
+      "trigger": {
+        "label": "Bitrate Trigger to Low Scene (kbps)",
+        "hint": "The bitrate threshold in kbps for switching to the low-bitrate scene"
+      },
+      "rTrigger": {
+        "label": "Bitrate Recovery Trigger to Live Scene (kbps)",
+        "hint": "The bitrate threshold in kbps for switching back to the live scene"
+      },
+      "offlineTrigger": {
+        "label": "Bitrate Trigger to Offline Scene (kbps)",
+        "hint": "The bitrate threshold in kbps for switching to the offline scene"
+      },
+      "switchToLiveTimeout": {
+        "label": "Switch to Live Timeout (s)",
+        "hint": "The time in seconds that the bitrate must be above the recovery trigger to switch back to the live scene. 0 forces an instant switch back to the live scene"
+      },
+      "switchToOfflineTimeout": {
+        "label": "Switch to Offline Timeout (s)",
+        "hint": "The time in seconds that the bitrate must be below the offline trigger to switch to the offline scene"
+      },
+      "switchToLowTimeout": {
+        "label": "Switch to Low-Bitrate Timeout (s)",
+        "hint": "The time in seconds that the bitrate must be below the low trigger to switch to the low-bitrate scene"
+      }
     }
   },
   "logging": {

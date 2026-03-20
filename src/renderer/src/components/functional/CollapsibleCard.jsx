@@ -54,7 +54,7 @@ const CollapsibleCard = ({
       ]}
     >
       <Stack spacing={2}>
-        <Stack direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" spacing={2}>
+        <Stack direction={'row' } justifyContent="space-between" spacing={2}>
           <Box sx={{ flex: 1, minWidth: 0 }}>
             {title && (
               <Typography variant="subtitle1" noWrap={!subtitle}>
@@ -62,7 +62,7 @@ const CollapsibleCard = ({
               </Typography>
             )}
             {subtitle && (
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, maxWidth:'80%' }}>
                 {subtitle}
               </Typography>
             )}

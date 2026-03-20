@@ -31,6 +31,9 @@ let counters = {
 // metrics stream in quickly without meaningfully changing state.
 let lastBand = null;
 
+// Track repeated observations of the same band to avoid flapping on noisy input.
+let sameBandCount = 0;
+
 // Cache stream state briefly to reduce repeated OBS queries during noisy updates.
 const streamStateCache = {
   value: null,
@@ -93,17 +96,30 @@ export async function switcherService(data, mainWindow = null) {
     toOffline: switcherSettings.triggerToOffline
   };
 
+  // Optional stability levers (safe defaults if missing in config).
+  const retryAttempts = Number(switcherSettings.retryAttempts ?? 1);
+
+  // If the offToLiveTrigger is set to 0, allow instant recovery from offline to live without requiring repeated confirmations.
+  const allowInstantRecover = Number(delays.toLive) === 0;
+
   const band = computeBand(bitrate, triggers, lastBand);
 
-  // If the bitrate band hasn't changed since the last tick, skip OBS calls to
-  // avoid spamming the API when telemetry is noisy but stable.
+  const prevBand = lastBand;
 
-  // Commenting out the band check to allow repeated switches even in the same band.
   if (band === lastBand) {
-    return;
+    sameBandCount += 1;
+  } else {
+    sameBandCount = 0;
+    lastBand = band;
   }
 
-  lastBand = band;
+  const forceInstantRecover = allowInstantRecover && prevBand === 'offline' && band === 'live';
+
+  // Require repeated confirmation of the same band before acting, unless we are
+  // explicitly recovering from offline to live.
+  if (!forceInstantRecover && sameBandCount < retryAttempts) {
+    return;
+  }
 
   // If switcher is disabled, exit the switcher
   if (!vars.switcherEnabled) {
@@ -132,9 +148,19 @@ export async function switcherService(data, mainWindow = null) {
 
   const currentScene = await getCurrentScene();
 
+  const clearPending = (key) => {
+    if (pending[key]) {
+      clearTimeout(pending[key]);
+      pending[key] = null;
+    }
+  };
+
   // If the current scene if the privacy scene, do not switch
   if (currentScene.data === switcherSettings.scenePrivacy) {
     Logger.log('Current scene is privacy scene. Switcher is inactive.');
+    clearPending('offline');
+    clearPending('low');
+    clearPending('live');
     return;
   }
 
@@ -143,13 +169,6 @@ export async function switcherService(data, mainWindow = null) {
     Logger.log('Current scene is not in switchable scenes. Switcher is inactive.');
     return;
   }
-
-  const clearPending = (key) => {
-    if (pending[key]) {
-      clearTimeout(pending[key]);
-      pending[key] = null;
-    }
-  };
 
   const scheduleSwitch = (key, delaySeconds, targetScene) => {
     if (pending[key]) return; // already counting down

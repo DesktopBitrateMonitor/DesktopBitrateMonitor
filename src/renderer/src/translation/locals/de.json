@@ -664,12 +664,30 @@
       "error3": "{{value}} muss kleiner als der Wiederherstellungs-Auslöser für Live sein",
       "error4": "{{value}} muss größer als der Auslöser für niedrige Bitrate sein",
       "error5": "{{value}} muss kleiner als sowohl der Auslöser für niedrige Bitrate als auch der Wiederherstellungs-Auslöser für Live sein",
-      "trigger": "Bitrate-Auslöser für niedrige Bitrate (kbps)",
-      "rTrigger": "Bitrate-Wiederherstellungs-Auslöser für Live (kbps)",
-      "offlineTrigger": "Offline-Auslöser für Offline (kbps)",
-      "switchToLiveTimeout": "Timeout für Wechsel zu Live (s)",
-      "switchToOfflineTimeout": "Timeout für Wechsel zu Offline (s)",
-      "switchToLowTimeout": "Timeout für Wechsel zu Low-Bitrate (s)"
+      "trigger": {
+        "label": "Bitrate-Auslöser für niedrige Bitrate (kbps)",
+        "hint": "Der Bitrate-Schwellenwert in kbps für den Wechsel zur Low-Bitrate-Szene"
+      },
+      "rTrigger": {
+        "label": "Bitrate-Wiederherstellungs-Auslöser für Live (kbps)",
+        "hint": "Der Bitrate-Schwellenwert in kbps für den Wechsel zurück zur Live-Szene"
+      },
+      "offlineTrigger": {
+        "label": "Bitrate-Auslöser für Offline (kbps)",
+        "hint": "Der Bitrate-Schwellenwert in kbps für den Wechsel zur Offline-Szene"
+      },
+      "switchToLiveTimeout": {
+        "label": "Timeout für Wechsel zu Live (s)",
+        "hint": "Die Zeit in Sekunden, die die Bitrate über dem Wiederherstellungs-Auslöser liegen muss, um zur Live-Szene zurückzuwechseln. 0 erzwingt einen sofortigen Wechsel zurück zur Live-Szene"
+      },
+      "switchToOfflineTimeout": {
+        "label": "Timeout für Wechsel zu Offline (s)",
+        "hint": "Die Zeit in Sekunden, die die Bitrate unter dem Offline-Auslöser liegen muss, um zur Offline-Szene zu wechseln"
+      },
+      "switchToLowTimeout": {
+        "label": "Timeout für Wechsel zu Low-Bitrate (s)",
+        "hint": "Die Zeit in Sekunden, die die Bitrate unter dem Auslöser für niedrige Bitrate liegen muss, um zur Low-Bitrate-Szene zu wechseln"
+      }
     }
   },
   "logging": {

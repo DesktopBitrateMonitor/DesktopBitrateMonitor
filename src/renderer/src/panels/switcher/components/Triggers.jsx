@@ -6,16 +6,25 @@ import InputEndAdornment from '../../../components/feedback/InputEndAdornment';
 import NumericInput from '../../../components/functional/NumericInput';
 import { useSwitcherConfigStore } from '../../../contexts/DataContext';
 import { useTranslation } from 'react-i18next';
+import { Box, Stack } from '@mui/material';
 
 const Triggers = ({ collapsedIds, toggleCollapsed }) => {
   const { t } = useTranslation();
   const FIELD_LABELS = {
-    trigger: t('switcher.triggers.trigger'),
-    rTrigger: t('switcher.triggers.rTrigger'),
-    offTrigger: t('switcher.triggers.offlineTrigger'),
-    triggerToLive: t('switcher.triggers.switchToLiveTimeout'),
-    triggerToLow: t('switcher.triggers.switchToLowTimeout'),
-    triggerToOffline: t('switcher.triggers.switchToOfflineTimeout')
+    trigger: t('switcher.triggers.trigger.label'),
+    rTrigger: t('switcher.triggers.rTrigger.label'),
+    offTrigger: t('switcher.triggers.offlineTrigger.label'),
+    triggerToLive: t('switcher.triggers.switchToLiveTimeout.label'),
+    triggerToLow: t('switcher.triggers.switchToLowTimeout.label'),
+    triggerToOffline: t('switcher.triggers.switchToOfflineTimeout.label ')
+  };
+  const FIELD_HINTS = {
+    trigger: t('switcher.triggers.trigger.hint'),
+    rTrigger: t('switcher.triggers.rTrigger.hint'),
+    offTrigger: t('switcher.triggers.offlineTrigger.hint'),
+    triggerToLive: t('switcher.triggers.switchToLiveTimeout.hint'),
+    triggerToLow: t('switcher.triggers.switchToLowTimeout.hint'),
+    triggerToOffline: t('switcher.triggers.switchToOfflineTimeout.hint')
   };
 
   const TRIGGER_KEYS = Object.keys(FIELD_LABELS);
@@ -140,37 +149,40 @@ const Triggers = ({ collapsedIds, toggleCollapsed }) => {
       expanded={!collapsedIds.includes('trigger')}
       onExpandedChange={() => toggleCollapsed('trigger')}
     >
-      {TRIGGER_KEYS.map((key) => (
-        <NumericInput
-          sx={{ mb: 2 }}
-          key={key}
-          label={FIELD_LABELS[key]}
-          name={key}
-          value={triggersData[key]}
-          min={0}
-          onChange={(e) => handleInputChange(key, e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              saveField(key);
-            }
-          }}
-          error={Boolean(errorMessages[key])}
-          helperText={errorMessages[key] || ''}
-          slotProps={{
-            endAdornment:
-              dirtyStates[key] && !errorMessages[key] ? (
-                <InputEndAdornment
-                  title={t('switcher.inputAdornment')}
-                  placement="top-start"
-                  open={Boolean(dirtyStates[key])}
-                  color="success"
-                  icon={<SaveIcon color="success" />}
-                  handleClick={() => saveField(key)}
-                />
-              ) : undefined
-          }}
-        />
-      ))}
+      <Stack gap={2}>
+        {TRIGGER_KEYS.map((key) => (
+          <NumericInput
+            sx={{ mb: 2 }}
+            key={key}
+            label={FIELD_LABELS[key]}
+            placeholder={FIELD_LABELS[key]}
+            name={key}
+            value={triggersData[key]}
+            min={0}
+            onChange={(e) => handleInputChange(key, e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                saveField(key);
+              }
+            }}
+            error={Boolean(errorMessages[key])}
+            helperText={errorMessages[key] || FIELD_HINTS[key]}
+            slotProps={{
+              endAdornment:
+                dirtyStates[key] && !errorMessages[key] ? (
+                  <InputEndAdornment
+                    title={t('switcher.inputAdornment')}
+                    placement="top-start"
+                    open={Boolean(dirtyStates[key])}
+                    color="success"
+                    icon={<SaveIcon color="success" />}
+                    handleClick={() => saveField(key)}
+                  />
+                ) : undefined
+            }}
+          />
+        ))}
+      </Stack>
     </CollapsibleCard>
   );
 };
