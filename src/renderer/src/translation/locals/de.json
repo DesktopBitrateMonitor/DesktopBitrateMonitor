@@ -723,6 +723,7 @@
     },
     "export": {
       "header": "Speicherort wählen",
+      "toolTip": "Logs exportieren",
       "cancelledMessage": "Export abgebrochen",
       "errorMessage": "Fehler beim Exportieren der Protokolle: {{error}}",
       "successMessage": "Protokolle erfolgreich exportiert nach: {{path}}",

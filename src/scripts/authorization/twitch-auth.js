@@ -3,7 +3,10 @@ import express from 'express';
 import Logger from '../logging/logger';
 import { injectDefaults } from '../store/defaults';
 import { userAuthorization, authAPI } from '../twitch/twitch-api';
-import { connectToTwitchEventSubs, disconnectTwitchEventSubs } from '../twitch/event-subscriptions/eventsubs';
+import {
+  connectToTwitchEventSubs,
+  disconnectTwitchEventSubs
+} from '../twitch/event-subscriptions/eventsubs';
 import img from '../../assets/icon.png';
 import { getTranslationData } from '../lib/translation-picker';
 
@@ -147,6 +150,5 @@ twitchRouter.get('/oauth/twitch', async (req, res) => {
     `);
   } catch (error) {
     Logger.error(`Error getting access token: ${error.message}`);
-    console.error(error);
   }
 });

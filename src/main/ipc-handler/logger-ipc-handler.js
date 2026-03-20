@@ -1,3 +1,4 @@
+import fs from 'fs';
 import Logger from '../../scripts/logging/logger';
 import CsvWriter from '../../scripts/lib/csv-writer';
 import CsvReader from '../../scripts/lib/csv-reader';
@@ -17,8 +18,23 @@ export async function initializeLoggerIpc(ipcMain) {
   isLoggerIpcInitialized = true;
   Logger.log('Initializing Logger IPC');
 
-  ipcMain.handle('create-log-file', (event, fullPath, content) => {
-    return writer.writeRow(fullPath, content);
+  ipcMain.handle('create-log-file', (event, type, fullPath, content) => {
+    if (!type || !fullPath || !content) {
+      Logger.error('Missing parameters for create-log-file IPC handler');
+      return { success: false, message: 'Missing parameters' };
+    }
+
+    if (type === 'csv') {
+      return writer.writeRow(fullPath, content);
+    }
+    if (type === 'txt') {
+      const txtContent = content
+        .map((log) => `${log.date} - ${log.time}: ${log.message}`)
+        .join('\n');
+      fs.writeFileSync(fullPath, txtContent);
+
+      return { success: true, message: 'File created successfully' };
+    }
   });
 
   ipcMain.handle('read-log-file', (event, fullPath) => {

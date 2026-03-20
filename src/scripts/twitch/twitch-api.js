@@ -61,8 +61,7 @@ export async function getAccessToken(refresh_token) {
     return data;
   } catch (error) {
     Logger.error(
-      'Twitch Token validation error:',
-      error.response ? error.response.data : error.message
+      `Twitch Token validation error: ${error.response ? JSON.stringify(error.response.data) : error.message}`
     );
     return null;
   }
@@ -174,17 +173,20 @@ export async function validateAccessToken(access_token) {
         Authorization: `Bearer ${access_token}`
       }
     });
-    Logger.log('Token validation successful:', {
-      user_id: data.user_id,
-      login: data.login,
-      expires_in: data.expires_in
-    });
+    Logger.log(`Token validation successful: 
+      ${JSON.stringify({
+        user_id: data.user_id,
+        login: data.login,
+        expires_in: data.expires_in
+      })}`);
     return data;
   } catch (error) {
     if (error.response && error.response.status === 401) {
       Logger.log('Token is invalid or expired (401)');
     } else {
-      Logger.error('Token validation error:', error.response ? error.response.data : error.message);
+      Logger.error(
+        `Token validation error: ${error.response ? JSON.stringify(error.response.data) : error.message}`
+      );
     }
     return null;
   }

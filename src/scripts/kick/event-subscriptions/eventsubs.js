@@ -117,7 +117,7 @@ async function connectOnce(mainWindow = null) {
     });
 
     ws.once('close', () => {
-      Logger.warn('Kick WebSocket closed');
+      Logger.info('Kick WebSocket closed');
     });
   });
 }
@@ -212,7 +212,7 @@ async function cleanupWebSocket() {
         ws.close();
       }
     } catch (err) {
-      Logger.warn(`Error closing Kick WebSocket: ${err.message}`);
+      Logger.error(`Error closing Kick WebSocket: ${err.message}`);
     }
     ws = null;
   }
@@ -244,7 +244,7 @@ function sendPing() {
     ws.send(JSON.stringify({ event: 'pusher:ping', data: {} }));
     lastPingAt = Date.now();
   } catch (err) {
-    Logger.warn(`Failed to send Kick ping: ${err.message}`);
+    Logger.error(`Failed to send Kick ping: ${err.message}`);
   }
 }
 

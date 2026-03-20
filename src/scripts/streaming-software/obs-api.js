@@ -13,7 +13,7 @@ function getOBSInstance(mainWindow = null) {
 
     obs.on('ConnectionClosed', () => {
       isConnected = false;
-      Logger.warn('OBS Studio connection closed');
+      Logger.info('OBS Studio connection closed');
       mainWindow?.webContents.send('obs-connection', {
         success: false,
         status: 'disconnected',
@@ -87,7 +87,7 @@ export async function connectToOBS(mainWindow = null) {
 
   obsInstance.on('ConnectionClosed', () => {
     isConnected = false;
-    Logger.warn('OBS Studio connection closed');
+    Logger.info('OBS Studio connection closed');
     startOBSConnectionLoop(mainWindow);
   });
 

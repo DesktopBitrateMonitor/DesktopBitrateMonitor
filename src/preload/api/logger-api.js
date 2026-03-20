@@ -12,7 +12,8 @@ export const loggerApi = {
   removeLogEvent: () => {
     ipcRenderer.removeAllListeners('log-message');
   },
-  createLogFile: (fullPath, content) => ipcRenderer.invoke('create-log-file', fullPath, content),
+  createLogFile: (type, fullPath, content) =>
+    ipcRenderer.invoke('create-log-file', type, fullPath, content),
   readLogFile: (fullPath) => ipcRenderer.invoke('read-log-file', fullPath),
   getLogFileSizeInMB: (fullPath) => ipcRenderer.invoke('get-log-file-size-mb', fullPath),
   openFileDialog: (options) => ipcRenderer.invoke('open-file-dialog', options),

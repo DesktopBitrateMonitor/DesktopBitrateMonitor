@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import path from 'path';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -13,6 +12,7 @@ import {
   MenuItem,
   Stack,
   TextField,
+  Tooltip,
   Typography
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
@@ -192,11 +192,26 @@ const LoggingFeed = () => {
       message: log.message
     }));
 
+    console.log(result);
     console.log(parsedLogs);
 
     if (result.canceled) {
       showAlert({ message: t('logging.export.cancelledMessage'), severity: 'info' });
       return;
+    }
+    const res = await window.loggerApi.createLogFile('txt', result.filePath, parsedLogs);
+    if (!res.success) {
+      showAlert({
+        message: t('logging.export.errorMessage', { error: res.message }),
+        severity: 'error'
+      });
+      return;
+    }
+    if (res.success) {
+      showAlert({
+        message: t('logging.export.successMessage', { path: result.filePath }),
+        severity: 'success'
+      });
     }
   };
 
@@ -219,9 +234,11 @@ const LoggingFeed = () => {
           fullWidth
         />
 
-        <IconButton onClick={openSaveFileDialog}>
-          <DownloadIcon fontSize="small" />
-        </IconButton>
+        <Tooltip title="Export logs" placement="top" arrow>
+          <IconButton size="small" onClick={openSaveFileDialog} sx={menuButtonSx}>
+            <DownloadIcon fontSize="small" />
+          </IconButton>
+        </Tooltip>
 
         <Stack direction="row" spacing={1} alignItems="center">
           <MenuControl

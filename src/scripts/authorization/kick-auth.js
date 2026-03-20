@@ -172,6 +172,5 @@ kickRouter.get('/oauth/kick', async (req, res) => {
       `);
   } catch (error) {
     Logger.error(`Error during Kick OAuth callback: ${error.message}`);
-    console.error(error);
   }
 });

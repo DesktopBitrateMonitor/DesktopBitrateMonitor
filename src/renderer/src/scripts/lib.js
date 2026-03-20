@@ -12,10 +12,10 @@ export async function storeLayoutChanges({ layout, key }) {
       message: { msg: 'Layout changes stored successfully.', severity: 'success' }
     };
   } catch (error) {
-    Logger.error('Failed to store layout changes:', error);
+    Logger.error(`Failed to store layout changes: ${error.message}`);
     return {
       success: false,
-      message: { msg: 'Failed to store layout changes: ' + error.message, severity: 'error' }
+      message: { msg: `Failed to store layout changes: ${error.message}`, severity: 'error' }
     };
   }
 }

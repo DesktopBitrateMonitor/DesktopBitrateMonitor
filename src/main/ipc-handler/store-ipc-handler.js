@@ -33,7 +33,7 @@ const getStore = (name) => {
   }
 
   if (!Object.keys(STORES).includes(name)) {
-    Logger.error(`Store not found:`, name);
+    Logger.error(`Store not found: ${name}`);
     return null;
   }
   return STORES[name];

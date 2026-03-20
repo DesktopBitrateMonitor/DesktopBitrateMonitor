@@ -104,7 +104,7 @@ async function connectOnce(clientId, bc, mainWindow = null) {
     });
 
     ws.once('close', () => {
-      Logger.warn('WebSocket closed');
+      Logger.info('WebSocket closed');
     });
   });
 }
@@ -133,7 +133,7 @@ async function cleanupWebSocket() {
         ws.close();
       }
     } catch (err) {
-      Logger.warn(`Error terminating WebSocket: ${err.message}`);
+      Logger.error(`Error terminating WebSocket: ${err.message}`);
     }
     ws = null;
   }

@@ -723,6 +723,7 @@
     },
     "export": {
       "header": "Choose Export Location",
+      "toolTip": "Export Logs",
       "cancelledMessage": "Export cancelled",
       "errorMessage": "Error exporting logs: {{error}}",
       "successMessage": "Logs successfully exported to: {{path}}",
