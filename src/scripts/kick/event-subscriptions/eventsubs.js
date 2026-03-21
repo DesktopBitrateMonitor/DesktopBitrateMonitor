@@ -2,6 +2,7 @@ import WebSocket from 'ws';
 import Logger from '../../logging/logger';
 import { injectDefaults } from '../../store/defaults';
 import { handleChatMessage } from './handleChatMessage';
+import { handleRaid } from './handelRaids';
 
 const WS_ENDPOINT =
   'wss://ws-us2.pusher.com/app/32cbd69e4b950bf97679?protocol=7&client=js&version=7.6.0&flash=false';
@@ -129,8 +130,9 @@ async function processMessage(rawMessage, mainWindow = null) {
   if (!message) {
     return;
   }
-  
-  if (!isDev) {
+
+  if (isDev) {
+    console.log('Received Kick message:', message);
     console.log('Received Kick message:', message.data);
   }
 
@@ -160,7 +162,7 @@ async function processMessage(rawMessage, mainWindow = null) {
       handleChatMessage(safeJsonParse(message.data));
       return;
     case 'App\\Events\\ChatMoveToSupportedChannelEvent':
-      Logger.info('Received Kick host/raid event.');
+      handleRaid(safeJsonParse(message.data));
       return;
     default:
       return;
