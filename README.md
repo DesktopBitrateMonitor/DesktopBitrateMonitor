@@ -24,6 +24,12 @@
   </li>
 </ul>
 
+<div align="center">
+  <h2>
+    If you have some questions look into the <span> <a href="#help-me">HELP ME - SECTION</a> to search for your problem</span>
+  </h2>
+</div>
+
 # Quick Start Guide
 
 - Download the "Desktop-bitrate-monitor-x.x.x-setup.exe file
@@ -45,13 +51,13 @@ If you now start a SRT-Feed and the server publish stats you can see the current
 
 <details>
   <summary> Show all dashboard descriptions </summary>
-  <img src="readme-assets/dashboard-full.png" alt="image" />
+  <img src="readme-assets/dashboard/dashboard-full.png" alt="image" />
   <ol>
     <li>Navigation side panel with all navigation buttons</li>
       <ul>
         <li>Platform button opens a card to change the active platform and switch to the platform-settings</li>
         <li>Only one active platform are allowed</li>
-        <img src="readme-assets/platform-select.png" alt="image">
+        <img src="readme-assets/dashboard/platform-select.png" alt="image">
       </ul>
     <li>Toggle navigation side panel</li>
       <ul>
@@ -94,13 +100,11 @@ If you now start a SRT-Feed and the server publish stats you can see the current
     </p>
   </div>
 
-  ##
+### Chat Commands
 
-  ### Chat Commands
+- Chat commands are the same for all platforms. E.g. If a command is changed for Twitch, it is changed for all platforms at the same time. This includes all settings (Aliases, enabled state, required roles)
 
-  - Chat commands are the same for all platforms. E.g. If a command is changed for Twitch, it is changed for all platforms at the same time. This includes all settings (Aliases, enabled state, required roles)
-
-  ![image](readme-assets/platform/chat-commands.png)
+![image](readme-assets/platform/chat-commands.png)
 
   <ol>
     <li>Search/Layout region</li>
@@ -144,14 +148,14 @@ If you now start a SRT-Feed and the server publish stats you can see the current
     </ul>
   </ol>
 
-  ##
-  
-  ### Chat Messages
+##
 
-  - Chat messages are the same for all platforms. E.g. If a message is changed for Twitch, it is changed for all platforms at the same time. This includes all settings (text and enabled states)
-  - Some messages are triggered at two ways. Manually, with an alias (e.g. !b trigger the bitrate message), automatically in effect of an switcher event (e.g. the switcher switches to any scene). The enabled state disable both ways the the message are triggered
+### Chat Messages
 
-  ![image](readme-assets/platform//chat-messages.png)
+- Chat messages are the same for all platforms. E.g. If a message is changed for Twitch, it is changed for all platforms at the same time. This includes all settings (text and enabled states)
+- Some messages are triggered at two ways. Manually, with an alias (e.g. !b trigger the bitrate message), automatically in effect of an switcher event (e.g. the switcher switches to any scene). The enabled state disable both ways the the message are triggered
+
+![image](readme-assets/platform//chat-messages.png)
 
   <ol>
     <li>Message name</li>
@@ -177,15 +181,15 @@ If you now start a SRT-Feed and the server publish stats you can see the current
     </ul>
   </ol>
 
-  ##
+##
 
-  ### User Settings
+### User Settings
 
-  - If no broadcaster for the platform is signed in you are not able to manage any users. The app need your access token from the platform to check if the user exists and send the api call to get the wanted users information. Only public user-information are requested from the api, no personal data (like email address).
-  - Admins or Mods, they you setup in the app must not have any roles or permissions in your broadcaster chat (this means they don't have mod role in your chat). The users you setup in the app have only the permissions in the app to perform commands.
-  - All platform moderators automatically owns the mod role in the app, you don't have to setup them all in the app
+- If no broadcaster for the platform is signed in you are not able to manage any users. The app need your access token from the platform to check if the user exists and send the api call to get the wanted users information. Only public user-information are requested from the api, no personal data (like email address).
+- Admins or Mods, they you setup in the app must not have any roles or permissions in your broadcaster chat (this means they don't have mod role in your chat). The users you setup in the app have only the permissions in the app to perform commands.
+- All platform moderators automatically owns the mod role in the app, you don't have to setup them all in the app
 
-  ![image](readme-assets/platform/users.png)
+![image](readme-assets/platform/users.png)
 
   <ol>
     <li>Users for the role-group</li>
@@ -208,14 +212,14 @@ If you now start a SRT-Feed and the server publish stats you can see the current
     </ul>
   </ol>
 
-  ##
+##
 
-  ### Account Settings
+### Account Settings
 
-  - The login of an broadcaster for the active platform is a requirement. Otherwise you are not able to use the applications chat functionality, the switching itself will be working without an login
-  - It isn't a requirement to login a chatbot account. Messages are posted with the broadcasters account if you don't sign in a chatbot.
+- The login of an broadcaster for the active platform is a requirement. Otherwise you are not able to use the applications chat functionality, the switching itself will be working without an login
+- It isn't a requirement to login a chatbot account. Messages are posted with the broadcasters account if you don't sign in a chatbot.
 
-  ![image](readme-assets/platform/accounts.png)
+![image](readme-assets/platform/accounts.png)
 
   <ol>
     <li>Account card</li>
@@ -236,16 +240,14 @@ If you now start a SRT-Feed and the server publish stats you can see the current
   </ol>
 </details>
 
-##
-
-### Platform Setup
+# Server Setup
 
 <details>
   <summary>Display all server settings</summary>
 
-  - The Bitrate Monitor is only able to listen for one server stats url. Different server types serve the stats in a little different way. To make sure the stats correctly send to the apps switcher function, it is required to choose the correct server type.
+- The Bitrate Monitor is only able to listen for one server stats url. Different server types serve the stats in a little different way. To make sure the stats correctly send to the apps switcher function, it is required to choose the correct server type.
 
-  ![image](readme-assets/server/server-settings.png)
+![image](readme-assets/server/server-settings.png)
 
   <ol>
     <li>
@@ -289,9 +291,9 @@ If you now start a SRT-Feed and the server publish stats you can see the current
 <details>
   <summary>Display all broadcasting software settings</summary>
 
-  - The broadcasting software is permanently connected with the app. In state of the feed information, witch are listen from the server stats, the Bitrate Monitor switches scenes in the broadcasting software
+- The broadcasting software is permanently connected with the app. In state of the feed information, witch are listen from the server stats, the Bitrate Monitor switches scenes in the broadcasting software
 
-  ![image](readme-assets/software/software-settings.png)
+![image](readme-assets/software/software-settings.png)
 
   <ol>
     <li>
@@ -335,13 +337,13 @@ If you now start a SRT-Feed and the server publish stats you can see the current
 <details>
   <summary>Display all switcher settings</summary>
 
-  - The switcher is the main functionality from the application. In dependency of the incoming bitrate and your settings the switcher switches your broadcasting platforms scenes.
+- The switcher is the main functionality from the application. In dependency of the incoming bitrate and your settings the switcher switches your broadcasting platforms scenes.
 
-  ##
+##
 
-  ### Switcher enabled states
+### Switcher enabled states
 
-  ![image](readme-assets/switcher/enabled-states.png)
+![image](readme-assets/switcher/enabled-states.png)
 
   <ol>
     <li>
@@ -389,13 +391,13 @@ If you now start a SRT-Feed and the server publish stats you can see the current
     </ul>
   </ol>
 
-  ##
+##
 
-  ### Switcher Scene Settings
+### Switcher Scene Settings
 
-  - Setup the scenes for the switcher. The scene names must match the scenes in your broadcasting software. They are not matching, the switcher doesn't abel to switch on the scene
+- Setup the scenes for the switcher. The scene names must match the scenes in your broadcasting software. They are not matching, the switcher doesn't abel to switch on the scene
 
-  ![image](readme-assets/switcher/scene-settings.png)
+![image](readme-assets/switcher/scene-settings.png)
 
   <ol>
     <li>
@@ -445,11 +447,11 @@ If you now start a SRT-Feed and the server publish stats you can see the current
   
   ##
 
-  ### Switcher Scene Settings
+### Switcher Scene Settings
 
-  - Setup the trigger thresholds and the delays, they have to wait before the switcher switches the scene
+- Setup the trigger thresholds and the delays, they have to wait before the switcher switches the scene
 
-  ![image](readme-assets/switcher/trigger-settings.png)
+![image](readme-assets/switcher/trigger-settings.png)
 
   <ol>
     <li>
@@ -510,5 +512,159 @@ If you now start a SRT-Feed and the server publish stats you can see the current
     </ul>
   </ol>
 
+</details>
+
+# App Settings
+
+<details>
+  <summary>Display all general app settings</summary>
+
+### General
+
+![image](readme-assets/app/general-settings.png)
+
+  <ol>
+    <li>
+      App Language
+    </li>
+    <ul>
+      <li>
+        Choose the app language for the frontend
+      </li>
+      <li>
+        This does not change any commands or messages. Commands an messages are loaded in dependency of your machine. 
+      </li>
+    </ul>
+    <li>
+      App behavior on close
+    </li>
+    <ul>
+      <li>
+        Set the state if the app does quit or minimize on close.
+      </li>
+    </ul>
+  </ol>
+
+##
+
+### Style
+
+![image](readme-assets/app/style-settings.png)
+
+  <ol>
+    <li>
+      App Theme
+    </li>
+    <ul>
+      <li>
+        Choose the theme for the frontend
+      </li>
+    </ul>
+  </ol>
+
+##
+
+### Update
+
+![image](readme-assets/app/update-settings.png)
+
+  <ol>
+    <li>
+      Release Notes
+    </li>
+    <ul>
+      <li>
+        Opens the release notes for the current installed version of the app in your main browser on your machine
+      </li>
+    </ul>
+    <li>
+      Auto-Check for Update
+    </li>
+    <ul>
+      <li>
+        On app start the app called the update server and search for a possible update. If a update was found, the release notes are show up to you in a window. in this window you are able to decide if you wanna update the application
+      </li>
+    </ul>
+    <li>
+      Auto-Install Updates
+    </li>
+    <ul>
+      <li>
+        The app install updates automatically if one is found. The installation runs on app start.
+      </li>
+    </ul>
+    <li>
+      Manual check for Updates
+    </li>
+    <ul>
+      <li>
+        Trigger manual a check if a update is available and open a information it is or not
+      </li>
+      <li>
+        After each check (automatic or manual doesn't matter), the timestamp are saved and displayed in the label
+      </li>
+    </ul>
+  </ol>
 
 </details>
+
+# HELP ME
+
+## Here you can find the most asked questions from the community and found maybe some help for your problem
+
+  <table>
+    <thead>
+      <tr>
+        <th>PROBLEM</th>
+        <th>POSSIBILITIES</th>
+        <th>POSSIBLE SOLUTIONS</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>The switcher doesn't start to switch</td>
+        <td>
+          <ul>
+            <li>
+              The broadcasting software is not in a switchable scene
+            </li>
+            <li>
+              The broadcasting software is not connected to the switcher
+            </li>
+            <li>
+              No stream feed stats served by the server
+            </li>
+          </ul>
+        </td>
+        <td>
+          <ul>
+            <li>
+              Manually bring the broadcasting software in a switchable scene (switch scene command). Only scenes in your switcher settings are switchable scenes! 
+            </li>
+            <li>
+              Check your connection setup (Websocket is up running? Connection settings correct?) or restart the broadcasting software
+            </li>
+            <li>
+              Check the server connection. If no live data are shown up in the Feed-Chart on the dashboard, the server does not send data oder the setup is wrong and the app can not listen to the server stats
+            </li>
+          </ul>
+        </td>
+      </tr>
+      <tr>
+        <td>After authorization i got a "server not reachable" or "cannot get /oauth/..." in my browser window</td>
+        <td>
+          <ul>
+            <li>
+              The firewall or defender block the incoming data
+            </li>
+          </ul>
+        </td>
+        <td>
+          <ul>
+            <li>
+              Check your firewall or defender settings and make sure the app is authorized to get incoming messages</td>
+            </li>
+          </ul>
+      </tr>
+    </tbody>
+  </table>

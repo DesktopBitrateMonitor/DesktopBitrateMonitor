@@ -17,6 +17,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useUpdate } from '../../contexts/UpdateContext';
 import { useTranslation } from 'react-i18next';
 
+// TODO: Fix the card after finish downloading the update
+// TODO: Add a button to abort the update process (if possible)
+
 const formatDate = (value) => {
   if (!value) return null;
   const parsed = new Date(value);
