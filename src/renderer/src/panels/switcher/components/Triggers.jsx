@@ -16,7 +16,7 @@ const Triggers = ({ collapsedIds, toggleCollapsed }) => {
     offTrigger: t('switcher.triggers.offlineTrigger.label'),
     triggerToLive: t('switcher.triggers.switchToLiveTimeout.label'),
     triggerToLow: t('switcher.triggers.switchToLowTimeout.label'),
-    triggerToOffline: t('switcher.triggers.switchToOfflineTimeout.label ')
+    triggerToOffline: t('switcher.triggers.switchToOfflineTimeout.label')
   };
   const FIELD_HINTS = {
     trigger: t('switcher.triggers.trigger.hint'),
