@@ -1,9 +1,9 @@
 <div align="center">
   <h1>
-    DESKTOP>BITRATE</span> MONITOR
+    DESKTOP BITRATE MONITOR
   </h1>
   <h2>
-    A Desktop app to listen for SRT ingest server stats and change scenes in your broadcasting software.
+    A desktop app that listens to SRT ingest server statistics and automatically switches scenes in your broadcasting software.
   </h2>
 </div>
 
@@ -11,22 +11,22 @@
 
 <ul type="none">
   <li >
-    🌟 All settings and Tokens are saved on your local machine, no server security issues are possible
+    🌟 All settings and tokens are stored locally on your machine — no server-related security risks
   </li>
   <li>
-    🌟 User friendly interface
+    🌟 User-friendly interface
   </li>
   <li>
-    🌟 Manage and customize all your chat messages and commands by yourself
+    🌟 Fully customizable chat messages and commands
   </li>
   <li>
-    🌟 Multi platform support (Twitch, Kick)
+    🌟 Multi-platform support (Twitch, Kick)
   </li>
 </ul>
 
 <div align="center">
   <h2>
-    If you have some questions look into the <span> <a href="#help-me">HELP ME - SECTION</a> to search for your problem</span>
+    If you have any, questions check the <span> <a href="#help-me">HELP ME - SECTION</a> to find solutions to common problems.</span>
   </h2>
 </div>
 
@@ -36,16 +36,18 @@
 
   ![downloader-exe](readme-assets/quick-start/downloader-exe.png)
 
-- Execute and install the application
-  - It might be you have to accept the warning for security risks. This warning accurse because i don't have bought a "content-security-policy" to sign the app as secure
-- Choose your platform and [register](###account-Settings) your account
-  - The enabled switch displays the current platform to listen for chat messages
-- Setup your stats-server to listen for
-- Connect your broadcasting software with the websocket (OBS-Websocket 5.x+ and higher)
-  - If the connection credentials are correct, the app connection are automatically establishes
-- If all correct connected, both connection state fields are green and the platform should display your account name
+- Run the installer
+  - You may see a security warning. This occurs because the app is not code-signed
+- Select your platform and configure your account
+  - The enabled switch shows which platform is currently active for chat listening
+- Configure your stats server
+- Connect your broadcasting software via WebSocket (OBS WebSocket 5.x or higher)
+  - If credentials are correct, the connection will be established automatically
+- If everything is connected properly:
+  - Both connection indicators turn green
+  - Your account name will be displayed
 
-If you now start a SRT-Feed and the server publish stats you can see the current stats in the chart
+Once you start an SRT feed and the server publishes stats, you will see live data in the chart.
 
 # Dashboard
 
@@ -53,39 +55,31 @@ If you now start a SRT-Feed and the server publish stats you can see the current
   <summary> Show all dashboard descriptions </summary>
   <img src="readme-assets/dashboard/dashboard-full.png" alt="image" />
   <ol>
-    <li>Navigation side panel with all navigation buttons</li>
+    <li>Navigation sidebar with all sections</li>
       <ul>
         <li>Platform button opens a card to change the active platform and switch to the platform-settings</li>
         <li>Only one active platform are allowed</li>
         <img src="readme-assets/dashboard/platform-select.png" alt="image">
       </ul>
-    <li>Toggle navigation side panel</li>
-      <ul>
-        <li>State will stored in the config, after app restart the state are loaded again</li>
-      </ul>
+    <li>Toggle button for collapsing/expanding the sidebar (state is saved)</li>
     <li>Full Feed-Chart</li>
       <ul>
         <li>Displays the live bitrate in a line chart</li>
       </ul>
-    <li>Feed Stats</li>
+    <li>Feed statistics:</li>
       <ul>
-        <li>The current feed-bitrate - refetching every 1000ms</li>
-        <li>The current feed-speed - refetching every 1000ms</li>
-        <li>The current feed-uptime - resets after restarting the feed</li>
-        <li>The total feed-uptime - the sum of all single feed uptimes since the app starts, resets after app restart</li>
+        <li>Current bitrate - refetching every 1000ms</li>
+        <li>Current speed - refetching every 1000ms</li>
+        <li>Current uptime - resets after restarting the feed</li>
+        <li>The total uptime - resets when app restart</li>
       </ul>
-    <li>Connection states from the server and broadcasting software</li>
+    <li>Connection status:</li>
       <ul>
-        <li>Color gray: No connection to a broadcasting software </li>
-        <li>Color green: Broadcasting software is connected to the app</li>
-        <li>Type: Show the server or broadcasting type if connected</li>
+        <li>Gray: No connection</li>
+        <li>Green: connected</li>
       </ul>
-    <li>Current active platform to listen for chat messages</li>
-      <ul>
-        <li>Top: Shows the platform icon</li>
-        <li>Bottom: Shows the Broadcaster nickname, is no broadcaster signed in for the active platform a information is shown instead the nick</li>
-      </ul>
-    <li>Open app session log feed</li>
+    <li>Active platform and broadcaster account name</li>
+    <li>Session log viewer</li>
   </ul>
 
 </details>
@@ -94,15 +88,22 @@ If you now start a SRT-Feed and the server publish stats you can see the current
 
 <details>
   <summary>Display all platform settings</summary>
+
   <div align="center">
-    <p>
-      Only <span><u><b>one</b></u></span> platform could be the active platform. If you change the active platform and a account for that platform is connected, the application logs in to the chat and listen for messages
-    </p>
+    <ul>
+      <li>
+        Only <span><u><b>one</b></u></span> platform can be active at a time
+      </li>
+      <li>
+        When switching platforms, the app automatically connects to chat if an account is available
+      </li>
+    </ul>
   </div>
 
 ### Chat Commands
 
-- Chat commands are the same for all platforms. E.g. If a command is changed for Twitch, it is changed for all platforms at the same time. This includes all settings (Aliases, enabled state, required roles)
+- Commands are shared across all platforms
+- Changes apply globally (aliases, roles, enabled state)
 
 ![image](readme-assets/platform/chat-commands.png)
 
@@ -113,37 +114,32 @@ If you now start a SRT-Feed and the server publish stats you can see the current
         All changed sorting/filtering/layout states are stored in the configs.
       </li>
       <li>
-        Searchbox - Search for the command name or a alias
+        Searchbox - Search commands by name or alias
       </li>
       <li>
-        Filtering/Sorting - Change the sorting and filtering of commands
+        Filtering/Sorting - Sort and filter commands
       </li>
       <li>
-        Layout - Change the layout for the commands from list to grid layout
+        Layout - Switch between list and grid layout
       </li>
     </ul>
     <li>Command name</li>
     <ul>
       <li>
-        The name from the command you can search for in the searchbox
+        The command name (searchable with the searchbox)
       </li>
     </ul>
     <li>Minimum required Role</li>
-    <ul>
-      <li>
-        The minimum required role to execute the command in the chat. E.g. Admins are able to execute admin, mod and all commands, but not broadcaster commands
-      </li>
-    </ul>
     <li>Aliases</li>
     <ul>
       <li>
         Each alias has his own chip
       </li>
       <li>
-        If you wanna execute a command with a alias, the alias must be the first word in the chat
+        Command alias has to be the first word
       </li>
       <li>
-        The wanted prefix must be included in the alias. E.b !start -> "!start" starts the stream, "start" does nothing "?start" does nothing as well
+        The wanted prefix must be included in the alias, e.g. !start 
       </li>
     </ul>
   </ol>
@@ -152,8 +148,10 @@ If you now start a SRT-Feed and the server publish stats you can see the current
 
 ### Chat Messages
 
-- Chat messages are the same for all platforms. E.g. If a message is changed for Twitch, it is changed for all platforms at the same time. This includes all settings (text and enabled states)
-- Some messages are triggered at two ways. Manually, with an alias (e.g. !b trigger the bitrate message), automatically in effect of an switcher event (e.g. the switcher switches to any scene). The enabled state disable both ways the the message are triggered
+- Messages are shared across all platforms
+- Can be triggered :
+  - Manually with command
+  - Automatically via switcher events
 
 ![image](readme-assets/platform//chat-messages.png)
 
@@ -167,16 +165,16 @@ If you now start a SRT-Feed and the server publish stats you can see the current
     <li>Enabled state</li>
     <ul>
       <li>
-        If the message is disabled the message will not posted in the broadcasters chat
+        If the message is disabled the message will not be posted
       </li>
       <li>
-        The message reply they are posted in the broadcasters chat
+        The message text (with or without possible variables)
       </li>
     </ul>
     <li>Hint</li>
     <ul>
       <li>
-        Hints are information for the possible variables. Variables must always be in brackets with a "$" as prefix. "{variable}" not works, the output is "text {variable} text".
+        The hint with variable description. Variable format have to be exactly like the hints variable
       </li>
     </ul>
   </ol>
@@ -185,9 +183,10 @@ If you now start a SRT-Feed and the server publish stats you can see the current
 
 ### User Settings
 
-- If no broadcaster for the platform is signed in you are not able to manage any users. The app need your access token from the platform to check if the user exists and send the api call to get the wanted users information. Only public user-information are requested from the api, no personal data (like email address).
-- Admins or Mods, they you setup in the app must not have any roles or permissions in your broadcaster chat (this means they don't have mod role in your chat). The users you setup in the app have only the permissions in the app to perform commands.
-- All platform moderators automatically owns the mod role in the app, you don't have to setup them all in the app
+- Requires a logged-in broadcaster account
+- Only public user data is requested from APIs
+- Users added in the app do not need roles on the platform
+- Platform moderators are automatically recognized as mods
 
 ![image](readme-assets/platform/users.png)
 
@@ -195,19 +194,19 @@ If you now start a SRT-Feed and the server publish stats you can see the current
     <li>Users for the role-group</li>
     <ul>
       <li>
-        Each user displayed in his own chip
+        List of users for each group
       </li>
       <li>
-        To remove a user click at the cross in the users chip. All user data will be deleted from the user
+        Users are removed by click the cross in the users chip (User date deleted permanently)
       </li>
     </ul>
     <li>Add a user</li>
     <ul>
       <li>
-        Entry the name from the user in the roles textfield. The name must be exact the name the user has on the platform.
+        Entry the name from the user in the roles textfield. The name must exact match the users platform name
       </li>
       <li>
-        After click the button or press enter the api call for the user data runs, if no user found a error message is displayed, otherwise the chip for the user appears
+        After click the button or press enter the api call for the user data runs. If no user found a error message shown up, otherwise the chip for the user appears
       </li>
     </ul>
   </ol>
@@ -216,8 +215,8 @@ If you now start a SRT-Feed and the server publish stats you can see the current
 
 ### Account Settings
 
-- The login of an broadcaster for the active platform is a requirement. Otherwise you are not able to use the applications chat functionality, the switching itself will be working without an login
-- It isn't a requirement to login a chatbot account. Messages are posted with the broadcasters account if you don't sign in a chatbot.
+- Broadcaster login for the active platform is a requirement
+- Chatbot account is a option
 
 ![image](readme-assets/platform/accounts.png)
 
@@ -225,10 +224,10 @@ If you now start a SRT-Feed and the server publish stats you can see the current
     <li>Account card</li>
     <ul>
       <li>
-        The user information and a logout button for the user. After logout all userdata will be deleted and the user access token are revoked.
+        The user information and logout button. After logout all userdata will be deleted and the user access token are revoke
       </li>
       <li>
-        If no user is logged in you find a login button. After clicking the button the authorization code flow automatically starts in your machines main browser. After the authorization on the platform, the user information automatically stored in the app and the image and name of the user appears in the user card
+        If no user is logged in, a login in button appears. After clicking the button the authorization code flow automatically starts in your machines main browser. After authorization the user information automatically stored in the app and the image and name of the user appears in the user card
       </li>
     </ul>
     <li>Enable Chatbot</li>
@@ -245,7 +244,7 @@ If you now start a SRT-Feed and the server publish stats you can see the current
 <details>
   <summary>Display all server settings</summary>
 
-- The Bitrate Monitor is only able to listen for one server stats url. Different server types serve the stats in a little different way. To make sure the stats correctly send to the apps switcher function, it is required to choose the correct server type.
+- The Bitrate Monitor is only able to listen for one server stats url
 
 ![image](readme-assets/server/server-settings.png)
 
@@ -253,27 +252,17 @@ If you now start a SRT-Feed and the server publish stats you can see the current
     <li>
       Server Type
     </li>
-    <ul>
-      <li>
-        The server type witch reaches the stream and serve the feed-stats  
-      </li>
-    </ul>
     <li>
       Server Name
     </li>
     <ul>
       <li>
-        A random name for your server in the app. It doesn't matter what name it is, but the name is required
+        A random name
       </li>
     </ul>
     <li>
       Stats URL
     </li>
-    <ul>
-      <li>
-        The stats url where the server serves the stats to fetch them.
-      </li>
-    </ul>
     <li>
       Publisher
     </li>
@@ -301,7 +290,7 @@ If you now start a SRT-Feed and the server publish stats you can see the current
     </li>
     <ul>
       <li>
-        The software type the broadcasting software is (OBS Studio only at first, more will be added if there are relevant ones)
+        The broadcasting software type - Currently supports OBS Studio (more planned)
       </li>
     </ul>
     <li>
@@ -309,7 +298,7 @@ If you now start a SRT-Feed and the server publish stats you can see the current
     </li>
     <ul>
       <li>
-        The public or local address for the websocket host
+        The public or local address for the websocket
       </li>
     </ul>
     <li>
@@ -325,7 +314,7 @@ If you now start a SRT-Feed and the server publish stats you can see the current
     </li>
     <ul>
       <li>
-        If the broadcasting software has a password on, the password is required. Passwords are sometimes optional, sometimes they named different (Streamlabs OBS called them API-Token)
+        Password (optional, may be called API token in some software)
       </li>
     </ul>
   </ol>
@@ -337,7 +326,7 @@ If you now start a SRT-Feed and the server publish stats you can see the current
 <details>
   <summary>Display all switcher settings</summary>
 
-- The switcher is the main functionality from the application. In dependency of the incoming bitrate and your settings the switcher switches your broadcasting platforms scenes.
+- The switcher automatically changes scenes based on bitrate conditions.
 
 ##
 
@@ -351,7 +340,7 @@ If you now start a SRT-Feed and the server publish stats you can see the current
     </li>
     <ul>
       <li>
-        Enable or disable the whole switcher. If the switcher is disable he never will switch any scene
+        Enable/disable the switcher
       </li>
     </ul>
     <li>
@@ -359,7 +348,7 @@ If you now start a SRT-Feed and the server publish stats you can see the current
     </li>
     <ul>
       <li>
-        If this settings is enabled, the switcher only switches automatically if your broadcasting software has started a stream to any platform
+        Automatically switches only when broadcasting software state is live streaming
       </li>
     </ul>
     <li>
@@ -367,10 +356,7 @@ If you now start a SRT-Feed and the server publish stats you can see the current
     </li>
     <ul>
       <li>
-        This option is only for not-triggered-actions. If the settings is enabled and the switcher switches in automatism run a scene (e.g. low bitrate, the switcher switches to low-bitrate scene) a message will be posted in the broadcaster chat. Otherwise he will not send the message to the chat.
-      </li>
-      <li>
-        If the message, the automatism wanna send, disabled in the message settings, the switcher will not send any message. 
+        Enable/Disable chat outputs for automatic switches. Only enabled messages are able to use.
       </li>
     </ul>
     <li>
@@ -378,7 +364,7 @@ If you now start a SRT-Feed and the server publish stats you can see the current
     </li>
     <ul>
       <li>
-        If the stream start command are triggered, the switcher automatically switches to the in the scenes defined start scene
+        Automatically switch to start scene on trigger stream start with command (not broad)
       </li>
     </ul>
     <li>
@@ -386,7 +372,7 @@ If you now start a SRT-Feed and the server publish stats you can see the current
     </li>
     <ul>
       <li>
-        After the broadcaster raids another broadcaster, the switcher automatically stops the stream in the broadcasting software
+        After raids another broadcaster, the switcher automatically stops the stream in the broadcasting software
       </li>
     </ul>
   </ol>
@@ -449,7 +435,7 @@ If you now start a SRT-Feed and the server publish stats you can see the current
 
 ### Switcher Scene Settings
 
-- Setup the trigger thresholds and the delays, they have to wait before the switcher switches the scene
+- Setup the trigger thresholds and the delays before the switcher switches the scene
 
 ![image](readme-assets/switcher/trigger-settings.png)
 
@@ -668,3 +654,29 @@ If you now start a SRT-Feed and the server publish stats you can see the current
       </tr>
     </tbody>
   </table>
+
+
+# Roadmap
+<ul>
+  <li>
+    FIND BROADCASTERS THEY ARE USING THE APP
+  </li>
+  <li>
+    Add a overlay served by the app to display the feed stats in the broadcasting software
+  </li>
+  <li>
+    Add more different server types
+  </li>
+  <li>
+    Add more broadcasting softwares
+  </li>
+  <li>
+    Add more platforms (if there are more relevant in future)
+  </li>
+  <li>
+    Find some translators to add more languages to the application
+  </li>
+  <li>
+    Get community feedback and make the app well for them
+  </li>
+</ul>
