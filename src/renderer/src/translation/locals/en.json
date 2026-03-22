@@ -492,7 +492,8 @@
       "options": {
         "srtLiveServer": "SrtLiveServer",
         "openIrl": "OpenIRL",
-        "belabox": "Belabox"
+        "belabox": "Belabox",
+        "listenerCaller": "Listener Caller"
       }
     },
     "srtLiveServer": {
@@ -551,6 +552,11 @@
         "placeholder": "Publisher",
         "hint": ""
       }
+    },
+    "listenerCaller": {
+      "header": "Listener Caller mode active",
+      "description": "Media source watching without relay server",
+      "content": "In Listener/Caller mode, there are no settings to configure. The application checks the media source of the streaming software and switches scenes based on active/inactive signal input."
     }
   },
   "software": {

@@ -3,6 +3,7 @@ import {
   connectToKickEventSub
 } from '../../scripts/kick/event-subscriptions/eventsubs';
 import Logger from '../../scripts/logging/logger';
+import { startListenerCallerWatcher } from '../../scripts/stats-watcher/listener-caller';
 import { startFetchingStats, stopFetchingStats } from '../../scripts/stats-watcher/stats-fetcher';
 import { injectDefaults } from '../../scripts/store/defaults';
 import { startOBSConnectionLoop } from '../../scripts/streaming-software/obs-api';
@@ -35,8 +36,18 @@ export async function startFetchingServerStats(mainWindow = null) {
   const currentType = serverConfig.get('currentType');
   if (currentType === 'openirl') {
     await startFetchingStats(true, 'openirl', mainWindow);
-  } else if (currentType === 'srt-live-server') {
+  } 
+  
+  if (currentType === 'srt-live-server') {
     await startFetchingStats(true, 'srt-live-server', mainWindow);
+  }
+
+  if(currentType === 'belabox'){
+    console.log('Starting stats fetcher for BelaBox');
+  }
+
+  if(currentType === 'listener-caller'){
+    await startListenerCallerWatcher(mainWindow);
   }
 
   return { success: true, data: { message: 'Server stats fetching started' }, error: null };

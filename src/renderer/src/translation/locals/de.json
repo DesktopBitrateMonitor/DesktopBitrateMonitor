@@ -493,7 +493,8 @@
       "options": {
         "srtLiveServer": "SrtLiveServer",
         "openIrl": "OpenIRL",
-        "belabox": "Belabox"
+        "belabox": "Belabox",
+        "listenerCaller": "Listener Caller"
       }
     },
     "srtLiveServer": {
@@ -552,6 +553,11 @@
         "placeholder": "Publisher",
         "hint": ""
       }
+    },
+    "listenerCaller":{
+      "header":"Listener Caller Modus aktiv",
+      "description": "Medien Überwachung ohne Relay-Server",
+      "content": "Im Listener/Caller modus sind keine Einstellungen zu treffen. Die Anwendung überprüft die Medienqulle der Streaming Software und wechelst bei aktivem/inaktivem Signaleingang"
     }
   },
   "software": {

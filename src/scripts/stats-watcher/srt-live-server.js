@@ -1,4 +1,5 @@
 import { injectDefaults } from '../store/defaults';
+import globalInternalStore from '../store/global-internal-store';
 
 export async function formatStatsSrtLiveServer(statsData) {
   if (!statsData.success) return;
@@ -12,6 +13,10 @@ export async function formatStatsSrtLiveServer(statsData) {
       if (serverConfig.get('srt-live-server.publisher') === Object.keys(data.publishers)[0]) {
         const livePublisherKey = Object.keys(data.publishers)[0];
         const livePublisherData = data.publishers[livePublisherKey];
+
+        // Store the latest stats in the global internal store for usage in the app backend
+        globalInternalStore.stats.set(livePublisherData);
+
         return {
           success: true,
           data: {
@@ -22,6 +27,9 @@ export async function formatStatsSrtLiveServer(statsData) {
           error: null
         };
       } else {
+        // Store the latest stats in the global internal store for usage in the app backend
+        globalInternalStore.stats.set({ bitrate: 0, rtt: 0, uptime: 0 });
+
         return {
           success: true,
           data: {
@@ -33,6 +41,9 @@ export async function formatStatsSrtLiveServer(statsData) {
         };
       }
     } else {
+      // Store the latest stats in the global internal store for usage in the app backend
+      globalInternalStore.stats.set({ bitrate: 0, rtt: 0, uptime: 0 });
+
       return {
         success: true,
         data: {
@@ -44,6 +55,9 @@ export async function formatStatsSrtLiveServer(statsData) {
       };
     }
   } catch (error) {
+    // Store the latest stats in the global internal store for usage in the app backend
+    globalInternalStore.stats.set({ bitrate: 0, rtt: 0, uptime: 0 });
+
     return {
       success: false,
       data: null,
