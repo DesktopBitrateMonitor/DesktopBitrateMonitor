@@ -338,8 +338,6 @@ export const commandActions = ({ platform, messageService, switcherConfig, accou
   bitrate: async () => {
     const { stats } = globalInternalStore.get();
 
-    console.log('Current bitrate stats:', stats);
-
     await messageService({
       action: 'bitrate',
       event: 'success',

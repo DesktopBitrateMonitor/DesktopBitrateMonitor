@@ -837,7 +837,7 @@
         "error": "Fehler beim Aktualisieren des Streams"
       },
       "bitrate": {
-        "success": "Aktuelle Bitrate: ${bitrate}|${speed} kbps",
+        "success": "Aktuelle Bitrate: ${bitrate} kbps | ${speed} ms",
         "error": "Fehler beim Abrufen der Bitrate"
       },
       "switchScene": {

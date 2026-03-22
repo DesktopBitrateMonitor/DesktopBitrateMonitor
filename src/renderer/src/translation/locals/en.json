@@ -838,7 +838,7 @@
         "error": "Failed to refresh the stream."
       },
       "bitrate": {
-        "success": "Current bitrate is ${bitrate}|${speed} kbps.",
+        "success": "Current bitrate is ${bitrate} kbps | ${speed} ms.",
         "error": "Failed to retrieve current bitrate.",
         "hint": "${bitrate} will be replaced with the current bitrate and ${speed} with the current speed."
       },

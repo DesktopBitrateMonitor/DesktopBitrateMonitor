@@ -1,3 +1,4 @@
+import Logger from "../logging/logger";
 import { injectDefaults } from "../store/defaults";
 import { getCurrentProgramScene } from "../streaming-software/obs-api";
 
