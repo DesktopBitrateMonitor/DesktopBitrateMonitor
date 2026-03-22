@@ -7,7 +7,7 @@ import { injectDefaults } from '../../../store/defaults';
  * @returns true or false based on whether the user has the required permissions
  */
 
-export const hasPermission = ({ event, requiredRole, restricted }) => {
+export const hasPermission = ({ event, requiredRole, restricted, inPrivacyScene }) => {
   const { broadcaster_user_id, chatter_user_id, user_type, badges } = event;
   const { twitchAccountsConfig } = injectDefaults();
 
@@ -21,8 +21,8 @@ export const hasPermission = ({ event, requiredRole, restricted }) => {
     (badges.length > 0 &&
       badges.some((badge) => badge.set_id === 'moderator' || badge.set_id === 'lead_moderator'));
 
-  // If the command is restricted, only allow broadcaster and admins to execute it
-  if (restricted) return isBroadcaster || isAdmin;
+  // If the command is restricted and the current scene is the privacy scene, only allow broadcaster and admins to execute it
+  if (restricted && inPrivacyScene) return isBroadcaster || isAdmin;
   // Broadcaster has all permissions, always return true
   if (isBroadcaster) return true;
   if (requiredRole === 'user') return true;

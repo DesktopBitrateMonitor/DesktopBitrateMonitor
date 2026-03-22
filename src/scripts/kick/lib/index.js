@@ -5,10 +5,11 @@ import { injectDefaults } from '../../store/defaults';
  * @param {Object} event t - The event object from the Kick chat message event
  * @param {string} requiredRole - The required role to check ('broadcaster', 'admin', 'mod', 'user')
  * @param {boolean} restricted - Whether the command is restricted to broadcaster and admins only
+ * @param {boolean} inPrivacyScene - Whether the current scene is the privacy scene
  * @returns true or false based on whether the user has the required permissions
  */
 
-export const hasPermission = ({ event, requiredRole, restricted }) => {
+export const hasPermission = ({ event, requiredRole, restricted, inPrivacyScene }) => {
   const { badges } = event.sender?.identity || [];
 
   const { kickAccountsConfig } = injectDefaults();
@@ -21,8 +22,8 @@ export const hasPermission = ({ event, requiredRole, restricted }) => {
   const isAdmin = admins.includes(event.sender?.username?.toLowerCase());
   const isMod = mods.includes(event.sender?.username?.toLowerCase()) || isModerator;
 
-  // If the command is restricted, only allow broadcaster and admins to execute it
-  if (restricted) return isBroadcaster || isAdmin;
+  // If the command is restricted and the current scene is the privacy scene, only allow broadcaster and admins to execute it
+  if (restricted && inPrivacyScene) return isBroadcaster || isAdmin;
   // Broadcaster has all permissions, always return true
   if (isBroadcaster) return true;
   if (requiredRole === 'user') return true;

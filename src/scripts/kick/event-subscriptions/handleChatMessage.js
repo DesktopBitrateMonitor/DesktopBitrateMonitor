@@ -2,10 +2,13 @@ import { injectDefaults } from '../../store/defaults';
 import { hasPermission } from '../lib';
 import { kickMessageService } from '../messages-service/chat-messages';
 import { commandActions } from '../../shared-chat-functions/command-actions';
+import { getCurrentProgramScene } from '../../streaming-software/obs-api';
+import { ifCurrentSceneIsPrivacyScene } from '../../shared-chat-functions/lib';
 
-const { commandsConfig, kickAccountsConfig, switcherConfig } = injectDefaults();
+const { commandsConfig, kickAccountsConfig, switcherConfig, streamingSoftwareConfig } =
+  injectDefaults();
 
-export function handleChatMessage(rawMessage) {
+export async function handleChatMessage(rawMessage) {
   const message = rawMessage.content;
   const args = message.split(' ');
   const commandName = args[0].toLowerCase();
@@ -37,7 +40,8 @@ export function handleChatMessage(rawMessage) {
     hasPermission({
       event: rawMessage,
       requiredRole: requiredCommandRole,
-      restricted: commandObject.restricted
+      restricted: commandObject.restricted,
+      inPrivacyScene: await ifCurrentSceneIsPrivacyScene()
     })
   ) {
     commandActions({

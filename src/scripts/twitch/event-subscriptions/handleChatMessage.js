@@ -2,10 +2,14 @@ import { injectDefaults } from '../../store/defaults';
 import { hasPermission } from './lib';
 import { twitchMessageService } from '../message-service/chat-messages';
 import { commandActions } from '../../shared-chat-functions/command-actions';
+import { getCurrentProgramScene } from '../../streaming-software/obs-api';
+import Logger from '../../logging/logger';
+import { ifCurrentSceneIsPrivacyScene } from '../../shared-chat-functions/lib';
 
-const { commandsConfig, twitchAccountsConfig, switcherConfig } = injectDefaults();
+const { commandsConfig, twitchAccountsConfig, switcherConfig, streamingSoftwareConfig } =
+  injectDefaults();
 
-export function handleChatMessage(eventSub) {
+export async function handleChatMessage(eventSub) {
   const event = eventSub.event;
   const { source_broadcaster_user_id, broadcaster_user_id } = eventSub.event;
   const message = event.message.text;
@@ -38,7 +42,8 @@ export function handleChatMessage(eventSub) {
     hasPermission({
       event,
       requiredRole: requiredCommandRole,
-      restricted: commandObject.restricted
+      restricted: commandObject.restricted,
+      inPrivacyScene: await ifCurrentSceneIsPrivacyScene()
     })
   ) {
     commandActions({

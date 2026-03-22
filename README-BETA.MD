@@ -1,5 +1,13 @@
 # First Beta release for testing functionality and get UI/functionality feedback
 
+## v0.0.4
+
+- Fix bitrate chat response for Srt-Relay-Server stats
+- Fix switch command for moderators. Only block the command if the broadcasting software is in privacy scene
+- Start implement experimental non-relay-server listener/caller media watching (like loopy SRT)
+
+
+
 ## v0.0.3
 
 - Little fixes and restructured message handling for all platforms

@@ -77,11 +77,11 @@ export async function switcherService(data, mainWindow = null) {
   };
 
   const scenes = [
-    switcherSettings.sceneStart,
-    switcherSettings.sceneLive,
-    switcherSettings.sceneOffline,
-    switcherSettings.sceneLow,
-    switcherSettings.scenePrivacy
+    switcherSettings.sceneStart.toLowerCase(),
+    switcherSettings.sceneLive.toLowerCase(),
+    switcherSettings.sceneOffline.toLowerCase(),
+    switcherSettings.sceneLow.toLowerCase(),
+    switcherSettings.scenePrivacy.toLowerCase()
   ];
 
   const triggers = {
@@ -129,10 +129,10 @@ export async function switcherService(data, mainWindow = null) {
 
   const streamState = await checkStreamState();
 
-  if (isDev) {
-    console.log('Data: ', data);
-    console.log('Switcher Settings:', switcherSettings);
-  }
+  // if (isDev) {
+  //   console.log('Data: ', data);
+  //   console.log('Switcher Settings:', switcherSettings);
+  // }
 
   // If unable to get stream state, exit the switcher
   if (!streamState.success) {
@@ -155,17 +155,22 @@ export async function switcherService(data, mainWindow = null) {
     }
   };
 
-  // If the current scene if the privacy scene, do not switch
-  if (currentScene.data === switcherSettings.scenePrivacy) {
-    Logger.log('Current scene is privacy scene. Switcher is inactive.');
+  const clearAllPending = () => {
     clearPending('offline');
     clearPending('low');
     clearPending('live');
+  };
+
+  // If the current scene if the privacy scene, do not switch
+  if (currentScene.data.toLowerCase() === switcherSettings.scenePrivacy.toLowerCase()) {
+    Logger.log('Current scene is privacy scene. Switcher is inactive.');
+    clearAllPending();
     return;
   }
 
   // Only switch if OBS is in a switchable scene
-  if (!scenes.includes(currentScene.data)) {
+  if (!scenes.includes(currentScene.data.toLowerCase())) {
+    clearAllPending();
     Logger.log('Current scene is not in switchable scenes. Switcher is inactive.');
     return;
   }
@@ -178,8 +183,9 @@ export async function switcherService(data, mainWindow = null) {
         pending[key] = null;
 
         const latestScene = await getCurrentScene();
-        if (latestScene.data === targetScene) return;
-        if (latestScene.data === switcherSettings.scenePrivacy) return;
+        if (latestScene?.data.toLowerCase() === targetScene?.toLowerCase()) return;
+        if (latestScene?.data.toLowerCase() === switcherSettings?.scenePrivacy?.toLowerCase()) return;
+        if (!scenes.includes(latestScene?.data?.toLowerCase())) return;
 
         const res = await setCurrentProgramScene(targetScene);
         if (!res.success) {
@@ -225,7 +231,10 @@ export async function switcherService(data, mainWindow = null) {
     );
   };
 
-  if (currentScene.data !== switcherSettings.sceneStart && bitrate <= triggers.offTrigger) {
+  if (
+    currentScene.data.toLowerCase() !== switcherSettings.sceneStart.toLowerCase() &&
+    bitrate <= triggers.offTrigger
+  ) {
     scheduleSwitch('offline', delays.toOffline, switcherSettings.sceneOffline);
     clearPending('low');
     clearPending('live');
@@ -233,7 +242,10 @@ export async function switcherService(data, mainWindow = null) {
   }
   clearPending('offline');
 
-  if (currentScene.data !== switcherSettings.sceneStart && bitrate < triggers.trigger) {
+  if (
+    currentScene.data.toLowerCase() !== switcherSettings.sceneStart.toLowerCase() &&
+    bitrate < triggers.trigger
+  ) {
     scheduleSwitch('low', delays.toLow, switcherSettings.sceneLow);
     clearPending('offline');
     clearPending('live');
