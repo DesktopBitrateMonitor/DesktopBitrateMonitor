@@ -631,7 +631,7 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
               Check your connection setup (Websocket is up running? Connection settings correct?) or restart the broadcasting software
             </li>
             <li>
-              Check the server connection. If no live data are shown up in the Feed-Chart on the dashboard, the server does not send data oder the setup is wrong and the app can not listen to the server stats
+              Check the server connection. If no live data are shown up in the Feed-Chart on the dashboard, the server does not send data or the setup is wrong and the app can not listen to the server stats
             </li>
           </ul>
         </td>
