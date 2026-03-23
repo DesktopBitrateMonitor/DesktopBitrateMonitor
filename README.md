@@ -58,7 +58,7 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
     <li>Navigation sidebar with all sections</li>
       <ul>
         <li>Platform button opens a card to change the active platform and switch to the platform-settings</li>
-        <li>Only one active platform are allowed</li>
+        <li>Only one active platform is allowed</li>
         <img src="readme-assets/dashboard/platform-select.png" alt="image">
       </ul>
     <li>Toggle button for collapsing/expanding the sidebar (state is saved)</li>
@@ -174,7 +174,7 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
     <li>Hint</li>
     <ul>
       <li>
-        The hint with variable description. Variable format have to be exactly like the hints variable
+        The hint with variable description. Variable format has to be exactly like the hints variable
       </li>
     </ul>
   </ol>
@@ -206,7 +206,7 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
         Entry the name from the user in the roles textfield. The name must exact match the users platform name
       </li>
       <li>
-        After click the button or press enter the api call for the user data runs. If no user found a error message shown up, otherwise the chip for the user appears
+        After click the save button or press enter, the api call for the user data runs. If no user found a error message shown up, otherwise the chip for the user appears
       </li>
     </ul>
   </ol>
@@ -224,10 +224,10 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
     <li>Account card</li>
     <ul>
       <li>
-        The user information and logout button. After logout all userdata will be deleted and the user access token are revoke
+        The user information and logout button. After logout all userdata will be deleted and the user access token are revoked
       </li>
       <li>
-        If no user is logged in, a login in button appears. After clicking the button the authorization code flow automatically starts in your machines main browser. After authorization the user information automatically stored in the app and the image and name of the user appears in the user card
+        If no user is logged in, a login in button appears. After clicking the login button, the authorization code flow automatically starts in your machines main browser. After authorization, the user information is automatically stored in the app and the image and name of the user appears in the user card
       </li>
     </ul>
     <li>Enable Chatbot</li>
@@ -372,7 +372,7 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
     </li>
     <ul>
       <li>
-        After raids another broadcaster, the switcher automatically stops the stream in the broadcasting software
+        After raiding another broadcaster, the switcher automatically stops the stream in the broadcasting software
       </li>
     </ul>
   </ol>
@@ -381,7 +381,7 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
 
 ### Switcher Scene Settings
 
-- Setup the scenes for the switcher. The scene names must match the scenes in your broadcasting software. They are not matching, the switcher doesn't abel to switch on the scene
+- Setup the scenes for the switcher. The scene names must match the scenes in your broadcasting software. If they not matching, the switcher is not abel to switch to the scene
 
 ![image](readme-assets/switcher/scene-settings.png)
 
@@ -445,7 +445,7 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
     </li>
     <ul>
       <li>
-        If the current bitrate is equals or below this value, the switcher switches to the low-bitrate-scene after the delay time value.
+        If the current bitrate is equal or below this value, the switcher switches to the low-bitrate-scene after the delay time value.
       </li>
     </ul>
     <li>
@@ -453,10 +453,10 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
     </li>
     <ul>
       <li>
-        If the current bitrate is equals or above this value, the switcher switches to the live-scene after the delay time value.
+        If the current bitrate is equal or above this value, the switcher switches to the live-scene after the delay time value.
       </li>
       <li>
-        Is the delay time value set to 0, the switcher switch switches instant back to the live-scene
+        If the delay time value set to 0, the switcher switch switches instant back to the live-scene
       </li>
     </ul>
     <li>
@@ -464,7 +464,7 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
     </li>
     <ul>
       <li>
-        The the current bitrate is equals or below this value, the switcher switches to the offline scene
+        The the current bitrate is equal or below this value, the switcher switches to the offline scene
       </li>
     </ul>
     <li>
@@ -472,7 +472,7 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
     </li>
     <ul>
       <li>
-        The time in seconds the current bitrate have to be above the bitrate threshold before the switcher actual switch the scene.
+        The time in seconds the current bitrate has to be above the bitrate threshold before the switcher actual switches the scene.
       </li>
       <li>
         Set the value to 0 to force instant recover to live scene
@@ -485,7 +485,7 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
     </li>
     <ul>
       <li>
-        The time in seconds the current bitrate have to be below the bitrate threshold before the switcher actual switch the scene
+        The time in seconds the current bitrate has to be below the bitrate threshold before the switcher actual switches the scene
       </li>
     </ul>
     <li>
@@ -493,7 +493,7 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
     </li>
     <ul>
       <li>
-        The time in seconds the current bitrate have to be below the bitrate threshold before the switcher actual switch the scene
+        The time in seconds the current bitrate has to be below the bitrate threshold before the switcher actual switches the scene
       </li>
     </ul>
   </ol>
@@ -568,7 +568,7 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
     </li>
     <ul>
       <li>
-        On app start the app called the update server and search for a possible update. If a update was found, the release notes are show up to you in a window. in this window you are able to decide if you wanna update the application
+        On app start the app called the update server and searches for an possible update. If an update was found, the release notes are shown in a window. In this window you are able to decide if you want to update the application
       </li>
     </ul>
     <li>
@@ -576,7 +576,7 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
     </li>
     <ul>
       <li>
-        The app install updates automatically if one is found. The installation runs on app start.
+        The app installs updates automatically if one is found. The installation runs on app start.
       </li>
     </ul>
     <li>
@@ -655,8 +655,8 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
     </tbody>
   </table>
 
-
 # Roadmap
+
 <ul>
   <li>
     FIND BROADCASTERS THEY ARE USING THE APP
