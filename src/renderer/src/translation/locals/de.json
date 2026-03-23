@@ -493,8 +493,7 @@
       "options": {
         "srtLiveServer": "SrtLiveServer",
         "openIrl": "OpenIRL",
-        "belabox": "Belabox",
-        "listenerCaller": "Listener Caller"
+        "belabox": "Belabox"
       }
     },
     "srtLiveServer": {
@@ -553,11 +552,6 @@
         "placeholder": "Publisher",
         "hint": ""
       }
-    },
-    "listenerCaller":{
-      "header":"Listener Caller Modus aktiv",
-      "description": "Medien Überwachung ohne Relay-Server",
-      "content": "Im Listener/Caller modus sind keine Einstellungen zu treffen. Die Anwendung überprüft die Medienqulle der Streaming Software und wechelst bei aktivem/inaktivem Signaleingang"
     }
   },
   "software": {
@@ -670,6 +664,7 @@
       "error2": "{{value}} muss eine ganze Zahl sein",
       "error3": "{{value}} muss kleiner als der Wiederherstellungs-Auslöser für Live sein",
       "error4": "{{value}} muss größer als der Auslöser für niedrige Bitrate sein",
+      "error6": "{{value}} muss größer als der Offline-Auslöser sein",
       "error5": "{{value}} muss kleiner als sowohl der Auslöser für niedrige Bitrate als auch der Wiederherstellungs-Auslöser für Live sein",
       "trigger": {
         "label": "Bitrate-Auslöser für niedrige Bitrate (kbps)",
@@ -849,7 +844,7 @@
         "error": "Fehler beim Setzen des Bitrate Triggers"
       },
       "setRTrigger": {
-        "success": "Bitrate Recovery Trigger auf ${trigger} kbps gesetzt",
+        "success": "Bitrate Recovery Trigger auf ${rtrigger} kbps gesetzt",
         "error": "Fehler beim Setzen des Bitrate Recovery Triggers"
       },
       "addAdmin": {

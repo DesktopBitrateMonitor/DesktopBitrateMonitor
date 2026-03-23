@@ -462,14 +462,14 @@
       "accounts": {}
     },
     "sorting": {
-      "default": "Standard",
-      "broadcaster": "StreamerIn",
+      "default": "Default",
+      "broadcaster": "Broadcaster",
       "admin": "Admin",
       "moderator": "Mod",
       "user": "User"
     },
     "filtering": {
-      "all": "Alle",
+      "all": "All",
       "broadcaster": "Broadcaster",
       "admin": "Admin",
       "moderator": "Mod",
@@ -492,8 +492,7 @@
       "options": {
         "srtLiveServer": "SrtLiveServer",
         "openIrl": "OpenIRL",
-        "belabox": "Belabox",
-        "listenerCaller": "Listener Caller"
+        "belabox": "Belabox"
       }
     },
     "srtLiveServer": {
@@ -552,11 +551,6 @@
         "placeholder": "Publisher",
         "hint": ""
       }
-    },
-    "listenerCaller": {
-      "header": "Listener Caller mode active",
-      "description": "Media source watching without relay server",
-      "content": "In Listener/Caller mode, there are no settings to configure. The application checks the media source of the streaming software and switches scenes based on active/inactive signal input."
     }
   },
   "software": {
@@ -667,9 +661,10 @@
       "description": "Setup the bitrate triggers and timeout values for switching scenes",
       "error1": "{{value}} is required",
       "error2": "{{value}} must be an integer",
-      "error3": "{{value}} must be lower than Reverse Trigger to live",
-      "error4": "{{value}} must be greater than Trigger to low",
-      "error5": "{{value}} must be lower than both Trigger to Low and Reverse Trigger to live",
+      "error3": "{{value}} must be lower than Reverse to Live Trigger",
+      "error4": "{{value}} must be greater than Trigger to Low",
+      "error6": "{{value}} must be greater than Offline Trigger",
+      "error5": "{{value}} must be lower than both Trigger to Low and Reverse to Live Trigger",
       "trigger": {
         "label": "Bitrate Trigger to Low Scene (kbps)",
         "hint": "The bitrate threshold in kbps for switching to the low-bitrate scene"

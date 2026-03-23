@@ -6,7 +6,6 @@ import SrtLiveServerElement from './components/SrtLiveServerElement';
 import CollapsibleCard from '../../components/functional/CollapsibleCard.jsx';
 import BelaboxElement from './components/BelaboxElement.jsx';
 import { useTranslation } from 'react-i18next';
-import ListenerCallerElement from './components/ListenerCallerElement.jsx';
 
 const isDev = import.meta.env.DEV;
 
@@ -17,7 +16,6 @@ const ServerSettings = () => {
   { label: t('server.select.options.srtLiveServer'), value: 'srt-live-server', isDev: false },
   { label: t('server.select.options.openIrl'), value: 'openirl', isDev: false },
   { label: t('server.select.options.belabox'), value: 'belabox', isDev: true },
-  { label: t('server.select.options.listenerCaller'), value: 'listener-caller', isDev: true }
 ];
 
   const { serverConfig, updateServerConfig } = useServerConfigStore();
@@ -103,16 +101,6 @@ const ServerSettings = () => {
           defaultExpanded={true}
         >
           <BelaboxElement />
-        </CollapsibleCard>
-      )}
-      {serverType === 'listener-caller' && (
-        <CollapsibleCard
-          title={t('server.listenerCaller.header')}
-          subtitle={t('server.listenerCaller.description')}
-          collapsible={false}
-          defaultExpanded={true}
-        >
-          <ListenerCallerElement />
         </CollapsibleCard>
       )}
     </Box>

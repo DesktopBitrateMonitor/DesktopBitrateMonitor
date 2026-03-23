@@ -62,7 +62,15 @@ const Triggers = ({ collapsedIds, toggleCollapsed }) => {
   });
 
   const validateTriggerValues = (name, value) => {
-    const triggerValue = Number(value);
+    const parsedValue = Number(value);
+    const nextValues = {
+      ...triggersData,
+      [name]: value
+    };
+    const triggerValue = Number(nextValues.trigger);
+    const rTriggerValue = Number(nextValues.rTrigger);
+    const offTriggerValue = Number(nextValues.offTrigger);
+
     if (
       name === 'trigger' ||
       name === 'rTrigger' ||
@@ -74,20 +82,32 @@ const Triggers = ({ collapsedIds, toggleCollapsed }) => {
       if (value.length === 0) {
         return t('switcher.triggers.error1', { value: FIELD_LABELS[name] });
       }
-      if (isNaN(triggerValue) || !Number.isInteger(triggerValue)) {
+      if (isNaN(parsedValue) || !Number.isInteger(parsedValue)) {
         return t('switcher.triggers.error2', { value: FIELD_LABELS[name] });
       }
-      if (name === 'trigger' && triggersData.rTrigger <= triggerValue) {
-        return t('switcher.triggers.error3', { value: FIELD_LABELS[name] });
+
+      if (name === 'trigger') {
+        if (triggerValue >= rTriggerValue) {
+          return t('switcher.triggers.error3', { value: FIELD_LABELS[name] });
+        }
+        if (triggerValue <= offTriggerValue) {
+          return t('switcher.triggers.error6', { value: FIELD_LABELS[name] });
+        }
       }
-      if (name === 'rTrigger' && triggerValue <= triggersData.trigger) {
-        return t('switcher.triggers.error4', { value: FIELD_LABELS[name] });
+
+      if (name === 'rTrigger') {
+        if (rTriggerValue <= triggerValue) {
+          return t('switcher.triggers.error4', { value: FIELD_LABELS[name] });
+        }
+        if (rTriggerValue <= offTriggerValue) {
+          return t('switcher.triggers.error6', { value: FIELD_LABELS[name] });
+        }
       }
-      if (
-        (name === 'offTrigger' && triggersData.trigger <= triggerValue) ||
-        triggersData.rTrigger <= triggerValue
-      ) {
-        return t('switcher.triggers.error5', { value: FIELD_LABELS[name] });
+
+      if (name === 'offTrigger') {
+        if (offTriggerValue >= triggerValue || offTriggerValue >= rTriggerValue) {
+          return t('switcher.triggers.error5', { value: FIELD_LABELS[name] });
+        }
       }
     }
     return '';

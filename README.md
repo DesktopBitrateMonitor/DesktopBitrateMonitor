@@ -3,7 +3,7 @@
     DESKTOP BITRATE MONITOR
   </h1>
   <h2>
-    A desktop app that listens to SRT ingest server statistics and automatically switches scenes in your broadcasting software.
+    A desktop app that monitors SRT ingest server statistics and automatically switches scenes in your broadcasting software.
   </h2>
 </div>
 

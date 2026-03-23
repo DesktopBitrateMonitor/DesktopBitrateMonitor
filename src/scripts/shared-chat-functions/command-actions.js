@@ -296,20 +296,19 @@ export const commandActions = ({ platform, messageService, switcherConfig, accou
     }
   },
   setTrigger: async (triggerValue) => {
-    if (
-      typeof triggerValue !== 'number' ||
-      triggerValue.trim().replace(/\s/g, '') === '' ||
-      isNaN(triggerValue)
-    ) {
+    triggerValue = Number(triggerValue);
+
+    if (typeof triggerValue !== 'number' || isNaN(triggerValue)) {
       await messageService({
         action: 'setTrigger',
         event: 'error',
         variables: { trigger: 'undefined' }
       });
-      Logger.error('Invalid username provided for addMod command.');
+      Logger.error('Invalid trigger value for setTrigger command.');
       return;
     }
-    switcherConfig.set('bitrateTrigger', triggerValue);
+
+    switcherConfig.set('trigger', triggerValue);
     await messageService({
       action: 'setTrigger',
       event: 'success',
@@ -317,16 +316,16 @@ export const commandActions = ({ platform, messageService, switcherConfig, accou
     });
   },
   setRTrigger: async (rTriggerValue) => {
-    if (
-      typeof rTriggerValue !== 'number' ||
-      rTriggerValue.trim().replace(/\s/g, '') === '' ||
-      isNaN(rTriggerValue)
-    ) {
+    rTriggerValue = Number(rTriggerValue);
+
+    if (typeof rTriggerValue !== 'number' || isNaN(rTriggerValue)) {
       await messageService({
         action: 'setRTrigger',
         event: 'error',
         variables: { rtrigger: 'undefined' }
       });
+      Logger.error('Invalid rTrigger value for setRTrigger command.');
+      return;
     }
     switcherConfig.set('rTrigger', rTriggerValue);
     await messageService({
