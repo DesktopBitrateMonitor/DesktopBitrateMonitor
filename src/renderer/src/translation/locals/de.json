@@ -49,7 +49,8 @@
     "softwareSettings": "Software-Einstellungen",
     "switcherSettings": "Switcher-Einstellungen",
     "loggingSettings": "Logging-Einstellungen",
-    "appSettings": "App-Einstellungen"
+    "appSettings": "App-Einstellungen",
+    "overlayEditor": "Overlay-Editor"
   },
   "dashboard": {
     "header": "Dashboard",
@@ -807,6 +808,10 @@
         }
       }
     }
+  },
+  "overlayEditor":{
+    "header": "Overlay Editor",
+    "description": "Einstellungen für das Stats-Overlay"
   },
   "defaults": {
     "messages": {

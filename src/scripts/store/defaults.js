@@ -236,6 +236,15 @@ export const injectDefaults = () => {
     }
   });
 
+  const overlayConfig = new Store({
+    name: 'overlay-config',
+    defaults: {
+      html: {},
+      css: {},
+      js: {}
+    }
+  });
+
   // Define more default storage instances here to return the defaults
 
   // const secondConfig = new Store({
@@ -257,6 +266,7 @@ export const injectDefaults = () => {
     kickAccountsConfig,
     serverConfig,
     streamingSoftwareConfig,
-    switcherConfig
+    switcherConfig,
+    overlayConfig
   };
 };

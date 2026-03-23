@@ -79,12 +79,19 @@ const NAV_ITEMS = [
     development: true
   },
   {
+    translationKey: 'navigation.overlayEditor',
+    path: '/dashboard/overlayeditor',
+    icon: SportsEsportsIcon,
+    matchPrefix: false,
+    development: true
+  },
+  {
     translationKey: 'navigation.appSettings',
     path: '/dashboard/appsettings',
     icon: Settings,
     matchPrefix: true,
     development: false
-  }
+  },
 ];
 
 const PLATFORM_ROUTES = [

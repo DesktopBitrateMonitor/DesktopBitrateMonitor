@@ -34,7 +34,22 @@
     "TWITCHCLIENTSECRET",
     "twitchsettings",
     "kbps",
-    "pkce"
+    "pkce",
+    "eventsub",
+    "kbps",
+    "KICKBOT",
+    "KICKBROADCASTER",
+    "KICKCLIENTID",
+    "KICKCLIENTSECRET",
+    "layouteditor",
+    "loggingsettings",
+    "overlayeditor",
+    "pkce",
+    "TWITCHBOT",
+    "TWITCHBROADCASTER",
+    "unsub",
+    "unsubs",
+    "usersettings"
   ],
   "ignoreWords": [],
   "import": []

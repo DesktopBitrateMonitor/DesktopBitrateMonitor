@@ -5,8 +5,10 @@ import Scenes from './components/Scenes.jsx';
 import Switches from './components/Switches.jsx';
 import Triggers from './components/Triggers.jsx';
 import { Box, Divider, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 const SwitcherSettings = () => {
+  const { t } = useTranslation();
   const { switcherConfig, updateSwitcherConfig } = useSwitcherConfigStore();
   const [layoutMode, setLayoutMode] = useState('grid');
   const [collapsedIds, setCollapsedIds] = useState(switcherConfig?.collapsed || []);
@@ -72,10 +74,10 @@ const SwitcherSettings = () => {
       >
         <Box>
           <Typography variant="h5" sx={{ mb: 0.5 }}>
-            Switcher Settings
+            {t('switcher.header')}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Choose and configure your switcher settings here
+            {t('switcher.description')}
           </Typography>
         </Box>
         <LayoutToggle value={layoutMode} onChange={handleLayoutChange} />

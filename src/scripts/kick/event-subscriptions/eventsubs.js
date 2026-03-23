@@ -131,11 +131,6 @@ async function processMessage(rawMessage, mainWindow = null) {
     return;
   }
 
-  if (isDev) {
-    console.log('Received Kick message:', message);
-    console.log('Received Kick message:', message.data);
-  }
-
   switch (message.event) {
     case 'pusher:connection_established': {
       const payload = safeJsonParse(message.data);

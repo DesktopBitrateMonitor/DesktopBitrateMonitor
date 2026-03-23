@@ -28,6 +28,7 @@ import UpdateCard from './components/feedback/UpdateCard';
 import { useAppConfigStore } from './contexts/DataContext';
 import { useEffect, useRef, useState } from 'react';
 import { useUpdate } from './contexts/UpdateContext';
+import OverlayEditor from './panels/overlay/OverlayEditor';
 
 function App() {
   const { appConfig, updateAppConfig } = useAppConfigStore();
@@ -67,6 +68,7 @@ function App() {
             <Route index element={<Main />} />
             <Route path="logs" element={<LoggingFeed />} />
 
+            {/* ACCOUNT SETTINGS */}
             <Route path="accountssettings" element={<AccountsSettings />}>
               <Route index element={<Navigate to="twitch" replace />} />
               <Route path="twitch" element={<TwitchSettings />}>
@@ -76,6 +78,7 @@ function App() {
                 <Route path="usersettings" element={<TwitchUserSettings />} />
                 <Route path="accountssettings" element={<TwitchAccountSettings />} />
               </Route>
+
               <Route path="kick" element={<KickSettings />}>
                 <Route index element={<CommandSettings />} />
                 <Route path="commandsettings" element={<CommandSettings />} />
@@ -85,8 +88,22 @@ function App() {
               </Route>
             </Route>
 
+            {/* SERVER SETTINGS */}
             <Route path="serversettings" element={<ServerSettings />} />
 
+            {/* SOFTWARE SETTINGS */}
+            <Route path="softwaresettings" element={<SoftwareSettings />} />
+
+            {/* SWITCHER SETTINGS */}
+            <Route path="switchersettings" element={<SwitcherSettings />} />
+
+            {/* LOGGING SETTINGS */}
+            <Route path="loggingsettings" element={<LoggingSettings />} />
+
+            {/* OVERLAY EDITOR */}
+            <Route path="overlayeditor" element={<OverlayEditor />} />
+
+            {/* APP SETTINGS */}
             <Route path="appsettings" element={<AppSettings />}>
               <Route index element={<GeneralSettings />} />
               <Route path="generalsettings" element={<GeneralSettings />} />
@@ -96,11 +113,6 @@ function App() {
               />
               <Route path="stylesettings" element={<StyleSettings />} />
             </Route>
-
-            <Route path="softwaresettings" element={<SoftwareSettings />} />
-
-            <Route path="switchersettings" element={<SwitcherSettings />} />
-            <Route path="loggingsettings" element={<LoggingSettings />} />
           </Route>
         </Routes>
       </Router>

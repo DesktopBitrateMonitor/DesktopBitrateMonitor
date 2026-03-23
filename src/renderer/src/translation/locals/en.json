@@ -49,7 +49,8 @@
     "softwareSettings": "Software Settings",
     "switcherSettings": "Switcher Settings",
     "loggingSettings": "Logging Settings",
-    "appSettings": "App Settings"
+    "appSettings": "App Settings",
+    "overlayEditor": "Overlay Editor"
   },
   "dashboard": {
     "header": "Dashboard",
@@ -807,6 +808,10 @@
         }
       }
     }
+  },
+  "overlayEditor": {
+    "header": "Overlay Editor",
+    "description": "Settings for the bitrate stats overlay"
   },
   "defaults": {
     "messages": {
