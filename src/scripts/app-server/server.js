@@ -1,0 +1,49 @@
+import WebSocket from 'ws';
+import fs from 'fs';
+import path from 'path';
+import Logger from '../logging/logger';
+import router from './base-router';
+import { overlayFilePath } from '../overlay/overlay-router';
+import { injectDefaults } from '../store/defaults';
+
+const express = require('express');
+const app = express();
+app.use(express.json());
+
+const port = import.meta.env.VITE_SERVERPORT;
+
+const server = app.listen(port, () => {
+  Logger.log(`App server listening at http://localhost:${port}`);
+});
+
+app.use('/', router);
+
+// ---- WEBSOCKET SERVER ---- //
+
+const wss = new WebSocket.Server({ server });
+
+function getOverlayData() {
+  const raw = fs.readFileSync(overlayFilePath, 'utf-8');
+  return JSON.parse(raw);
+}
+
+export function broadcastOverlay() {
+  const data = JSON.stringify(getOverlayData());
+
+  wss.clients.forEach((client) => {
+    if (client.readyState === 1) {
+      client.send(data);
+    }
+  });
+}
+
+wss.on('connection', (ws) => {
+  console.log('Overlay client connected');
+
+  const data = JSON.stringify(getOverlayData());
+  ws.send(data);
+});
+
+wss.on('close', () => {
+  console.log('Overlay client disconnected');
+});

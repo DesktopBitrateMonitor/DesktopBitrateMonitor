@@ -3,7 +3,6 @@
 ## v0.0.6 - Beta
 
 - Implement stats overlay service
-- 
 
 ## v0.0.5 - Beta
 

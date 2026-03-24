@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: transparent;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="main-overlay-root-container"></div>
+    <div class="container">
+      <p class="overlay-title"></p>
+      <p id="overlay-bitrate"></p>
+      <p class="overlay-speed"></p>
+      <p class="overlay-uptime"></p>
+      <p>{{totalUptime}}</p>
+    </div>
+
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="index.js"></script>
+  </body>
+</html>

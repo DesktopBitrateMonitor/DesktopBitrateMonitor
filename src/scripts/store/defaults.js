@@ -59,7 +59,8 @@ export const injectDefaults = () => {
       lastUpdateCheck: null,
       layout: {
         dashboardLayout: { ...defaultLayout }
-      }
+      },
+      overlayWebsocketConnected: false
     }
   });
 
@@ -239,9 +240,12 @@ export const injectDefaults = () => {
   const overlayConfig = new Store({
     name: 'overlay-config',
     defaults: {
-      html: {},
-      css: {},
-      js: {}
+      html: "<div id='counter'></div>",
+      css: '#counter { color: red; font-size: 48px; }',
+      js: "document.getElementById('counter').innerText = PROPS.count;",
+      props: {
+        count: 1
+      }
     }
   });
 

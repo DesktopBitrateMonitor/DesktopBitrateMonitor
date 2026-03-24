@@ -1,6 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import JsEditor from './components/JsEditor';
 
 const OverlayEditor = () => {
   const { t } = useTranslation();
@@ -47,6 +48,7 @@ const OverlayEditor = () => {
             minHeight: 0
           }}
         >
+          <JsEditor />
           {/* Overlay editor content goes here */}
         </Box>
       </Box>

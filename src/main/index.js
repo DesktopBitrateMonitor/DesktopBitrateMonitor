@@ -12,7 +12,8 @@ import { initializeAuthIpc } from './ipc-handler/auth-ipc-handler';
 import { initializeLoggerIpc } from './ipc-handler/logger-ipc-handler';
 import { initializeServices } from './lib/initialize-services';
 import { initializeServicesIpc } from './ipc-handler/services-ipc-handler';
-import '../scripts/authorization/auth-server';
+import '../scripts/app-server/server';
+// import '../scripts/authorization/auth-server';
 
 const { appConfig } = injectDefaults();
 
