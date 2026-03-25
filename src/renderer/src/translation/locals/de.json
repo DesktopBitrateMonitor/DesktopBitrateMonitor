@@ -229,7 +229,7 @@
     "commands": {
       "header": "Chat Befehle ",
       "description": "Bearbeite die Chat Befehle für die verschiedenen Aktionen der Anwendung.",
-      "restrictedHint": "Wenn eingeschränkt, können nur der StreamerIn und Admins zur Live-Szene wechseln",
+      "restrictedHint": "Wenn eingeschränkt, können nur der StreamerIn und Admins von der Pause Scene weg wechseln",
       "restricted": "Eingeschränkt",
       "notRestricted": "Nicht eingeschränkt",
       "searchBox": {
@@ -825,9 +825,9 @@
   "overlayEditor": {
     "header": "Overlay Editor",
     "description": "Einstellungen für das Stats-Overlay",
-    "panels":{
+    "panels": {
       "js": "JS - Editor",
-      "html":"HTML - Editor",
+      "html": "HTML - Editor",
       "css": "CSS - Editor"
     }
   },

@@ -228,7 +228,7 @@
     "commands": {
       "header": "Chat Commands",
       "description": "Configure chat commands that can be used to trigger actions in the app.",
-      "restrictedHint": "If restricted, only the broadcaster and admins can switch to the live scene",
+      "restrictedHint": "If restricted, only the broadcaster and admins can switch away from the privacy scene",
       "restricted": "Restricted",
       "notRestricted": "Not Restricted",
       "searchBox": {

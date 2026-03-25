@@ -1,3 +1,4 @@
+import { broadcastOverlay } from '../../scripts/app-server/server';
 import Logger from '../../scripts/logging/logger';
 import { reconnectToOBS } from '../../scripts/streaming-software/obs-api';
 import { connectToActivePlatform, startFetchingServerStats } from '../lib/initialize-services';
@@ -42,5 +43,9 @@ export async function initializeServicesIpc(ipcMain, mainWindow = null) {
   ipcMain.handle('connect-to-active-platform', async (event, platform) => {
     console.log(`Received request to connect to active platform: ${platform}`);
     await connectToActivePlatform(mainWindow, platform);
+  });
+
+  ipcMain.on('reload-overlay', async (event, data) => {
+    broadcastOverlay(data);
   });
 }

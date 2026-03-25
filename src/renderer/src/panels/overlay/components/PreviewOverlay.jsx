@@ -1,55 +1,66 @@
-import React, { useEffect, useState } from 'react';
-import { Box, IconButton } from '@mui/material';
-import SyncIcon from '@mui/icons-material/Sync';
-import { useOverlayConfigStore } from '../../../contexts/DataContext';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Box } from '@mui/material';
+import { useStreamStats } from '../../../contexts/StreamStatsContext';
 
 const PreviewOverlay = ({ workingConfig }) => {
-  const { overlayConfig } = useOverlayConfigStore();
-
-  const [jsCode, setJsCode] = useState(() => workingConfig.js || '');
-  const [htmlCode, setHtmlCode] = useState(() => workingConfig.html || '');
-  const [cssCode, setCssCode] = useState(() => workingConfig.css || '');
-
-  const handleRefresh = () => {
-    setJsCode(workingConfig.js || '');
-    setHtmlCode(workingConfig.html || '');
-    setCssCode(workingConfig.css || '');
-  };
+  const { stats } = useStreamStats();
+  const [previewConfig, setPreviewConfig] = useState({ html: '', css: '', js: '' });
 
   useEffect(() => {
-    const config = overlayConfig?.overlay || { html: '', css: '', js: '' };
+    const timeoutId = window.setTimeout(() => {
+      setPreviewConfig({
+        html: workingConfig.html || '',
+        css: workingConfig.css || '',
+        js: workingConfig.js || ''
+      });
+    }, 300);
 
-    setJsCode(config.js || '');
-    setHtmlCode(config.html || '');
-    setCssCode(config.css || '');
-  }, [overlayConfig.overlay]);
+    return () => window.clearTimeout(timeoutId);
+  }, [workingConfig]);
+
+  const overlayStats = useMemo(() => {
+    const bitrate = Number(stats?.bitrate) || 0;
+    const speed = Number(stats?.speed ?? stats?.mbpsRecvRate ?? stats?.recvRate ?? stats?.rtt) || 0;
+    const uptime = Number(stats?.uptime) || 0;
+
+    return { bitrate, speed, uptime };
+  }, [stats]);
+
+  const srcDoc = useMemo(() => {
+    const statsJson = JSON.stringify(overlayStats);
+
+    return `
+      <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <link rel="preload" href="https://code.jquery.com/jquery-3.6.0.min.js" as="script">
+          <style>${previewConfig.css || ''}</style>
+        </head>
+        <body>
+          ${previewConfig.html || ''}
+          <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+          <script>
+            window.overlayStats = ${statsJson};
+            window.PROPS = window.overlayStats;
+          </script>
+          <script>${previewConfig.js || ''}</script>
+        </body>
+      </html>`;
+  }, [overlayStats, previewConfig]);
 
   return (
     <Box sx={{ mb: 2 }}>
-      <IconButton onClick={handleRefresh} size="small" sx={{ mb: 1 }}>
-        <SyncIcon />
-      </IconButton>
       <iframe
         title="Overlay Preview"
         style={{
           width: '100%',
-          height: 240,
+          height: 200,
           border: '1px solid rgba(255,255,255,0.12)',
           borderRadius: 4
         }}
-        srcDoc={`
-          <!DOCTYPE html>
-            <html lang="en">
-              <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <style>${cssCode}</style>
-              </head>
-              <body>
-                ${htmlCode}
-                <script>${jsCode}</script>
-              </body>
-            </html>`}
+        srcDoc={srcDoc}
       />
     </Box>
   );

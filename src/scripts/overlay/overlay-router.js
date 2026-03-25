@@ -1,11 +1,7 @@
 import express from 'express';
 import path from 'path';
-import fs from 'fs';
 import os from 'os';
-import Logger from '../logging/logger';
-import { injectDefaults } from '../store/defaults';
 import { app } from 'electron';
-import WebSocket from 'ws';
 
 export const overlayRouter = express.Router();
 
@@ -24,13 +20,12 @@ const folderPath = path.join(baseDir, app.name);
 export const overlayFilePath = path.join(folderPath, fileName);
 
 overlayRouter.get('/overlay/stats', (req, res) => {
-  const data = JSON.parse(fs.readFileSync(overlayFilePath, 'utf-8'));
-
   res.send(`
     <!DOCTYPE html>
     <html>
       <head>
         <meta charset="UTF-8" />
+        <link rel="preload" href="https://code.jquery.com/jquery-3.6.0.min.js" as="script" />
         <style>
           html, body {
             margin: 0;
@@ -39,38 +34,73 @@ overlayRouter.get('/overlay/stats', (req, res) => {
             overflow: hidden;
           }
         </style>
-      </head>
-      <body>
-        <div id="root"></div>
 
+      </head>
+      <body id="overlay-root">
+
+        <!-- JQUERY for DOM manipulation -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+        <!-- The root element for the overlay content -->
+        <div id="root-overlay-element"></div>
+       
+        <!-- Overlay script -->
         <script>
           const ws = new WebSocket("ws://localhost:${PORT}");
+          const overlayState = {
+            config: { html: '', css: '', js: '' },
+            stats: { bitrate: 0, speed: 0, uptime: 0 }
+          };
 
-          console.log("Connecting to overlay WebSocket...");
+          const normalizeStats = (stats = {}) => {
+            const bitrate = Number(stats.bitrate) || 0;
+            const speed = Number(stats.rtt) || 0;
+            const uptime = Number(stats.uptime) || 0;
 
-          ws.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            const { html, css, js, props } = data;
+            return { bitrate, speed, uptime };
+          };
 
-            // inject HTML
-            document.getElementById("root").innerHTML = html;
+          const applyOverlay = () => {
+            const root = document.getElementById("root-overlay-element");
+            const currentConfig = overlayState.config || {};
+            const currentStats = overlayState.stats || { bitrate: 0, speed: 0, uptime: 0 };
 
-            // inject CSS
-            let style = document.getElementById("overlay-style");
+            root.innerHTML = currentConfig.html || '';
+
+            let style = document.getElementById("root-overlay-style");
             if (!style) {
               style = document.createElement("style");
-              style.id = "overlay-style";
+              style.id = "root-overlay-style";
               document.head.appendChild(style);
             }
-            style.innerHTML = css;
+            style.innerHTML = currentConfig.css || '';
 
-            // run JS safely
+            window.overlayStats = currentStats;
+            window.PROPS = window.overlayStats;
+
             try {
-              window.PROPS = props;
-              eval(js);
+              eval(currentConfig.js || '');
             } catch (e) {
               console.error("Overlay JS error:", e);
             }
+          };
+
+          ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.type === "stats") {
+              overlayState.stats = normalizeStats(data.stats || {});
+              applyOverlay();
+              return;
+            }
+
+            const overlayPayload = data?.overlay || data?.config || data || {};
+            overlayState.config = {
+              html: overlayPayload.html || '',
+              css: overlayPayload.css || '',
+              js: overlayPayload.js || ''
+            };
+            applyOverlay();
           };
         </script>
       </body>

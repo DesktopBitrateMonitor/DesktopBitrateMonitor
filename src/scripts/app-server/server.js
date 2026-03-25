@@ -1,6 +1,5 @@
 import WebSocket from 'ws';
 import fs from 'fs';
-import path from 'path';
 import Logger from '../logging/logger';
 import router from './base-router';
 import { overlayFilePath } from '../overlay/overlay-router';
@@ -27,12 +26,11 @@ function getOverlayData() {
   return JSON.parse(raw);
 }
 
-export function broadcastOverlay() {
-  const data = JSON.stringify(getOverlayData());
-
+export function broadcastOverlay(data) {
+  const dataString = JSON.stringify(data);
   wss.clients.forEach((client) => {
     if (client.readyState === 1) {
-      client.send(data);
+      client.send(dataString);
     }
   });
 }

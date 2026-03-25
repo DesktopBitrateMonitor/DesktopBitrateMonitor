@@ -240,13 +240,15 @@ export const injectDefaults = () => {
   const overlayConfig = new Store({
     name: 'overlay-config',
     defaults: {
+      expertMode: false,
+      showBitrate: true,
+      showSpeed: true,
+      showUptime: true,
+      showIcons: true,
       overlay: {
-        html: "<div id='counter'></div>",
-        css: '#counter { color: red; font-size: 48px; }',
-        js: "document.getElementById('counter').innerText = PROPS.count;",
-        props: {
-          count: 1
-        }
+        html: '<link rel="stylesheet"\r\n    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />\r\n\r\n<div id="root">\r\n    <div class="container">\r\n        <span id="icon" class="material-symbols-outlined"\r\n          >signal_cellular_0_bar</span>\r\n        <div id="bitrate">Loading...</div>\r\n    </div>\r\n</div>',
+        css: '* {\r\n  font-family: Verdana, Geneva, Tahoma, sans-serif;\r\n}\r\n\r\n.container {\r\n  display: flex;\r\n  align-items: center;\r\n  gap: 0.5rem;\r\n}\r\n\r\n.material-symbols-outlined {\r\n  font-size: 8px;\r\n  color: rgb(33, 57, 238);\r\n}\r\n\r\n#bitrate {\r\n  font-size: 20px;\r\n  color: rgb(33, 57, 238);\r\n}',
+        js: '\r\n// PROPS object returns the bitrate, speed, uptime from the current active feed, otherwise 0\r\nconst bitrate = PROPS.bitrate\r\nconst speed = PROPS.speed\r\nconst uptime = PROPS.uptime\r\n\r\n$(\"#bitrate\").text(`${bitrate} kb/s`);\r\n\r\nconst updateImageOnBitrate = () => {\r\n  let imgTxt;\r\n  if (bitrate >= 4000) {\r\n    imgTxt = \"signal_cellular_alt\";\r\n  } else if (bitrate >= 1200) {\r\n    imgTxt = \"signal_cellular_alt_2_bar\";\r\n  } else if (bitrate >= 600) {\r\n    imgTxt = \"signal_cellular_alt_1_bar\";\r\n  } else {\r\n    imgTxt = \"signal_cellular_connected_no_internet_0_bar\";\r\n  }\r\n  $(\".material-symbols-outlined\").text(imgTxt);\r\n};\r\n\r\nupdateImageOnBitrate();'
       }
     }
   });

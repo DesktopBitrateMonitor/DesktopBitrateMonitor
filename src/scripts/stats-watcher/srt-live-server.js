@@ -1,3 +1,4 @@
+import { broadcastOverlay } from '../app-server/server';
 import { injectDefaults } from '../store/defaults';
 import globalInternalStore from '../store/global-internal-store';
 
@@ -17,6 +18,12 @@ export async function formatStatsSrtLiveServer(statsData) {
         // Store the latest stats in the global internal store for usage in the app backend
         globalInternalStore.stats.set(livePublisherData);
 
+        // Broadcast the stats to the overlay
+        broadcastOverlay({
+          type: 'stats',
+          stats: livePublisherData
+        });
+
         return {
           success: true,
           data: {
@@ -29,6 +36,12 @@ export async function formatStatsSrtLiveServer(statsData) {
       } else {
         // Store the latest stats in the global internal store for usage in the app backend
         globalInternalStore.stats.set({ bitrate: 0, rtt: 0, uptime: 0 });
+
+        // Broadcast the stats to the overlay
+        broadcastOverlay({
+          type: 'stats',
+          stats: { bitrate: 0, rtt: 0, uptime: 0 }
+        });
 
         return {
           success: true,
@@ -44,6 +57,11 @@ export async function formatStatsSrtLiveServer(statsData) {
       // Store the latest stats in the global internal store for usage in the app backend
       globalInternalStore.stats.set({ bitrate: 0, rtt: 0, uptime: 0 });
 
+      // Broadcast the stats to the overlay
+      broadcastOverlay({
+        type: 'stats',
+        stats: { bitrate: 0, rtt: 0, uptime: 0 }
+      });
       return {
         success: true,
         data: {
@@ -57,6 +75,12 @@ export async function formatStatsSrtLiveServer(statsData) {
   } catch (error) {
     // Store the latest stats in the global internal store for usage in the app backend
     globalInternalStore.stats.set({ bitrate: 0, rtt: 0, uptime: 0 });
+
+    // Broadcast the stats to the overlay
+    broadcastOverlay({
+      type: 'stats',
+      stats: { bitrate: 0, rtt: 0, uptime: 0 }
+    });
 
     return {
       success: false,

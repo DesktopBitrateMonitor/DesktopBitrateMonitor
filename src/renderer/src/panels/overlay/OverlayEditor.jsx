@@ -1,5 +1,5 @@
 import { Box, Button, Switch, Tab, Tabs, Typography } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import JsEditor from './components/JsEditor';
 import PreviewOverlay from './components/PreviewOverlay';
@@ -18,6 +18,7 @@ const OverlayEditor = () => {
   const { showAlert } = useAlert();
 
   const [workingConfig, setWorkingConfig] = useState({ html: '', css: '', js: '' });
+  const hasLoadedInitialOverlay = useRef(false);
   const TAB_CONFIG = [
     {
       value: 'html',
@@ -52,16 +53,24 @@ const OverlayEditor = () => {
   const [activeValue, setActiveValue] = useState(TAB_CONFIG[0].value);
 
   useEffect(() => {
-    setWorkingConfig({
-      html: overlayConfig.html || '',
-      css: overlayConfig.css || '',
-      js: overlayConfig.js || ''
-    });
-  }, [overlayConfig]);
+    if (hasLoadedInitialOverlay.current) return;
+    if (!overlayConfig?.overlay) return;
 
-  const handleChange = useCallback((event, newValue) => {
-    setActiveValue(newValue);
-  }, []);
+    setWorkingConfig({
+      html: overlayConfig.overlay.html || '',
+      css: overlayConfig.overlay.css || '',
+      js: overlayConfig.overlay.js || ''
+    });
+
+    hasLoadedInitialOverlay.current = true;
+  }, [overlayConfig?.overlay]);
+
+  const handleChange = useCallback(
+    (event, newValue) => {
+      setActiveValue(newValue);
+    },
+    [setActiveValue]
+  );
 
   const handleSaveOverlay = async () => {
     const res = await window.storeApi.set('overlay-config', 'overlay', workingConfig);
@@ -72,6 +81,7 @@ const OverlayEditor = () => {
     }
 
     updateOverlayConfig(workingConfig);
+    await window.servicesApi.reloadOverlay({type: 'overlay', config: workingConfig});
     showAlert({ message: t('alerts.saveSuccess'), severity: 'success' });
   };
 
@@ -105,8 +115,8 @@ const OverlayEditor = () => {
           pt: 2,
           px: 1.5,
           pb: 1.5,
-          overflowY: 'auto',
-          overflowX: 'hidden',
+          // overflowY: 'auto',
+          overflow: 'hidden',
           minHeight: 0
         }}
       >
