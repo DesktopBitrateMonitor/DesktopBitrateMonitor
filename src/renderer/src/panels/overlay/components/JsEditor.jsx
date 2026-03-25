@@ -1,13 +1,30 @@
 import Editor from '@monaco-editor/react';
+import React, { useEffect, useState } from 'react';
 
-import React from 'react';
+const JsEditor = ({ workingConfig, setWorkingConfig }) => {
+  const [jsCode, setJsCode] = useState('Loading JavaScript...');
 
-const JsEditor = () => {
+  useEffect(() => {
+    setJsCode(workingConfig.js || '');
+  }, [workingConfig.js]);
+
+  const updateJsCode = (value) => {
+    setJsCode(value);
+    setWorkingConfig({ ...workingConfig, js: value });
+  }
+
   return (
     <Editor
-      height="90vh"
+      theme="vs-dark"
+      height="80vh"
       defaultLanguage="javascript"
-      defaultValue="// Write your custom JavaScript here"
+      value={jsCode}
+      onChange={(value) => updateJsCode(value)}
+      onMount={(editor) => {
+        editor.onDidChangeModelContent(() => {
+          updateJsCode(editor.getValue());
+        });
+      }}
     />
   );
 };

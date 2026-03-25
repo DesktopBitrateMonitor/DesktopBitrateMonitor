@@ -3,7 +3,20 @@
     "name": "Desktop Bitratenmonitor",
     "global": {
       "enabled": "Aktiviert",
-      "disabled": "Deaktiviert"
+      "disabled": "Deaktiviert",
+      "button": {
+        "save": "Speichern",
+        "reset": "Abbrechen",
+        "add": "Hinzufügen",
+        "remove": "Entfernen",
+        "export": "Exportieren"
+      },
+      "inputAdornment": {
+        "add": "Zum Hinzufügen klicken oder Enter drücken",
+        "save": "Zum Speichern klicken oder Enter drücken",
+        "clickSave": "Zum Speichern klicken",
+        "clickAdd": "Zum Hinzufügen klicken"
+      }
     },
     "backend": {}
   },
@@ -809,9 +822,14 @@
       }
     }
   },
-  "overlayEditor":{
+  "overlayEditor": {
     "header": "Overlay Editor",
-    "description": "Einstellungen für das Stats-Overlay"
+    "description": "Einstellungen für das Stats-Overlay",
+    "panels":{
+      "js": "JS - Editor",
+      "html":"HTML - Editor",
+      "css": "CSS - Editor"
+    }
   },
   "defaults": {
     "messages": {

@@ -240,11 +240,13 @@ export const injectDefaults = () => {
   const overlayConfig = new Store({
     name: 'overlay-config',
     defaults: {
-      html: "<div id='counter'></div>",
-      css: '#counter { color: red; font-size: 48px; }',
-      js: "document.getElementById('counter').innerText = PROPS.count;",
-      props: {
-        count: 1
+      overlay: {
+        html: "<div id='counter'></div>",
+        css: '#counter { color: red; font-size: 48px; }',
+        js: "document.getElementById('counter').innerText = PROPS.count;",
+        props: {
+          count: 1
+        }
       }
     }
   });

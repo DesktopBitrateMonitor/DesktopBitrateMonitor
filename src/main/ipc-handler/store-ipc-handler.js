@@ -10,7 +10,8 @@ const {
   kickAccountsConfig,
   serverConfig,
   streamingSoftwareConfig,
-  switcherConfig
+  switcherConfig,
+  overlayConfig
 } = injectDefaults();
 
 // Map store names to their instances for ipc usage
@@ -23,7 +24,8 @@ const STORES = {
   'kick-accounts-config': kickAccountsConfig,
   'server-config': serverConfig,
   'streaming-software-config': streamingSoftwareConfig,
-  'switcher-config': switcherConfig
+  'switcher-config': switcherConfig,
+  'overlay-config': overlayConfig
 };
 
 // Helper function to get a store by name

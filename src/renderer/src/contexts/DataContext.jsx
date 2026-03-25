@@ -41,6 +41,7 @@ const [StreamingSoftwareConfigContext, useStreamingSoftwareConfigInternal] = cre
 );
 const [SwitcherConfigContext, useSwitcherConfigInternal] =
   createStoreContext('SwitcherConfigContext');
+const [OverlayConfigContext, useOverlayConfigInternal] = createStoreContext('OverlayConfigContext');
 
 const useStoreState = (file) => {
   const [config, setConfig] = useState(null);
@@ -103,7 +104,8 @@ export const DataProvider = ({ children }) => {
       { Provider: KickAccountsConfigContext.Provider, file: 'kick-accounts-config' },
       { Provider: ServerConfigContext.Provider, file: 'server-config' },
       { Provider: StreamingSoftwareConfigContext.Provider, file: 'streaming-software-config' },
-      { Provider: SwitcherConfigContext.Provider, file: 'switcher-config' }
+      { Provider: SwitcherConfigContext.Provider, file: 'switcher-config' },
+      { Provider: OverlayConfigContext.Provider, file: 'overlay-config' }
     ],
     []
   );
@@ -245,6 +247,20 @@ export const useSwitcherConfigStore = () => {
   );
 };
 
+export const useOverlayConfigStore = () => {
+  const { config, loading, error, reload, updateLocal } = useOverlayConfigInternal();
+  return useMemo(
+    () => ({
+      overlayConfig: config,
+      loading,
+      error,
+      reloadOverlayConfig: reload,
+      updateOverlayConfig: updateLocal
+    }),
+    [config, loading, error, reload, updateLocal]
+  );
+};
+
 // Backwards-compat helper for debugging or boot screens if needed
 // NOTE: Avoid this in performance-critical code, as it combines all stores again.
 export const useAllStores = () => {
@@ -257,7 +273,7 @@ export const useAllStores = () => {
   const server = useServerConfigStore();
   const streaming = useStreamingSoftwareConfigStore();
   const switcher = useSwitcherConfigStore();
-
+  const overlay = useOverlayConfigStore();
   return {
     appConfig: app.appConfig,
     loggingConfig: logging.loggingConfig,
@@ -267,6 +283,7 @@ export const useAllStores = () => {
     kickAccountsConfig: kickAccounts.kickAccountsConfig,
     serverConfig: server.serverConfig,
     streamingSoftwareConfig: streaming.streamingSoftwareConfig,
-    switcherConfig: switcher.switcherConfig
+    switcherConfig: switcher.switcherConfig,
+    overlayConfig: overlay.overlayConfig
   };
 };

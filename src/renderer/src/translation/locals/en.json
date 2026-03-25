@@ -3,7 +3,20 @@
     "name": "Desktop Bitrate Monitor",
     "global": {
       "enabled": "Enabled",
-      "disabled": "Disabled"
+      "disabled": "Disabled",
+      "button": {
+        "save": "Save",
+        "cancel": "Cancel",
+        "add": "Add",
+        "remove": "Remove",
+        "export": "Export"
+      },
+      "inputAdornment": {
+        "add": "Click or press Enter to add",
+        "save": "Click or press Enter to save",
+        "clickSave": "Click to save",
+        "clickAdd": "Click to add"
+      }
     },
     "backend": {}
   },
@@ -811,7 +824,12 @@
   },
   "overlayEditor": {
     "header": "Overlay Editor",
-    "description": "Settings for the bitrate stats overlay"
+    "description": "Settings for the bitrate stats overlay",
+    "panels": {
+      "js": "JS - Editor",
+      "html": "HTML - Editor",
+      "css": "CSS - Editor"
+    }
   },
   "defaults": {
     "messages": {
