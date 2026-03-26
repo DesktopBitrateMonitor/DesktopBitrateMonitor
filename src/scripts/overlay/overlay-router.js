@@ -25,7 +25,12 @@ overlayRouter.get('/overlay/stats', (req, res) => {
     <html>
       <head>
         <meta charset="UTF-8" />
-        <link rel="preload" href="https://code.jquery.com/jquery-3.6.0.min.js" as="script" />
+
+        <!-- JQUERY for DOM manipulation -->
+        <script src="https://code.jquery.com/jquery-4.0.0.min.js"
+          integrity="sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao="
+          crossorigin="anonymous"></script>
+
         <style>
           html, body {
             margin: 0;
@@ -39,8 +44,10 @@ overlayRouter.get('/overlay/stats', (req, res) => {
       <body id="overlay-root">
 
         <!-- JQUERY for DOM manipulation -->
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+        <script
+          src="https://code.jquery.com/jquery-4.0.0.min.js"
+          integrity="sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao="
+          crossorigin="anonymous"></script>
 
         <!-- The root element for the overlay content -->
         <div id="root-overlay-element"></div>

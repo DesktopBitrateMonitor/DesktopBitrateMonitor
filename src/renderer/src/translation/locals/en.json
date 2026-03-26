@@ -825,6 +825,8 @@
   "overlayEditor": {
     "header": "Overlay Editor",
     "description": "Settings for the bitrate stats overlay",
+    "expertMode":"Expert Mode",
+    "statsOverlayUrl":"Stats Overlay URL",
     "panels": {
       "js": "JS - Editor",
       "html": "HTML - Editor",

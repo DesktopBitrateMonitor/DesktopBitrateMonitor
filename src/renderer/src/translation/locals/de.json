@@ -825,6 +825,8 @@
   "overlayEditor": {
     "header": "Overlay Editor",
     "description": "Einstellungen für das Stats-Overlay",
+    "expertMode": "Expertenmodus",
+    "statsOverlayUrl":" Stats-Overlay URL",
     "panels": {
       "js": "JS - Editor",
       "html": "HTML - Editor",

@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Box } from '@mui/material';
 import { useStreamStats } from '../../../contexts/StreamStatsContext';
 
-const PreviewOverlay = ({ workingConfig }) => {
+const PreviewOverlay = ({ workingConfig, fullwidth = false }) => {
   const { stats } = useStreamStats();
   const [previewConfig, setPreviewConfig] = useState({ html: '', css: '', js: '' });
 
@@ -55,7 +55,7 @@ const PreviewOverlay = ({ workingConfig }) => {
       <iframe
         title="Overlay Preview"
         style={{
-          width: '100%',
+          width: fullwidth ? '100%' : '50%',
           height: 200,
           border: '1px solid rgba(255,255,255,0.12)',
           borderRadius: 4

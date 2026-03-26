@@ -59,7 +59,7 @@ const FeedChart = () => {
           <Stack direction="row" spacing={0.75} alignItems="center">
             <SpeedRoundedIcon fontSize="small" color="secondary" />
             <Typography variant="body2" sx={{ fontWeight: 600 }}>
-              {`${stats.rtt ?? 0} ms`}
+              {`${stats.rtt.toFixed(2) ?? 0} ms`}
             </Typography>
           </Stack>
         </Tooltip>

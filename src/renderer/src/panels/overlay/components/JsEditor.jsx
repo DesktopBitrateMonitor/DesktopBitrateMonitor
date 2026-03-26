@@ -1,17 +1,32 @@
 import Editor from '@monaco-editor/react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 const JsEditor = ({ workingConfig, setWorkingConfig }) => {
   const [jsCode, setJsCode] = useState('Loading JavaScript...');
+  const updateTimeoutRef = useRef(null);
 
   useEffect(() => {
     setJsCode(workingConfig.js || '');
   }, [workingConfig.js]);
 
   const updateJsCode = (value) => {
-    setJsCode(value);
-    setWorkingConfig({ ...workingConfig, js: value });
-  }
+    const safeValue = value ?? '';
+    setJsCode(safeValue);
+
+    if (updateTimeoutRef.current) {
+      clearTimeout(updateTimeoutRef.current);
+    }
+
+    updateTimeoutRef.current = setTimeout(() => {
+      setWorkingConfig((prevConfig) => ({ ...prevConfig, js: safeValue }));
+    }, 300);
+  };
+
+  useEffect(() => () => {
+    if (updateTimeoutRef.current) {
+      clearTimeout(updateTimeoutRef.current);
+    }
+  }, []);
 
   return (
     <Editor
@@ -20,11 +35,6 @@ const JsEditor = ({ workingConfig, setWorkingConfig }) => {
       defaultLanguage="javascript"
       value={jsCode}
       onChange={(value) => updateJsCode(value)}
-      onMount={(editor) => {
-        editor.onDidChangeModelContent(() => {
-          updateJsCode(editor.getValue());
-        });
-      }}
     />
   );
 };
