@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Box } from '@mui/material';
 import { useStreamStats } from '../../../contexts/StreamStatsContext';
 
-const PreviewOverlay = ({ workingConfig, fullwidth = false }) => {
+const PreviewOverlay = ({ workingConfig, fullWidth = false, ...props }) => {
   const { stats } = useStreamStats();
   const [previewConfig, setPreviewConfig] = useState({ html: '', css: '', js: '' });
 
@@ -20,7 +20,7 @@ const PreviewOverlay = ({ workingConfig, fullwidth = false }) => {
 
   const overlayStats = useMemo(() => {
     const bitrate = Number(stats?.bitrate) || 0;
-    const speed = Number(stats?.speed ?? stats?.mbpsRecvRate ?? stats?.recvRate ?? stats?.rtt) || 0;
+    const speed = Number(stats?.rtt) || 0;
     const uptime = Number(stats?.uptime) || 0;
 
     return { bitrate, speed, uptime };
@@ -35,12 +35,12 @@ const PreviewOverlay = ({ workingConfig, fullwidth = false }) => {
         <head>
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <link rel="preload" href="https://code.jquery.com/jquery-3.6.0.min.js" as="script">
+          <link rel="preload" href="https://code.jquery.com/jquery-4.0.0.min.js" as="script">
           <style>${previewConfig.css || ''}</style>
         </head>
         <body>
           ${previewConfig.html || ''}
-          <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+          <script src="https://code.jquery.com/jquery-4.0.0.min.js"></script>
           <script>
             window.overlayStats = ${statsJson};
             window.PROPS = window.overlayStats;
@@ -51,11 +51,11 @@ const PreviewOverlay = ({ workingConfig, fullwidth = false }) => {
   }, [overlayStats, previewConfig]);
 
   return (
-    <Box sx={{ mb: 2 }}>
+    <Box sx={{ mb: 2 }} {...props}>
       <iframe
         title="Overlay Preview"
         style={{
-          width: fullwidth ? '100%' : '50%',
+          width: fullWidth ? '100%' : '50%',
           height: 200,
           border: '1px solid rgba(255,255,255,0.12)',
           borderRadius: 4

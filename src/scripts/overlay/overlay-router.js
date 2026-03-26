@@ -101,7 +101,10 @@ overlayRouter.get('/overlay/stats', (req, res) => {
               return;
             }
 
-            const overlayPayload = data?.overlay || data?.config || data || {};
+            // Choose the correct config based on expertMode
+            const mode = data.expertMode ? 'expert' : 'easy';
+            const overlayPayload = data?.overlay[mode] || {};
+
             overlayState.config = {
               html: overlayPayload.html || '',
               css: overlayPayload.css || '',

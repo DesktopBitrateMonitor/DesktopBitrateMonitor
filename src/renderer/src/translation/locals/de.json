@@ -826,11 +826,24 @@
     "header": "Overlay Editor",
     "description": "Einstellungen für das Stats-Overlay",
     "expertMode": "Expertenmodus",
-    "statsOverlayUrl":" Stats-Overlay URL",
+    "statsOverlayUrl": " Stats-Overlay URL",
     "panels": {
       "js": "JS - Editor",
       "html": "HTML - Editor",
       "css": "CSS - Editor"
+    },
+    "expert": {
+      "header": "",
+      "description": ""
+    },
+    "easy": {
+      "header": "Easy Mode",
+      "description": "",
+      "showBitrate": "Bitrate anzeigen",
+      "showSpeed": "Geschwindigkeit anzeigen",
+      "showUptime": "Uptime anzeigen",
+      "showTotalUptime": "Gesamte Uptime anzeigen",
+      "showIcons": "Symbole anzeigen"
     }
   },
   "defaults": {

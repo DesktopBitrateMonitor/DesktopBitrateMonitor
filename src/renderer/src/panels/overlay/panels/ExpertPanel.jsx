@@ -89,7 +89,7 @@ const ExpertPanel = ({ workingConfig, setWorkingConfig }) => {
           minHeight: 0
         }}
       >
-        <PreviewOverlay workingConfig={workingConfig} fullwidth />
+        <PreviewOverlay workingConfig={workingConfig} fullWidth />
         {TAB_CONFIG.map((tab) => {
           if (tab.value === activeValue) {
             return tab.content;

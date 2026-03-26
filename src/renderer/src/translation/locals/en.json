@@ -825,12 +825,25 @@
   "overlayEditor": {
     "header": "Overlay Editor",
     "description": "Settings for the bitrate stats overlay",
-    "expertMode":"Expert Mode",
-    "statsOverlayUrl":"Stats Overlay URL",
+    "expertMode": "Expert Mode",
+    "statsOverlayUrl": "Stats Overlay URL",
     "panels": {
       "js": "JS - Editor",
       "html": "HTML - Editor",
       "css": "CSS - Editor"
+    },
+    "expert": {
+      "header": "",
+      "description": ""
+    },
+    "easy": {
+      "header": "Easy Mode",
+      "description": "",
+      "showBitrate": "Show Bitrate",
+      "showSpeed": "Show Speed",
+      "showUptime": "Show Uptime",
+      "showTotalUptime": "Show Total Uptime",
+      "showIcons": "Show Icons"
     }
   },
   "defaults": {

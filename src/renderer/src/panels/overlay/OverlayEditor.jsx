@@ -17,42 +17,69 @@ const OverlayEditor = () => {
   const hasLoadedInitialOverlay = useRef(false);
 
   useEffect(() => {
-    if (hasLoadedInitialOverlay.current) return;
-    if (!overlayConfig?.overlay) return;
-
-    setWorkingConfig({
-      html: overlayConfig.overlay.html || '',
-      css: overlayConfig.overlay.css || '',
-      js: overlayConfig.overlay.js || ''
-    });
-
-    hasLoadedInitialOverlay.current = true;
-  }, [overlayConfig?.overlay]);
-
-  useEffect(() => {
     setExpertMode(overlayConfig.expertMode);
     setOverlayStatsUrl(overlayConfig.statsOverlayUrl);
   }, [overlayConfig]);
 
+  useEffect(() => {
+    if (hasLoadedInitialOverlay.current) return;
+
+    setWorkingConfig({
+      html: overlayConfig.overlay[overlayConfig.expertMode ? 'expert' : 'easy'].html || '',
+      css: overlayConfig.overlay[overlayConfig.expertMode ? 'expert' : 'easy'].css || '',
+      js: overlayConfig.overlay[overlayConfig.expertMode ? 'expert' : 'easy'].js || ''
+    });
+
+    hasLoadedInitialOverlay.current = true;
+  }, [overlayConfig.overlay]);
+
   const handleSaveOverlay = async () => {
-    const res = await window.storeApi.set('overlay-config', 'overlay', workingConfig);
+    const res = await window.storeApi.set(
+      'overlay-config',
+      `overlay.${expertMode ? 'expert' : 'easy'}`,
+      workingConfig
+    );
 
     if (!res.success) {
       showAlert({ message: t('alerts.saveError'), severity: 'error' });
       return;
     }
 
-    updateOverlayConfig(workingConfig);
-    await window.servicesApi.reloadOverlay({ type: 'overlay', config: workingConfig });
+    updateOverlayConfig((prev) => ({
+      ...prev,
+      overlay: {
+        ...(prev.overlay || {}),
+        [expertMode ? 'expert' : 'easy']: workingConfig
+      }
+    }));
+
+    await window.servicesApi.reloadOverlay({
+      type: `overlay.${expertMode ? 'expert' : 'easy'}`,
+      config: workingConfig
+    });
     showAlert({ message: t('alerts.saveSuccess'), severity: 'success' });
   };
 
-  const handleSwitcherChange = useCallback(
+  const handleSwitchChange = useCallback(
     async (key, value) => {
       updateOverlayConfig((prev) => ({
         ...(prev || {}),
         [key]: value
       }));
+
+      if (key === 'expertMode' && value) {
+        setWorkingConfig({
+          html: overlayConfig.overlay.expert.html || '',
+          css: overlayConfig.overlay.expert.css || '',
+          js: overlayConfig.overlay.expert.js || ''
+        });
+      } else {
+        setWorkingConfig({
+          html: overlayConfig.overlay.easy.html || '',
+          css: overlayConfig.overlay.easy.css || '',
+          js: overlayConfig.overlay.easy.js || ''
+        });
+      }
 
       const res = await window.storeApi.set('overlay-config', key, value);
       if (res.success) {
@@ -61,7 +88,7 @@ const OverlayEditor = () => {
         showAlert({ message: t('alerts.saveError'), severity: 'error' });
       }
     },
-    [updateOverlayConfig]
+    [updateOverlayConfig, overlayConfig, showAlert, t]
   );
 
   return (
@@ -89,7 +116,7 @@ const OverlayEditor = () => {
               onChange={(e) => {
                 const checked = e.target.checked;
                 setExpertMode(checked);
-                handleSwitcherChange('expertMode', checked);
+                handleSwitchChange('expertMode', checked);
               }}
               checked={expertMode}
             />
