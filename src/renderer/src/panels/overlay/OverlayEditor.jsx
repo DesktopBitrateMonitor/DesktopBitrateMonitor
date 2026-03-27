@@ -27,7 +27,8 @@ const OverlayEditor = () => {
     setWorkingConfig({
       html: overlayConfig.overlay[overlayConfig.expertMode ? 'expert' : 'easy'].html || '',
       css: overlayConfig.overlay[overlayConfig.expertMode ? 'expert' : 'easy'].css || '',
-      js: overlayConfig.overlay[overlayConfig.expertMode ? 'expert' : 'easy'].js || ''
+      js: overlayConfig.overlay[overlayConfig.expertMode ? 'expert' : 'easy'].js || '',
+      props: overlayConfig.overlay[overlayConfig.expertMode ? 'expert' : 'easy'].props || {}
     });
 
     hasLoadedInitialOverlay.current = true;
@@ -53,10 +54,22 @@ const OverlayEditor = () => {
       }
     }));
 
-    await window.servicesApi.reloadOverlay({
-      type: `overlay.${expertMode ? 'expert' : 'easy'}`,
-      config: workingConfig
-    });
+    const createOverlayPayload = () => {
+      return {
+        ...overlayConfig,
+        overlay: {
+          ...(overlayConfig.overlay || {}),
+          [expertMode ? 'expert' : 'easy']: workingConfig
+        }
+      };
+    };
+
+    const reloadPayload = {
+      type: 'overlay',
+      data: createOverlayPayload()
+    };
+
+    await window.servicesApi.reloadOverlay(reloadPayload);
     showAlert({ message: t('alerts.saveSuccess'), severity: 'success' });
   };
 
@@ -71,13 +84,15 @@ const OverlayEditor = () => {
         setWorkingConfig({
           html: overlayConfig.overlay.expert.html || '',
           css: overlayConfig.overlay.expert.css || '',
-          js: overlayConfig.overlay.expert.js || ''
+          js: overlayConfig.overlay.expert.js || '',
+          props: overlayConfig.overlay.expert.props || {}
         });
       } else {
         setWorkingConfig({
           html: overlayConfig.overlay.easy.html || '',
           css: overlayConfig.overlay.easy.css || '',
-          js: overlayConfig.overlay.easy.js || ''
+          js: overlayConfig.overlay.easy.js || '',
+          props: overlayConfig.overlay.easy.props || {}
         });
       }
 

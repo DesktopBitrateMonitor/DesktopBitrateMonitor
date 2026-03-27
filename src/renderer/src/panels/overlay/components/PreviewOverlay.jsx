@@ -35,12 +35,19 @@ const PreviewOverlay = ({ workingConfig, fullWidth = false, ...props }) => {
         <head>
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <link rel="preload" href="https://code.jquery.com/jquery-4.0.0.min.js" as="script">
+          <!-- JQUERY for DOM manipulation -->
+          <script
+            src="https://code.jquery.com/jquery-4.0.0.min.js"
+            integrity="sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao="
+            crossorigin="anonymous"></script>          
           <style>${previewConfig.css || ''}</style>
         </head>
         <body>
           ${previewConfig.html || ''}
-          <script src="https://code.jquery.com/jquery-4.0.0.min.js"></script>
+          <script
+            src="https://code.jquery.com/jquery-4.0.0.min.js"
+            integrity="sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao="
+            crossorigin="anonymous"></script>          
           <script>
             window.overlayStats = ${statsJson};
             window.PROPS = window.overlayStats;

@@ -95,22 +95,38 @@ overlayRouter.get('/overlay/stats', (req, res) => {
 
           ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
+
+            console.log("Received data from server:", data);
+
+            // Stats payload from the app backend
             if (data.type === "stats") {
               overlayState.stats = normalizeStats(data.stats || {});
               applyOverlay();
               return;
             }
 
-            // Choose the correct config based on expertMode
-            const mode = data.expertMode ? 'expert' : 'easy';
-            const overlayPayload = data?.overlay[mode] || {};
+            if(data.type === "overlay") {
+            
+              // Overlay configuration payloads
+              // - On first connection the server sends the full overlay-config.json
+              // - On overlay updates the backend sends the same shape again
 
-            overlayState.config = {
-              html: overlayPayload.html || '',
-              css: overlayPayload.css || '',
-              js: overlayPayload.js || ''
-            };
-            applyOverlay();
+              const overlayConfig = data.data;
+
+              // const expertMode = !!overlayConfig.expertMode;
+              const expertMode = data.data.expertMode || false;
+              const modeKey = expertMode ? "expert" : "easy";
+
+              const overlaysByMode = data.data.overlay ||  {};
+              const overlayPayload = data.data.overlay[modeKey] || {html: '', css: '', js: ''};
+
+              overlayState.config = {
+                html: overlayPayload.html || '',
+                css: overlayPayload.css || '',
+                js: overlayPayload.js || ''
+              };
+              applyOverlay();
+            }
           };
         </script>
       </body>

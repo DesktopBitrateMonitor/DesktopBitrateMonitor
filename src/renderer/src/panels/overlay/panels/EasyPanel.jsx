@@ -1,4 +1,4 @@
-import { Box, Stack, Switch, Typography } from '@mui/material';
+import { Box, MenuItem, Select, Stack, Switch, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useState } from 'react';
 import PreviewOverlay from '../components/PreviewOverlay';
 import { useTranslation } from 'react-i18next';
@@ -18,9 +18,12 @@ const EasyPanel = ({ workingConfig, setWorkingConfig }) => {
     showIcons: false
   });
 
-  useEffect(() => {
-    console.log(workingConfig);
+  const [simpleLayoutProps, setSimpleLayoutProps] = useState({
+    direction: 'row',
+    gap: 8
+  });
 
+  useEffect(() => {
     setSwitchStates({
       showBitrate: overlayConfig.showBitrate,
       showSpeed: overlayConfig.showSpeed,
@@ -29,6 +32,30 @@ const EasyPanel = ({ workingConfig, setWorkingConfig }) => {
       showIcons: overlayConfig.showIcons
     });
   }, [overlayConfig]);
+
+  useEffect(() => {
+    setSimpleLayoutProps(workingConfig.props || {});
+  }, [workingConfig]);
+
+  const handleSelectChange = useCallback(
+    async (key, value) => {
+      setWorkingConfig((prev) => ({
+        ...prev,
+        props: {
+          ...prev.props,
+          [key]: value
+        }
+      }));
+
+      const res = await window.storeApi.set('overlay-config', `overlay.easy.props[${key}]`, value);
+      if (res.success) {
+        showAlert({ message: t('alerts.saveSuccess'), severity: 'success' });
+      } else {
+        showAlert({ message: t('alerts.saveError'), severity: 'error' });
+      }
+    },
+    [setWorkingConfig]
+  );
 
   const handleSwitchChange = useCallback(
     async (key, value) => {
@@ -59,6 +86,8 @@ const EasyPanel = ({ workingConfig, setWorkingConfig }) => {
     { key: 'showIcons', label: 'Show Icons', translation: 'overlayEditor.easy.showIcons' }
   ];
 
+  const handleHtmlLayoutChange = () => {};
+
   return (
     <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between', gap: 2 }}>
       <PreviewOverlay sx={{ width: '100%', flex: 1 }} workingConfig={workingConfig} fullWidth />
@@ -74,6 +103,13 @@ const EasyPanel = ({ workingConfig, setWorkingConfig }) => {
             </Typography>
           </Box>
         ))}
+        <Select
+          onChange={(e) => handleSelectChange('direction', e.target.value)}
+          value={simpleLayoutProps.direction || ''}
+        >
+          <MenuItem value={'row'}>{t('overlayEditor.easy.select.row')}</MenuItem>
+          <MenuItem value={'column'}>{t('overlayEditor.easy.select.column')}</MenuItem>
+        </Select>
       </Box>
     </Box>
   );

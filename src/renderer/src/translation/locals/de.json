@@ -843,7 +843,11 @@
       "showSpeed": "Geschwindigkeit anzeigen",
       "showUptime": "Uptime anzeigen",
       "showTotalUptime": "Gesamte Uptime anzeigen",
-      "showIcons": "Symbole anzeigen"
+      "showIcons": "Symbole anzeigen",
+      "select": {
+        "row": "Reihe",
+        "column": "Spalte"
+      }
     }
   },
   "defaults": {

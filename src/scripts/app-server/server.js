@@ -38,7 +38,7 @@ export function broadcastOverlay(data) {
 wss.on('connection', (ws) => {
   console.log('Overlay client connected');
 
-  const data = JSON.stringify(getOverlayData());
+  const data = JSON.stringify({ type: 'overlay', data: getOverlayData() });
   ws.send(data);
 });
 

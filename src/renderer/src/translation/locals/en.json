@@ -843,7 +843,11 @@
       "showSpeed": "Show Speed",
       "showUptime": "Show Uptime",
       "showTotalUptime": "Show Total Uptime",
-      "showIcons": "Show Icons"
+      "showIcons": "Show Icons",
+      "select":{
+        "row": "Row",
+        "column": "Column"
+      }
     }
   },
   "defaults": {
