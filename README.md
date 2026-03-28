@@ -538,7 +538,7 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
   ![image](readme-assets/overlay/expert.png)
 
   - Edit the overlay with raw HTML, CSS, JS
-  - QJuery is supported
+  - jQuery is supported
   - PROPS Object includes the default state values
 
   ``` javascript
