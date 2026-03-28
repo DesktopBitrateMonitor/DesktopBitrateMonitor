@@ -514,6 +514,7 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
     <li>Save changes and push them to your live overlay</li>
       <ul>
       <li>Unsaved changes are lost on change to another settings page</li>
+      <li><b>NOTICE</b>Mode change need a save click to show the change in your live overlay!</li>
       </ul>
     <li>Drag & Drop the element to add a overlay automatically in your software</li>
     <li>Click the URL-Field to copy the URL to your clipboard</li>
