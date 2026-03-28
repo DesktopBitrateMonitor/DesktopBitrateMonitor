@@ -33,6 +33,7 @@
     "express": "^5.2.1",
     "i18next": "^25.7.3",
     "i18next-http-backend": "^3.0.2",
+    "mui-color-input": "^7.0.0",
     "obs-websocket-js": "^5.0.8",
     "react-grid-layout": "^2.2.2",
     "react-i18next": "^16.5.0",

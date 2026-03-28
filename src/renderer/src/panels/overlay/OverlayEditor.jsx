@@ -1,8 +1,20 @@
-import { Box, Button, Switch, Tab, Tabs, TextField, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  IconButton,
+  Stack,
+  Switch,
+  Tab,
+  Tabs,
+  TextField,
+  Tooltip,
+  Typography
+} from '@mui/material';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useOverlayConfigStore } from '../../contexts/DataContext';
 import { useAlert } from '../../contexts/AlertContext';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import EasyPanel from './panels/EasyPanel';
 import ExpertPanel from './panels/ExpertPanel';
 
@@ -28,7 +40,7 @@ const OverlayEditor = () => {
       html: overlayConfig.overlay[overlayConfig.expertMode ? 'expert' : 'easy'].html || '',
       css: overlayConfig.overlay[overlayConfig.expertMode ? 'expert' : 'easy'].css || '',
       js: overlayConfig.overlay[overlayConfig.expertMode ? 'expert' : 'easy'].js || '',
-      props: overlayConfig.overlay[overlayConfig.expertMode ? 'expert' : 'easy'].props || {}
+      data: overlayConfig.overlay[overlayConfig.expertMode ? 'expert' : 'easy'].data || {}
     });
 
     hasLoadedInitialOverlay.current = true;
@@ -73,6 +85,17 @@ const OverlayEditor = () => {
     showAlert({ message: t('alerts.saveSuccess'), severity: 'success' });
   };
 
+  const handleCopyStatsUrl = useCallback(() => {
+    navigator.clipboard.writeText(overlayStatsUrl).then(
+      () => {
+        showAlert({ message: t('alerts.copySuccess'), severity: 'success' });
+      },
+      () => {
+        showAlert({ message: t('alerts.copyError'), severity: 'error' });
+      }
+    );
+  }, [overlayStatsUrl, showAlert, t]);
+
   const handleSwitchChange = useCallback(
     async (key, value) => {
       updateOverlayConfig((prev) => ({
@@ -85,14 +108,14 @@ const OverlayEditor = () => {
           html: overlayConfig.overlay.expert.html || '',
           css: overlayConfig.overlay.expert.css || '',
           js: overlayConfig.overlay.expert.js || '',
-          props: overlayConfig.overlay.expert.props || {}
+          data: overlayConfig.overlay.expert.data || {}
         });
       } else {
         setWorkingConfig({
           html: overlayConfig.overlay.easy.html || '',
           css: overlayConfig.overlay.easy.css || '',
           js: overlayConfig.overlay.easy.js || '',
-          props: overlayConfig.overlay.easy.props || {}
+          data: overlayConfig.overlay.easy.data || {}
         });
       }
 
@@ -106,12 +129,15 @@ const OverlayEditor = () => {
     [updateOverlayConfig, overlayConfig, showAlert, t]
   );
 
+  const overlayUrl =
+    'http://localhost:9898/overlay/stats?layer-name=StreamStats&layer-width=400&layer-height=200';
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, flex: 1, minHeight: 0 }}>
       <Box
         sx={{
           display: 'flex',
-          flexWrap: 'wrap',
+          // flexWrap: 'wrap',
           alignItems: 'center',
           justifyContent: 'space-between',
           gap: 1.5
@@ -121,12 +147,12 @@ const OverlayEditor = () => {
           <Typography variant="h5" sx={{ mb: 0.5 }}>
             {t('overlayEditor.header')}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.secondary" sx={{ maxWidth: '80%' }}>
             {t('overlayEditor.description')}
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: '1rem' }}>
-          <Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mr: 2 }}>
             <Switch
               onChange={(e) => {
                 const checked = e.target.checked;
@@ -149,21 +175,52 @@ const OverlayEditor = () => {
           pt: 2,
           px: 1.5,
           pb: 1.5,
-          // overflowY: 'auto',
-          overflow: 'hidden',
+          overflowX: 'hidden',
+          overflowY: 'auto',
           minHeight: 0
         }}
       >
-        <TextField
-          label={t('overlayEditor.statsOverlayUrl')}
-          value={overlayStatsUrl}
-          fullWidth
-          slotProps={{
-            input: {
-              readOnly: true
-            }
-          }}
-        />
+        <Stack sx={{ mb: 2 }} direction="row" alignItems="center" spacing={2}>
+          <Tooltip title={t('overlayEditor.easy.dragToolTip')} arrow placement="top">
+            <Button
+              draggable
+              onClick={(e) => e.preventDefault()}
+              size="medium"
+              sx={{ cursor: 'grabbing', whiteSpace: 'nowrap' }}
+              onDragStart={(e) => {
+                try {
+                  e.dataTransfer.setData('text/uri-list', overlayUrl);
+                  e.dataTransfer.setData('text/plain', overlayUrl);
+                } catch (error) {
+                  //void
+                }
+              }}
+            >
+              {t('overlayEditor.easy.dragNdrop')}
+            </Button>
+          </Tooltip>
+
+          <TextField
+            label={t('overlayEditor.statsOverlayUrl')}
+            value={overlayStatsUrl}
+            fullWidth
+            sx={{
+              '& .MuiInputBase-root': { cursor: 'pointer' },
+              '& .MuiInputBase-input': { cursor: 'pointer' }
+            }}
+            onClick={handleCopyStatsUrl}
+            slotProps={{
+              input: {
+                readOnly: true,
+                endAdornment: (
+                  <>
+                    <ContentCopyIcon fontSize="small" />
+                  </>
+                )
+              }
+            }}
+          />
+        </Stack>
         {expertMode ? (
           <ExpertPanel workingConfig={workingConfig} setWorkingConfig={setWorkingConfig} />
         ) : (

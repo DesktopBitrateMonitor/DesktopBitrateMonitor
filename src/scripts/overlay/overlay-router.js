@@ -60,6 +60,44 @@ overlayRouter.get('/overlay/stats', (req, res) => {
             stats: { bitrate: 0, speed: 0, uptime: 0 }
           };
 
+          const getNestedValue = (obj, path) =>
+            path.split('.').reduce((acc, key) => (acc && acc[key] !== undefined ? acc[key] : undefined), obj);
+
+          const parseTemplate = (template, values = {}) => {
+            if (typeof template !== "string") return template;
+
+            const replaceTokens = (str, regex) =>
+              str.replace(regex, (match, key) => {
+                const resolved = getNestedValue(values, key.trim());
+                return resolved !== undefined ? resolved : match;
+              });
+
+            const withDollar = replaceTokens(template, /\$\{(.*?)\}/g);
+            return replaceTokens(withDollar, /\{\{(.*?)\}\}/g);
+          };
+
+          const applyTemplateToOverlay = (config, vars) => ({
+            html: parseTemplate(config.html || '', vars),
+            css: parseTemplate(config.css || '', vars),
+            js: parseTemplate(config.js || '', vars)
+          });
+
+          const buildTemplateVariables = (overlayConfig, modePayload) => {
+            const data = (modePayload && modePayload.data) || {};
+            const showValue = (flag, visibleValue) => (flag === false ? 'none' : visibleValue);
+
+            return {
+              direction: data.direction ?? 'column',
+              gap: data.gap ?? 8,
+              iconColor: data.iconColor ?? '#580991',
+              fontColor: data.fontColor ?? '#580991',
+              bitrateDisplay: showValue(overlayConfig.showBitrate, 'flex'),
+              speedDisplay: showValue(overlayConfig.showSpeed, 'flex'),
+              uptimeDisplay: showValue(overlayConfig.showUptime, 'flex'),
+              iconsDisplay: showValue(overlayConfig.showIcons, 'inline-flex')
+            };
+          };
+
           const normalizeStats = (stats = {}) => {
             const bitrate = Number(stats.bitrate) || 0;
             const speed = Number(stats.rtt) || 0;
@@ -111,20 +149,17 @@ overlayRouter.get('/overlay/stats', (req, res) => {
               // - On first connection the server sends the full overlay-config.json
               // - On overlay updates the backend sends the same shape again
 
-              const overlayConfig = data.data;
+              const overlayConfig = data.data || {};
 
               // const expertMode = !!overlayConfig.expertMode;
               const expertMode = data.data.expertMode || false;
               const modeKey = expertMode ? "expert" : "easy";
 
               const overlaysByMode = data.data.overlay ||  {};
-              const overlayPayload = data.data.overlay[modeKey] || {html: '', css: '', js: ''};
+              const overlayPayload = overlaysByMode[modeKey] || {html: '', css: '', js: '', data: {}};
 
-              overlayState.config = {
-                html: overlayPayload.html || '',
-                css: overlayPayload.css || '',
-                js: overlayPayload.js || ''
-              };
+              const templateVars = buildTemplateVariables(overlayConfig, overlayPayload);
+              overlayState.config = applyTemplateToOverlay(overlayPayload, templateVars);
               applyOverlay();
             }
           };

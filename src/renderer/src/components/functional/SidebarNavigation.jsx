@@ -83,7 +83,7 @@ const NAV_ITEMS = [
     path: '/dashboard/overlayeditor',
     icon: SportsEsportsIcon,
     matchPrefix: false,
-    development: true
+    development: false
   },
   {
     translationKey: 'navigation.appSettings',

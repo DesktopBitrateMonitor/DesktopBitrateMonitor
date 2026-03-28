@@ -26,7 +26,9 @@
     "deleteSuccess": "Deleted successfully",
     "deleteError": "Failed to delete item",
     "saveStateSuccess": "Save {{key}} successfully",
-    "saveStateError": "Failed to save {{key}}"
+    "saveStateError": "Failed to save {{key}}",
+    "copySuccess": "Copied to clipboard",
+    "copyError": "Failed to copy to clipboard"
   },
   "authorization": {
     "twitch": {
@@ -824,7 +826,7 @@
   },
   "overlayEditor": {
     "header": "Overlay Editor",
-    "description": "Settings for the bitrate stats overlay",
+    "description": "Settings for the bitrate stats overlay. Changes are applied in real-time in the preview. On save your broadcasting overlay will be updated. Not saved changes will be lost on change the settings tab.",
     "expertMode": "Expert Mode",
     "statsOverlayUrl": "Stats Overlay URL",
     "panels": {
@@ -838,16 +840,21 @@
     },
     "easy": {
       "header": "Easy Mode",
-      "description": "",
+      "description": "Easily configure the overlay settings without writing code.",
       "showBitrate": "Show Bitrate",
       "showSpeed": "Show Speed",
       "showUptime": "Show Uptime",
-      "showTotalUptime": "Show Total Uptime",
       "showIcons": "Show Icons",
-      "select":{
+      "select": {
         "row": "Row",
         "column": "Column"
-      }
+      },
+      "selectLabel": "Select layout orientation",
+      "sliderLabel": "Gap between elements (px)",
+      "iconColor": "Icon Color",
+      "fontColor": "Text Color",
+      "dragToolTip": "Drag the element into your streaming software to create an overlay",
+      "dragNdrop": "Drag & Drop"
     }
   },
   "defaults": {

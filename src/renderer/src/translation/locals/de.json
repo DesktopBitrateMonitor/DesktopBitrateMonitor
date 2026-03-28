@@ -26,7 +26,9 @@
     "deleteSuccess": "Erfolgreich gelöscht",
     "deleteError": "Element konnte nicht gelöscht werden",
     "saveStateSuccess": "{{key}} erfolgreich gespeichert",
-    "saveStateError": "{{key}} konnte nicht gespeichert werden"
+    "saveStateError": "{{key}} konnte nicht gespeichert werden",
+    "copySuccess": "In die Zwischenablage kopiert",
+    "copyError": "Konnte nicht in die Zwischenablage kopiert werden"
   },
   "authorization": {
     "twitch": {
@@ -824,7 +826,7 @@
   },
   "overlayEditor": {
     "header": "Overlay Editor",
-    "description": "Einstellungen für das Stats-Overlay",
+    "description": "Einstellungen für das Stats-Overlay. Änderungen werden automatisch beim Speichern an das Overlay übertragen, nicht gespeicherte Änderungen gehen verloren beim wechsel des Tabs",
     "expertMode": "Expertenmodus",
     "statsOverlayUrl": " Stats-Overlay URL",
     "panels": {
@@ -842,12 +844,17 @@
       "showBitrate": "Bitrate anzeigen",
       "showSpeed": "Geschwindigkeit anzeigen",
       "showUptime": "Uptime anzeigen",
-      "showTotalUptime": "Gesamte Uptime anzeigen",
       "showIcons": "Symbole anzeigen",
       "select": {
-        "row": "Reihe",
-        "column": "Spalte"
-      }
+        "row": "Horizontal",
+        "column": "Vertikal"
+      },
+      "selectLabel": "Anordnung der Elemente",
+      "sliderLabel": "Abstand zwischen den Elementen (px)",
+      "iconColor": "Symbolfarbe",
+      "fontColor": "Schriftfarbe",
+      "dragToolTip":"Ziehe das Element in deine Streaming-Software um ein Overlay zu erstellen",
+      "dragNdrop": "Drag & Drop"
     }
   },
   "defaults": {

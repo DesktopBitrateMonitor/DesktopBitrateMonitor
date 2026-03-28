@@ -500,6 +500,62 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
 
 </details>
 
+# Overlay Setup
+<details>
+  <summary>Setup your Overlay</summary>
+
+  - Display your live feed stats in your stream
+  - Easy mode or expert mode available
+
+  ### URL Settings
+
+  <ol>
+    <li>Change between Easy/Expert Mode</li>
+    <li>Save changes and push them to your live overlay</li>
+      <ul>
+      <li>Unsaved changes are lost on change to another settings page</li>
+      </ul>
+    <li>Drag & Drop the element to add a overlay automatically in your software</li>
+    <li>Click the URL-Field to copy the URL to your clipboard</li>
+    <li>Every change are show up in the preview in realtime</li>
+    <li><b>Do not forget to save your changes to make them in your live overlay visible</b></li>
+
+  </ol>
+
+  ##
+
+  ### Easy Mode
+
+  ![image](readme-assets/overlay/easy.png)
+
+  - Change the elements visibility
+  - Change some colors or directions
+
+  ##
+
+  ### Expert Mode
+
+  ![image](readme-assets/overlay/expert.png)
+
+  - Edit the overlay with raw HTML, CSS, JS
+  - QJuery is supported
+  - PROPS Object includes the default state values
+
+  ``` javascript
+  
+  const {bitrate, speed, uptime} = PROPS
+ 
+  // The current bitrate from the incoming feed
+  bitrate
+  // The current speed (rtt) from the incoming feed
+  speed
+  // The current uptime from the incoming feed
+  uptime
+
+  ```
+
+</details>
+
 # App Settings
 
 <details>
@@ -661,8 +717,8 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
   <li>
     FIND BROADCASTERS THEY ARE USING THE APP
   </li>
-  <li>
-    Add a overlay served by the app to display the feed stats in the broadcasting software
+  <li type="none" >
+    ✅ Add a overlay served by the app to display the feed stats in the broadcasting software
   </li>
   <li>
     Add more different server types

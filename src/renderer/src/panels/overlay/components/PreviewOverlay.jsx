@@ -1,22 +1,42 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Box } from '@mui/material';
 import { useStreamStats } from '../../../contexts/StreamStatsContext';
+import { useOverlayConfigStore } from '../../../contexts/DataContext';
+import { templateParser } from '../../../../../scripts/lib/template-parser.js';
 
 const PreviewOverlay = ({ workingConfig, fullWidth = false, ...props }) => {
   const { stats } = useStreamStats();
+  const { overlayConfig } = useOverlayConfigStore();
   const [previewConfig, setPreviewConfig] = useState({ html: '', css: '', js: '' });
+
+  const buildTemplateVariables = useCallback(() => {
+    const data = workingConfig?.data || {};
+    const showValue = (flag, visibleValue) => (flag === false ? 'none' : visibleValue);
+
+    return {
+      direction: data.direction ?? 'column',
+      gap: data.gap ?? 8,
+      iconColor: data.iconColor ?? '#580991',
+      fontColor: data.fontColor ?? '#580991',
+      bitrateDisplay: showValue(overlayConfig?.showBitrate, 'flex'),
+      speedDisplay: showValue(overlayConfig?.showSpeed, 'flex'),
+      uptimeDisplay: showValue(overlayConfig?.showUptime, 'flex'),
+      iconsDisplay: showValue(overlayConfig?.showIcons, 'block')
+    };
+  }, [workingConfig, overlayConfig]);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
+      const templateVars = buildTemplateVariables();
       setPreviewConfig({
-        html: workingConfig.html || '',
-        css: workingConfig.css || '',
-        js: workingConfig.js || ''
+        html: templateParser(workingConfig.html || '', templateVars),
+        css: templateParser(workingConfig.css || '', templateVars),
+        js: templateParser(workingConfig.js || '', templateVars)
       });
     }, 300);
 
     return () => window.clearTimeout(timeoutId);
-  }, [workingConfig]);
+  }, [workingConfig, buildTemplateVariables]);
 
   const overlayStats = useMemo(() => {
     const bitrate = Number(stats?.bitrate) || 0;
