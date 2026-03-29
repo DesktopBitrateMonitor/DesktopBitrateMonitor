@@ -3,6 +3,7 @@ import Logger from '../logging/logger';
 import { injectDefaults } from '../store/defaults';
 import { formatStatsOpenIrl } from './openirl';
 import { formatStatsSrtLiveServer } from './srt-live-server';
+import { formatStatsBelabox } from './belabox';
 import { switcherService } from '../switcher-service';
 
 let fetchInterval = null;
@@ -66,6 +67,10 @@ export async function startFetchingStats(
       }
       if (serverType === 'srt-live-server') {
         const res = await formatStatsSrtLiveServer(response);
+        await switcherService(res, mainWindow);
+      }
+      if (serverType === 'belabox') {
+        const res = await formatStatsBelabox(response);
         await switcherService(res, mainWindow);
       }
     } catch (error) {

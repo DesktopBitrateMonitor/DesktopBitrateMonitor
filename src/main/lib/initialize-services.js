@@ -42,7 +42,7 @@ export async function startFetchingServerStats(mainWindow = null) {
   }
 
   if(currentType === 'belabox'){
-    console.log('Starting stats fetcher for BelaBox');
+    await startFetchingStats(true, 'belabox', mainWindow);
   }
 
   return { success: true, data: { message: 'Server stats fetching started' }, error: null };

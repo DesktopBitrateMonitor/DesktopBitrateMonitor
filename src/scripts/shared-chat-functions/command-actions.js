@@ -14,12 +14,19 @@ import globalInternalStore from '../store/global-internal-store';
  *
  * @param {string} platform - The streaming platform (e.g., 'twitch' or 'kick') that the command is being executed on.
  * @param {function} messageService - A function to send messages back to the chat, typically for command execution feedback.
+ * @param {string} server - The current server type (e.g., 'belabox', 'openirl', 'srt-live-server') from which stats are being fetched, used for context in command actions.
  * @param {object} switcherConfig - The configuration object for stream switching, containing scene names and bitrate triggers.
  * @param {object} accountConfig - The configuration object for account details, including broadcaster info and user lists.
  * @returns {object} An object mapping command action names to their corresponding async functions that execute the desired behavior.
  */
 
-export const commandActions = ({ platform, messageService, switcherConfig, accountConfig }) => ({
+export const commandActions = ({
+  platform,
+  server,
+  messageService,
+  switcherConfig,
+  accountConfig
+}) => ({
   startStream: async () => {
     const res = await startStream();
     const config = switcherConfig.get('');
@@ -33,20 +40,20 @@ export const commandActions = ({ platform, messageService, switcherConfig, accou
           Logger.error(`Failed to switch to start scene ${startScene}: ${sceneRes.error}`);
         }
       }
-      await messageService({ action: 'startStream', event: 'success' });
+      await messageService({ action: 'startStream', event: 'success', variables: { server } });
       Logger.log('Stream started successfully.');
     } else {
-      await messageService({ action: 'startStream', event: 'error' });
+      await messageService({ action: 'startStream', event: 'error', variables: { server } });
       Logger.error(`Failed to start stream: ${res.error}`);
     }
   },
   stopStream: async () => {
     const res = await stopStream();
     if (res.success) {
-      await messageService({ action: 'stopStream', event: 'success' });
+      await messageService({ action: 'stopStream', event: 'success', variables: { server } });
       Logger.log('Stream stopped successfully.');
     } else {
-      await messageService({ action: 'stopStream', event: 'error' });
+      await messageService({ action: 'stopStream', event: 'error', variables: { server } });
       Logger.error(`Failed to stop stream: ${res.error}`);
     }
   },
@@ -68,7 +75,7 @@ export const commandActions = ({ platform, messageService, switcherConfig, accou
         await messageService({
           action: 'addAdmin',
           event: 'alreadyAdmin',
-          variables: { user }
+          variables: { user, server }
         });
         Logger.error(`${user} is already an admin.`);
         return;
@@ -94,7 +101,7 @@ export const commandActions = ({ platform, messageService, switcherConfig, accou
       user: userObj
     });
 
-    await messageService({ action: 'addAdmin', event: 'success', variables: { user } });
+    await messageService({ action: 'addAdmin', event: 'success', variables: { user, server } });
     return { success: true, data: userObj };
   },
   removeAdmin: async (user) => {
@@ -102,7 +109,7 @@ export const commandActions = ({ platform, messageService, switcherConfig, accou
       await messageService({
         action: 'removeAdmin',
         event: 'error',
-        variables: { user: 'undefined' }
+        variables: { user: 'undefined', server }
       });
       Logger.error('Invalid username provided for removeAdmin command.');
       return;
@@ -113,7 +120,7 @@ export const commandActions = ({ platform, messageService, switcherConfig, accou
       (admin) => admin.login.toLowerCase() === user.toLowerCase()
     );
     if (userIndex === -1) {
-      await messageService({ action: 'removeAdmin', event: 'notFound', variables: { user } });
+      await messageService({ action: 'removeAdmin', event: 'notFound', variables: { user, server } });
       Logger.error(`${user} is not an admin.`);
       return;
     }
@@ -129,7 +136,7 @@ export const commandActions = ({ platform, messageService, switcherConfig, accou
     await messageService({
       action: 'removeAdmin',
       event: 'success',
-      variables: { user: removedUser.login }
+      variables: { user: removedUser.login, server }
     });
     return { success: true, data: removedUser };
   },
@@ -138,7 +145,7 @@ export const commandActions = ({ platform, messageService, switcherConfig, accou
       await messageService({
         action: 'addMod',
         event: 'error',
-        variables: { user: 'undefined' }
+        variables: { user: 'undefined', server }
       });
       Logger.error('Invalid username provided for addMod command.');
       return;
@@ -148,7 +155,7 @@ export const commandActions = ({ platform, messageService, switcherConfig, accou
 
     for (const mod of modUsers) {
       if (mod.login === user.toLowerCase()) {
-        await messageService({ action: 'addMod', event: 'alreadyMod', variables: { user } });
+        await messageService({ action: 'addMod', event: 'alreadyMod', variables: { user, server } });
         Logger.error(`${user} is already a mod.`);
         return;
       }
@@ -172,7 +179,7 @@ export const commandActions = ({ platform, messageService, switcherConfig, accou
       action: 'add',
       user: userObj
     });
-    await messageService({ action: 'addMod', event: 'success', variables: { user } });
+    await messageService({ action: 'addMod', event: 'success', variables: { user, server } });
     return { success: true, data: userObj };
   },
   removeMod: async (user) => {
@@ -180,7 +187,7 @@ export const commandActions = ({ platform, messageService, switcherConfig, accou
       await messageService({
         action: 'removeMod',
         event: 'error',
-        variables: { user: 'undefined' }
+        variables: { user: 'undefined', server }
       });
       Logger.error('Invalid username provided for removeMod command.');
       return;
@@ -189,7 +196,7 @@ export const commandActions = ({ platform, messageService, switcherConfig, accou
     const modUsers = accountConfig.get('mods');
     const userIndex = modUsers.findIndex((mod) => mod.login.toLowerCase() === user.toLowerCase());
     if (userIndex === -1) {
-      await messageService({ action: 'removeMod', event: 'notFound', variables: { user } });
+      await messageService({ action: 'removeMod', event: 'notFound', variables: { user, server } });
       Logger.error(`${user} is not a mod.`);
       return;
     }
@@ -205,7 +212,7 @@ export const commandActions = ({ platform, messageService, switcherConfig, accou
     await messageService({
       action: 'removeMod',
       event: 'success',
-      variables: { user: removedUser.login }
+      variables: { user: removedUser.login, server }
     });
     return { success: true, data: removedUser };
   },
@@ -214,10 +221,10 @@ export const commandActions = ({ platform, messageService, switcherConfig, accou
     const res = await setCurrentProgramScene(scene);
     if (res.success) {
       console.log(scene);
-      await messageService({ action: 'switchScene', event: 'success', variables: { scene } });
+      await messageService({ action: 'switchScene', event: 'success', variables: { scene, server } });
       Logger.log('Switched to low scene.');
     } else {
-      await messageService({ action: 'switchScene', event: 'error', variables: { scene } });
+      await messageService({ action: 'switchScene', event: 'error', variables: { scene, server } });
       Logger.error(`Failed to switch to low scene: ${res.error}`);
     }
   },
@@ -225,9 +232,9 @@ export const commandActions = ({ platform, messageService, switcherConfig, accou
     const scene = switcherConfig.get('sceneLive');
     const res = await setCurrentProgramScene(scene);
     if (res.success) {
-      await messageService({ action: 'switchScene', event: 'success', variables: { scene } });
+      await messageService({ action: 'switchScene', event: 'success', variables: { scene, server } });
     } else {
-      await messageService({ action: 'switchScene', event: 'error', variables: { scene } });
+      await messageService({ action: 'switchScene', event: 'error', variables: { scene, server } });
       Logger.error(`Failed to switch to live scene: ${res.error}`);
     }
   },
@@ -235,10 +242,10 @@ export const commandActions = ({ platform, messageService, switcherConfig, accou
     const scene = switcherConfig.get('sceneOffline');
     const res = await setCurrentProgramScene(scene);
     if (res.success) {
-      await messageService({ action: 'switchScene', event: 'success', variables: { scene } });
+      await messageService({ action: 'switchScene', event: 'success', variables: { scene, server } });
       Logger.log('Switched to offline scene.');
     } else {
-      await messageService({ action: 'switchScene', event: 'error', variables: { scene } });
+      await messageService({ action: 'switchScene', event: 'error', variables: { scene, server } });
       Logger.error(`Failed to switch to offline scene: ${res.error}`);
     }
   },
@@ -247,10 +254,10 @@ export const commandActions = ({ platform, messageService, switcherConfig, accou
     const res = await setCurrentProgramScene(scene);
 
     if (res.success) {
-      await messageService({ action: 'switchScene', event: 'success', variables: { scene } });
+      await messageService({ action: 'switchScene', event: 'success', variables: { scene, server } });
       Logger.log('Switched to privacy scene.');
     } else {
-      await messageService({ action: 'switchScene', event: 'error', variables: { scene } });
+      await messageService({ action: 'switchScene', event: 'error', variables: { scene, server } });
       Logger.error(`Failed to switch to privacy scene: ${res.error}`);
     }
   },
@@ -259,7 +266,7 @@ export const commandActions = ({ platform, messageService, switcherConfig, accou
       await messageService({
         action: 'switchScene',
         event: 'error',
-        variables: { scene: 'undefined' }
+        variables: { scene: 'undefined', server }
       });
       Logger.error('Invalid scene provided for switchScene command.');
       return;
@@ -270,28 +277,28 @@ export const commandActions = ({ platform, messageService, switcherConfig, accou
       await messageService({
         action: 'switchScene',
         event: 'success',
-        variables: { scene: sceneName }
+        variables: { scene: sceneName, server }
       });
       Logger.log(`Switched to scene: ${sceneName}`);
     } else {
       await messageService({
         action: 'switchScene',
         event: 'error',
-        variables: { scene: sceneName }
+        variables: { scene: sceneName, server }
       });
       Logger.error(`Failed to switch to scene ${sceneName}: ${res.error}`);
     }
   },
   refreshStream: async () => {
-    await messageService({ action: 'refreshStream', event: 'try' });
+    await messageService({ action: 'refreshStream', event: 'try', variables: { server } });
 
     const res = await fixMediaSources();
 
     if (res.success) {
-      await messageService({ action: 'refreshStream', event: 'success' });
+      await messageService({ action: 'refreshStream', event: 'success', variables: { server } });
       Logger.log('Media sources refreshed successfully.');
     } else {
-      await messageService({ action: 'refreshStream', event: 'error' });
+      await messageService({ action: 'refreshStream', event: 'error', variables: { server } });
       Logger.error(`Failed to refresh media sources: ${res.error}`);
     }
   },
@@ -302,7 +309,7 @@ export const commandActions = ({ platform, messageService, switcherConfig, accou
       await messageService({
         action: 'setTrigger',
         event: 'error',
-        variables: { trigger: 'undefined' }
+        variables: { trigger: 'undefined', server }
       });
       Logger.error('Invalid trigger value for setTrigger command.');
       return;
@@ -312,7 +319,7 @@ export const commandActions = ({ platform, messageService, switcherConfig, accou
     await messageService({
       action: 'setTrigger',
       event: 'success',
-      variables: { trigger: triggerValue }
+      variables: { trigger: triggerValue, server }
     });
   },
   setRTrigger: async (rTriggerValue) => {
@@ -322,7 +329,7 @@ export const commandActions = ({ platform, messageService, switcherConfig, accou
       await messageService({
         action: 'setRTrigger',
         event: 'error',
-        variables: { rtrigger: 'undefined' }
+        variables: { rtrigger: 'undefined', server }
       });
       Logger.error('Invalid rTrigger value for setRTrigger command.');
       return;
@@ -331,7 +338,7 @@ export const commandActions = ({ platform, messageService, switcherConfig, accou
     await messageService({
       action: 'setRTrigger',
       event: 'success',
-      variables: { rtrigger: rTriggerValue }
+      variables: { rtrigger: rTriggerValue, server }
     });
   },
   bitrate: async () => {
@@ -340,7 +347,7 @@ export const commandActions = ({ platform, messageService, switcherConfig, accou
     await messageService({
       action: 'bitrate',
       event: 'success',
-      variables: { bitrate: stats.bitrate, speed: stats.rtt }
+      variables: { bitrate: stats.bitrate, speed: stats.rtt, server }
     });
   }
 });

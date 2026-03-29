@@ -6,8 +6,7 @@ import { getCurrentProgramScene } from '../../streaming-software/obs-api';
 import Logger from '../../logging/logger';
 import { ifCurrentSceneIsPrivacyScene } from '../../shared-chat-functions/lib';
 
-const { commandsConfig, twitchAccountsConfig, switcherConfig, streamingSoftwareConfig } =
-  injectDefaults();
+const { commandsConfig, twitchAccountsConfig, switcherConfig, serverConfig } = injectDefaults();
 
 export async function handleChatMessage(eventSub) {
   const event = eventSub.event;
@@ -38,6 +37,11 @@ export async function handleChatMessage(eventSub) {
   if (!requiredCommandRole) return;
 
   // If the user has permissions, execute the command action
+
+  const serverSettings = serverConfig.get('');
+  const serverType = serverSettings.currentType;
+  const serverName = serverSettings[serverType].name;
+
   if (
     hasPermission({
       event,
@@ -49,6 +53,7 @@ export async function handleChatMessage(eventSub) {
     commandActions({
       platform: 'twitch',
       messageService: twitchMessageService,
+      server: serverName,
       switcherConfig,
       accountConfig: twitchAccountsConfig
     })[commandObject.action](commandArg);

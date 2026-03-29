@@ -337,141 +337,141 @@
       "startStream": {
         "success": {
           "label": "Stream Started Message",
-          "hint": ""
+          "hint": "Available variables: ${server}"
         },
         "error": {
           "label": "Stream Start Error Message",
-          "hint": ""
+          "hint": "Available variables: ${server}"
         }
       },
       "stopStream": {
         "success": {
           "label": "Stream Stopped Message",
-          "hint": ""
+          "hint": "Available variables: ${server}"
         },
         "error": {
           "label": "Stream Stop Error Message",
-          "hint": ""
+          "hint": "Available variables: ${server}"
         }
       },
       "raid": {
         "success": {
           "label": "Raid Success Message",
-          "hint": "${channel} will be replaced with the name of the raided channel."
+          "hint": "Available variables: ${channel}, ${server}"
         },
         "error": {
           "label": "Raid Error Message",
-          "hint": "${channel} will be replaced with the name of the raided channel."
+          "hint": "Available variables: ${channel}, ${server}"
         }
       },
       "refreshStream": {
         "success": {
           "label": "Refresh Stream Success Message",
-          "hint": ""
+          "hint": "Available variables: ${server}"
         },
         "try": {
           "label": "Refresh Stream Attempt Message",
-          "hint": ""
+          "hint": "Available variables: ${server}"
         },
         "error": {
           "label": "Refresh Stream Error Message",
-          "hint": ""
+          "hint": "Available variables: ${server}"
         }
       },
       "bitrate": {
         "success": {
           "label": "Bitrate Success Message",
-          "hint": "${bitrate} will be replaced with the current bitrate and ${speed} with the current speed."
+          "hint": "Available variables: ${bitrate}, ${speed}, ${server}"
         },
         "error": {
           "label": "Bitrate Error Message",
-          "hint": ""
+          "hint": "Available variables: ${bitrate}, ${speed}, ${server}"
         }
       },
       "switchScene": {
         "success": {
           "label": "Switch Scene Success Message",
-          "hint": "${scene} will be replaced with the name of the switched scene."
+          "hint": "Available variables: ${scene}, ${server}"
         },
         "error": {
           "label": "Switch Scene Error Message",
-          "hint": "${scene} will be replaced with the name of the switched scene."
+          "hint": "Available variables: ${scene}, ${server}"
         }
       },
       "setTrigger": {
         "success": {
           "label": "Set Trigger Success Message",
-          "hint": "${trigger} will be replaced with the set bitrate trigger in kbps."
+          "hint": "Available variables: ${trigger}, ${server}"
         },
         "error": {
           "label": "Set Trigger Error Message",
-          "hint": "${trigger} will be replaced with the set bitrate trigger in kbps."
+          "hint": "Available variables: ${trigger}, ${server}"
         }
       },
       "setRTrigger": {
         "success": {
           "label": "Set Recovery Trigger Success Message",
-          "hint": "${trigger} will be replaced with the set bitrate recovery trigger in kbps."
+          "hint": "Available variables: ${trigger}, ${server}"
         },
         "error": {
           "label": "Set Recovery Trigger Error Message",
-          "hint": "${trigger} will be replaced with the set bitrate recovery trigger in kbps."
+          "hint": "Available variables: ${trigger}, ${server}"
         }
       },
       "addAdmin": {
         "success": {
           "label": "Add Admin Success Message",
-          "hint": "${user} will be replaced with the name of the admin being added."
+          "hint": "Available variables: ${user}, ${server}"
         },
         "alreadyAdmin": {
           "label": "Admin Already Exists Message",
-          "hint": "${user} will be replaced with the name of the admin being added."
+          "hint": "Available variables: ${user}, ${server}"
         },
         "error": {
           "label": "Add Admin Error Message",
-          "hint": "${user} will be replaced with the name of the admin being added."
+          "hint": "Available variables: ${user}, ${server}"
         }
       },
       "removeAdmin": {
         "success": {
           "label": "Remove Admin Success Message",
-          "hint": "${user} will be replaced with the name of the admin being removed."
+          "hint": "Available variables: ${user}, ${server}"
         },
         "notFound": {
           "label": "Remove Admin Not Found Message",
-          "hint": ""
+          "hint": "Available variables: ${user}, ${server}"
         },
         "error": {
           "label": "Remove Admin Error Message",
-          "hint": ""
+          "hint": "Available variables: ${user}, ${server}"
         }
       },
       "addMod": {
         "success": {
           "label": "Add Mod Success Message",
-          "hint": "${user} will be replaced with the name of the mod being added."
+          "hint": "Available variables: ${user}, ${server}"
         },
         "alreadyMod": {
           "label": "Mod Already Exists Message",
-          "hint": "${user} will be replaced with the name of the mod being added."
+          "hint": "Available variables: ${user}, ${server}"
         },
         "error": {
           "label": "Add Mod Error Message",
-          "hint": ""
+          "hint": "Available variables: ${user}, ${server}"
         }
       },
       "removeMod": {
         "success": {
           "label": "Remove Mod Success Message",
-          "hint": "${user} will be replaced with the name of the mod being removed."
+          "hint": "Available variables: ${user}, ${server}"
         },
         "notFound": {
           "label": "Remove Mod Not Found Message",
-          "hint": "${user} will be replaced with the name of the mod being removed."
+          "hint": "Available variables: ${user}, ${server}"
         },
         "error": {
           "label": "Remove Mod Error Message",
-          "hint": ""
+          "hint": "Available variables: ${user}, ${server}"
         }
       },
       "users": {},
@@ -527,7 +527,7 @@
       "publisherBox": {
         "label": "Publisher",
         "placeholder": "Publisher",
-        "hint": "Example: publish/live/your_stream_key"
+        "hint": "Example: stream/live/your_stream_key"
       }
     },
     "openIrl": {
@@ -559,13 +559,13 @@
       },
       "urlBox": {
         "label": "Stats URL",
-        "placeholder": "http://xxx.xxx.xxx.xxx:8080/api/stats",
-        "hint": "Example: http://<IP_ADDRESS>:<PORT>/api/stats"
+        "placeholder": "http://xxx.xxx.xxx.xxx:8080/stats",
+        "hint": "Example: http://<IP_ADDRESS>:<PORT>/stats"
       },
       "publisherBox": {
         "label": "Publisher",
         "placeholder": "Publisher",
-        "hint": ""
+        "hint": "Example: live/stream/your_stream_key"
       }
     }
   },
@@ -814,8 +814,13 @@
         },
         "downloadProgress": {
           "header": "Downloading update...",
+          "description": "The update is being downloaded. Please wait...",
           "progress": "Download Progress: {{progress}}%",
           "speed": "Download Speed: {{speed}}/s"
+        },
+        "updateDownloaded": {
+          "header": "Update Downloaded",
+          "description": "The update has been downloaded and will be installed now."
         },
         "noUpdateAvailable": {
           "header": "No Update Available",
@@ -864,66 +869,69 @@
         "error": "Something went wrong! Please try again."
       },
       "startStream": {
-        "success": "Stream started successfully!",
-        "error": "Failed to start the stream."
+        "success": "${server}: Stream started successfully!",
+        "error": "${server}: Failed to start the stream.",
+        "hint": "Available variables: ${server}"
       },
       "stopStream": {
-        "success": "Stream has stopped. Thanks for watching!",
-        "error": "Failed to stop the stream."
+        "success": "${server}: Stream has stopped. Thanks for watching!",
+        "error": "${server}: Failed to stop the stream.",
+        "hint": "Available variables: ${server}"
       },
       "raid": {
         "success": "Follow us to twitch.tv/${channel} for more content!",
         "error": "Failed to raid twitch.tv/${channel}",
-        "hint": "${channel} will be replaced with the raided channel name."
+        "hint": "Available variables: ${channel}, ${server}"
       },
       "refreshStream": {
-        "success": "Stream refreshed successfully!",
-        "try": "Trying to refresh the stream...",
-        "error": "Failed to refresh the stream."
+        "success": "${server}: Stream refreshed successfully!",
+        "try": "${server}: Trying to refresh the stream...",
+        "error": "${server}: Failed to refresh the stream.",
+        "hint": "Available variables: ${server}"
       },
       "bitrate": {
-        "success": "Current bitrate is ${bitrate} kbps | ${speed} ms.",
-        "error": "Failed to retrieve current bitrate.",
-        "hint": "${bitrate} will be replaced with the current bitrate and ${speed} with the current speed."
+        "success": "${server}: Current bitrate is ${bitrate} kbps | ${speed} ms.",
+        "error": "${server}: Failed to retrieve current bitrate.",
+        "hint": "Available variables: ${bitrate}, ${speed}, ${server}"
       },
       "switchScene": {
-        "success": "Switched to scene: ${scene}!",
-        "error": "Failed to switch to scene: ${scene}!",
-        "hint": "${scene} will be replaced with the name of the switched scene."
+        "success": "${server}: Switched to scene: ${scene}!",
+        "error": "${server}: Failed to switch to scene: ${scene}!",
+        "hint": "Available variables: ${scene}, ${server}"
       },
       "setTrigger": {
-        "success": "Bitrate trigger set to ${trigger} kbps!",
-        "error": "Failed to set bitrate trigger to ${trigger} kbps!",
-        "hint": "${trigger} will be replaced with the set bitrate trigger."
+        "success": "${server}: Bitrate trigger set to ${trigger} kbps!",
+        "error": "${server}: Failed to set bitrate trigger to ${trigger} kbps!",
+        "hint": "Available variables: ${trigger}, ${server}"
       },
       "setRTrigger": {
-        "success": "Bitrate recovery trigger set to ${rtrigger} kbps!",
-        "error": "Failed to set bitrate recovery trigger to ${rtrigger} kbps!",
-        "hint": "${rtrigger} will be replaced with the set bitrate recovery trigger."
+        "success": "${server}: Bitrate recovery trigger set to ${rtrigger} kbps!",
+        "error": "${server}: Failed to set bitrate recovery trigger to ${rtrigger} kbps!",
+        "hint": "Available variables: ${rtrigger}, ${server}"
       },
       "addAdmin": {
         "success": "User ${user} has been added as an admin.",
         "alreadyAdmin": "User ${user} is already an admin.",
         "error": "Failed to add user ${user} as an admin.",
-        "hint": "${user} will be replaced with the admin to add username."
+        "hint": "Available variables: ${user}, ${server}"
       },
       "removeAdmin": {
         "success": "User ${user} has been removed from admins.",
         "notFound": "No admin found with username ${user}.",
         "error": "Failed to remove user ${user} from admins.",
-        "hint": "${user} will be replaced with the admin to remove username."
+        "hint": "Available variables: ${user}, ${server}"
       },
       "addMod": {
         "success": "User ${user} has been added as a moderator.",
         "alreadyMod": "User ${user} is already a moderator.",
         "error": "Failed to add user ${user} as a moderator.",
-        "hint": "${user} will be replaced with the moderator to add username."
+        "hint": "Available variables: ${user}, ${server}"
       },
       "removeMod": {
         "success": "User ${user} has been removed from moderators.",
         "notFound": "No moderator found with username ${user}.",
         "error": "Failed to remove user ${user} from moderators.",
-        "hint": "${user} will be replaced with the moderator to remove username."
+        "hint": "Available variables: ${user}, ${server}"
       }
     }
   }

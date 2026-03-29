@@ -1,5 +1,5 @@
-import { Box, Stack, TextField, Typography } from '@mui/material';
-import { useState } from 'react';
+import { Box, Stack, TextField } from '@mui/material';
+import React, { useState } from 'react';
 import InputEndAdornment from '../../../components/feedback/InputEndAdornment';
 import SaveIcon from '@mui/icons-material/Save';
 import { useServerConfigStore } from '../../../contexts/DataContext';
@@ -15,25 +15,25 @@ const BelaboxElement = ({}) => {
   const [serverData, setServerData] = useState({
     name: serverConfig[type].name,
     statsUrl: serverConfig[type].statsUrl,
-    provider: serverConfig[type].provider
+    publisher: serverConfig[type].publisher
   });
 
   const [errorMessages, setErrorMessages] = useState({
     name: '',
     statsUrl: '',
-    provider: ''
+    publisher: ''
   });
 
   const [dirtyStates, setDirtyStates] = useState({
     name: false,
     statsUrl: false,
-    provider: false
+    publisher: false
   });
 
   const [oldDataDraft, setOldDataDraft] = useState({
     name: serverConfig[type].name,
     statsUrl: serverConfig[type].statsUrl,
-    provider: serverConfig[type].provider
+    publisher: serverConfig[type].publisher
   });
 
   const handleInputChange = (name, value) => {
@@ -190,8 +190,8 @@ const BelaboxElement = ({}) => {
 
           <TextField
             fullWidth
-            label={t('server.srtLiveServer.publisherBox.label')}
-            placeholder={t('server.srtLiveServer.publisherBox.placeholder')}
+            label={t('server.belabox.publisherBox.label')}
+            placeholder={t('server.belabox.publisherBox.placeholder')}
             value={serverData.publisher || ''}
             onChange={(e) => handleInputChange('publisher', e.target.value)}
             onKeyDown={(e) => {
@@ -201,7 +201,7 @@ const BelaboxElement = ({}) => {
             }}
             required
             error={Boolean(errorMessages.publisher)}
-            helperText={errorMessages.publisher || t('server.srtLiveServer.publisherBox.hint')}
+            helperText={errorMessages.publisher || t('server.belabox.publisherBox.hint')}
             slotProps={{
               input: {
                 endAdornment: dirtyStates.publisher && errorMessages.publisher.length === 0 && (

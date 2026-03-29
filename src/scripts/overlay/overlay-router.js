@@ -54,7 +54,10 @@ overlayRouter.get('/overlay/stats', (req, res) => {
        
         <!-- Overlay script -->
         <script>
-          const ws = new WebSocket("ws://localhost:${PORT}");
+          let ws;
+          let retryAttempts = 0;
+          const maxRetryDelay = 5000;
+
           const overlayState = {
             config: { html: '', css: '', js: '' },
             stats: { bitrate: 0, speed: 0, uptime: 0 }
@@ -131,7 +134,7 @@ overlayRouter.get('/overlay/stats', (req, res) => {
             }
           };
 
-          ws.onmessage = (event) => {
+          const handleMessage = (event) => {
             const data = JSON.parse(event.data);
 
             console.log("Received data from server:", data);
@@ -143,26 +146,52 @@ overlayRouter.get('/overlay/stats', (req, res) => {
               return;
             }
 
-            if(data.type === "overlay") {
-            
+            if (data.type === "overlay") {
+
               // Overlay configuration payloads
               // - On first connection the server sends the full overlay-config.json
               // - On overlay updates the backend sends the same shape again
 
               const overlayConfig = data.data || {};
 
-              // const expertMode = !!overlayConfig.expertMode;
               const expertMode = data.data.expertMode || false;
               const modeKey = expertMode ? "expert" : "easy";
 
-              const overlaysByMode = data.data.overlay ||  {};
-              const overlayPayload = overlaysByMode[modeKey] || {html: '', css: '', js: '', data: {}};
+              const overlaysByMode = data.data.overlay || {};
+              const overlayPayload = overlaysByMode[modeKey] || { html: '', css: '', js: '', data: {} };
 
               const templateVars = buildTemplateVariables(overlayConfig, overlayPayload);
               overlayState.config = applyTemplateToOverlay(overlayPayload, templateVars);
               applyOverlay();
             }
           };
+
+          const scheduleReconnect = (reason) => {
+            retryAttempts += 1;
+            const delay = Math.min(500 + retryAttempts * 500, maxRetryDelay);
+            setTimeout(connectWS, delay);
+          };
+
+          const connectWS = () => {
+            ws = new WebSocket("ws://localhost:${PORT}");
+
+            ws.onopen = () => {
+              retryAttempts = 0;
+              console.log("WebSocket connected to overlay server");
+            };
+
+            ws.onmessage = handleMessage;
+
+            ws.onerror = () => {
+              console.warn("WebSocket error, closing and retrying");
+              try { ws.close(); } catch (_) {}
+            };
+
+            ws.onclose = () => scheduleReconnect("closed");
+          };
+
+          // Initial connect (will keep retrying if the server is not up yet)
+          connectWS();
         </script>
       </body>
     </html>

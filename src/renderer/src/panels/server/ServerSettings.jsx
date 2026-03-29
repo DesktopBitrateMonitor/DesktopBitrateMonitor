@@ -15,7 +15,7 @@ const ServerSettings = () => {
   const SERVER_TYPES = [
   { label: t('server.select.options.srtLiveServer'), value: 'srt-live-server', isDev: false },
   { label: t('server.select.options.openIrl'), value: 'openirl', isDev: false },
-  { label: t('server.select.options.belabox'), value: 'belabox', isDev: true },
+  { label: t('server.select.options.belabox'), value: 'belabox', isDev: false },
 ];
 
   const { serverConfig, updateServerConfig } = useServerConfigStore();

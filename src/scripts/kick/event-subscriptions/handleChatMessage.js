@@ -5,8 +5,7 @@ import { commandActions } from '../../shared-chat-functions/command-actions';
 import { getCurrentProgramScene } from '../../streaming-software/obs-api';
 import { ifCurrentSceneIsPrivacyScene } from '../../shared-chat-functions/lib';
 
-const { commandsConfig, kickAccountsConfig, switcherConfig, streamingSoftwareConfig } =
-  injectDefaults();
+const { commandsConfig, kickAccountsConfig, switcherConfig, serverConfig } = injectDefaults();
 
 export async function handleChatMessage(rawMessage) {
   const message = rawMessage.content;
@@ -36,6 +35,10 @@ export async function handleChatMessage(rawMessage) {
   const requiredCommandRole = commandObject.requiredRole;
   if (!requiredCommandRole) return;
 
+  const serverSettings = serverConfig.get('');
+  const serverType = serverSettings.currentType;
+  const serverName = serverSettings[serverType].name;
+
   if (
     hasPermission({
       event: rawMessage,
@@ -47,6 +50,7 @@ export async function handleChatMessage(rawMessage) {
     commandActions({
       platform: 'kick',
       messageService: kickMessageService,
+      server: serverName,
       switcherConfig,
       accountConfig: kickAccountsConfig
     })[commandObject.action](commandArg);

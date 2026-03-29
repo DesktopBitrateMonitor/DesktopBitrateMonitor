@@ -338,17 +338,17 @@
       "startStream": {
         "success": {
           "label": "Stream gestartet Nachricht",
-          "hint": ""
+          "hint": "Verfügbare Variablen: ${server}"
         },
         "error": {
           "label": "Stream Start Fehler Nachricht",
-          "hint": ""
+          "hint": "Verfügbare Variablen: ${server}"
         }
       },
       "stopStream": {
         "success": {
           "label": "Stream gestoppt Nachricht",
-          "hint": ""
+          "hint": "Verfügbare Variablen: ${server}"
         },
         "error": {
           "label": "Stream stoppen Fehler Nachricht",
@@ -358,121 +358,121 @@
       "raid": {
         "success": {
           "label": "Raid erfolgreich Nachricht",
-          "hint": "${channel} wird mit dem Namen des geraideten Kanals ersetzt."
+          "hint": "Verfügbare Variablen: ${channel}, ${server}"
         },
         "error": {
           "label": "Raid Fehler Nachricht",
-          "hint": "${channel} wird mit dem Namen des geraideten Kanals ersetzt."
+          "hint": "Verfügbare Variablen: ${channel}, ${server}"
         }
       },
       "refreshStream": {
         "success": {
           "label": "Aktualisierung erfolgreich Nachricht",
-          "hint": ""
+          "hint": "Verfügbare Variablen: ${server}"
         },
         "try": {
           "label": "Aktualisierungsversuch Nachricht",
-          "hint": ""
+          "hint": "Verfügbare Variablen: ${server}"
         },
         "error": {
           "label": "Aktualisierungsfehler Nachricht",
-          "hint": ""
+          "hint": "Verfügbare Variablen: ${server}"
         }
       },
       "bitrate": {
         "success": {
           "label": "Abruf der Bitrate Nachricht",
-          "hint": "${bitrate} wird mit der aktuellen Bitrate und ${speed} mit der aktuellen Geschwindigkeit ersetzt."
+          "hint": "Verfügbare Variablen: ${bitrate}, ${speed}, ${server}"
         },
         "error": {
           "label": "Fehler beim Abruf der Bitrate Nachricht",
-          "hint": ""
+          "hint": "Verfügbare Variablen: ${server}"
         }
       },
       "switchScene": {
         "success": {
           "label": "Szenenwechsel erfolgreich Nachricht",
-          "hint": "${scene} wird mit dem Namen der gewechselten Szene ersetzt."
+          "hint": "Verfügbare Variablen: ${scene}, ${server}"
         },
         "error": {
           "label": "Szenenwechsel Fehler Nachricht",
-          "hint": "${scene} wird mit dem Namen der gewechselten Szene ersetzt."
+          "hint": "Verfügbare Variablen: ${scene}, ${server}"
         }
       },
       "setTrigger": {
         "success": {
           "label": "Trigger setzen erfolgreich Nachricht",
-          "hint": "${trigger} wird mit dem gesetzten Bitrate Trigger in kbps ersetzt."
+          "hint": "Verfügbare Variablen: ${trigger}, ${server}"
         },
         "error": {
           "label": "Trigger setzen Fehler Nachricht",
-          "hint": "${trigger} wird mit dem gesetzten Bitrate Trigger in kbps ersetzt."
+          "hint": "Verfügbare Variablen: ${trigger}, ${server}"
         }
       },
       "setRTrigger": {
         "success": {
           "label": "Recovery Trigger setzen erfolgreich Nachricht",
-          "hint": "${trigger} wird mit dem gesetzten Bitrate Recovery Trigger in kbps ersetzt."
+          "hint": "Verfügbare Variablen: ${rtrigger}, ${server}"
         },
         "error": {
           "label": "Recovery Trigger setzen Fehler Nachricht",
-          "hint": "${trigger} wird mit dem gesetzten Bitrate Recovery Trigger in kbps ersetzt."
+          "hint": "Verfügbare Variablen: ${rtrigger}, ${server}"
         }
       },
       "addAdmin": {
         "success": {
           "label": "Admin hinzufügen erfolgreich Nachricht",
-          "hint": "${user} wird mit dem Namen des hinzuzufügenden Admins ersetzt."
+          "hint": "Verfügbare Variablen: ${user}, ${server}"
         },
         "alreadyAdmin": {
           "label": "Admin bereits vorhanden Nachricht",
-          "hint": "${user} wird mit dem Namen des hinzuzufügenden Admins ersetzt."
+          "hint": "Verfügbare Variablen: ${user}, ${server}"
         },
         "error": {
           "label": "Admin hinzufügen Fehler Nachricht",
-          "hint": "${user} wird mit dem Namen des hinzuzufügenden Admins ersetzt."
+          "hint": "Verfügbare Variablen: ${user}, ${server}"
         }
       },
       "removeAdmin": {
         "success": {
           "label": "Admin entfernen erfolgreich Nachricht",
-          "hint": "${user} wird mit dem Namen des zu entfernenden Admins ersetzt."
+          "hint": "Verfügbare Variablen: ${user}, ${server}"
         },
         "notFound": {
           "label": "Admin nicht gefunden Nachricht",
-          "hint": ""
+          "hint": "Verfügbare Variablen: ${user}, ${server}"
         },
         "error": {
           "label": "Admin entfernen Fehler Nachricht",
-          "hint": ""
+          "hint": "Verfügbare Variablen: ${user}, ${server}"
         }
       },
       "addMod": {
         "success": {
           "label": "Mod hinzufügen erfolgreich Nachricht",
-          "hint": "${user} wird mit dem Namen des hinzuzufügenden Mods ersetzt."
+          "hint": "Verfügbare Variablen: ${user}, ${server}"
         },
         "alreadyMod": {
           "label": "Mod bereits vorhanden Nachricht",
-          "hint": ""
+          "hint": "Verfügbare Variablen: ${user}, ${server}"
         },
         "error": {
           "label": "Mod hinzufügen Fehler Nachricht",
-          "hint": ""
+          "hint": "Verfügbare Variablen: ${user}, ${server}"
         }
       },
       "removeMod": {
         "success": {
           "label": "Mod entfernen erfolgreich Nachricht",
-          "hint": "${user} wird mit dem Namen des zu entfernenden Mods ersetzt."
+          "hint": "Verfügbare Variablen: ${user}, ${server}"
         },
         "notFound": {
           "label": "Mod nicht gefunden Nachricht",
-          "hint": ""
+          "hint": "Verfügbare Variablen: ${user}, ${server}"
         },
         "error": {
           "label": "Mod entfernen Fehler Nachricht",
-          "hint": ""
+          "hint": "Verfügbare Variablen: ${user}, ${server}"
         }
       },
       "users": {},
@@ -560,13 +560,13 @@
       },
       "urlBox": {
         "label": "Stats URL",
-        "placeholder": "http://xxx.xxx.xxx.xxx:8080/api/stats",
-        "hint": "Beispiel: http://<IP_ADRESSE>:<PORT>/api/stats"
+        "placeholder": "http://xxx.xxx.xxx.xxx:8080/stats",
+        "hint": "Beispiel: http://<IP_ADRESSE>:<PORT>/stats"
       },
       "publisherBox": {
         "label": "Publisher",
         "placeholder": "Publisher",
-        "hint": ""
+        "hint": "Beispiel: live/stream/dein_stream_key"
       }
     }
   },
@@ -814,8 +814,13 @@
         },
         "downloadProgress": {
           "header": "Update wird heruntergeladen...",
+          "description": "Update wird heruntergeladen, bitte warten...",
           "progress": "Download-Fortschritt: {{progress}}%",
           "speed": "Download-Geschwindigkeit: {{speed}}/s"
+        },
+        "updateDownloaded": {
+          "header": "Update heruntergeladen",
+          "description": "Das Update wurde heruntergeladen und wird jetzt installiert."
         },
         "noUpdateAvailable": {
           "header": "Kein Update verfügbar",
@@ -853,7 +858,7 @@
       "sliderLabel": "Abstand zwischen den Elementen (px)",
       "iconColor": "Symbolfarbe",
       "fontColor": "Schriftfarbe",
-      "dragToolTip":"Ziehe das Element in deine Streaming-Software um ein Overlay zu erstellen",
+      "dragToolTip": "Ziehe das Element in deine Streaming-Software um ein Overlay zu erstellen",
       "dragNdrop": "Drag & Drop"
     }
   },
@@ -864,57 +869,69 @@
         "error": "Es ist ein Fehler aufgetreten, bitte versuche es erneut"
       },
       "startStream": {
-        "success": "Stream erfolgreich gestartet",
-        "error": "Fehler beim Starten des Streams"
+        "success": "${server}: Stream erfolgreich gestartet",
+        "error": "${server}: Fehler beim Starten des Streams",
+        "hint": "Verfügbare Variablen: ${server}"
       },
       "stopStream": {
-        "success": "Stream erfolgreich gestoppt",
-        "error": "Fehler beim Stoppen des Streams"
+        "success": "${server}: Stream erfolgreich gestoppt",
+        "error": "${server}: Fehler beim Stoppen des Streams",
+        "hint": "Verfügbare Variablen: ${server}"
       },
       "raid": {
         "success": "Folgt mit uns zu twitch.tv/${channel} für mehr Unterhaltung!",
-        "error": "Fehler bei der Erstellung des Raids zu twitch.tv/${channel}"
+        "error": "Fehler bei der Erstellung des Raids zu twitch.tv/${channel}",
+        "hint": "Verfügbare Variablen: ${channel}, ${server}"
       },
       "refreshStream": {
-        "success": "Stream erfolgreich aktualisiert",
-        "try": "Versuche den Stream zu aktualisieren ...",
-        "error": "Fehler beim Aktualisieren des Streams"
+        "success": "${server}: Stream erfolgreich aktualisiert",
+        "try": "${server}: Versuche den Stream zu aktualisieren ...",
+        "error": "${server}: Fehler beim Aktualisieren des Streams",
+        "hint": "Verfügbare Variablen: ${server}"
       },
       "bitrate": {
-        "success": "Aktuelle Bitrate: ${bitrate} kbps | ${speed} ms",
-        "error": "Fehler beim Abrufen der Bitrate"
+        "success": "${server}: Aktuelle Bitrate: ${bitrate} kbps | ${speed} ms",
+        "error": "${server}: Fehler beim Abrufen der Bitrate",
+        "hint": "Verfügbare Variablen: ${bitrate}, ${speed}, ${server}"
       },
       "switchScene": {
-        "success": "Szene erfolgreich zu ${scene} gewechselt",
-        "error": "Fehler beim Wechseln der Szene"
+        "success": "${server}: Szene erfolgreich zu ${scene} gewechselt",
+        "error": "${server}: Fehler beim Wechseln der Szene",
+        "hint": "Verfügbare Variablen: ${scene}, ${server}"
       },
       "setTrigger": {
-        "success": "Bitrate Trigger auf ${trigger} kbps gesetzt",
-        "error": "Fehler beim Setzen des Bitrate Triggers"
+        "success": "${server}: Bitrate Trigger auf ${trigger} kbps gesetzt",
+        "error": "${server}: Fehler beim Setzen des Bitrate Triggers",
+        "hint": "Verfügbare Variablen: ${trigger}, ${server}"
       },
       "setRTrigger": {
-        "success": "Bitrate Recovery Trigger auf ${rtrigger} kbps gesetzt",
-        "error": "Fehler beim Setzen des Bitrate Recovery Triggers"
+        "success": "${server}: Bitrate Recovery Trigger auf ${rtrigger} kbps gesetzt",
+        "error": "${server}: Fehler beim Setzen des Bitrate Recovery Triggers",
+        "hint": "Verfügbare Variablen: ${rtrigger}, ${server}"
       },
       "addAdmin": {
         "success": "${user} erfolgreich als Admin hinzugefügt",
         "alreadyAdmin": "${user} ist bereits ein Admin",
-        "error": "Fehler beim Hinzufügen von ${user} als Admin"
+        "error": "Fehler beim Hinzufügen von ${user} als Admin",
+        "hint": "Verfügbare Variablen: ${user}, ${server}"
       },
       "removeAdmin": {
         "success": "${user} erfolgreich als Admin entfernt",
         "notFound": "Kein Admin mit dem Namen ${user} gefunden",
-        "error": "Fehler beim Entfernen von ${user} als Admin"
+        "error": "Fehler beim Entfernen von ${user} als Admin",
+        "hint": "Verfügbare Variablen: ${user}, ${server}"
       },
       "addMod": {
         "success": "${user} erfolgreich als Mod hinzugefügt",
         "alreadyMod": "${user} ist bereits ein Mod",
-        "error": "Fehler beim Hinzufügen von ${user} als Mod"
+        "error": "Fehler beim Hinzufügen von ${user} als Mod",
+        "hint": "Verfügbare Variablen: ${user}, ${server}"
       },
       "removeMod": {
         "success": "${user} erfolgreich als Mod entfernt",
         "notFound": "Kein Mod mit dem Namen ${user} gefunden",
-        "error": "Fehler beim Entfernen von ${user} als Mod"
+        "error": "Fehler beim Entfernen von ${user} als Mod",
+        "hint": "Verfügbare Variablen: ${user}, ${server}"
       }
     }
   }

@@ -17,7 +17,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useUpdate } from '../../contexts/UpdateContext';
 import { useTranslation } from 'react-i18next';
 
-// TODO: Fix the card after finish downloading the update
 // TODO: Add a button to abort the update process (if possible)
 
 const formatDate = (value) => {
@@ -126,7 +125,6 @@ const UpdateCard = ({ open = true, onClose }) => {
   const releaseName = data?.releaseName || data?.version;
   const releaseDate = formatDate(data?.releaseDate);
   const fileSize = formatBytes(data?.files?.[0]?.size);
-  const isBusy = ['checking-for-update', 'downloading', 'installing'].includes(status);
   const totalBytes = formatBytes(data?.total);
   const transferredBytes = formatBytes(data?.transferred);
   const bytesPerSecond = formatBytes(data?.bytesPerSecond);
@@ -197,7 +195,7 @@ const UpdateCard = ({ open = true, onClose }) => {
         </DialogContent>
 
         <DialogActions sx={{ px: 3, py: 2 }}>
-          <Button variant="contained" disableElevation onClick={startUpdate} disabled={isBusy}>
+          <Button variant="contained" disableElevation onClick={startUpdate}>
             {t('appSettings.update.dialog.updateAvailable.installButton')}
           </Button>
           <Button onClick={onClose} variant="outlined">
@@ -248,10 +246,12 @@ const UpdateCard = ({ open = true, onClose }) => {
           }
         }}
       >
-        <DialogTitle sx={{ px: 3, pt: 2.5, pb: 1.5 }}>Downloading update...</DialogTitle>
+        <DialogTitle sx={{ px: 3, pt: 2.5, pb: 1.5 }}>
+          {t('appSettings.update.dialog.downloadProgress.header')}
+        </DialogTitle>
         <DialogContent dividers>
           <Typography variant="body2" color="text.secondary">
-            {t('appSettings.update.dialog.downloadProgress.header')}
+            {t('appSettings.update.dialog.downloadProgress.description')}
           </Typography>
           {totalBytes && transferredBytes && (
             <Box mt={2} mb={1}>
@@ -273,6 +273,32 @@ const UpdateCard = ({ open = true, onClose }) => {
               {t('appSettings.update.dialog.downloadProgress.speed', { speed: bytesPerSecond })}
             </Typography>
           )}
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  if (status === 'update-downloaded') {
+    return (
+      <Dialog
+        open={open}
+        onClose={onClose}
+        slotProps={{
+          paper: {
+            sx: (theme) => ({
+              borderRadius: 3,
+              border: `1px solid ${alpha(theme.palette.divider, 0.45)}`
+            })
+          }
+        }}
+      >
+        <DialogTitle sx={{ px: 3, pt: 2.5, pb: 1.5 }}>
+          {t('appSettings.update.dialog.updateDownloaded.header')}
+        </DialogTitle>
+        <DialogContent dividers>
+          <Typography variant="body2" color="text.secondary">
+            {t('appSettings.update.dialog.updateDownloaded.description')}
+          </Typography>
         </DialogContent>
       </Dialog>
     );

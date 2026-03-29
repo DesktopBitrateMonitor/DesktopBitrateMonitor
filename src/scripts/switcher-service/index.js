@@ -41,7 +41,7 @@ const streamStateCache = {
   ttlMs: 500
 };
 
-const { appConfig, switcherConfig, streamingSoftwareConfig } = injectDefaults();
+const { appConfig, switcherConfig, streamingSoftwareConfig, serverConfig } = injectDefaults();
 
 // Hysteresis helper so we don't bounce bands when rTrigger > trigger.
 const computeBand = (bitrate, t, previous) => {
@@ -66,6 +66,9 @@ export async function switcherService(data, mainWindow = null) {
 
   const { bitrate, speed, uptime } = data.data;
   const switcherSettings = switcherConfig.get('');
+  const serverSettings = serverConfig.get('');
+  const serverType = serverSettings.currentType;
+  const serverName = serverSettings[serverType].name;
   const appSettings = appConfig.get('');
 
   const platform = appSettings.activePlatform;
@@ -184,7 +187,8 @@ export async function switcherService(data, mainWindow = null) {
 
         const latestScene = await getCurrentScene();
         if (latestScene?.data.toLowerCase() === targetScene?.toLowerCase()) return;
-        if (latestScene?.data.toLowerCase() === switcherSettings?.scenePrivacy?.toLowerCase()) return;
+        if (latestScene?.data.toLowerCase() === switcherSettings?.scenePrivacy?.toLowerCase())
+          return;
         if (!scenes.includes(latestScene?.data?.toLowerCase())) return;
 
         const res = await setCurrentProgramScene(targetScene);
@@ -210,10 +214,11 @@ export async function switcherService(data, mainWindow = null) {
 
           // Send chat message on scene switch if enabled
           if (platform === 'twitch') {
+            console.log(serverName);
             await twitchMessageService({
               action: 'switchScene',
               event: 'success',
-              variables: { scene: targetScene }
+              variables: { scene: targetScene, server: serverName }
             });
             Logger.log(`Automatic switch to scene ${key}`);
           }
@@ -221,7 +226,7 @@ export async function switcherService(data, mainWindow = null) {
             await kickMessageService({
               action: 'switchScene',
               event: 'success',
-              variables: { scene: targetScene }
+              variables: { scene: targetScene, server: serverName }
             });
             Logger.log(`Automatic switch to scene ${key}`);
           }

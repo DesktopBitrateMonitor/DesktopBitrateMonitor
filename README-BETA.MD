@@ -1,8 +1,19 @@
 # First Beta release for testing functionality and get UI/functionality feedback
 
+## v0.0.7 - Beta
+
+- Implement automatic reconnect the overlay websocket to the service
+- Implement belabox server connection
+- Add messages variable for server names
+- Fix update message after finishing download
+
+---
+
 ## v0.0.6 - Beta
 
 - Implement stats overlay service
+
+---
 
 ## v0.0.5 - Beta
 
@@ -12,10 +23,14 @@
 
 ## v0.0.4 - Beta
 
+---
+
 - Fix bitrate chat response for Srt-Relay-Server stats
 - Fix switch command for moderators. Only block the command if the broadcasting software is in privacy scene
 
 ## v0.0.3 - Beta
+
+---
 
 - Little fixes and restructured message handling for all platforms
 - Switcher-Service restructuring for more stability
@@ -26,12 +41,16 @@
 
 ## v0.0.2 - Beta
 
+---
+
 - Finish the beta state from the dashboard
 - Add draggable dashboard items
 - Add logs page with filtering
 - some little bugfixes (frontend only)
 
 ## v0.0.1 - Beta
+
+---
 
 - Test main bitrate switching functionalities
 - Test platform and chat connection stabilities
