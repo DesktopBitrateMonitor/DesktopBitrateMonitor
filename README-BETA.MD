@@ -1,5 +1,12 @@
 # First Beta release for testing functionality and get UI/functionality feedback
 
+## v0.0.8 - Beta
+
+- Implement a option to disable the automatic switch from intro to live scene [💡fullymira]
+-  Add a Help button to the Navigation and open the github readme in the local browser
+
+---
+
 ## v0.0.7 - Beta
 
 - Implement automatic reconnect the overlay websocket to the service

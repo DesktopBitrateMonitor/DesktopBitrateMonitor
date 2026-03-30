@@ -12,7 +12,7 @@ import generateId from '../../../scripts/lib/id-generator';
 const LoggerContext = createContext(null);
 LoggerContext.displayName = 'LoggerContext';
 
-const MAX_LOGS = 500;
+const MAX_LOGS = 1000;
 
 const normalizeLog = (log, source = 'backend') => {
   const message = typeof log === 'string' ? log : (log?.message ?? '');
@@ -47,9 +47,14 @@ export const LoggerProvider = ({ children }) => {
 
     if (!api?.newLogEvent) return undefined;
 
+    let lastMessage;
+
     const unsubscribe = api.newLogEvent((log) => {
       if (!mountedRef.current) return;
+
+      if (log.message === lastMessage) return;
       appendLog(log, 'backend');
+      lastMessage = log?.message;
     });
 
     return () => {

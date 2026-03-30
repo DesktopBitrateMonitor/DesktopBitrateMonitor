@@ -57,6 +57,7 @@
   },
   "navigation": {
     "brand": "Bitratenmonitor",
+    "documents": "Dokumente",
     "dashboard": "Dashboard",
     "platformsSettings": "Plattformen",
     "twitchSettings": "Twitch-Einstellungen",
@@ -659,6 +660,7 @@
       "onlySwitchWhenLive": "Nur wechseln, wenn live",
       "enableChatNotifications": "Chat-Benachrichtigungen aktivieren",
       "switchToStartSceneOnStreamStart": "Wechsel zur Startszene beim Stream-Start",
+      "switchFromStartingToLive": "Wechsel von Start-Szene zu Live-Szene",
       "stopStreamAfterRaid": "Stream nach Raid stoppen"
     },
     "scenes": {
@@ -754,7 +756,8 @@
     "panels": {
       "general": "Allgemein",
       "style": "Erscheinung",
-      "update": "Updates"
+      "update": "Updates",
+      "backup": "Backup"
     },
     "general": {
       "header": "Allgemeine App-Einstellungen",
@@ -827,7 +830,8 @@
           "description": "Du verwendest bereits die neueste Version der App."
         }
       }
-    }
+    },
+    "backup": {}
   },
   "overlayEditor": {
     "header": "Overlay Editor",

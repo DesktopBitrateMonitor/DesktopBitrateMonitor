@@ -1,3 +1,5 @@
+import { dialog, shell } from 'electron';
+import fs from 'fs';
 import { broadcastOverlay } from '../../scripts/app-server/server';
 import Logger from '../../scripts/logging/logger';
 import { reconnectToOBS } from '../../scripts/streaming-software/obs-api';
@@ -47,5 +49,34 @@ export async function initializeServicesIpc(ipcMain, mainWindow = null) {
 
   ipcMain.on('reload-overlay', async (event, data) => {
     broadcastOverlay(data);
+  });
+
+  ipcMain.handle('open-external', async (event, url) => {
+    if (url) {
+      shell.openExternal(url);
+    }
+  });
+
+  ipcMain.handle('save-backup', async (event, data, options) => {
+    const res = await dialog.showSaveDialog(options);
+
+    if (res.canceled) {
+      return { success: false, message: 'Save cancelled' };
+    }
+
+    fs.writeFileSync(res.filePath, data);
+
+    return { success: true, message: 'Backup saved successfully' };
+  });
+
+  ipcMain.handle('load-backup', async (event, options) => {
+    const res = await dialog.showOpenDialog(options);
+
+    if (res.canceled || res.filePaths.length === 0) {
+      return { success: false, message: 'Load cancelled' };
+    }
+
+    const fileData = fs.readFileSync(res.filePaths[0], 'utf-8');
+    return { success: true, data: fileData };
   });
 }

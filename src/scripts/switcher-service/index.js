@@ -76,7 +76,8 @@ export async function switcherService(data, mainWindow = null) {
   const vars = {
     switcherEnabled: switcherSettings.switcherEnabled,
     onlySwitchWhenLive: switcherSettings.onlySwitchWhenLive,
-    enableChatNotifications: switcherSettings.enableChatNotifications
+    enableChatNotifications: switcherSettings.enableChatNotifications,
+    switchFromStartingToLive: switcherSettings.switchFromStartingToLive
   };
 
   const scenes = [
@@ -167,6 +168,20 @@ export async function switcherService(data, mainWindow = null) {
   // If the current scene if the privacy scene, do not switch
   if (currentScene.data.toLowerCase() === switcherSettings.scenePrivacy.toLowerCase()) {
     Logger.log('Current scene is privacy scene. Switcher is inactive.');
+    clearAllPending();
+    return;
+  }
+
+  // If the current scene is the starting scene and switchFromStartingToLive is disabled, do not switch to live scene
+  // This allows users to use the starting scene as a "holding" scene before going live, without worrying about accidentally switching to the live scene before they are ready.
+  // Switch command will be not disabled for moderators (like privacy restriction).
+  if (
+    currentScene.data.toLowerCase() === switcherSettings.sceneStart.toLowerCase() &&
+    !vars.switchFromStartingToLive
+  ) {
+    Logger.log(
+      'Currently in starting scene and automatic switch starting -> live is disabled. Switcher will not switch to live scene.'
+    );
     clearAllPending();
     return;
   }

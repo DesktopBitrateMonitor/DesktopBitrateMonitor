@@ -5,6 +5,7 @@ import {
   Divider,
   Drawer,
   IconButton,
+  Link,
   List,
   ListItemButton,
   ListItemIcon,
@@ -91,7 +92,7 @@ const NAV_ITEMS = [
     icon: Settings,
     matchPrefix: true,
     development: false
-  },
+  }
 ];
 
 const PLATFORM_ROUTES = [
@@ -193,6 +194,11 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
     },
     [activePlatform, updateAppConfig]
   );
+
+  const handleOpenDocuments = async () => {
+    const url = `https://github.com/yinks87/desktop-bitrate-monitor`;
+    await window.servicesApi.openExternal(url);
+  };
 
   return (
     <Box
@@ -391,16 +397,44 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
                 transition: spacingTransition
               }}
             >
-              <img
-                src={appImage}
-                alt="app_logo"
-                style={{ height: collapsed ? '28px' : '32px', width: 'auto' }}
-              />
-              {!collapsed && (
-                <Typography variant="subtitle2" fontWeight={700} noWrap>
-                  {t('navigation.brand')}
-                </Typography>
-              )}
+              <ListItemButton
+                onClick={handleOpenDocuments}
+                sx={{
+                  minHeight: 48,
+                  justifyContent: collapsed ? 'center' : 'flex-start',
+                  px: collapsed ? 0 : 2.5,
+                  py: 1,
+                  borderRadius: 2,
+                  mx: collapsed ? 'auto' : 1,
+                  width: collapsed ? 48 : 'auto',
+                  transition: spacingTransition
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: collapsed ? 0 : 2,
+                    color: 'text.secondary',
+                    justifyContent: collapsed ? 'center' : 'flex-start',
+                    transition: spacingTransition,
+                    '& .MuiSvgIcon-root': {
+                      fontSize: 26
+                    }
+                  }}
+                >
+                  <img
+                    src={appImage}
+                    alt="app_logo"
+                    style={{ height: collapsed ? '28px' : '32px', width: 'auto' }}
+                  />
+                </ListItemIcon>
+
+                {!collapsed && (
+                  <Typography variant="body1" fontWeight={700} noWrap>
+                    {t('navigation.documents')}
+                  </Typography>
+                )}
+              </ListItemButton>
             </Box>
           </Box>
         </Box>

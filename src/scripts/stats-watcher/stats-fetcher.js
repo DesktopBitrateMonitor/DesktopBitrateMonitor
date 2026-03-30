@@ -91,6 +91,6 @@ export async function fetchStats(statsUrl) {
     const stats = await axios.get(statsUrl);
     return { stats: stats.data };
   } catch (error) {
-    Logger.log(`Error fetching stats from OpenIRL: ${error.message}`);
+    Logger.log(`Error fetching stats: ${error.message}`);
   }
 }

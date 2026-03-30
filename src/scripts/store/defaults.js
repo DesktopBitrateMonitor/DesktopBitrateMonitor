@@ -234,6 +234,7 @@ export const injectDefaults = () => {
       onlySwitchWhenLive: false,
       enableChatNotifications: true,
       switchToStartSceneOnStreamStart: true,
+      switchFromStartingToLive: true,
       stopStreamAfterRaid: true
     }
   });

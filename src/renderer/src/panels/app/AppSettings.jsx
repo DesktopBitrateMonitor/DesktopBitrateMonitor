@@ -5,6 +5,7 @@ import TuneIcon from '@mui/icons-material/Tune';
 import SyncAltIcon from '@mui/icons-material/SyncAlt';
 import ColorLensIcon from '@mui/icons-material/ColorLens';
 import { useTranslation } from 'react-i18next';
+import { Backup } from '@mui/icons-material';
 
 const AppSettings = () => {
   const location = useLocation();
@@ -12,10 +13,33 @@ const AppSettings = () => {
 
   const { t } = useTranslation();
 
+  const isDev = import.meta.env.DEV;
+
   const TAB_CONFIG = [
-    { value: 'generalsettings', label: t('appSettings.panels.general'), icon: TuneIcon },
-    { value: 'stylesettings', label: t('appSettings.panels.style'), icon: ColorLensIcon },
-    { value: 'updatesettings', label: t('appSettings.panels.update'), icon: SyncAltIcon }
+    {
+      value: 'generalsettings',
+      label: t('appSettings.panels.general'),
+      icon: TuneIcon,
+      isDev: false
+    },
+    {
+      value: 'stylesettings',
+      label: t('appSettings.panels.style'),
+      icon: ColorLensIcon,
+      isDev: false
+    },
+    {
+      value: 'updatesettings',
+      label: t('appSettings.panels.update'),
+      icon: SyncAltIcon,
+      isDev: false
+    },
+    {
+      value: 'backup',
+      label: t('appSettings.panels.backup'),
+      icon: Backup,
+      isDev: true
+    }
   ];
 
   const activeValue = useMemo(() => {
@@ -60,6 +84,7 @@ const AppSettings = () => {
         }}
       >
         {TAB_CONFIG.map((tab) => {
+          if (tab.isDev && !isDev) return null;
           const Icon = tab.icon;
           return (
             <Tab

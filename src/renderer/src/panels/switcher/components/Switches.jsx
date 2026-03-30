@@ -15,6 +15,7 @@ const Switches = ({ collapsedIds, toggleCollapsed }) => {
     onlySwitchWhenLive: t('switcher.states.onlySwitchWhenLive'),
     enableChatNotifications: t('switcher.states.enableChatNotifications'),
     switchToStartSceneOnStreamStart: t('switcher.states.switchToStartSceneOnStreamStart'),
+    switchFromStartingToLive: t('switcher.states.switchFromStartingToLive'),
     stopStreamAfterRaid: t('switcher.states.stopStreamAfterRaid')
   };
 
@@ -23,6 +24,7 @@ const Switches = ({ collapsedIds, toggleCollapsed }) => {
     onlySwitchWhenLive: switcherConfig.onlySwitchWhenLive,
     enableChatNotifications: switcherConfig.enableChatNotifications,
     switchToStartSceneOnStreamStart: switcherConfig.switchToStartSceneOnStreamStart,
+    switchFromStartingToLive: switcherConfig.switchFromStartingToLive,
     stopStreamAfterRaid: switcherConfig.stopStreamAfterRaid
   };
 

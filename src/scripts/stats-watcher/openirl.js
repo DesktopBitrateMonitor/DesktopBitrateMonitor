@@ -134,7 +134,7 @@ export async function formatStatsOpenIrl(statsData) {
     return {
       success: false,
       data: null,
-      error: { message: `Error parsing Open IRL stats: ${error.message}` }
+      error: { message: `Error parsing OpenIRL stats: ${error.message}` }
     };
   }
 }

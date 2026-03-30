@@ -29,6 +29,7 @@ import { useAppConfigStore } from './contexts/DataContext';
 import { useEffect, useRef, useState } from 'react';
 import { useUpdate } from './contexts/UpdateContext';
 import OverlayEditor from './panels/overlay/OverlayEditor';
+import Backup from './panels/app/components/Backup';
 
 function App() {
   const { appConfig, updateAppConfig } = useAppConfigStore();
@@ -112,6 +113,7 @@ function App() {
                 element={<UpdateSettings setOpenUpdateCard={setOpenUpdateCard} />}
               />
               <Route path="stylesettings" element={<StyleSettings />} />
+              <Route path="backup" element={<Backup />} />
             </Route>
           </Route>
         </Routes>

@@ -6,8 +6,6 @@ export async function formatStatsBelabox(statsData) {
   if (!statsData.success) return;
   const { serverConfig } = injectDefaults();
 
-  const statsUrl = serverConfig.get('belabox.statsUrl');
-
   try {
     const { data } = statsData;
 
@@ -27,9 +25,9 @@ export async function formatStatsBelabox(statsData) {
         return {
           success: true,
           data: {
-            bitrate: livePublisherData.bitrate,
-            rtt: livePublisherData.rtt,
-            uptime: livePublisherData.uptime
+            bitrate: livePublisherData?.bitrate || 0,
+            rtt: livePublisherData?.rtt || 0,
+            uptime: livePublisherData?.uptime || 0
           },
           error: null
         };

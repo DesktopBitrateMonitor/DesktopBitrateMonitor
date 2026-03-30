@@ -368,6 +368,14 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
       </li>
     </ul>
     <li>
+      Switch from Start Scene to Live Scene
+    </li>
+    <ul>
+      <li>
+        Automatically switch to start scene disabled, manually switch required
+      </li>
+    </ul>
+    <li>
       Stop stream after raid
     </li>
     <ul>
@@ -715,9 +723,6 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
 # Roadmap
 
 <ul>
-  <li>
-    FIND BROADCASTERS THEY ARE USING THE APP
-  </li>
   <li type="none" >
     ✅ Add a overlay served by the app to display the feed stats in the broadcasting software
   </li>

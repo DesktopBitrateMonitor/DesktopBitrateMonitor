@@ -57,6 +57,7 @@
   },
   "navigation": {
     "brand": "Bitrate Monitor",
+    "documents": "Documents",
     "dashboard": "Dashboard",
     "platformsSettings": "Platforms",
     "twitchSettings": "Twitch Settings",
@@ -658,6 +659,7 @@
       "onlySwitchWhenLive": "Only Switch When Live",
       "enableChatNotifications": "Enable Chat Notifications",
       "switchToStartSceneOnStreamStart": "Switch to Start Scene on Stream Start",
+      "switchFromStartingToLive": "Switch from Start Scene to Live Scene",
       "stopStreamAfterRaid": "Stop Stream After Raid"
     },
     "scenes": {
@@ -754,7 +756,8 @@
     "panels": {
       "general": "General",
       "style": "Style",
-      "update": "Update"
+      "update": "Update",
+      "backup": "Backup"
     },
     "general": {
       "header": "General App Settings",
@@ -827,7 +830,8 @@
           "description": "You are already using the latest version of the app."
         }
       }
-    }
+    },
+    "backup": {}
   },
   "overlayEditor": {
     "header": "Overlay Editor",

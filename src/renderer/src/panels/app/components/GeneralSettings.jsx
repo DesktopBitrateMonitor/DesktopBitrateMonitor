@@ -17,8 +17,6 @@ import { useTranslation } from 'react-i18next';
 import { useLanguage } from '../../../contexts/LanguageContext';
 
 const GeneralSettings = () => {
-  const [searchTerm, setSearchTerm] = React.useState('');
-
   const { appConfig, updateAppConfig } = useAppConfigStore();
 
   const { showAlert } = useAlert();
@@ -51,11 +49,6 @@ const GeneralSettings = () => {
       const result = await changeLanguage(newLanguage);
 
       if (result.success) {
-        const fallbackLabel =
-          result.meta?.label ||
-          supportedLanguages.find((lang) => lang.code === newLanguage)?.label ||
-          newLanguage;
-
         showAlert({
           message: t('alerts.saveSuccess'),
           severity: 'success'

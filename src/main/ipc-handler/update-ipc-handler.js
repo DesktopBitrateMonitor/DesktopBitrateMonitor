@@ -37,7 +37,6 @@ export async function initializeUpdateIpc(ipcMain, mainWindow) {
 
   ipcMain.on('open-external', (event, url) => {
     const appendedUrl = url + app.getVersion();
-    console.log(appendedUrl);
     if (url) {
       shell.openExternal(appendedUrl);
     }
