@@ -3,12 +3,14 @@ import { useLoggingConfigStore } from '../../contexts/DataContext';
 import { useAlert } from '../../contexts/AlertContext';
 import CollapsibleCard from '../../components/functional/CollapsibleCard';
 import SaveIcon from '@mui/icons-material/Save';
-import { Box, Stack, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, Stack, Switch, TextField, Typography } from '@mui/material';
 import InputEndAdornment from '../../components/feedback/InputEndAdornment';
 import NumericInput from '../../components/functional/NumericInput';
 import LayoutToggle from '../../components/functional/LayoutToggle';
 import AdsClickIcon from '@mui/icons-material/AdsClick';
 import { useTranslation } from 'react-i18next';
+
+const isDev = import.meta.env.DEV;
 
 const LoggingSettings = () => {
   const { loggingConfig, updateLoggingConfig } = useLoggingConfigStore();
@@ -190,6 +192,13 @@ const LoggingSettings = () => {
     }
   };
 
+  const handleRequestFileSize = async () => {
+    const res = await window.loggerApi.getFileSize(
+      'C:\\Users\\ProbstR54392\\OneDrive - AMAG\\Desktop\\exampe.json'
+    );
+    console.log(res);
+  };
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, flex: 1, minHeight: 0 }}>
       <Box
@@ -357,6 +366,7 @@ const LoggingSettings = () => {
           </CollapsibleCard>
         </Box>
       </Box>
+      {isDev && <Button onClick={() => handleRequestFileSize()}>request filesize</Button>}
     </Box>
   );
 };

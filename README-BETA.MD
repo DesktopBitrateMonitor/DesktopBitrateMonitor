@@ -1,9 +1,15 @@
 # First Beta release for testing functionality and get UI/functionality feedback
 
+## v1.0.0 - Mature Release
+
+- Implement a backup export/import dialog
+
+---
+
 ## v0.0.8 - Beta
 
 - Implement a option to disable the automatic switch from intro to live scene [💡fullymira]
--  Add a Help button to the Navigation and open the github readme in the local browser
+- Add a Help button to the Navigation and open the github readme in the local browser
 
 ---
 

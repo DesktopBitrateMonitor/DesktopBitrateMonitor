@@ -199,7 +199,7 @@ const Backup = () => {
           <Box>
             {SETTING_KEY.map((setting, index) => {
               if (setting.isDev && !isDev) return null;
-              if (index > 4) return null; // Only show first 5 settings for now, can be removed later
+              if (index > 4) return null; // Only show first 5 settings
               return (
                 <Box key={setting.key}>
                   <Switch
@@ -216,7 +216,7 @@ const Backup = () => {
           <Box>
             {SETTING_KEY.map((setting, index) => {
               if (setting.isDev && !isDev) return null;
-              if (index < 5) return null; // Only show settings after the first 5, can be removed later
+              if (index < 5) return null; // Only show settings after the first 5
               return (
                 <Box key={setting.key}>
                   <Switch

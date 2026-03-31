@@ -63,6 +63,12 @@ export async function initializeLoggerIpc(ipcMain) {
   });
 
   ipcMain.handle('get-log-file-size-mb', (event, fullPath) => {
+    const stats = fs.statSync('C:\\Users\\ProbstR54392\\OneDrive - AMAG\\Desktop\\exampe.json');
+    console.log(stats);
+    return {
+      success: true,
+      data: { stats, sizeBytes: stats.size, sizeMB: stats.size / (1024 * 1000) }
+    };
     // return fileHandler.getFileSizeInMB(fullPath);
   });
 }

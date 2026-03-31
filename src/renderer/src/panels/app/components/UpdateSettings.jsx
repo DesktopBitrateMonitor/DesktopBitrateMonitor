@@ -5,16 +5,11 @@ import { Box, Button, Stack, Switch, Typography } from '@mui/material';
 import CollapsibleCard from '../../../components/functional/CollapsibleCard';
 import SyncIcon from '@mui/icons-material/Sync';
 import { useTranslation } from 'react-i18next';
-import { useUpdate } from '../../../contexts/UpdateContext';
-import { exampleData } from '../../../components/feedback/update-example';
-
-const isDev = import.meta.env.DEV;
 
 const UpdateSettings = ({ setOpenUpdateCard }) => {
   const { t } = useTranslation();
 
   const { appConfig, updateAppConfig } = useAppConfigStore();
-  const { setExampleData } = useUpdate();
   const { showAlert } = useAlert();
 
   const [updateData, setUpdateData] = useState({
@@ -23,21 +18,6 @@ const UpdateSettings = ({ setOpenUpdateCard }) => {
     installOnQuit: appConfig.installOnQuit,
     lastUpdateCheck: appConfig.lastUpdateCheck
   });
-
-  const simulateUpdateProgress = () => {
-    setOpenUpdateCard(true);
-
-    let intervalId = null;
-    const maxIndex = exampleData.length - 1;
-    let currentIndex = 0;
-    intervalId = setInterval(() => {
-      if (currentIndex > maxIndex) currentIndex = 0;
-      const item = exampleData[currentIndex];
-      setExampleData(item.status, item.data);
-      currentIndex++;
-    }, 5000);
-    return () => clearInterval(intervalId);
-  };
 
   const handleSwitchChange = useCallback(
     async (key, value) => {
@@ -146,9 +126,6 @@ const UpdateSettings = ({ setOpenUpdateCard }) => {
           </Typography>
         </Box>
       </CollapsibleCard>
-
-      {isDev && <Button onClick={() => simulateUpdateProgress()}>Open Update Card</Button>}
-      {/* <UpdateCard open={openUpdateCard} onClose={() => setOpenUpdateCard(false)} /> */}
     </Box>
   );
 };
