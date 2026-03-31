@@ -9,7 +9,9 @@
         "reset": "Abbrechen",
         "add": "Hinzufügen",
         "remove": "Entfernen",
-        "export": "Exportieren"
+        "export": "Exportieren",
+        "import": "Importieren",
+        "exportAnyway": "Trotzdem exportieren"
       },
       "inputAdornment": {
         "add": "Zum Hinzufügen klicken oder Enter drücken",
@@ -833,7 +835,26 @@
         }
       }
     },
-    "backup": {}
+    "backup": {
+      "header": "Export / Import Backups",
+      "description": "Exportieren oder importieren von App-Einstellungen aus Backups",
+      "switches": {
+        "appConfig": "App-Konfiguration",
+        "loggingConfig": "Protokollierungskonfiguration",
+        "commandsConfig": "Befehlskonfiguration",
+        "messagesConfig": "Nachrichtenkonfiguration",
+        "twitchAccountsConfig": "Twitch-Kontokonfiguration",
+        "kickAccountsConfig": "Kick-Kontokonfiguration",
+        "serverConfig": "Serverkonfiguration",
+        "streamingSoftwareConfig": "Streaming-Software-Konfiguration",
+        "switcherConfig": "Switcher-Konfiguration",
+        "overlayConfig": "Overlay-Konfiguration"
+      },
+      "dialog": {
+        "header": "Warnung: Sensible Daten im Backup enthalten",
+        "description": "Es wurden sensible Daten aus Plattform Konten für den Export ausgewählt. Diese Daten beinhalten personalisierte Access Token für die jeweilge Plattform. Daten nicht an dritte weitergeben!"
+      }
+    }
   },
   "overlayEditor": {
     "header": "Overlay Editor",

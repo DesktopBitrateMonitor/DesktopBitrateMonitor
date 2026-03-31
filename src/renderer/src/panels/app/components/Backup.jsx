@@ -74,16 +74,40 @@ const Backup = () => {
   };
 
   const SETTING_KEY = [
-    { key: 'app-config', label: 'App Config', isDev: false },
-    { key: 'logging-config', label: 'Logging Config', isDev: true },
-    { key: 'commands-config', label: 'Commands Config', isDev: false },
-    { key: 'messages-config', label: 'Messages Config', isDev: false },
-    { key: 'twitch-accounts-config', label: 'Twitch Accounts Config', isDev: false },
-    { key: 'kick-accounts-config', label: 'Kick Accounts Config', isDev: false },
-    { key: 'server-config', label: 'Server Config', isDev: false },
-    { key: 'streaming-software-config', label: 'Streaming Software Config', isDev: false },
-    { key: 'switcher-config', label: 'Switcher Config', isDev: false },
-    { key: 'overlay-config', label: 'Overlay Config', isDev: false }
+    { key: 'app-config', label: t('appSettings.backup.switches.appConfig'), isDev: false },
+    { key: 'logging-config', label: t('appSettings.backup.switches.loggingConfig'), isDev: true },
+    {
+      key: 'commands-config',
+      label: t('appSettings.backup.switches.commandsConfig'),
+      isDev: false
+    },
+    {
+      key: 'messages-config',
+      label: t('appSettings.backup.switches.messagesConfig'),
+      isDev: false
+    },
+    {
+      key: 'twitch-accounts-config',
+      label: t('appSettings.backup.switches.twitchAccountsConfig'),
+      isDev: false
+    },
+    {
+      key: 'kick-accounts-config',
+      label: t('appSettings.backup.switches.kickAccountsConfig'),
+      isDev: false
+    },
+    { key: 'server-config', label: t('appSettings.backup.switches.serverConfig'), isDev: false },
+    {
+      key: 'streaming-software-config',
+      label: t('appSettings.backup.switches.streamingSoftwareConfig'),
+      isDev: false
+    },
+    {
+      key: 'switcher-config',
+      label: t('appSettings.backup.switches.switcherConfig'),
+      isDev: false
+    },
+    { key: 'overlay-config', label: t('appSettings.backup.switches.overlayConfig'), isDev: false }
   ];
 
   const handleSwitchChange = (key) => {
@@ -145,7 +169,8 @@ const Backup = () => {
     const decrypted = await parseBackupData(loadRes.data);
 
     for (const store in decrypted) {
-      if (!decrypted[store] || Object.keys(decrypted[store]).length === 0) continue; // Skip empty objects, which means the user chose not to include that config in the backup
+      // Skip empty objects, which means the user chose not to include that config in the backup
+      if (!decrypted[store] || Object.keys(decrypted[store]).length === 0) continue;
 
       // Update the store with the decrypted data from the backup
       await window.storeApi.set(store, '', decrypted[store]);
@@ -166,8 +191,8 @@ const Backup = () => {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
       <CollapsibleCard
-        title={'Import/Export'}
-        subtitle={'Choose the data you want to import or backup'}
+        title={t('appSettings.backup.header')}
+        subtitle={t('appSettings.backup.description')}
         collapsible={false}
       >
         <Box sx={{ display: 'flex', gap: 2 }}>
@@ -220,10 +245,10 @@ const Backup = () => {
             }}
             startIcon={<CloudDownload />}
           >
-            Export
+            {t('app.global.button.export')}
           </Button>
           <Button onClick={handleImport} startIcon={<CloudUpload />}>
-            Import
+            {t('app.global.button.import')}
           </Button>
         </Box>
       </CollapsibleCard>
@@ -233,20 +258,17 @@ const Backup = () => {
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Warning color="warning" />
             <Typography variant="h6" component="span" ml={1}>
-              Warning: Sensitive Data Included
+              {t('appSettings.backup.dialog.header')}
             </Typography>
           </Box>
         </DialogTitle>
         <DialogContent>
-          <Typography variant="body2">
-            You have selected to include your Twitch or Kick accounts config in the backup. This
-            will include sensitive information such as your access tokens. Make sure to keep the
-            backup file safe and do not share it with anyone you do not trust. Are you sure you want
-            to export the backup with the sensitive account data?
-          </Typography>
+          <Typography variant="body2">{t('appSettings.backup.dialog.message')}</Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenWarningDialog(false)}>Cancel</Button>
+          <Button onClick={() => setOpenWarningDialog(false)}>
+            {t('app.global.button.cancel')}
+          </Button>
           <Button
             onClick={() => {
               handleExport();
@@ -254,7 +276,7 @@ const Backup = () => {
             }}
             color="error"
           >
-            Export Anyway
+            {t('app.global.button.exportAnyway')}
           </Button>
         </DialogActions>
       </Dialog>
