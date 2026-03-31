@@ -61,6 +61,18 @@ export const injectDefaults = () => {
       lastUpdateCheck: null,
       layout: {
         dashboardLayout: { ...defaultLayout }
+      },
+      backup: {
+        appConfig: true,
+        loggingConfig: true,
+        commandsConfig: true,
+        messagesConfig: true,
+        twitchAccountsConfig: true,
+        kickAccountsConfig: true,
+        serverConfig: true,
+        streamingSoftwareConfig: true,
+        switcherConfig: true,
+        overlayConfig: true
       }
     }
   });

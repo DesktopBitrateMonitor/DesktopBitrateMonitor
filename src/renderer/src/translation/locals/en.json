@@ -11,13 +11,17 @@
         "remove": "Remove",
         "export": "Export",
         "import": "Import",
-        "exportAnyway":"Export Anyway"
+        "exportAnyway": "Export Anyway"
       },
       "inputAdornment": {
         "add": "Click or press Enter to add",
         "save": "Click or press Enter to save",
         "clickSave": "Click to save",
         "clickAdd": "Click to add"
+      },
+      "filter": {
+        "txt": "Text files (*.txt)",
+        "csv": "CSV files (*.csv)"
       }
     },
     "backend": {}
@@ -749,11 +753,7 @@
       "toolTip": "Export Logs",
       "cancelledMessage": "Export cancelled",
       "errorMessage": "Error exporting logs: {{error}}",
-      "successMessage": "Logs successfully exported to: {{path}}",
-      "filter": {
-        "txt": "Text files (*.txt)",
-        "csv": "CSV files (*.csv)"
-      }
+      "successMessage": "Logs successfully exported to: {{path}}"
     }
   },
   "appSettings": {
@@ -852,7 +852,9 @@
       },
       "dialog": {
         "header": "Warning: Sensitive data included",
-        "message": "You have selected to include some platform accounts config in the backup. This will include sensitive information such as your access tokens. Make sure to keep the backup file safe and do not share it with anyone you do not trust. Are you sure you want to export the backup with the sensitive account data?"
+        "message": "You have selected to include some platform accounts config in the backup. This will include sensitive information such as your access tokens. Make sure to keep the backup file safe and do not share it with anyone you do not trust. Are you sure you want to export the backup with the sensitive account data?",
+        "saveBackup": "Save Backup",
+        "loadBackup": "Load Backup"
       }
     }
   },

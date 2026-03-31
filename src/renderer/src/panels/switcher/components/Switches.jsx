@@ -28,7 +28,7 @@ const Switches = ({ collapsedIds, toggleCollapsed }) => {
     stopStreamAfterRaid: switcherConfig.stopStreamAfterRaid
   };
 
-  const handleSwitcherChange = useCallback(
+  const handleSwitchChange = useCallback(
     async (key, value) => {
       updateSwitcherConfig((prev) => ({
         ...(prev || {}),
@@ -60,7 +60,7 @@ const Switches = ({ collapsedIds, toggleCollapsed }) => {
       >
         {Object.entries(switchesData).map(([key, value]) => (
           <Box key={key} mb={2}>
-            <Switch checked={value} onChange={(e) => handleSwitcherChange(key, e.target.checked)} />
+            <Switch checked={value} onChange={(e) => handleSwitchChange(key, e.target.checked)} />
             <Typography variant="body2" component="span">
               {SWITCH_MAPPINGS[key]}
             </Typography>

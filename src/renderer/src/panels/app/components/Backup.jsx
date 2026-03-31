@@ -8,7 +8,7 @@ import {
   Switch,
   Typography
 } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import CollapsibleCard from '../../../components/functional/CollapsibleCard';
 import { CloudDownload, CloudUpload, Warning } from '@mui/icons-material';
 import {
@@ -30,6 +30,19 @@ import { useThemeMode } from '../../../contexts/ThemeContext';
 
 const isDev = import.meta.env.DEV;
 
+const DEFAULT_SELECTED_SETTINGS = {
+  'app-config': true,
+  'logging-config': false,
+  'commands-config': true,
+  'messages-config': true,
+  'twitch-accounts-config': true,
+  'kick-accounts-config': true,
+  'server-config': true,
+  'streaming-software-config': true,
+  'switcher-config': true,
+  'overlay-config': true
+};
+
 const Backup = () => {
   const { t } = useTranslation();
   const { showAlert } = useAlert();
@@ -47,20 +60,11 @@ const Backup = () => {
   const { toggleMode } = useThemeMode();
 
   const [openWarningDialog, setOpenWarningDialog] = useState(false);
-  const [selectedSettings, setSelectedSettings] = useState({
-    'app-config': true,
-    'logging-config': false,
-    'commands-config': true,
-    'messages-config': true,
-    'twitch-accounts-config': true,
-    'kick-accounts-config': true,
-    'server-config': true,
-    'streaming-software-config': true,
-    'switcher-config': true,
-    'overlay-config': true
-  });
+  const [selectedSettings, setSelectedSettings] = useState(() => ({
+    ...DEFAULT_SELECTED_SETTINGS
+  }));
 
-  const UPDATE_MAPINGS = {
+  const UPDATE_MAPPINGS = {
     'app-config': updateAppConfig,
     'logging-config': updateLoggingConfig,
     'commands-config': updateCommandsConfig,
@@ -73,48 +77,138 @@ const Backup = () => {
     'overlay-config': updateOverlayConfig
   };
 
-  const SETTING_KEY = [
-    { key: 'app-config', label: t('appSettings.backup.switches.appConfig'), isDev: false },
-    { key: 'logging-config', label: t('appSettings.backup.switches.loggingConfig'), isDev: true },
-    {
-      key: 'commands-config',
-      label: t('appSettings.backup.switches.commandsConfig'),
-      isDev: false
-    },
-    {
-      key: 'messages-config',
-      label: t('appSettings.backup.switches.messagesConfig'),
-      isDev: false
-    },
-    {
-      key: 'twitch-accounts-config',
-      label: t('appSettings.backup.switches.twitchAccountsConfig'),
-      isDev: false
-    },
-    {
-      key: 'kick-accounts-config',
-      label: t('appSettings.backup.switches.kickAccountsConfig'),
-      isDev: false
-    },
-    { key: 'server-config', label: t('appSettings.backup.switches.serverConfig'), isDev: false },
-    {
-      key: 'streaming-software-config',
-      label: t('appSettings.backup.switches.streamingSoftwareConfig'),
-      isDev: false
-    },
-    {
-      key: 'switcher-config',
-      label: t('appSettings.backup.switches.switcherConfig'),
-      isDev: false
-    },
-    { key: 'overlay-config', label: t('appSettings.backup.switches.overlayConfig'), isDev: false }
-  ];
+  const SETTING_KEY = useMemo(
+    () => [
+      {
+        key: 'app-config',
+        backupKey: 'appConfig',
+        label: t('appSettings.backup.switches.appConfig'),
+        isDev: false
+      },
+      {
+        key: 'logging-config',
+        backupKey: 'loggingConfig',
+        label: t('appSettings.backup.switches.loggingConfig'),
+        isDev: true
+      },
+      {
+        key: 'commands-config',
+        backupKey: 'commandsConfig',
+        label: t('appSettings.backup.switches.commandsConfig'),
+        isDev: false
+      },
+      {
+        key: 'messages-config',
+        backupKey: 'messagesConfig',
+        label: t('appSettings.backup.switches.messagesConfig'),
+        isDev: false
+      },
+      {
+        key: 'twitch-accounts-config',
+        backupKey: 'twitchAccountsConfig',
+        label: t('appSettings.backup.switches.twitchAccountsConfig'),
+        isDev: false
+      },
+      {
+        key: 'kick-accounts-config',
+        backupKey: 'kickAccountsConfig',
+        label: t('appSettings.backup.switches.kickAccountsConfig'),
+        isDev: false
+      },
+      {
+        key: 'server-config',
+        backupKey: 'serverConfig',
+        label: t('appSettings.backup.switches.serverConfig'),
+        isDev: false
+      },
+      {
+        key: 'streaming-software-config',
+        backupKey: 'streamingSoftwareConfig',
+        label: t('appSettings.backup.switches.streamingSoftwareConfig'),
+        isDev: false
+      },
+      {
+        key: 'switcher-config',
+        backupKey: 'switcherConfig',
+        label: t('appSettings.backup.switches.switcherConfig'),
+        isDev: false
+      },
+      {
+        key: 'overlay-config',
+        backupKey: 'overlayConfig',
+        label: t('appSettings.backup.switches.overlayConfig'),
+        isDev: false
+      }
+    ],
+    [t]
+  );
 
-  const handleSwitchChange = (key) => {
+  const backupKeyMap = useMemo(() => {
+    return SETTING_KEY.reduce((acc, setting) => {
+      acc[setting.key] = setting.backupKey;
+      return acc;
+    }, {});
+  }, [SETTING_KEY]);
+
+  useEffect(() => {
+    if (!appConfig?.backup) return;
+
+    setSelectedSettings((prev) => {
+      const next = { ...prev };
+      let changed = false;
+
+      SETTING_KEY.forEach(({ key, backupKey }) => {
+        const persisted = appConfig.backup?.[backupKey];
+        if (typeof persisted === 'boolean' && persisted !== prev[key]) {
+          next[key] = persisted;
+          changed = true;
+        }
+      });
+
+      return changed ? next : prev;
+    });
+  }, [appConfig?.backup, SETTING_KEY]);
+
+  const handleSwitchChange = async (key) => {
+    const backupKey = backupKeyMap[key];
+    if (!backupKey) return;
+
+    const nextValue = !selectedSettings[key];
+
     setSelectedSettings((prev) => ({
       ...prev,
-      [key]: !prev[key]
+      [key]: nextValue
     }));
+
+    updateAppConfig((prev) => {
+      const prevBackup = prev?.backup || {};
+      if (prevBackup[backupKey] === nextValue) return prev;
+      return {
+        ...(prev || {}),
+        backup: {
+          ...prevBackup,
+          [backupKey]: nextValue
+        }
+      };
+    });
+
+    const res = await window.storeApi.set('app-config', `backup.${backupKey}`, nextValue);
+
+    if (res.success) {
+      showAlert({
+        message: t('alerts.saveStateSuccess', {
+          key: SETTING_KEY.find((s) => s.key === key)?.label || key
+        }),
+        severity: 'success'
+      });
+    } else {
+      showAlert({
+        message: t('alerts.saveStateError', {
+          key: SETTING_KEY.find((s) => s.key === key)?.label || key
+        }),
+        severity: 'error'
+      });
+    }
   };
 
   const handleExport = async () => {
@@ -134,6 +228,8 @@ const Backup = () => {
       'switcher-config': selectedSettings['switcher-config'] ? switcherConfig : null,
       'overlay-config': selectedSettings['overlay-config'] ? overlayConfig : null
     };
+
+    console.log(selectedData);
 
     const res = await stringifyBackupData(selectedData);
 
@@ -177,12 +273,14 @@ const Backup = () => {
 
       // Set the theme mode from the backup
       if (store === 'app-config' && decrypted[store].theme) {
+        console.log(store);
+        console.log(decrypted[store]);
         toggleMode(decrypted[store].theme);
       }
 
       // Update the store in the app state using the corresponding update function
-      if (UPDATE_MAPINGS[store]) {
-        UPDATE_MAPINGS[store](decrypted[store]);
+      if (UPDATE_MAPPINGS[store]) {
+        UPDATE_MAPPINGS[store](decrypted[store]);
       }
     }
     showAlert({ message: t('alerts.loadSuccess'), severity: 'success' });

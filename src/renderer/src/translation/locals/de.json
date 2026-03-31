@@ -18,6 +18,10 @@
         "save": "Zum Speichern klicken oder Enter drücken",
         "clickSave": "Zum Speichern klicken",
         "clickAdd": "Zum Hinzufügen klicken"
+      },
+      "filter": {
+        "txt": "Text Dateien (*.txt)",
+        "csv": "CSV Dateien (*.csv)"
       }
     },
     "backend": {}
@@ -852,7 +856,9 @@
       },
       "dialog": {
         "header": "Warnung: Sensible Daten im Backup enthalten",
-        "description": "Es wurden sensible Daten aus Plattform Konten für den Export ausgewählt. Diese Daten beinhalten personalisierte Access Token für die jeweilge Plattform. Daten nicht an dritte weitergeben!"
+        "message": "Es wurden sensible Daten aus Plattform Konten für den Export ausgewählt. Diese Daten beinhalten personalisierte Access Token für die jeweilge Plattform. Daten nicht an dritte weitergeben!",
+        "saveBackup":"Backup Speichern",
+        "loadBackup":"Backup Laden"
       }
     }
   },

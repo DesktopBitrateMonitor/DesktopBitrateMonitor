@@ -1,14 +1,21 @@
 import { Stack, FormControl, Select, MenuItem, InputLabel } from '@mui/material';
 import { useThemeMode } from '../contexts/ThemeContext';
 import { useTranslation } from 'react-i18next';
+import { useAppConfigStore } from '../contexts/DataContext';
 
 const ThemeSelector = () => {
   const { t } = useTranslation();
   const { mode, toggleMode } = useThemeMode();
+  const { updateAppConfig } = useAppConfigStore();
 
   const handleChange = (event) => {
     const nextMode = event.target.value;
     if (nextMode !== mode) toggleMode(nextMode);
+
+    updateAppConfig((prev) => ({
+      ...prev,
+      theme: nextMode
+    }));
   };
 
   return (

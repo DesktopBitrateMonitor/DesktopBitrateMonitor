@@ -26,15 +26,12 @@ export const ThemeModeProvider = ({ initialMode = 'system', children }) => {
     })();
   }, []);
 
-  const toggleMode = useCallback(
-    async (newMode) => {
-      if (!newMode) return;
-      setMode(newMode);
-      console.log('Setting theme mode to:', newMode);
-      await window.storeApi.set('app-config.json', 'theme', newMode);
-    },
-    []
-  );
+  const toggleMode = useCallback(async (newMode) => {
+    if (!newMode) return;
+    setMode(newMode);
+
+    await window.storeApi.set('app-config.json', 'theme', newMode);
+  }, []);
 
   useEffect(() => {
     if (typeof window === 'undefined' || !window.matchMedia) return undefined;
@@ -67,7 +64,10 @@ export const ThemeModeProvider = ({ initialMode = 'system', children }) => {
     return createMuiTheme(themeDef);
   }, [resolvedMode]);
 
-  const value = useMemo(() => ({ mode, resolvedMode, toggleMode }), [mode, resolvedMode, toggleMode]);
+  const value = useMemo(
+    () => ({ mode, resolvedMode, toggleMode }),
+    [mode, resolvedMode, toggleMode]
+  );
 
   return (
     <ThemeContext.Provider value={value}>
