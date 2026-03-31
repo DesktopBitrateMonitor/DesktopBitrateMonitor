@@ -12,7 +12,6 @@ const INITIAL_STATS = {
 export const StreamStatsProvider = ({ children }) => {
   const [stats, setStats] = useState(INITIAL_STATS);
   const [totalUptime, setTotalUptime] = useState(0);
-  const [totalStats, setTotalStats] = useState([]);
   const lastUptimeRef = useRef(0);
 
   useEffect(() => {
@@ -31,11 +30,6 @@ export const StreamStatsProvider = ({ children }) => {
       const nextBitrate = Number(incoming?.bitrate) || 0;
       const nextRtt = Number(incoming?.rtt) || 0;
       const nextUptime = Number(incoming?.uptime) || 0;
-
-      // setTotalStats((prev) => [
-      //   ...prev,
-      //   { bitrate: nextBitrate, rtt: nextRtt, uptime: nextUptime, ts: Date.now() }
-      // ]);
 
       setStats({ bitrate: nextBitrate, rtt: nextRtt, uptime: nextUptime });
 

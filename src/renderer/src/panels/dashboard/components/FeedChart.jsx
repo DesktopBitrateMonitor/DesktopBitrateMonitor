@@ -73,7 +73,10 @@ const FeedChart = () => {
           </Stack>
         </Tooltip>
 
-        <Tooltip title={t('dashboard.feedChart.totalUptimeToolTip') || 'Total uptime (this session)'} arrow>
+        <Tooltip
+          title={t('dashboard.feedChart.totalUptimeToolTip') || 'Total uptime (this session)'}
+          arrow
+        >
           <Stack direction="row" spacing={0.75} alignItems="center">
             <AllInclusiveRoundedIcon fontSize="small" color="primary" />
             <Typography variant="body2" sx={{ fontWeight: 600 }}>

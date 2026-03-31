@@ -14,6 +14,7 @@ export const loggerApi = {
   },
   createLogFile: (type, fullPath, content) =>
     ipcRenderer.invoke('create-log-file', type, fullPath, content),
+  writeToLogFile: (fullPath, content) => ipcRenderer.invoke('write-to-log-file', fullPath, content),
   readLogFile: (fullPath) => ipcRenderer.invoke('read-log-file', fullPath),
   getFileSize: (fullPath) => ipcRenderer.invoke('get-log-file-size-mb', fullPath),
   openFileDialog: (options) => ipcRenderer.invoke('open-file-dialog', options),

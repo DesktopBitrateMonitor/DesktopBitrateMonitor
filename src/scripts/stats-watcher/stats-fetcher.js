@@ -58,7 +58,7 @@ export async function startFetchingStats(
       }
 
       if (mainWindow?.webContents && !mainWindow.isDestroyed()) {
-        mainWindow.webContents.send('server-connected', response);
+        mainWindow?.webContents?.send('server-connected', response);
       }
 
       if (serverType === 'openirl') {
