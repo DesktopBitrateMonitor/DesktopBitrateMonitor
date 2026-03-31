@@ -26,6 +26,7 @@ import {
 import { parseBackupData, stringifyBackupData, timestamp } from '../../../scripts/lib';
 import { useTranslation } from 'react-i18next';
 import { useAlert } from '../../../contexts/AlertContext';
+import { useThemeMode } from '../../../contexts/ThemeContext';
 
 const isDev = import.meta.env.DEV;
 
@@ -43,6 +44,7 @@ const Backup = () => {
     useStreamingSoftwareConfigStore();
   const { switcherConfig, updateSwitcherConfig } = useSwitcherConfigStore();
   const { overlayConfig, updateOverlayConfig } = useOverlayConfigStore();
+  const { toggleMode } = useThemeMode();
 
   const [openWarningDialog, setOpenWarningDialog] = useState(false);
   const [selectedSettings, setSelectedSettings] = useState({
@@ -57,6 +59,19 @@ const Backup = () => {
     'switcher-config': true,
     'overlay-config': true
   });
+
+  const UPDATE_MAPINGS = {
+    'app-config': updateAppConfig,
+    'logging-config': updateLoggingConfig,
+    'commands-config': updateCommandsConfig,
+    'messages-config': updateMessagesConfig,
+    'twitch-accounts-config': updateTwitchAccountsConfig,
+    'kick-accounts-config': updateKickAccountsConfig,
+    'server-config': updateServerConfig,
+    'streaming-software-config': updateStreamingSoftwareConfig,
+    'switcher-config': updateSwitcherConfig,
+    'overlay-config': updateOverlayConfig
+  };
 
   const SETTING_KEY = [
     { key: 'app-config', label: 'App Config', isDev: false },
@@ -129,23 +144,22 @@ const Backup = () => {
 
     const decrypted = await parseBackupData(loadRes.data);
 
-    if (decrypted['app-config']) updateAppConfig(decrypted['app-config']);
-    if (decrypted['logging-config']) updateLoggingConfig(decrypted['logging-config']);
-    if (decrypted['commands-config']) updateCommandsConfig(decrypted['commands-config']);
-    if (decrypted['messages-config']) updateMessagesConfig(decrypted['messages-config']);
-    if (decrypted['twitch-accounts-config'])
-      updateTwitchAccountsConfig(decrypted['twitch-accounts-config']);
-    if (decrypted['kick-accounts-config'])
-      updateKickAccountsConfig(decrypted['kick-accounts-config']);
-    if (decrypted['server-config']) updateServerConfig(decrypted['server-config']);
-    if (decrypted['streaming-software-config'])
-      updateStreamingSoftwareConfig(decrypted['streaming-software-config']);
-    if (decrypted['switcher-config']) updateSwitcherConfig(decrypted['switcher-config']);
-    if (decrypted['overlay-config']) updateOverlayConfig(decrypted['overlay-config']);
+    for (const store in decrypted) {
+      if (!decrypted[store] || Object.keys(decrypted[store]).length === 0) continue; // Skip empty objects, which means the user chose not to include that config in the backup
 
-    // Add storage updates for any config file that is included in the backup object
-    // await window.storeApi.set('app-config', )
+      // Update the store with the decrypted data from the backup
+      await window.storeApi.set(store, '', decrypted[store]);
 
+      // Set the theme mode from the backup
+      if (store === 'app-config' && decrypted[store].theme) {
+        toggleMode(decrypted[store].theme);
+      }
+
+      // Update the store in the app state using the corresponding update function
+      if (UPDATE_MAPINGS[store]) {
+        UPDATE_MAPINGS[store](decrypted[store]);
+      }
+    }
     showAlert({ message: t('alerts.loadSuccess'), severity: 'success' });
   };
 

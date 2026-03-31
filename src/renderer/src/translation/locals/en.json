@@ -28,7 +28,9 @@
     "saveStateSuccess": "Save {{key}} successfully",
     "saveStateError": "Failed to save {{key}}",
     "copySuccess": "Copied to clipboard",
-    "copyError": "Failed to copy to clipboard"
+    "copyError": "Failed to copy to clipboard",
+    "loadSuccess":"Data loaded successfully",
+    "loadError":"Failed to load data"
   },
   "authorization": {
     "twitch": {

@@ -80,14 +80,23 @@ export default class Store {
    * store.set('foo', {key: value});
    * store.set('foo', value);
    * store.set('foo.nest', value);
+   * store.set('', {foo: 'bar'});
    * ```
    */
 
   set(key: string, value: any): void {
-    const oldValue = this.get(key);
-    setNested(this.data, key, value);
+    const isRootSet = key === '';
+    const oldValue = isRootSet ? this.get() : this.get(key);
+
+    if (isRootSet) {
+      this.data = isObjectRecord(value) ? structuredClone(value) : {};
+      mergeDefaults(this.data, this.defaults);
+    } else {
+      setNested(this.data, key, value);
+    }
+
     saveFile(this.path, this.data);
-    this.emitChange(key, value, oldValue);
+    this.emitChange(key, isRootSet ? this.data : value, oldValue);
   }
 
   /**
@@ -220,6 +229,10 @@ function mergeDefaults(target: Record<string, any>, defaults: Record<string, any
     }
     // Else: existing value stays as-is (no overwrite, no conversion)
   }
+}
+
+function isObjectRecord(value: unknown): value is Record<string, any> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 function getNested(obj: Record<string, any>, key: string): any {

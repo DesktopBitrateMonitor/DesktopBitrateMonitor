@@ -28,7 +28,9 @@
     "saveStateSuccess": "{{key}} erfolgreich gespeichert",
     "saveStateError": "{{key}} konnte nicht gespeichert werden",
     "copySuccess": "In die Zwischenablage kopiert",
-    "copyError": "Konnte nicht in die Zwischenablage kopiert werden"
+    "copyError": "Konnte nicht in die Zwischenablage kopiert werden",
+    "loadSuccess": "Daten erfolgreich geladen",
+    "loadError": "Daten konnten nicht geladen werden"
   },
   "authorization": {
     "twitch": {
