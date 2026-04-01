@@ -18,10 +18,10 @@ export const statesApi = {
       callback(args);
     };
 
-    ipcRenderer.on('obs-connection', listener);
+    ipcRenderer.on('software-connection', listener);
 
     return () => {
-      ipcRenderer.removeListener('obs-connection', listener);
+      ipcRenderer.removeListener('software-connection', listener);
     };
   },
 

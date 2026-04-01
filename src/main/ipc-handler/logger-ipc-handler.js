@@ -1,19 +1,39 @@
 import fs from 'fs';
 import Logger from '../../scripts/logging/logger';
-import CsvWriter from '../../scripts/lib/csv-writer';
-import CsvReader from '../../scripts/lib/csv-reader';
+import { FeedLogger } from '../../scripts/logging/feed-logger';
 import { dialog } from 'electron';
 
+import { injectDefaults } from '../../scripts/store/defaults';
+
+const { loggingConfig } = injectDefaults();
+
 let isLoggerIpcInitialized = false;
+let sessionFeedLogger = null;
+let sessionFeedLoggerKey = null;
+
+function getSessionFeedLogger({ dir, baseName, format, maxSizeMB }) {
+  const normalizedMaxSizeMB = Number(maxSizeMB) || 5;
+  const loggerKey = `${dir}|${baseName}|${format}|${normalizedMaxSizeMB}`;
+
+  if (!sessionFeedLogger || sessionFeedLoggerKey !== loggerKey) {
+    sessionFeedLogger = new FeedLogger({
+      dir,
+      baseName: `feed-log-${new Date().toISOString().replace(/[:.]/g, '-')}`,
+      format: format || 'ndjson',
+      maxFileSize: normalizedMaxSizeMB * 1024 * 1000,
+      bufferSize: 1
+    });
+    sessionFeedLoggerKey = loggerKey;
+  }
+
+  return sessionFeedLogger;
+}
 
 export async function initializeLoggerIpc(ipcMain) {
   if (isLoggerIpcInitialized) {
     Logger.warn('Logger IPC already initialized, skipping...');
     return;
   }
-
-  const writer = new CsvWriter();
-  const reader = new CsvReader();
 
   isLoggerIpcInitialized = true;
   Logger.log('Initializing Logger IPC');
@@ -24,9 +44,6 @@ export async function initializeLoggerIpc(ipcMain) {
       return { success: false, message: 'Missing parameters' };
     }
 
-    if (type === 'csv') {
-      return writer.writeRow(fullPath, content);
-    }
     if (type === 'txt') {
       const txtContent = content
         .map((log) => `${log.date} - ${log.time}: ${log.message}`)
@@ -39,7 +56,6 @@ export async function initializeLoggerIpc(ipcMain) {
 
   ipcMain.handle('read-log-file', (event, fullPath) => {
     console.log('IPC read-log-file called with:', fullPath);
-    return reader.read(fullPath);
   });
 
   ipcMain.handle('open-file-dialog', (event, options) => {
@@ -62,19 +78,29 @@ export async function initializeLoggerIpc(ipcMain) {
     }
   });
 
-  ipcMain.handle('get-log-file-size-mb', (event, fullPath) => {
-    const stats = fs.statSync(fullPath);
-    console.log(stats);
-    return {
-      success: true,
-      data: { stats, sizeBytes: stats.size, sizeMB: stats.size / (1024 * 1000) }
-    };
-    // return fileHandler.getFileSizeInMB(fullPath);
-  });
+  ipcMain.handle('write-to-log-file', (event, content) => {
+    if (!content) return { success: false, message: 'Missing content to write' };
 
-  ipcMain.handle('write-to-log-file', (event, fullPath, content) => {
+    const loggingSettings = loggingConfig.get('');
+    const loggingEnabled = loggingSettings.logSessions;
+    const sessionLogsPath = loggingSettings.sessionLogsPath;
+
+    if (!loggingEnabled)
+      return { success: false, message: 'Session logging is disabled in settings' };
+    if (!sessionLogsPath)
+      return { success: false, message: 'Session logs path is not set in settings' };
+
     try {
-      fs.appendFileSync(fullPath, content);
+      const feedLogger = getSessionFeedLogger({
+        dir: sessionLogsPath,
+        format: loggingSettings.sessionLogsFormat,
+        maxSizeMB: loggingSettings.sessionLogsFileSize
+      });
+
+      const entries = Array.isArray(content) ? content : [content];
+
+      feedLogger.write(entries);
+
       return { success: true, message: 'Content written successfully' };
     } catch (error) {
       Logger.error(`Error in write-to-log-file IPC handler: ${error.message}`);

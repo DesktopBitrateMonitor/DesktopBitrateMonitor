@@ -14,7 +14,7 @@ function getOBSInstance(mainWindow = null) {
     obs.on('ConnectionClosed', () => {
       isConnected = false;
       Logger.info('OBS Studio connection closed');
-      mainWindow?.webContents.send('obs-connection', {
+      mainWindow?.webContents.send('software-connection', {
         success: false,
         status: 'disconnected',
         softwareType: 'undefined',
@@ -26,7 +26,7 @@ function getOBSInstance(mainWindow = null) {
     obs.on('ConnectionOpened', () => {
       isConnected = true;
       Logger.log('Connected to OBS Studio');
-      mainWindow?.webContents.send('obs-connection', {
+      mainWindow?.webContents.send('software-connection', {
         success: true,
         status: 'connected',
         softwareType: 'obs-studio',
@@ -36,7 +36,7 @@ function getOBSInstance(mainWindow = null) {
     });
 
     obs.on('StreamStateChanged', (data) => {
-      mainWindow?.webContents.send('obs-connection', {
+      mainWindow?.webContents.send('software-connection', {
         success: true,
         status: isConnected ? 'connected' : 'disconnected',
         softwareType: 'obs-studio',
@@ -64,7 +64,7 @@ export async function startOBSConnectionLoop(mainWindow = null) {
         }
       } catch (err) {
         Logger.error(`Connect attempt failed: ${err}`);
-        mainWindow?.webContents.send('obs-connection', { success: false });
+        mainWindow?.webContents.send('software-connection', { success: false });
         return { success: false, data: null, error: err };
       }
       setTimeout(attemptReconnect, reconnectInterval);

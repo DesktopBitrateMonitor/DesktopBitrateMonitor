@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LineChart } from '@mui/x-charts/LineChart';
 import { alpha, useTheme } from '@mui/material/styles';
 import { Box, Card, Stack, Tooltip, Typography } from '@mui/material';
@@ -8,6 +8,10 @@ import ScheduleRoundedIcon from '@mui/icons-material/ScheduleRounded';
 import AllInclusiveRoundedIcon from '@mui/icons-material/AllInclusiveRounded';
 import { useStreamStats } from '../../../contexts/StreamStatsContext.jsx';
 import { useTranslation } from 'react-i18next';
+import { useConnectionStates } from '../../../contexts/ConnectionStatesContext.jsx';
+import { useLoggingConfigStore } from '../../../contexts/DataContext.jsx';
+
+const isDev = import.meta.env.DEV;
 
 const MAX_POINTS = 60;
 
@@ -15,20 +19,71 @@ const FeedChart = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const { stats, totalUptime } = useStreamStats();
-
+  const { broadcastState } = useConnectionStates();
   const [history, setHistory] = useState([]);
   const [startTs, setStartTs] = useState(null);
   const [maxY, setMaxY] = useState(0);
+
+  const statsPayloadRef = useRef([]);
+  const previousBroadcastStateRef = useRef(broadcastState);
+
+  const flushStatsPayload = useCallback(async () => {
+    if (!statsPayloadRef.current.length) {
+      return;
+    }
+
+    const payloadToFlush = statsPayloadRef.current;
+    statsPayloadRef.current = [];
+    const res =await window.loggerApi.writeToLogFile(payloadToFlush);
+
+    console.log(res);
+  }, []);
 
   useEffect(() => {
     setHistory((prev) => {
       const now = Date.now();
       if (!startTs) setStartTs(now);
       const next = [...prev, { bitrate: stats.bitrate || 0, rtt: stats.rtt || 0, ts: Date.now() }];
+
       return next.length > MAX_POINTS ? next.slice(next.length - MAX_POINTS) : next;
     });
     setMaxY((prev) => Math.max(prev, stats.bitrate || 0));
   }, [stats.bitrate, stats.rtt, startTs]);
+
+  useEffect(() => {
+    const handleLogging = async () => {
+      // if (!broadcastState ) {
+      //   return;
+      // }
+
+      statsPayloadRef.current = [...statsPayloadRef.current, { ...stats, ts: Date.now() }];
+
+      if (statsPayloadRef.current.length >= 20) {
+        await flushStatsPayload();
+      }
+    };
+
+    handleLogging();
+  }, [broadcastState, flushStatsPayload, stats]);
+
+  useEffect(() => {
+    const previousBroadcastState = previousBroadcastStateRef.current;
+
+    if (previousBroadcastState !== broadcastState) {
+      flushStatsPayload();
+      previousBroadcastStateRef.current = broadcastState;
+    }
+  }, [broadcastState, flushStatsPayload]);
+
+  useEffect(() => {
+    flushStatsPayload();
+  }, [flushStatsPayload]);
+
+  useEffect(() => {
+    return () => {
+      flushStatsPayload();
+    };
+  }, [flushStatsPayload]);
 
   const chartData = useMemo(() => {
     if (!history.length || !startTs) return [];
