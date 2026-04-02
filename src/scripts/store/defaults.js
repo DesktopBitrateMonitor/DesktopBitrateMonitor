@@ -59,6 +59,7 @@ export const injectDefaults = () => {
       autoCheckForUpdates: true,
       autoInstallUpdates: false,
       lastUpdateCheck: null,
+      moderatedApplication: false,
       layout: {
         dashboardLayout: { ...defaultLayout }
       },
@@ -85,9 +86,11 @@ export const injectDefaults = () => {
       sort: 'none',
       sessionLogsPath: defaultSessionLoggingPath,
       sessionLogsFileSize: 5,
+      actionsLogsFileSize: 5,
       actionsLogsPath: defaultActionsLoggingPath,
-      logActions: true,
-      logSessions: true,
+      logActions: false,
+      logSessions: false,
+      logSessionsOnAppStart: false,
       messageMode: 'simple' // 'simple' or 'detailed'
     }
   });

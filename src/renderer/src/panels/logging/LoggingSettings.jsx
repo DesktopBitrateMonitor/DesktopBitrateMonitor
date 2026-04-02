@@ -3,14 +3,12 @@ import { useLoggingConfigStore } from '../../contexts/DataContext';
 import { useAlert } from '../../contexts/AlertContext';
 import CollapsibleCard from '../../components/functional/CollapsibleCard';
 import SaveIcon from '@mui/icons-material/Save';
-import { Box, Button, Stack, Switch, TextField, Typography } from '@mui/material';
+import { Box, Stack, Switch, TextField, Typography } from '@mui/material';
 import InputEndAdornment from '../../components/feedback/InputEndAdornment';
 import NumericInput from '../../components/functional/NumericInput';
 import LayoutToggle from '../../components/functional/LayoutToggle';
 import AdsClickIcon from '@mui/icons-material/AdsClick';
 import { useTranslation } from 'react-i18next';
-
-const isDev = import.meta.env.DEV;
 
 const LoggingSettings = () => {
   const { loggingConfig, updateLoggingConfig } = useLoggingConfigStore();
@@ -23,26 +21,31 @@ const LoggingSettings = () => {
     sessionLogsPath: loggingConfig?.sessionLogsPath,
     actionsLogsPath: loggingConfig?.actionsLogsPath,
     sessionLogsFileSize: loggingConfig?.sessionLogsFileSize,
+    actionsLogsFileSize: loggingConfig?.actionsLogsFileSize,
     logActions: loggingConfig?.logActions,
-    logSessions: loggingConfig?.logSessions
+    logSessions: loggingConfig?.logSessions,
+    logSessionsOnAppStart: loggingConfig?.logSessionsOnAppStart
   });
 
   const [errorMessages, setErrorMessages] = useState({
     sessionLogsPath: '',
     actionsLogsPath: '',
-    sessionLogsFileSize: ''
+    sessionLogsFileSize: '',
+    actionsLogsFileSize: ''
   });
 
   const [dirtyStates, setDirtyStates] = useState({
     sessionLogsPath: false,
     actionsLogsPath: false,
-    sessionLogsFileSize: false
+    sessionLogsFileSize: false,
+    actionsLogsFileSize: false
   });
 
   const [oldDataDraft, setOldDataDraft] = useState({
     sessionLogsPath: loggingConfig?.sessionLogsPath,
     actionsLogsPath: loggingConfig?.actionsLogsPath,
-    sessionLogsFileSize: loggingConfig?.sessionLogsFileSize
+    sessionLogsFileSize: loggingConfig?.sessionLogsFileSize,
+    actionsLogsFileSize: loggingConfig?.actionsLogsFileSize
   });
 
   useEffect(() => {
@@ -85,11 +88,11 @@ const LoggingSettings = () => {
           return t('logging.settings.validation.pathNoSpaces');
         }
       }
-      if (name === 'sessionLogsFileSize') {
+      if (name === 'sessionLogsFileSize' || name === 'actionsLogsFileSize') {
         const fileSizeNumber = Number(value);
         if (isNaN(fileSizeNumber) || !Number.isInteger(fileSizeNumber)) {
           return t('logging.settings.validation.fileSizeInteger');
-        } else if (fileSizeNumber < 0 || fileSizeNumber > 10) {
+        } else if (fileSizeNumber <= 0 || fileSizeNumber > 100) {
           return t('logging.settings.validation.fileSizeRange');
         } else if (value.length === 0) {
           return t('logging.settings.validation.fileSizeEmpty');
@@ -192,13 +195,6 @@ const LoggingSettings = () => {
     }
   };
 
-  const handleRequestFileSize = async () => {
-    const res = await window.loggerApi.getFileSize(
-      'C:\\Users\\ProbstR54392\\OneDrive - AMAG\\Desktop\\exampe.json'
-    );
-    console.log(res);
-  };
-
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, flex: 1, minHeight: 0 }}>
       <Box
@@ -292,7 +288,7 @@ const LoggingSettings = () => {
               <NumericInput
                 sx={{ mb: 2 }}
                 key={'sessionLogsFileSize'}
-                label={t('logging.settings.fileSizeLabel')}
+                label={t('logging.settings.sessionFileSizeLabel')}
                 name={'sessionLogsFileSize'}
                 value={loggingData.sessionLogsFileSize}
                 min={1}
@@ -319,6 +315,17 @@ const LoggingSettings = () => {
                 }}
               />
             </Stack>
+            <Stack direction={'row'} alignItems={'center'} gap={1}>
+              <Switch
+                checked={loggingData.logSessionsOnAppStart}
+                onChange={(e) => changeLoggingState('logSessionsOnAppStart', e.target.checked)}
+              />
+              <Typography variant="body2" color="text.secondary">
+                {loggingData.logSessionsOnAppStart
+                  ? t('logging.settings.logSessionsOnAppStart')
+                  : t('logging.settings.logSessionsOnStreamStart')}
+              </Typography>
+            </Stack>
           </CollapsibleCard>
 
           <CollapsibleCard
@@ -340,33 +347,64 @@ const LoggingSettings = () => {
               </>
             }
           >
-            <TextField
-              sx={{
-                '& .MuiInputBase-root': { cursor: 'pointer' },
-                '& .MuiInputBase-input': { cursor: 'pointer' }
-              }}
-              fullWidth
-              label={t('logging.settings.actionsPathLabel')}
-              name="actionsLogsPath"
-              onClick={(e) => handleOpenFileDialog('actionsLogsPath')}
-              value={loggingData.actionsLogsPath}
-              error={Boolean(errorMessages.actionsLogsPath)}
-              helperText={errorMessages.actionsLogsPath || ''}
-              slotProps={{
-                input: {
-                  readOnly: true,
-                  endAdornment: (
-                    <>
-                      <AdsClickIcon sx={{ color: 'text.secondary' }} />
-                    </>
-                  )
-                }
-              }}
-            />
+            <Stack gap={3}>
+              <TextField
+                sx={{
+                  '& .MuiInputBase-root': { cursor: 'pointer' },
+                  '& .MuiInputBase-input': { cursor: 'pointer' }
+                }}
+                fullWidth
+                label={t('logging.settings.actionsPathLabel')}
+                name="actionsLogsPath"
+                onClick={(e) => handleOpenFileDialog('actionsLogsPath')}
+                value={loggingData.actionsLogsPath}
+                error={Boolean(errorMessages.actionsLogsPath)}
+                helperText={errorMessages.actionsLogsPath || ''}
+                slotProps={{
+                  input: {
+                    readOnly: true,
+                    endAdornment: (
+                      <>
+                        <AdsClickIcon sx={{ color: 'text.secondary' }} />
+                      </>
+                    )
+                  }
+                }}
+              />
+
+              <NumericInput
+                sx={{ mb: 2 }}
+                key={'actionsLogsFileSize'}
+                label={t('logging.settings.actionsFileSizeLabel')}
+                name={'actionsLogsFileSize'}
+                value={loggingData.actionsLogsFileSize}
+                min={1}
+                onChange={(e) => handleInputChange('actionsLogsFileSize', e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    saveField('actionsLogsFileSize');
+                  }
+                }}
+                error={Boolean(errorMessages['actionsLogsFileSize'])}
+                helperText={errorMessages['actionsLogsFileSize'] || ''}
+                slotProps={{
+                  endAdornment:
+                    dirtyStates['actionsLogsFileSize'] && !errorMessages['actionsLogsFileSize'] ? (
+                      <InputEndAdornment
+                        title={t('logging.settings.saveTooltip')}
+                        placement="top-start"
+                        open={Boolean(dirtyStates['actionsLogsFileSize'])}
+                        color="success"
+                        icon={<SaveIcon color="success" />}
+                        handleClick={() => saveField('actionsLogsFileSize')}
+                      />
+                    ) : undefined
+                }}
+              />
+            </Stack>
           </CollapsibleCard>
         </Box>
       </Box>
-      {isDev && <Button onClick={() => handleRequestFileSize()}>request filesize</Button>}
     </Box>
   );
 };

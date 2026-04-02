@@ -1,8 +1,20 @@
 # First Beta release for testing functionality and get UI/functionality feedback
 
-## v1.0.0 - Mature Release
+
+
+## v0.0.10 - Beta
+
+- Implement moderated App version
+
+---
+
+## v0.0.9 - Beta
 
 - Implement a backup export/import dialog
+  - Export selected settings from the current app setup
+  - Import settings in the app
+- Implement session and actions logging to files
+  - Log all session and actions activities in folders
 
 ---
 

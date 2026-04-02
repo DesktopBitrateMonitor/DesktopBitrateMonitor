@@ -1,0 +1,17 @@
+
+Todo:
+  - Version 0.0.10 - Beta
+  
+  Moderated Application Mode:
+    ☐ Find a place to add the toggle - Moderated Mode on/off
+    ☐ Add a Chip or badge on top of the app when Moderated Mode is on
+
+    Accounts:
+      ☐ Create a single login for the managers chat bot
+      ☐ Create a textfield to manually set the channels name to listen on and subscribe to the eventsubs
+        - For twitch it doesn't matter if the channel is first setup before login the bots account
+        - For kick the channel to join has to be setup at first, because it needs the channel name to get the chatId/channelId
+      ☐ Find a logic to 
+      ☐ Check the admin or moderator logic has to be changed in moderated mode
+
+

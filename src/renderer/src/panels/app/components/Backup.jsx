@@ -143,7 +143,7 @@ const Backup = () => {
       isDev: false
     },
     { key: 'overlay-config', label: t('appSettings.backup.switches.overlayConfig'), isDev: false },
-    { key: 'logging-config', label: t('appSettings.backup.switches.loggingConfig'), isDev: true }
+    { key: 'logging-config', label: t('appSettings.backup.switches.loggingConfig'), isDev: false }
   ];
 
   const handleSwitchChange = useCallback(
@@ -229,21 +229,26 @@ const Backup = () => {
 
     const decrypted = await parseBackupData(loadRes.data);
 
-    for (const store in decrypted) {
+    if (!decrypted.success) {
+      showAlert({ message: t('alerts.loadError'), severity: 'error' });
+      return;
+    }
+
+    for (const store in decrypted.data) {
       // Skip empty objects, which means the user chose not to include that config in the backup
-      if (!decrypted[store] || Object.keys(decrypted[store]).length === 0) continue;
+      if (!decrypted.data[store] || Object.keys(decrypted.data[store]).length === 0) continue;
 
       // Update the store with the decrypted data from the backup
-      await window.storeApi.set(store, '', decrypted[store]);
+      await window.storeApi.set(store, '', decrypted.data[store]);
 
       // Set the theme mode from the backup
-      if (store === 'app-config' && decrypted[store].theme) {
-        toggleMode(decrypted[store].theme);
+      if (store === 'app-config' && decrypted.data[store].theme) {
+        toggleMode(decrypted.data[store].theme);
       }
 
       // Update the store in the app state using the corresponding update function
       if (UPDATE_MAPPINGS[store]) {
-        UPDATE_MAPPINGS[store](decrypted[store]);
+        UPDATE_MAPPINGS[store](decrypted.data[store]);
       }
     }
     showAlert({ message: t('alerts.loadSuccess'), severity: 'success' });

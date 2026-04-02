@@ -67,14 +67,18 @@ export const LoggerProvider = ({ children }) => {
     };
   }, [appendLog]);
 
+  const getLastLog = useCallback(() => logs[logs.length - 1] || null, [logs]);
+
   const value = useMemo(
     () => ({
       logs,
       appendLog,
       clearLogs,
-      addFrontendLog: (log) => appendLog(log, 'frontend')
+      addFrontendLog: (log) => appendLog(log, 'frontend'),
+      getLastLog,
+      lastLog: logs[logs.length - 1] || null
     }),
-    [logs, appendLog, clearLogs]
+    [logs, appendLog, clearLogs, getLastLog]
   );
 
   return <LoggerContext.Provider value={value}>{children}</LoggerContext.Provider>;

@@ -49,6 +49,8 @@
 
 Once you start an SRT feed and the server publishes stats, you will see live data in the chart.
 
+---
+
 # Dashboard
 
 <details>
@@ -83,6 +85,8 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
   </ul>
 
 </details>
+
+---
 
 # Platform Setup
 
@@ -239,6 +243,8 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
   </ol>
 </details>
 
+---
+
 # Server Setup
 
 <details>
@@ -274,6 +280,8 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
   </ol>
 
 </details>
+
+---
 
 # Software Setup
 
@@ -320,6 +328,8 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
   </ol>
 
 </details>
+
+---
 
 # Switcher Setup
 
@@ -439,7 +449,7 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
     </ul>
   </ol>
   
-  ##
+##
 
 ### Switcher Scene Settings
 
@@ -508,14 +518,42 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
 
 </details>
 
+---
+
+# Logging Setup
+
+<details>
+  <summary>Setup the logging settings</summary>
+
+- Setup the logging for session feed logs and action logs
+- The logs will be stored in the paths are defined
+
+![image](readme-assets/logging/logging-settings.png)
+
+1. Session logging settings
+   - Enable / disable the logging for session data
+   - Path/Directory for log storing
+   - Maximum file size for each log - logs are split after reaching the size
+   - Setup logging starting point (App or Broadcasting start)
+
+2. Actions logging settings
+   - Enable / disable actions logging
+   - Path/Directory for log storing
+   - Maximum file size for each log - logs are split after reaching the size
+
+</details>
+
+---
+
 # Overlay Setup
+
 <details>
   <summary>Setup your Overlay</summary>
 
-  - Display your live feed stats in your stream
-  - Easy mode or expert mode available
+- Display your live feed stats in your stream
+- Easy mode or expert mode available
 
-  ### URL Settings
+### URL Settings
 
   <ol>
     <li>Change between Easy/Expert Mode</li>
@@ -531,39 +569,39 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
 
   </ol>
 
-  ##
+##
 
-  ### Easy Mode
+### Easy Mode
 
-  ![image](readme-assets/overlay/easy.png)
+![image](readme-assets/overlay/easy.png)
 
-  - Change the elements visibility
-  - Change some colors or directions
+- Change the elements visibility
+- Change some colors or directions
 
-  ##
+##
 
-  ### Expert Mode
+### Expert Mode
 
-  ![image](readme-assets/overlay/expert.png)
+![image](readme-assets/overlay/expert.png)
 
-  - Edit the overlay with raw HTML, CSS, JS
-  - jQuery is supported
-  - PROPS Object includes the default state values
+- Edit the overlay with raw HTML, CSS, JS
+- jQuery is supported
+- PROPS Object includes the default state values
 
-  ``` javascript
-  
-  const {bitrate, speed, uptime} = PROPS
- 
-  // The current bitrate from the incoming feed
-  bitrate
-  // The current speed (rtt) from the incoming feed
-  speed
-  // The current uptime from the incoming feed
-  uptime
+```javascript
+const { bitrate, speed, uptime } = PROPS;
 
-  ```
+// The current bitrate from the incoming feed
+bitrate;
+// The current speed (rtt) from the incoming feed
+speed;
+// The current uptime from the incoming feed
+uptime;
+```
 
 </details>
+
+---
 
 # App Settings
 
@@ -657,7 +695,22 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
     </ul>
   </ol>
 
+##
+
+### Backup
+
+- Create or import a backup from all settings
+- Switch states only for export settings
+- Import always a full import for all data are created on export. Switch states does not effect it
+
+![image](readme-assets/app/backup.png)
+
+- Choose the settings to export
+- Export or import button opens the save or load dialog
+
 </details>
+
+---
 
 # HELP ME
 
@@ -722,23 +775,12 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
 
 # Roadmap
 
-<ul>
-  <li type="none" >
-    ✅ Add a overlay served by the app to display the feed stats in the broadcasting software
-  </li>
-  <li>
-    Add more different server types
-  </li>
-  <li>
-    Add more broadcasting softwares
-  </li>
-  <li>
-    Add more platforms (if there are more relevant in future)
-  </li>
-  <li>
-    Find some translators to add more languages to the application
-  </li>
-  <li>
-    Get community feedback and make the app well for them
-  </li>
-</ul>
+- ✅ Add a overlay served by the app to display the feed stats in the broadcasting software
+- ✅ Add a Backup / Import function
+- ✅ Add a logging functionality to save session / actions logs
+- Add a option for full managed app versions
+- Add more different server types
+- Add more broadcasting softwares
+- Add more platforms (if there are more relevant in future)
+- Find some translators to add more languages to the application
+- Get community feedback and make the app well for them

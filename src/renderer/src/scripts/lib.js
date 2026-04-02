@@ -37,6 +37,10 @@ export async function stringifyBackupData(data) {
 }
 
 export async function parseBackupData(encodedData) {
-  const decodedData = atob(encodedData);
-  return JSON.parse(decodedData);
+  try {
+    const decodedData = atob(encodedData);
+    return { success: true, data: JSON.parse(decodedData) };
+  } catch (error) {
+    return { success: false };
+  }
 }

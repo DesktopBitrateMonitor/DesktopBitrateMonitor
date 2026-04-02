@@ -7,6 +7,8 @@ import ColorLensIcon from '@mui/icons-material/ColorLens';
 import { useTranslation } from 'react-i18next';
 import { Backup } from '@mui/icons-material';
 
+
+
 const AppSettings = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -38,7 +40,7 @@ const AppSettings = () => {
       value: 'backup',
       label: t('appSettings.panels.backup'),
       icon: Backup,
-      isDev: true
+      isDev: false
     }
   ];
 

@@ -16,7 +16,7 @@ class Logger {
     return `${(h < 10 ? '0' : '') + h}:${(m < 10 ? '0' : '') + m}:${(s < 10 ? '0' : '') + s} - ${(day < 10 ? '0' : '') + day}.${(month < 10 ? '0' : '') + month}.${year}`;
   }
 
-  static _logTimeStamp(){
+  static _logTimeStamp() {
     return new Date();
   }
 

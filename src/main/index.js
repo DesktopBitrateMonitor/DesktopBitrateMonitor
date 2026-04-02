@@ -13,7 +13,6 @@ import { initializeLoggerIpc } from './ipc-handler/logger-ipc-handler';
 import { initializeServices } from './lib/initialize-services';
 import { initializeServicesIpc } from './ipc-handler/services-ipc-handler';
 import '../scripts/app-server/server';
-// import '../scripts/authorization/auth-server';
 
 const { appConfig } = injectDefaults();
 
@@ -22,9 +21,6 @@ const config = appConfig.get('');
 let mainWindow;
 let tray = null;
 let isQuitting = false;
-
-// TODO: Fix automatic install updates on app start if appConfig.autoInstallUpdates is true and autoCheckForUpdates is true
-// TODO: If the app is running, don't allow multiple instances. Focus the existing instance instead of opening a new one.
 
 // Ensure that only a single instance of the application is running
 const gotLock = app.requestSingleInstanceLock();

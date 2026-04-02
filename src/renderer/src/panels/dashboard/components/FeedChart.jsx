@@ -8,8 +8,6 @@ import ScheduleRoundedIcon from '@mui/icons-material/ScheduleRounded';
 import AllInclusiveRoundedIcon from '@mui/icons-material/AllInclusiveRounded';
 import { useStreamStats } from '../../../contexts/StreamStatsContext.jsx';
 import { useTranslation } from 'react-i18next';
-import { useConnectionStates } from '../../../contexts/ConnectionStatesContext.jsx';
-import { useLoggingConfigStore } from '../../../contexts/DataContext.jsx';
 
 const isDev = import.meta.env.DEV;
 
@@ -19,25 +17,10 @@ const FeedChart = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const { stats, totalUptime } = useStreamStats();
-  const { broadcastState } = useConnectionStates();
+  // const { broadcastState } = useConnectionStates();
   const [history, setHistory] = useState([]);
   const [startTs, setStartTs] = useState(null);
   const [maxY, setMaxY] = useState(0);
-
-  const statsPayloadRef = useRef([]);
-  const previousBroadcastStateRef = useRef(broadcastState);
-
-  const flushStatsPayload = useCallback(async () => {
-    if (!statsPayloadRef.current.length) {
-      return;
-    }
-
-    const payloadToFlush = statsPayloadRef.current;
-    statsPayloadRef.current = [];
-    const res =await window.loggerApi.writeToLogFile(payloadToFlush);
-
-    console.log(res);
-  }, []);
 
   useEffect(() => {
     setHistory((prev) => {
@@ -49,41 +32,6 @@ const FeedChart = () => {
     });
     setMaxY((prev) => Math.max(prev, stats.bitrate || 0));
   }, [stats.bitrate, stats.rtt, startTs]);
-
-  useEffect(() => {
-    const handleLogging = async () => {
-      // if (!broadcastState ) {
-      //   return;
-      // }
-
-      statsPayloadRef.current = [...statsPayloadRef.current, { ...stats, ts: Date.now() }];
-
-      if (statsPayloadRef.current.length >= 20) {
-        await flushStatsPayload();
-      }
-    };
-
-    handleLogging();
-  }, [broadcastState, flushStatsPayload, stats]);
-
-  useEffect(() => {
-    const previousBroadcastState = previousBroadcastStateRef.current;
-
-    if (previousBroadcastState !== broadcastState) {
-      flushStatsPayload();
-      previousBroadcastStateRef.current = broadcastState;
-    }
-  }, [broadcastState, flushStatsPayload]);
-
-  useEffect(() => {
-    flushStatsPayload();
-  }, [flushStatsPayload]);
-
-  useEffect(() => {
-    return () => {
-      flushStatsPayload();
-    };
-  }, [flushStatsPayload]);
 
   const chartData = useMemo(() => {
     if (!history.length || !startTs) return [];

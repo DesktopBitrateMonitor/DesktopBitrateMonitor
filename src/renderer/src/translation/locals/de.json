@@ -36,7 +36,8 @@
     "copySuccess": "In die Zwischenablage kopiert",
     "copyError": "Konnte nicht in die Zwischenablage kopiert werden",
     "loadSuccess": "Daten erfolgreich geladen",
-    "loadError": "Daten konnten nicht geladen werden"
+    "loadError": "Daten konnten nicht geladen werden",
+    "keyError": "Daten konnten nicht geladen werden: Schlüssel stimmen nicht überein"
   },
   "authorization": {
     "twitch": {
@@ -730,9 +731,12 @@
       "disabled": "Protokollierung deaktiviert",
       "sessionPathLabel": "Pfad für Sitzungsprotokolle",
       "actionsPathLabel": "Pfad für Aktionsprotokolle",
-      "fileSizeLabel": "Dateigröße für Sitzungsprotokolle (MB)",
+      "sessionFileSizeLabel": "Dateigröße für Sitzungsprotokolle (MB)",
+      "actionsFileSizeLabel": "Dateigröße für Aktionsprotokolle (MB)",
       "saveTooltip": "Zum Speichern klicken",
       "directoryDialogTitle": "Verzeichnis für {{label}} auswählen",
+      "logSessionsOnAppStart": "Sitzungsprotokollierung beim App-Start starten",
+      "logSessionsOnStreamStart": "Sitzungsprotokollierung beim Stream-Start starten",
       "validation": {
         "pathEmpty": "Pfad darf nicht leer sein.",
         "pathNoSpaces": "Pfad darf keine Leerzeichen enthalten.",
@@ -857,8 +861,8 @@
       "dialog": {
         "header": "Warnung: Sensible Daten im Backup enthalten",
         "message": "Es wurden sensible Daten aus Plattform Konten für den Export ausgewählt. Diese Daten beinhalten personalisierte Access Token für die jeweilge Plattform. Daten nicht an dritte weitergeben!",
-        "saveBackup":"Backup Speichern",
-        "loadBackup":"Backup Laden"
+        "saveBackup": "Backup Speichern",
+        "loadBackup": "Backup Laden"
       }
     }
   },

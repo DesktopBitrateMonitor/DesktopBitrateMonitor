@@ -36,7 +36,8 @@
     "copySuccess": "Copied to clipboard",
     "copyError": "Failed to copy to clipboard",
     "loadSuccess": "Data loaded successfully",
-    "loadError": "Failed to load data"
+    "loadError": "Failed to load data",
+    "keyError": "Failed to load Data: Keys does not match"
   },
   "authorization": {
     "twitch": {
@@ -729,9 +730,12 @@
       "disabled": "Logging disabled",
       "sessionPathLabel": "Session Logs Path",
       "actionsPathLabel": "Actions Logs Path",
-      "fileSizeLabel": "Session Logs File Size (MB)",
+      "sessionFileSizeLabel": "Session Logs File Size (MB)",
+      "actionsFileSizeLabel": "Actions Logs File Size (MB)",
       "saveTooltip": "Click to save changes",
       "directoryDialogTitle": "Select directory for {{label}}",
+      "logSessionsOnAppStart": "Log sessions on app start",
+      "logSessionsOnStreamStart": "Log sessions on stream start",
       "validation": {
         "pathEmpty": "Path cannot be empty.",
         "pathNoSpaces": "Path must not contain spaces.",

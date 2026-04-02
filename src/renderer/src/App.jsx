@@ -25,19 +25,135 @@ import TwitchUserSettings from './panels/twitch/components/TwitchUserSettings';
 import KickUserSettings from './panels/kick/components/KickUserSettings';
 import LoggingFeed from './panels/logging/LoggingFeed';
 import UpdateCard from './components/feedback/UpdateCard';
-import { useAppConfigStore } from './contexts/DataContext';
-import { useEffect, useRef, useState } from 'react';
+import { useAppConfigStore, useLoggingConfigStore } from './contexts/DataContext';
+import { use, useCallback, useEffect, useRef, useState } from 'react';
 import { useUpdate } from './contexts/UpdateContext';
 import OverlayEditor from './panels/overlay/OverlayEditor';
 import Backup from './panels/app/components/Backup';
+import { useStreamStats } from './contexts/StreamStatsContext';
+import { useConnectionStates } from './contexts/ConnectionStatesContext';
+import { useLogger } from './contexts/LoggerContext';
+import generateId from '../../scripts/lib/id-generator';
+
+const STATS_PAYLOAD_FLUSH_INTERVAL = 50;
+const ACTIONS_PAYLOAD_FLUSH_INTERVAL = 10;
 
 function App() {
   const { appConfig, updateAppConfig } = useAppConfigStore();
   const { status } = useUpdate();
   const { alerts } = useAlert();
+  const { stats, totalUptime } = useStreamStats();
+  const { broadcastState } = useConnectionStates();
+  const { loggingConfig } = useLoggingConfigStore();
+  const { getLastLog } = useLogger();
 
   const [openUpdateCard, setOpenUpdateCard] = useState(false);
   const hasAutoChecked = useRef(false);
+
+  const statsPayloadRef = useRef([]);
+  const actionsPayloadRef = useRef([]);
+  const previousBroadcastStateRef = useRef(broadcastState);
+
+  const flushStatsPayload = useCallback(async () => {
+    if (!statsPayloadRef.current.length) {
+      return;
+    }
+
+    const payloadToFlush = statsPayloadRef.current;
+    statsPayloadRef.current = [];
+    await window.loggerApi.writeToSessionLogFile(payloadToFlush);
+  }, []);
+
+  const flushActionsPayload = useCallback(async () => {
+    if (!actionsPayloadRef.current.length) {
+      return;
+    }
+
+    const payloadToFlush = actionsPayloadRef.current;
+    actionsPayloadRef.current = [];
+    await window.loggerApi.writeToActionsLogFile(payloadToFlush);
+  }, []);
+
+  const startSessionLogging = () => {
+    if (loggingConfig?.logSessionsOnAppStart) return true;
+    if (!loggingConfig?.logSessionsOnStreamStart && !broadcastState) return false;
+    if (broadcastState) return true;
+
+    return false;
+  };
+
+  useEffect(() => {
+    const handleSessionLogging = async () => {
+      const shouldStartLogging = startSessionLogging();
+
+      if (!shouldStartLogging) return;
+
+      statsPayloadRef.current = [
+        ...statsPayloadRef.current,
+        { id: generateId(32), ...stats, totalUptime, broadcastState, ts: Date.now() }
+      ];
+
+      if (statsPayloadRef.current.length >= STATS_PAYLOAD_FLUSH_INTERVAL) {
+        await flushStatsPayload();
+      }
+    };
+
+    handleSessionLogging();
+  }, [broadcastState, flushStatsPayload, stats, totalUptime]);
+
+  useEffect(() => {
+    const handleActionsLogging = async () => {
+      if (!loggingConfig?.logActions) return;
+
+      const lastLog = getLastLog();
+      if (!lastLog) return;
+
+      actionsPayloadRef.current = [
+        ...actionsPayloadRef.current,
+        {
+          id: lastLog.id,
+          type: lastLog.type,
+          message: lastLog.message,
+          ts: Date.now()
+        }
+      ];
+
+      if (actionsPayloadRef.current.length >= ACTIONS_PAYLOAD_FLUSH_INTERVAL) {
+        await flushActionsPayload();
+      }
+    };
+
+    handleActionsLogging();
+  }, [flushActionsPayload, getLastLog, loggingConfig?.logActions]);
+
+  useEffect(() => {
+    const previousBroadcastState = previousBroadcastStateRef.current;
+
+    if (previousBroadcastState !== broadcastState) {
+      flushStatsPayload();
+      previousBroadcastStateRef.current = broadcastState;
+    }
+  }, [broadcastState, flushStatsPayload]);
+
+  useEffect(() => {
+    flushStatsPayload();
+  }, [flushStatsPayload]);
+
+  useEffect(() => {
+    flushActionsPayload();
+  }, [flushActionsPayload]);
+
+  useEffect(() => {
+    return () => {
+      flushActionsPayload();
+    };
+  }, [flushActionsPayload]);
+
+  useEffect(() => {
+    return () => {
+      flushStatsPayload();
+    };
+  }, [flushStatsPayload]);
 
   // On app start (and when toggled on), auto-check for updates once.
   useEffect(() => {
@@ -58,6 +174,8 @@ function App() {
       setOpenUpdateCard(true);
     }
   }, [status]);
+
+  useEffect(() => {}, []);
 
   return (
     <Container>

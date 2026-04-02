@@ -77,7 +77,7 @@ const NAV_ITEMS = [
     path: '/dashboard/loggingsettings',
     icon: FeedIcon,
     matchPrefix: false,
-    development: true
+    development: false
   },
   {
     translationKey: 'navigation.overlayEditor',
