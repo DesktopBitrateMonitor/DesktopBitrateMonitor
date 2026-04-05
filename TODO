@@ -1,17 +1,32 @@
+Version 0.0.10-beta:
+  Fixes:
+    Backups:
+      ✔ Fix value overrides when older backups are imported to newer version of the configs @started(26-04-03 15:24) @done(26-04-03 15:49) @lasted(25m48s)
+    OverlayEditor:
+      ✔ Fix overlay - broadcasting software websocket connection. Hardcoded localhost at this moment @started(26-04-03 16:03) @done(26-04-03 17:51) @lasted(1h48m32s)
+      ✔ Add a textfield to setup a own host address @done(26-04-03 16:48)
+      ✔ Add the host address to the backup config file @done(26-04-03 16:48)
+      ✔ Add a key to the overlay connection string @started(26-04-03 19:48) @done(26-04-03 20:23) @lasted(35m53s)
+      ✔ Add a button to generate a new key @started(26-04-03 20:24) @done(26-04-03 20:43) @lasted(19m9s)
+  Implementations:
+    ✔ Add new commands to add and remove command aliases @started(26-04-04 11:32) @done(26-04-04 15:08) @lasted(3h36m16s)
 
-Todo:
-  - Version 0.0.10 - Beta
-  
-  Moderated Application Mode:
-    ☐ Find a place to add the toggle - Moderated Mode on/off
-    ☐ Add a Chip or badge on top of the app when Moderated Mode is on
-
-    Accounts:
-      ☐ Create a single login for the managers chat bot
-      ☐ Create a textfield to manually set the channels name to listen on and subscribe to the eventsubs
-        - For twitch it doesn't matter if the channel is first setup before login the bots account
-        - For kick the channel to join has to be setup at first, because it needs the channel name to get the chatId/channelId
-      ☐ Find a logic to 
-      ☐ Check the admin or moderator logic has to be changed in moderated mode
+    Moderated Application Mode:
+      # Don't implement this functionality because this is not what the app should be. 
+      # The app should help streamers to totally customize anything they want, not what the managers give them.
+      ✘ Find a place to add the toggle - Moderated Mode on/off @started(26-04-02 16:59) @cancelled(26-04-03 13:11) @wasted(20h12m53s)
+      ✘ Add a Chip or badge on top of the app when Moderated Mode is on @started(26-04-02 17:32) @cancelled(26-04-03 13:11) @wasted(19h39m55s)
+      Workflow:
+        ✘ Step 1: Login the managers bot account @cancelled(26-04-03 13:12)
+        ✘ Step 2: Add the users channel name to join in the textfield @cancelled(26-04-03 13:13)
+        ✘ Step 3: Validate the user and get his user-information @cancelled(26-04-03 13:13)
+        ✘ Step 4: Subscribe to the users chat and eventsubs @cancelled(26-04-03 13:13)
+      Accounts:
+        ✘ Create a single login for the managers chat bot @cancelled(26-04-03 13:12)
+        ✘ Create a textfield to manually set the channels user name @cancelled(26-04-03 13:12)
+        ✘ Validation button @cancelled(26-04-03 13:12)
+        ✘ Disabled or not visible if no managers bot is logged in @cancelled(26-04-03 13:12)
+        ✘ Store the moderated channels user data in the "moderatedChannel" array in the appConfig @cancelled(26-04-03 13:12)
+        ✘ Check the admin or moderator logic has to be changed in moderated mode @cancelled(26-04-03 13:12)
 
 

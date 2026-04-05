@@ -6,8 +6,7 @@ import { userCommands } from './commands/user-commands';
 import { buildMessages } from './messages/messages';
 import Store from './store';
 import { defaultLayout } from '../../renderer/src/panels/dashboard/components/layout-default';
-
-const PORT = import.meta.env.VITE_SERVERPORT;
+import generateId from '../lib/id-generator';
 
 const defaultSessionLoggingPath = path.join(
   app.getPath('documents'),
@@ -25,6 +24,63 @@ const language =
   preferredSystemLanguages && preferredSystemLanguages.length > 0
     ? preferredSystemLanguages[0].split('-')[0]
     : 'en';
+
+const isArray = (value) => Array.isArray(value);
+
+const isSameJson = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+
+const mergeByKey = (existingList, defaultList, getKey) => {
+  const existing = isArray(existingList) ? existingList : [];
+  const defaults = isArray(defaultList) ? defaultList : [];
+
+  const defaultByKey = new Map();
+  for (const item of defaults) {
+    const key = getKey(item);
+    if (key) defaultByKey.set(key, item);
+  }
+
+  const merged = [];
+  const seen = new Set();
+
+  for (const item of existing) {
+    const key = getKey(item);
+    if (!key) {
+      merged.push(item);
+      continue;
+    }
+
+    const defaultItem = defaultByKey.get(key);
+    if (defaultItem) {
+      // Keep user customizations while filling any newly added default fields.
+      merged.push({ ...defaultItem, ...item });
+      seen.add(key);
+      continue;
+    }
+
+    // Keep deprecated/custom entries already present in the user's store.
+    merged.push(item);
+    seen.add(key);
+  }
+
+  for (const item of defaults) {
+    const key = getKey(item);
+    if (!key || seen.has(key)) continue;
+    merged.push(item);
+    seen.add(key);
+  }
+
+  return merged;
+};
+
+const getCommandMergeKey = (command) => {
+  if (!command || !command.action) return null;
+  return `${command.action}`;
+};
+
+const getMessageMergeKey = (message) => {
+  if (!message || !message.action || !message.event) return null;
+  return `${message.group || ''}:${message.action}:${message.event}`;
+};
 
 /**
  * Inject default values into the store.
@@ -59,7 +115,6 @@ export const injectDefaults = () => {
       autoCheckForUpdates: true,
       autoInstallUpdates: false,
       lastUpdateCheck: null,
-      moderatedApplication: false,
       layout: {
         dashboardLayout: { ...defaultLayout }
       },
@@ -170,6 +225,15 @@ export const injectDefaults = () => {
     }
   });
 
+  const defaultCommands = [...adminCommands, ...modCommands, ...userCommands];
+  const existingCommands = commandsConfig.get('commands');
+  const mergedCommands = mergeByKey(existingCommands, defaultCommands, getCommandMergeKey);
+  if (!isSameJson(existingCommands, mergedCommands)) {
+    commandsConfig.set('commands', mergedCommands);
+  }
+
+  const appLanguage = appConfig.get('language') || language;
+
   const messagesConfig = new Store({
     name: 'messages-config',
     defaults: {
@@ -178,9 +242,16 @@ export const injectDefaults = () => {
       order: [],
       collapsed: [],
       orderGroups: ['admin', 'mod', 'user'],
-      messages: buildMessages(language)
+      messages: buildMessages(appLanguage)
     }
   });
+
+  const defaultMessages = buildMessages(appLanguage);
+  const existingMessages = messagesConfig.get('messages');
+  const mergedMessages = mergeByKey(existingMessages, defaultMessages, getMessageMergeKey);
+  if (!isSameJson(existingMessages, mergedMessages)) {
+    messagesConfig.set('messages', mergedMessages);
+  }
 
   const serverConfig = new Store({
     name: 'server-config',
@@ -200,6 +271,11 @@ export const injectDefaults = () => {
         name: 'Belabox',
         statsUrl: 'http://xxx.xxx.xxx.xxx:8080/stats',
         publisher: 'publish/live/key_xxxxxxx'
+      },
+      'nginx-rtmp': {
+        name: 'Nginx RTMP',
+        statsUrl: 'http://xxx.xxx.xxx.xxx:8080/stats',
+        publisher: 'stream/key_xxxxxxx'
       }
     }
   });
@@ -263,7 +339,8 @@ export const injectDefaults = () => {
       showUptime: true,
       showTotalUptime: true,
       showIcons: true,
-      statsOverlayUrl: `http://localhost:${PORT}/overlay/stats`,
+      overlayKey: generateId(32),
+      host: 'http://localhost',
       overlay: {
         expert: {
           html: '<link rel=\"stylesheet\"\r\n    href=\"https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200\" />\r\n\r\n<div id=\"root\">\r\n    <div class=\"bitrate-container\">\r\n        <span id=\"bitrate-icon\" class=\"material-symbols-outlined\"\r\n          >signal_cellular_0_bar</span>\r\n        <div class=\"bitrate-txt\">Loading...</div>\r\n    </div>\r\n    <div class=\"speed-container\">\r\n        <span id=\"speed-icon\" class=\"material-symbols-outlined\">speed</span>\r\n        <div class=\"speed-txt\">Loading...</div>\r\n    </div>\r\n    <div class=\"uptime-container\">\r\n        <span id=\"uptime-icon\" class=\"material-symbols-outlined\">timer</span>\r\n        <div class=\"uptime-txt\">Loading...</div>\r\n    </div>\r\n</div>',

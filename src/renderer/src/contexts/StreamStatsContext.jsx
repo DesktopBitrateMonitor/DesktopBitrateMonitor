@@ -6,7 +6,8 @@ StreamStatsContext.displayName = 'StreamStatsContext';
 const INITIAL_STATS = {
   bitrate: 0,
   rtt: 0,
-  uptime: 0
+  uptime: 0,
+  serverType: null
 };
 
 export const StreamStatsProvider = ({ children }) => {
@@ -23,15 +24,21 @@ export const StreamStatsProvider = ({ children }) => {
       const legacyPublishers = response?.data?.publishers;
       const firstLegacyPublisherKey = legacyPublishers ? Object.keys(legacyPublishers)[0] : null;
       const legacyData = firstLegacyPublisherKey ? legacyPublishers[firstLegacyPublisherKey] : null;
+      let incoming = null;
 
-      const incoming =
-        publisherData && typeof publisherData === 'object' ? publisherData : legacyData;
+      // If not nginx-rtmp use publishers key data (new format), otherwise use the root response data (nginx-rtmp format)
+      if (response?.server !== 'nginx-rtmp') {
+        incoming = publisherData && typeof publisherData === 'object' ? publisherData : legacyData;
+      } else {
+        incoming = response?.data;
+      }
 
       const nextBitrate = Number(incoming?.bitrate) || 0;
       const nextRtt = Number(incoming?.rtt) || 0;
       const nextUptime = Number(incoming?.uptime) || 0;
+      const nextServerType = incoming?.serverType || null;
 
-      setStats({ bitrate: nextBitrate, rtt: nextRtt, uptime: nextUptime });
+      setStats({ bitrate: nextBitrate, rtt: nextRtt, uptime: nextUptime, serverType: nextServerType });
 
       // accumulate uptime across page changes (resets only on app restart)
       const delta = Math.max(nextUptime - (lastUptimeRef.current || 0), 0);

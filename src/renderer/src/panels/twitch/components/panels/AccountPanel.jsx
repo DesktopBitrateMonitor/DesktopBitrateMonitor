@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import React from 'react';
 
 const AccountPanel = ({ data, accountType, login, logout }) => {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   return (
     <Box>
       {data?.id ? (
@@ -18,7 +18,9 @@ const AccountPanel = ({ data, accountType, login, logout }) => {
               <Typography variant="h6" sx={{ mt: 1 }}>
                 {data.display_name || t('platforms.twitch.accounts.notLoggedIn')}
                 <Typography variant="body2" color="text.secondary">
-                  {accountType === 'broadcaster' ? t('platforms.twitch.accounts.broadcaster.header') : t('platforms.twitch.accounts.chatbot.header')}
+                  {accountType === 'broadcaster'
+                    ? t('platforms.twitch.accounts.broadcaster.header')
+                    : t('platforms.twitch.accounts.chatbot.header')}
                 </Typography>
               </Typography>
             </Stack>

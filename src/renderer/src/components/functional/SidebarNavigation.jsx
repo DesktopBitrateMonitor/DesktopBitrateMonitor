@@ -32,6 +32,7 @@ import { useTranslation } from 'react-i18next';
 import TwitchIcon from '../../assets/icons/TwitchIcon';
 import KickIcon from '../../assets/icons/KickIcon';
 import appImage from '../../../../assets/icon.png';
+import ShieldIcon from '@mui/icons-material/Shield';
 
 const isDev = import.meta.env.DEV;
 

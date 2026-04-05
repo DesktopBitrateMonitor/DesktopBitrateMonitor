@@ -38,5 +38,23 @@ export const modCommands = [
     description: 'Sets a new bitrate return point.',
     cmd: ['!rtrigger'],
     enabled: true
+  },
+  {
+    id: generateId(),
+    action: 'addAlias',
+    label: 'Add Command Alias',
+    requiredRole: 'mod',
+    description: 'Adds a new alias to an existing command. Usage: !addalias [existing command] [new alias]',
+    cmd: ['!addalias'],
+    enabled: true
+  },
+  {
+    id: generateId(),
+    action: 'removeAlias',
+    label: 'Remove Command Alias',
+    requiredRole: 'mod',
+    description: 'Removes an existing alias from a command. Usage: !removealias [existing command] [alias]',
+    cmd: ['!removealias'],
+    enabled: true
   }
 ];

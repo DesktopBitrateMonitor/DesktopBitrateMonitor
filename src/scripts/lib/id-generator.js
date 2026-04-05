@@ -4,6 +4,8 @@
  */
 
 export default function generateId(length = 10) {
-  // Generate a random alphanumeric ID of specified length
-  return Math.random().toString(36).substr(2, length);
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  const values = crypto.getRandomValues(new Uint8Array(length));
+
+  return Array.from(values, (value) => chars[value % chars.length]).join('');
 }

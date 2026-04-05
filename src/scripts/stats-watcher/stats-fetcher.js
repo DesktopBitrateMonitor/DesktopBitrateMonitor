@@ -5,6 +5,7 @@ import { formatStatsOpenIrl } from './openirl';
 import { formatStatsSrtLiveServer } from './srt-live-server';
 import { formatStatsBelabox } from './belabox';
 import { switcherService } from '../switcher-service';
+import { formatStatsNginxRtmp } from './nginx-rtmp';
 
 let fetchInterval = null;
 const fetchingTimeout = 1000;
@@ -43,22 +44,38 @@ export async function startFetchingStats(
     const stats = await fetchStats(serverData.statsUrl);
 
     try {
-      if (stats && stats?.stats?.status === 'ok') {
-        response.success = true;
-        response.server = serverType;
-        response.data = stats.stats;
-        response.storedPublisher = serverData.publisher;
-        response.error = null;
-      } else {
-        response.success = false;
-        response.server = serverType;
-        response.data = null;
-        response.storedPublisher = serverData?.publisher;
-        response.error = stats?.stats || 'Failed to fetch stats from the server';
-      }
+      if (serverType !== 'nginx-rtmp') {
+        if (stats && stats?.data?.status?.toLowerCase() === 'ok') {
+          response.success = true;
+          response.server = serverType;
+          response.data = stats?.data;
+          response.storedPublisher = serverData?.publisher;
+          response.error = null;
+        } else {
+          response.success = false;
+          response.server = serverType;
+          response.data = null;
+          response.storedPublisher = serverData?.publisher;
+          response.error = stats?.data || 'Failed to fetch stats from the server';
+        }
 
-      if (mainWindow?.webContents && !mainWindow.isDestroyed()) {
-        mainWindow?.webContents?.send('server-connected', response);
+        if (mainWindow?.webContents && !mainWindow.isDestroyed()) {
+          mainWindow?.webContents?.send('server-connected', response);
+        }
+      } else {
+        if (stats && stats?.statusText?.toLowerCase() === 'ok') {
+          response.success = true;
+          response.server = serverType;
+          response.data = stats.data; // Nginx raw RTMP stats data for further processing in the app backend
+          response.storedPublisher = serverData?.publisher;
+          response.error = null;
+        } else {
+          response.success = false;
+          response.server = serverType;
+          response.data = null;
+          response.storedPublisher = serverData?.publisher;
+          response.error = stats || 'Failed to fetch stats from the server';
+        }
       }
 
       if (serverType === 'openirl') {
@@ -72,6 +89,18 @@ export async function startFetchingStats(
       if (serverType === 'belabox') {
         const res = await formatStatsBelabox(response);
         await switcherService(res, mainWindow);
+      }
+      if (serverType === 'nginx-rtmp') {
+        const res = await formatStatsNginxRtmp(response);
+        await switcherService(res, mainWindow);
+
+        if (mainWindow?.webContents && !mainWindow.isDestroyed()) {
+          const result = {
+            ...response,
+            data: res.data
+          };
+          mainWindow?.webContents?.send('server-connected', result);
+        }
       }
     } catch (error) {
       Logger.error(`Error processing fetched stats: ${error.message}`);
@@ -89,7 +118,7 @@ export function stopFetchingStats() {
 export async function fetchStats(statsUrl) {
   try {
     const stats = await axios.get(statsUrl);
-    return { stats: stats.data };
+    return stats;
   } catch (error) {
     Logger.log(`Error fetching stats: ${error.message}`);
   }

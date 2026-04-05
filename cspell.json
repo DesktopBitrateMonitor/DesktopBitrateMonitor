@@ -50,7 +50,9 @@
     "unsub",
     "unsubs",
     "usersettings",
-    "Ndrop"
+    "Ndrop",
+    "VITE_SERVERHOST",
+    "rtmp"
   ],
   "ignoreWords": [],
   "import": []

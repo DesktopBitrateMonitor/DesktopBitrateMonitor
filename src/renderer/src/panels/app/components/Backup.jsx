@@ -62,6 +62,33 @@ const Backup = () => {
     []
   );
 
+  const MAPPED_STORES = useMemo(
+    () => ({
+      'app-config': appConfig,
+      'logging-config': loggingConfig,
+      'commands-config': commandsConfig,
+      'messages-config': messagesConfig,
+      'twitch-accounts-config': twitchAccountsConfig,
+      'kick-accounts-config': kickAccountsConfig,
+      'server-config': serverConfig,
+      'streaming-software-config': streamingSoftwareConfig,
+      'switcher-config': switcherConfig,
+      'overlay-config': overlayConfig
+    }),
+    [
+      appConfig,
+      loggingConfig,
+      commandsConfig,
+      messagesConfig,
+      twitchAccountsConfig,
+      kickAccountsConfig,
+      serverConfig,
+      streamingSoftwareConfig,
+      switcherConfig,
+      overlayConfig
+    ]
+  );
+
   const BACKUP_KEY_MAP = useMemo(
     () => ({
       'app-config': 'appConfig',
@@ -238,17 +265,19 @@ const Backup = () => {
       // Skip empty objects, which means the user chose not to include that config in the backup
       if (!decrypted.data[store] || Object.keys(decrypted.data[store]).length === 0) continue;
 
+      const mergedData = { ...MAPPED_STORES[store], ...decrypted.data[store] };
+
       // Update the store with the decrypted data from the backup
-      await window.storeApi.set(store, '', decrypted.data[store]);
+      await window.storeApi.set(store, '', mergedData);
 
       // Set the theme mode from the backup
-      if (store === 'app-config' && decrypted.data[store].theme) {
-        toggleMode(decrypted.data[store].theme);
+      if (store === 'app-config' && mergedData.theme) {
+        toggleMode(mergedData.theme);
       }
 
       // Update the store in the app state using the corresponding update function
       if (UPDATE_MAPPINGS[store]) {
-        UPDATE_MAPPINGS[store](decrypted.data[store]);
+        UPDATE_MAPPINGS[store](mergedData);
       }
     }
     showAlert({ message: t('alerts.loadSuccess'), severity: 'success' });

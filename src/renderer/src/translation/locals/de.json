@@ -111,7 +111,8 @@
       "serverNames": {
         "openIrl": "OpenIRL",
         "srtLiveServer": "Srt Live Server",
-        "belabox": "Belabox"
+        "belabox": "Belabox",
+        "nginxRtmp": "Nginx RTMP"
       },
       "softwareNames": {
         "obsStudio": "OBS Studio",
@@ -324,6 +325,14 @@
       "bitrate": {
         "label": "Bitrate abrufen",
         "description": "Gibt die aktuelle Bitrate und Geschwindigkeit zurück"
+      },
+      "addAlias":{
+        "label":"Alias hinzufügen",
+        "hint": "Fügt einen Alias für einen Command hinzu"
+      },
+      "removeAlias":{
+        "label": "Alias entfernen",
+        "hint": "Entfernt einen Alias für einen Command"
       }
     },
     "messages": {
@@ -485,6 +494,34 @@
           "hint": "Verfügbare Variablen: ${user}, ${server}"
         }
       },
+      "addAlias":{
+        "success": {
+          "label": "Alias hinzufügen erfolgreich Nachricht",
+          "hint": "Verfügbare Variablen: ${alias}, ${command}, ${server}"
+        },
+        "alreadyExists": {
+          "label": "Alias bereits vorhanden Nachricht",
+          "hint": "Verfügbare Variablen: ${alias}, ${command}, ${server}"
+        },
+        "error": {
+          "label": "Alias hinzufügen Fehler Nachricht",
+          "hint": "Verfügbare Variablen: ${alias}, ${command}, ${server}"
+        }
+      },
+      "removeAlias":{
+        "success": {
+          "label": "Alias entfernen erfolgreich Nachricht",
+          "hint": "Verfügbare Variablen: ${alias}, ${command}, ${server}"
+        },
+        "notFound": {
+          "label": "Alias nicht gefunden Nachricht",
+          "hint": "Verfügbare Variablen: ${alias}, ${command}, ${server}"
+        },
+        "error": {
+          "label": "Alias entfernen Fehler Nachricht",
+          "hint": "Verfügbare Variablen: ${alias}, ${command}, ${server}"
+        }
+      },
       "users": {},
       "accounts": {}
     },
@@ -519,7 +556,8 @@
       "options": {
         "srtLiveServer": "SrtLiveServer",
         "openIrl": "OpenIRL",
-        "belabox": "Belabox"
+        "belabox": "Belabox",
+        "nginxRtmp": "Nginx RTMP"
       }
     },
     "srtLiveServer": {
@@ -577,6 +615,25 @@
         "label": "Publisher",
         "placeholder": "Publisher",
         "hint": "Beispiel: live/stream/dein_stream_key"
+      }
+    },
+    "nginxRtmp": {
+      "header": "Nginx RTMP Einstellungen",
+      "description": "Konfiguriere die Einstellungen für die Nginx RTMP-Verbindung",
+      "nameBox": {
+        "label": "Server Name",
+        "placeholder": "Nginx RTMP",
+        "hint": "Der Name der Serverinstanz, z.B. Nginx RTMP"
+      },
+      "urlBox": {
+        "label": "Stats URL",
+        "placeholder": "http://xxx.xxx.xxx.xxx:8080/stats",
+        "hint": "Beispiel: http://<IP_ADRESSE>:<PORT>/stats"
+      },
+      "publisherBox": {
+        "label": "Publisher",
+        "placeholder": "Publisher",
+        "hint": "Beispiel: stream/dein_stream_key"
       }
     }
   },
@@ -871,6 +928,9 @@
     "description": "Einstellungen für das Stats-Overlay. Änderungen werden automatisch beim Speichern an das Overlay übertragen, nicht gespeicherte Änderungen gehen verloren beim wechsel des Tabs",
     "expertMode": "Expertenmodus",
     "statsOverlayUrl": " Stats-Overlay URL",
+    "hostLabel": "Stats-Overlay Host",
+    "hostToolTip": "Die Host URL, wo die Softare installiert ist",
+    "regenerateKeyToolTip": "Generiere einen neuen Overlay-Schlüssel für das Overlay. Es müssen alle Overlays aktualisiert werden, damit das Overlay geladen wird!",
     "panels": {
       "js": "JS - Editor",
       "html": "HTML - Editor",
@@ -969,6 +1029,18 @@
         "notFound": "Kein Mod mit dem Namen ${user} gefunden",
         "error": "Fehler beim Entfernen von ${user} als Mod",
         "hint": "Verfügbare Variablen: ${user}, ${server}"
+      },
+      "addAlias": {
+        "success": "Alias ${alias} erfolgreich zum Befehl ${command} hinzugefügt",
+        "alreadyExists": "Alias ${alias} existiert bereits für den Befehl ${command}",
+        "error": "Fehler beim Hinzufügen des Alias ${alias} zum Befehl ${command}",
+        "hint": "Verfügbare Variablen: ${alias}, ${command}"
+      },
+      "removeAlias": {
+        "success": "Alias ${alias} erfolgreich vom Befehl ${command} entfernt",
+        "notFound": "Kein Alias mit dem Namen ${alias} gefunden",
+        "error": "Fehler beim Entfernen des Alias ${alias}",
+        "hint": "Verfügbare Variablen: ${alias}, ${command}"
       }
     }
   }

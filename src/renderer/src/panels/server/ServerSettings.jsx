@@ -6,17 +6,19 @@ import SrtLiveServerElement from './components/SrtLiveServerElement';
 import CollapsibleCard from '../../components/functional/CollapsibleCard.jsx';
 import BelaboxElement from './components/BelaboxElement.jsx';
 import { useTranslation } from 'react-i18next';
+import NginxRtmpElement from './components/NginxRtmpElement.jsx';
 
 const isDev = import.meta.env.DEV;
 
 const ServerSettings = () => {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   const SERVER_TYPES = [
-  { label: t('server.select.options.srtLiveServer'), value: 'srt-live-server', isDev: false },
-  { label: t('server.select.options.openIrl'), value: 'openirl', isDev: false },
-  { label: t('server.select.options.belabox'), value: 'belabox', isDev: false },
-];
+    { label: t('server.select.options.srtLiveServer'), value: 'srt-live-server', isDev: false },
+    { label: t('server.select.options.openIrl'), value: 'openirl', isDev: false },
+    { label: t('server.select.options.belabox'), value: 'belabox', isDev: false },
+    { label: t('server.select.options.nginxRtmp'), value: 'nginx-rtmp', isDev: false }
+  ];
 
   const { serverConfig, updateServerConfig } = useServerConfigStore();
 
@@ -48,7 +50,7 @@ const ServerSettings = () => {
       >
         <Box>
           <Typography variant="h5" sx={{ mb: 0.5 }}>
-           {t('server.header')}
+            {t('server.header')}
           </Typography>
           <Typography variant="body2" color="text.secondary">
             {t('server.description')}
@@ -101,6 +103,16 @@ const ServerSettings = () => {
           defaultExpanded={true}
         >
           <BelaboxElement />
+        </CollapsibleCard>
+      )}
+      {serverType === 'nginx-rtmp' && (
+        <CollapsibleCard
+          title={t('server.nginxRtmp.header')}
+          subtitle={t('server.nginxRtmp.description')}
+          collapsible={false}
+          defaultExpanded={true}
+        >
+          <NginxRtmpElement />
         </CollapsibleCard>
       )}
     </Box>

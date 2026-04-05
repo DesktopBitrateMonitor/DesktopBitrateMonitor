@@ -1,10 +1,19 @@
 # First Beta release for testing functionality and get UI/functionality feedback
 
+## v1.0.0 - First full release
 
+- Fix Data display for stats data
+- Implement Nginx-RTMP stats watching and switching
+
+---
 
 ## v0.0.10 - Beta
 
-- Implement moderated App version
+- Fix value overrides when older backups are imported to newer version of the configs
+- Implement a textfield to change the host of the overlay
+- <b>ATTENTION</b>: Older overlay URLs does not connect anymore, setup the source with new URL from the editor
+- Add a key in the overlay url for security
+- Fix for merging new commands or messages with older config files without touch user changed settings
 
 ---
 

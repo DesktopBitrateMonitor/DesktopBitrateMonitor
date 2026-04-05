@@ -29,7 +29,7 @@ export const buildMessages = (locale) => {
       action: 'global',
       event: 'success',
       enabled: true,
-      label:'General Success Message',
+      label: 'General Success Message',
       message: gm('defaults.messages.global.success')
     },
     {
@@ -38,7 +38,7 @@ export const buildMessages = (locale) => {
       action: 'global',
       event: 'error',
       enabled: true,
-      label:'General Error Message',
+      label: 'General Error Message',
       message: gm('defaults.messages.global.error')
     },
     {
@@ -47,7 +47,7 @@ export const buildMessages = (locale) => {
       action: 'startStream',
       event: 'success',
       enabled: true,
-      label:'Stream Started Message',
+      label: 'Stream Started Message',
       message: gm('defaults.messages.startStream.success')
     },
     {
@@ -56,7 +56,7 @@ export const buildMessages = (locale) => {
       action: 'startStream',
       event: 'error',
       enabled: true,
-      label:'Stream Start Error Message',
+      label: 'Stream Start Error Message',
       message: gm('defaults.messages.startStream.error')
     },
     {
@@ -65,7 +65,7 @@ export const buildMessages = (locale) => {
       action: 'stopStream',
       event: 'success',
       enabled: true,
-      label:'Stream Stopped Message',
+      label: 'Stream Stopped Message',
       message: gm('defaults.messages.stopStream.success')
     },
     {
@@ -74,7 +74,7 @@ export const buildMessages = (locale) => {
       action: 'stopStream',
       event: 'error',
       enabled: true,
-      label:'Stream Stop Error Message',
+      label: 'Stream Stop Error Message',
       message: gm('defaults.messages.stopStream.error')
     },
     {
@@ -83,7 +83,7 @@ export const buildMessages = (locale) => {
       action: 'raid',
       event: 'success',
       enabled: true,
-      label:'Raid Success Message',
+      label: 'Raid Success Message',
       message: gm('defaults.messages.raid.success')
     },
     {
@@ -92,7 +92,7 @@ export const buildMessages = (locale) => {
       action: 'raid',
       event: 'error',
       enabled: true,
-      label:'Raid Error Message',
+      label: 'Raid Error Message',
       message: gm('defaults.messages.raid.error')
     },
     {
@@ -101,7 +101,7 @@ export const buildMessages = (locale) => {
       action: 'refreshStream',
       event: 'try',
       enabled: true,
-      label:'Refresh Stream Message',
+      label: 'Refresh Stream Message',
       message: gm('defaults.messages.refreshStream.try')
     },
     {
@@ -110,7 +110,7 @@ export const buildMessages = (locale) => {
       action: 'refreshStream',
       event: 'success',
       enabled: true,
-      label:'Refresh Stream Success Message',
+      label: 'Refresh Stream Success Message',
       message: gm('defaults.messages.refreshStream.success')
     },
     {
@@ -119,7 +119,7 @@ export const buildMessages = (locale) => {
       action: 'refreshStream',
       event: 'error',
       enabled: true,
-      label:'Refresh Stream Error Message',
+      label: 'Refresh Stream Error Message',
       message: gm('defaults.messages.refreshStream.error')
     },
     {
@@ -128,7 +128,7 @@ export const buildMessages = (locale) => {
       action: 'bitrate',
       event: 'success',
       enabled: true,
-      label:'Bitrate Success Message',
+      label: 'Bitrate Success Message',
       message: gm('defaults.messages.bitrate.success')
     },
     {
@@ -137,7 +137,7 @@ export const buildMessages = (locale) => {
       action: 'bitrate',
       event: 'error',
       enabled: true,
-      label:'Bitrate Error Message',
+      label: 'Bitrate Error Message',
       message: gm('defaults.messages.bitrate.error')
     },
     {
@@ -146,7 +146,7 @@ export const buildMessages = (locale) => {
       action: 'switchScene',
       event: 'success',
       enabled: true,
-      label:'Switch Scene Success Message',
+      label: 'Switch Scene Success Message',
       message: gm('defaults.messages.switchScene.success')
     },
     {
@@ -155,7 +155,7 @@ export const buildMessages = (locale) => {
       action: 'switchScene',
       event: 'error',
       enabled: true,
-      label:'Switch Scene Error Message',
+      label: 'Switch Scene Error Message',
       message: gm('defaults.messages.switchScene.error')
     },
     {
@@ -164,7 +164,7 @@ export const buildMessages = (locale) => {
       action: 'setTrigger',
       event: 'success',
       enabled: true,
-      label:'Set Trigger Success Message',
+      label: 'Set Trigger Success Message',
       message: gm('defaults.messages.setTrigger.success')
     },
     {
@@ -173,7 +173,7 @@ export const buildMessages = (locale) => {
       action: 'setTrigger',
       event: 'error',
       enabled: true,
-      label:'Set Trigger Error Message',
+      label: 'Set Trigger Error Message',
       message: gm('defaults.messages.setTrigger.error')
     },
     {
@@ -182,7 +182,7 @@ export const buildMessages = (locale) => {
       action: 'setRTrigger',
       event: 'success',
       enabled: true,
-      label:'Set RTrigger Success Message',
+      label: 'Set RTrigger Success Message',
       message: gm('defaults.messages.setRTrigger.success')
     },
     {
@@ -191,7 +191,7 @@ export const buildMessages = (locale) => {
       action: 'setRTrigger',
       event: 'error',
       enabled: true,
-      label:'Set RTrigger Error Message',
+      label: 'Set RTrigger Error Message',
       message: gm('defaults.messages.setRTrigger.error')
     },
     {
@@ -200,7 +200,7 @@ export const buildMessages = (locale) => {
       action: 'addAdmin',
       event: 'success',
       enabled: true,
-      label:'Add Admin Success Message',
+      label: 'Add Admin Success Message',
       message: gm('defaults.messages.addAdmin.success')
     },
     {
@@ -209,7 +209,7 @@ export const buildMessages = (locale) => {
       action: 'addAdmin',
       event: 'error',
       enabled: true,
-      label:'Add Admin Error Message',
+      label: 'Add Admin Error Message',
       message: gm('defaults.messages.addAdmin.error')
     },
     {
@@ -218,7 +218,7 @@ export const buildMessages = (locale) => {
       action: 'addAdmin',
       event: 'alreadyAdmin',
       enabled: true,
-      label:'Add Admin Already Admin Message',
+      label: 'Add Admin Already Admin Message',
       message: gm('defaults.messages.addAdmin.alreadyAdmin')
     },
     {
@@ -227,7 +227,7 @@ export const buildMessages = (locale) => {
       action: 'removeAdmin',
       event: 'success',
       enabled: true,
-      label:'Remove Admin Success Message',
+      label: 'Remove Admin Success Message',
       message: gm('defaults.messages.removeAdmin.success')
     },
     {
@@ -236,7 +236,7 @@ export const buildMessages = (locale) => {
       action: 'removeAdmin',
       event: 'error',
       enabled: true,
-      label:'Remove Admin Error Message',
+      label: 'Remove Admin Error Message',
       message: gm('defaults.messages.removeAdmin.error')
     },
     {
@@ -245,7 +245,7 @@ export const buildMessages = (locale) => {
       action: 'removeAdmin',
       event: 'notFound',
       enabled: true,
-      label:'Remove Admin Not Found Message',
+      label: 'Remove Admin Not Found Message',
       message: gm('defaults.messages.removeAdmin.notFound')
     },
     {
@@ -254,7 +254,7 @@ export const buildMessages = (locale) => {
       action: 'addMod',
       event: 'success',
       enabled: true,
-      label:'Add Mod Success Message',
+      label: 'Add Mod Success Message',
       message: gm('defaults.messages.addMod.success')
     },
     {
@@ -263,7 +263,7 @@ export const buildMessages = (locale) => {
       action: 'addMod',
       event: 'error',
       enabled: true,
-      label:'Add Mod Error Message',
+      label: 'Add Mod Error Message',
       message: gm('defaults.messages.addMod.error')
     },
     {
@@ -272,7 +272,7 @@ export const buildMessages = (locale) => {
       action: 'addMod',
       event: 'alreadyMod',
       enabled: true,
-      label:'Add Mod Already Mod Message',
+      label: 'Add Mod Already Mod Message',
       message: gm('defaults.messages.addMod.alreadyMod')
     },
     {
@@ -281,7 +281,7 @@ export const buildMessages = (locale) => {
       action: 'removeMod',
       event: 'success',
       enabled: true,
-      label:'Remove Mod Success Message',
+      label: 'Remove Mod Success Message',
       message: gm('defaults.messages.removeMod.success')
     },
     {
@@ -290,8 +290,62 @@ export const buildMessages = (locale) => {
       action: 'removeMod',
       event: 'notFound',
       enabled: true,
-      label:'Remove Mod Not Found Message',
+      label: 'Remove Mod Not Found Message',
       message: gm('defaults.messages.removeMod.notFound')
+    },
+    {
+      id: generateId(),
+      group: 'user',
+      action: 'addAlias',
+      event: 'success',
+      enabled: true,
+      label: 'Add Alias Success Message',
+      message: gm('defaults.messages.addAlias.success')
+    },
+    {
+      id: generateId(),
+      group: 'user',
+      action: 'addAlias',
+      event: 'alreadyExists',
+      enabled: true,
+      label: 'Add Alias Already Exists Message',
+      message: gm('defaults.messages.addAlias.alreadyExists')
+    },
+    {
+      id: generateId(),
+      group: 'user',
+      action: 'addAlias',
+      event: 'error',
+      enabled: true,
+      label: 'Add Alias Error Message',
+      message: gm('defaults.messages.addAlias.error')
+    },
+    {
+      id: generateId(),
+      group: 'user',
+      action: 'removeAlias',
+      event: 'success',
+      enabled: true,
+      label: 'Remove Alias Success Message',
+      message: gm('defaults.messages.removeAlias.success')
+    },
+    {
+      id: generateId(),
+      group: 'user',
+      action: 'removeAlias',
+      event: 'notFound',
+      enabled: true,
+      label: 'Remove Alias Not Found Message',
+      message: gm('defaults.messages.removeAlias.notFound')
+    },
+    {
+      id: generateId(),
+      group: 'user',
+      action: 'removeAlias',
+      event: 'error',
+      enabled: true,
+      label: 'Remove Alias Error Message',
+      message: gm('defaults.messages.removeAlias.error')
     }
   ];
 };

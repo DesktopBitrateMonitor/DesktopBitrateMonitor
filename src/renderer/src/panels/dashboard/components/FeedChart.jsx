@@ -7,6 +7,7 @@ import TimelineRoundedIcon from '@mui/icons-material/TimelineRounded';
 import ScheduleRoundedIcon from '@mui/icons-material/ScheduleRounded';
 import AllInclusiveRoundedIcon from '@mui/icons-material/AllInclusiveRounded';
 import { useStreamStats } from '../../../contexts/StreamStatsContext.jsx';
+import { useServerConfigStore } from '../../../contexts/DataContext.jsx';
 import { useTranslation } from 'react-i18next';
 
 const isDev = import.meta.env.DEV;
@@ -17,21 +18,30 @@ const FeedChart = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const { stats, totalUptime } = useStreamStats();
-  // const { broadcastState } = useConnectionStates();
+  const { serverConfig } = useServerConfigStore();
   const [history, setHistory] = useState([]);
   const [startTs, setStartTs] = useState(null);
   const [maxY, setMaxY] = useState(0);
 
+  const serverType = serverConfig.currentType;
+
   useEffect(() => {
+    if (!startTs) {
+      setStartTs(Date.now());
+      return;
+    }
+  }, [startTs]);
+
+  useEffect(() => {
+    if (!startTs) return;
+
     setHistory((prev) => {
-      const now = Date.now();
-      if (!startTs) setStartTs(now);
       const next = [...prev, { bitrate: stats.bitrate || 0, rtt: stats.rtt || 0, ts: Date.now() }];
 
       return next.length > MAX_POINTS ? next.slice(next.length - MAX_POINTS) : next;
     });
     setMaxY((prev) => Math.max(prev, stats.bitrate || 0));
-  }, [stats.bitrate, stats.rtt, startTs]);
+  }, [stats.bitrate, stats.rtt]);
 
   const chartData = useMemo(() => {
     if (!history.length || !startTs) return [];
@@ -58,14 +68,16 @@ const FeedChart = () => {
             </Typography>
           </Stack>
         </Tooltip>
-        <Tooltip title={t('dashboard.feedChart.speedToolTip')} arrow>
-          <Stack direction="row" spacing={0.75} alignItems="center">
-            <SpeedRoundedIcon fontSize="small" color="secondary" />
-            <Typography variant="body2" sx={{ fontWeight: 600 }}>
-              {`${stats.rtt.toFixed(2) ?? 0} ms`}
-            </Typography>
-          </Stack>
-        </Tooltip>
+        {serverType !== 'nginx-rtmp' && (
+          <Tooltip title={t('dashboard.feedChart.speedToolTip')} arrow>
+            <Stack direction="row" spacing={0.75} alignItems="center">
+              <SpeedRoundedIcon fontSize="small" color="secondary" />
+              <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                {`${stats.rtt.toFixed(2) ?? 0} ms`}
+              </Typography>
+            </Stack>
+          </Tooltip>
+        )}
 
         <Tooltip title={t('dashboard.feedChart.uptimeToolTip') || 'Stream uptime'} arrow>
           <Stack direction="row" spacing={0.75} alignItems="center">

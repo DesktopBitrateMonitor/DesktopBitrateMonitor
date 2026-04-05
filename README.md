@@ -148,6 +148,159 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
     </ul>
   </ol>
 
+- All commands for chat control
+  <table>
+    <thead>
+      <tr>
+        <th>COMMAND ACTION</th>
+        <th>DESCRIPTION</th>
+        <th>DEFAULT ALIASES</th>
+        <th>DEFAULT MIN ROLE</th>
+        <th>ARGUMENTS </br> (required)</th>
+        <th>EXAMPLE</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>start_stream</td>
+        <td>Starts the stream</td>
+        <td>!start</td>
+        <td>Broadcaster</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>stop_stream</td>
+        <td>Stops the stream</td>
+        <td>!stop</td>
+        <td>Broadcaster</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>add_admin</td>
+        <td>Adds a new admin</td>
+        <td>!addadmin</td>
+        <td>Broadcaster</td>
+        <td>userName</td>
+        <td>!addadmin yinks87</td>
+      </tr>
+      <tr>
+        <td>remove_admin</td>
+        <td>Removes a existing admin</td>
+        <td>!removeadmin</td>
+        <td>Broadcaster</td>
+        <td>userName</td>
+        <td>!removeadmin yinks87</td>
+      </tr>
+      <tr>
+        <td>add_mod</td>
+        <td>Adds a new moderator</td>
+        <td>!addmod</td>
+        <td>Admin</td>
+        <td>userName</td>
+        <td>!addmod yinks87</td>
+      </tr>
+      <tr>
+        <td>remove_mod</td>
+        <td>Removes a moderator</td>
+        <td>!removemod</td>
+        <td>Admin</td>
+        <td>userName</td>
+        <td>!removemod yinks87</td>
+      </tr>
+      <tr>
+        <td>switch_to_live</td>
+        <td>Switch to Live Scene</td>
+        <td>!live</td>
+        <td>Admin</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>switch_to_low</td>
+        <td>Switch to Low Scene</td>
+        <td>!low</td>
+        <td>Admin</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>switch_to_offline</td>
+        <td>Switch to Offline Scene</td>
+        <td>!offline</td>
+        <td>Admin</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>switch_to_privacy</td>
+        <td>Switch to Privacy Scene</td>
+        <td>!privacy</td>
+        <td>Admin</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>switch_to_scene</td>
+        <td>Switch Scene</td>
+        <td>!switch, !ss</td>
+        <td>Moderator</td>
+        <td>sceneName</td>
+        <td>!switch low</td>
+      </tr>
+      <tr>
+        <td>refresh_stream</td>
+        <td>Refreshes the stream</td>
+        <td>!refresh, !fix</td>
+        <td>Moderator</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>set_trigger</td>
+        <td>Set the trigger to low threshold</td>
+        <td>!trigger</td>
+        <td>Moderator</td>
+        <td>value</td>
+        <td>!trigger 500</td>
+      </tr>
+      <tr>
+        <td>set_rTrigger</td>
+        <td>Set the trigger to live threshold</td>
+        <td>!rtrigger</td>
+        <td>Moderator</td>
+        <td>value</td>
+        <td>!rtrigger 1200</td>
+      </tr>
+      <tr>
+        <td>add_alias</td>
+        <td>Set a alias for a command</td>
+        <td>!addalias</td>
+        <td>Moderator</td>
+        <td>command, alias</td>
+        <td>!addalias live !L</td>
+      </tr>
+      <tr>
+        <td>remove_alias</td>
+        <td>Removes a alias</td>
+        <td>!removealias</td>
+        <td>Moderator</td>
+        <td>alias</td>
+        <td>!removealias !L</td>
+      </tr>
+      <tr>
+        <td>bitrate</td>
+        <td>Returns the bitrate message</td>
+        <td>!bitrate, !b</td>
+        <td>User</td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+
+  </table>
+
 ##
 
 ### Chat Messages

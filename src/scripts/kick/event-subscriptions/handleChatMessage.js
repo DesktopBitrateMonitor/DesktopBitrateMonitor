@@ -2,7 +2,6 @@ import { injectDefaults } from '../../store/defaults';
 import { hasPermission } from '../lib';
 import { kickMessageService } from '../messages-service/chat-messages';
 import { commandActions } from '../../shared-chat-functions/command-actions';
-import { getCurrentProgramScene } from '../../streaming-software/obs-api';
 import { ifCurrentSceneIsPrivacyScene } from '../../shared-chat-functions/lib';
 
 const { commandsConfig, kickAccountsConfig, switcherConfig, serverConfig } = injectDefaults();
@@ -12,6 +11,13 @@ export async function handleChatMessage(rawMessage) {
   const args = message.split(' ');
   const commandName = args[0].toLowerCase();
   const commandArg = args.slice(1).join(' ').toLowerCase();
+  const aliasCommand = args[1]?.toLowerCase().startsWith('!')
+    ? args[1].toLowerCase().slice(1)
+    : args[1]?.toLowerCase();
+  const alias = args[2]?.toLowerCase();
+  const aliasToRemove = args[1]?.toLowerCase();
+
+  const commandArgs = { commandArg, aliasCommand, alias, aliasToRemove };
 
   const commandsArray = commandsConfig.get('commands').map((cmd) => ({ ...cmd }));
   const allAliases = commandsArray.map((cmd) => cmd.cmd).flat();
@@ -52,7 +58,8 @@ export async function handleChatMessage(rawMessage) {
       messageService: kickMessageService,
       server: serverName,
       switcherConfig,
+      commandsConfig,
       accountConfig: kickAccountsConfig
-    })[commandObject.action](commandArg);
+    })[commandObject.action](commandArgs);
   }
 }

@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   IconButton,
+  InputAdornment,
   Stack,
   Switch,
   Tab,
@@ -15,8 +16,14 @@ import { useTranslation } from 'react-i18next';
 import { useOverlayConfigStore } from '../../contexts/DataContext';
 import { useAlert } from '../../contexts/AlertContext';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import SaveIcon from '@mui/icons-material/Save';
 import EasyPanel from './panels/EasyPanel';
 import ExpertPanel from './panels/ExpertPanel';
+import InputEndAdornment from '../../components/feedback/InputEndAdornment';
+import generateId from '../../../../scripts/lib/id-generator';
+import SyncIcon from '@mui/icons-material/Sync';
+
+const PORT = import.meta.env.VITE_SERVERPORT;
 
 const OverlayEditor = () => {
   const { t } = useTranslation();
@@ -25,12 +32,22 @@ const OverlayEditor = () => {
 
   const [workingConfig, setWorkingConfig] = useState({ html: '', css: '', js: '' });
   const [expertMode, setExpertMode] = useState(false);
-  const [overlayStatsUrl, setOverlayStatsUrl] = useState('');
+  // const [overlayStatsUrl, setOverlayStatsUrl] = useState('');
+  const [overlayData, setOverlayData] = useState({
+    host: overlayConfig.host,
+    overlayKey: overlayConfig.overlayKey
+  });
+
+  const [dirtyStates, setDirtyStates] = useState({ host: false });
   const hasLoadedInitialOverlay = useRef(false);
 
   useEffect(() => {
     setExpertMode(overlayConfig.expertMode);
-    setOverlayStatsUrl(overlayConfig.statsOverlayUrl);
+    setOverlayData((prev) => ({
+      ...prev,
+      host: overlayConfig.host,
+      overlayKey: overlayConfig.overlayKey
+    }));
   }, [overlayConfig]);
 
   useEffect(() => {
@@ -85,16 +102,19 @@ const OverlayEditor = () => {
     showAlert({ message: t('alerts.saveSuccess'), severity: 'success' });
   };
 
-  const handleCopyStatsUrl = useCallback(() => {
-    navigator.clipboard.writeText(overlayStatsUrl).then(
-      () => {
-        showAlert({ message: t('alerts.copySuccess'), severity: 'success' });
-      },
-      () => {
-        showAlert({ message: t('alerts.copyError'), severity: 'error' });
-      }
-    );
-  }, [overlayStatsUrl, showAlert, t]);
+  const handleCopyStatsUrl = useCallback(
+    (value) => {
+      navigator.clipboard.writeText(value).then(
+        () => {
+          showAlert({ message: t('alerts.copySuccess'), severity: 'success' });
+        },
+        () => {
+          showAlert({ message: t('alerts.copyError'), severity: 'error' });
+        }
+      );
+    },
+    [showAlert, t]
+  );
 
   const handleSwitchChange = useCallback(
     async (key, value) => {
@@ -129,8 +149,74 @@ const OverlayEditor = () => {
     [updateOverlayConfig, overlayConfig, showAlert, t]
   );
 
-  const overlayUrl =
-    'http://localhost:9898/overlay/stats?layer-name=StreamStats&layer-width=400&layer-height=200';
+  const [oldDataDraft, setOldDataDraft] = useState({
+    host: overlayConfig.host,
+    overlayKey: overlayConfig.overlayKey,
+    publisher: overlayConfig.publisher
+  });
+
+  const handleInputChange = async (name, value) => {
+    setOverlayData((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+
+    if (oldDataDraft[name] !== value) {
+      setDirtyStates((prev) => ({
+        ...prev,
+        [name]: true
+      }));
+    } else {
+      setDirtyStates((prev) => ({
+        ...prev,
+        [name]: false
+      }));
+    }
+    setOverlayData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleRegenerateKey = async () => {
+    const newKey = generateId(32);
+    const res = await window.storeApi.set('overlay-config', 'overlayKey', newKey);
+    if (res.success) {
+      showAlert({ message: t('alerts.saveSuccess'), severity: 'success' });
+      setOverlayData((prev) => ({
+        ...prev,
+        overlayKey: newKey
+      }));
+    } else {
+      showAlert({ message: t('alerts.saveError'), severity: 'error' });
+    }
+  };
+
+  const saveField = async (name, value) => {
+    const res = await window.storeApi.set('overlay-config', name, value);
+
+    if (res.success) {
+      showAlert({ message: t('alerts.saveSuccess'), severity: 'success' });
+
+      updateOverlayConfig((prev) => ({
+        ...(prev || {}),
+        [name]: value
+      }));
+      setOldDataDraft((prev) => ({
+        ...prev,
+        [name]: value
+      }));
+      setDirtyStates((prev) => ({
+        ...prev,
+        [name]: false
+      }));
+    } else {
+      showAlert({ message: t('alerts.saveError'), severity: 'error' });
+    }
+  };
+
+  const buildOverlayUrl = () => {
+    const host = overlayData.host;
+    const overlayKey = overlayData.overlayKey;
+    return `${host}:${PORT}/overlay/stats?key=${overlayKey}&layer-name=StreamStats&layer-width=400&layer-height=200`;
+  };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, flex: 1, minHeight: 0 }}>
@@ -180,17 +266,17 @@ const OverlayEditor = () => {
           minHeight: 0
         }}
       >
-        <Stack sx={{ mb: 2 }} direction="row" alignItems="center" spacing={2}>
+        <Stack sx={{ mb: 2 }} direction={'row'} alignItems="center" spacing={2}>
           <Tooltip title={t('overlayEditor.easy.dragToolTip')} arrow placement="top">
             <Button
               draggable
               onClick={(e) => e.preventDefault()}
               size="medium"
-              sx={{ cursor: 'grabbing', whiteSpace: 'nowrap' }}
+              sx={{ minWidth: 100, cursor: 'grabbing', whiteSpace: 'nowrap' }}
               onDragStart={(e) => {
                 try {
-                  e.dataTransfer.setData('text/uri-list', overlayUrl);
-                  e.dataTransfer.setData('text/plain', overlayUrl);
+                  e.dataTransfer.setData('text/uri-list', buildOverlayUrl());
+                  e.dataTransfer.setData('text/plain', buildOverlayUrl());
                 } catch (error) {
                   //void
                 }
@@ -200,27 +286,72 @@ const OverlayEditor = () => {
             </Button>
           </Tooltip>
 
+          <Tooltip title={t('overlayEditor.hostToolTip')} arrow placement="top">
+            <TextField
+              value={overlayData.host}
+              name="host"
+              label={t('overlayEditor.hostLabel')}
+              placeholder={t('overlayEditor.hostLabel')}
+              sx={{ minWidth: 200 }}
+              onChange={(e) => handleInputChange('host', e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  saveField('host', overlayData.host);
+                }
+              }}
+              slotProps={{
+                input: {
+                  endAdornment: dirtyStates.host && (
+                    <InputEndAdornment
+                      title={t('app.global.inputAdornment.add')}
+                      placement="top-start"
+                      open={Boolean(dirtyStates.host)}
+                      color="success"
+                      icon={<SaveIcon color="success" />}
+                      handleClick={(e) => {
+                        saveField('host', overlayData.host);
+                      }}
+                    />
+                  )
+                }
+              }}
+            />
+          </Tooltip>
+
           <TextField
             label={t('overlayEditor.statsOverlayUrl')}
-            value={overlayStatsUrl}
+            value={`${overlayData.host === '' ? 'http://localhost' : overlayData.host}:${PORT}/overlay/stats?key=${overlayData.overlayKey}`}
             fullWidth
             sx={{
               '& .MuiInputBase-root': { cursor: 'pointer' },
               '& .MuiInputBase-input': { cursor: 'pointer' }
             }}
-            onClick={handleCopyStatsUrl}
+            onClick={(e) => handleCopyStatsUrl(e.target.value)}
             slotProps={{
               input: {
                 readOnly: true,
                 endAdornment: (
                   <>
-                    <ContentCopyIcon fontSize="small" />
+                    <ContentCopyIcon
+                      fontSize="small"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const value = `${overlayData.host === '' ? 'http://localhost' : overlayData.host}:${PORT}/overlay/stats?key=${overlayData.overlayKey}&layer-name=StreamStats&layer-width=400&layer-height=200`;
+                        handleCopyStatsUrl(value);
+                      }}
+                    />
                   </>
                 )
               }
             }}
           />
+          <Tooltip title={t('overlayEditor.regenerateKeyToolTip')} arrow placement="top">
+            <IconButton onClick={() => handleRegenerateKey()}>
+              <SyncIcon />
+            </IconButton>
+          </Tooltip>
         </Stack>
+
         {expertMode ? (
           <ExpertPanel workingConfig={workingConfig} setWorkingConfig={setWorkingConfig} />
         ) : (

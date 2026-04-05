@@ -65,6 +65,7 @@ export async function switcherService(data, mainWindow = null) {
   if (!data || !data.data) return;
 
   const { bitrate, speed, uptime } = data.data;
+
   const switcherSettings = switcherConfig.get('');
   const serverSettings = serverConfig.get('');
   const serverType = serverSettings.currentType;
@@ -229,7 +230,6 @@ export async function switcherService(data, mainWindow = null) {
 
           // Send chat message on scene switch if enabled
           if (platform === 'twitch') {
-            console.log(serverName);
             await twitchMessageService({
               action: 'switchScene',
               event: 'success',

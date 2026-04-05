@@ -2,8 +2,12 @@ import express from 'express';
 import path from 'path';
 import os from 'os';
 import { app } from 'electron';
+import { injectDefaults } from '../store/defaults';
+
+const isDev = import.meta.env.DEV;
 
 export const overlayRouter = express.Router();
+const { overlayConfig } = injectDefaults();
 
 const PORT = import.meta.env.VITE_SERVERPORT;
 
@@ -20,6 +24,19 @@ const folderPath = path.join(baseDir, app.name);
 export const overlayFilePath = path.join(folderPath, fileName);
 
 overlayRouter.get('/overlay/stats', (req, res) => {
+  const overlayKey = overlayConfig.get('overlayKey');
+  const { key } = req.query;
+
+  if (!key) {
+    console.warn('Unauthorized overlay access attempt with missing key');
+    return res.status(401).send('Key is required');
+  }
+
+  if (key !== overlayKey) {
+    console.warn(`Unauthorized overlay access attempt with key: ${key}`);
+    return res.status(401).send('Unauthorized');
+  }
+
   res.send(`
     <!DOCTYPE html>
     <html>
@@ -35,7 +52,7 @@ overlayRouter.get('/overlay/stats', (req, res) => {
           html, body {
             margin: 0;
             padding: 0;
-            background: transparent;
+            ${isDev ? 'background: #555;' : 'background: transparent;'}
             overflow: hidden;
           }
         </style>
@@ -173,7 +190,7 @@ overlayRouter.get('/overlay/stats', (req, res) => {
           };
 
           const connectWS = () => {
-            ws = new WebSocket("ws://localhost:${PORT}");
+            ws = new WebSocket("ws://" + window.location.hostname + ":${PORT}");
 
             ws.onopen = () => {
               retryAttempts = 0;

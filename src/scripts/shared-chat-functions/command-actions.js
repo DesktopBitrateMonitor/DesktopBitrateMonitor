@@ -25,7 +25,8 @@ export const commandActions = ({
   server,
   messageService,
   switcherConfig,
-  accountConfig
+  accountConfig,
+  commandsConfig
 }) => ({
   startStream: async () => {
     const res = await startStream();
@@ -57,7 +58,8 @@ export const commandActions = ({
       Logger.error(`Failed to stop stream: ${res.error}`);
     }
   },
-  addAdmin: async (user) => {
+  addAdmin: async (argument) => {
+    const user = argument.commandArg;
     if (typeof user !== 'string' || user.trim().replace(/\s/g, '') === '' || !isNaN(user)) {
       await messageService({
         action: 'addAdmin',
@@ -104,7 +106,8 @@ export const commandActions = ({
     await messageService({ action: 'addAdmin', event: 'success', variables: { user, server } });
     return { success: true, data: userObj };
   },
-  removeAdmin: async (user) => {
+  removeAdmin: async (argument) => {
+    const user = argument.commandArg;
     if (typeof user !== 'string' || user.trim().replace(/\s/g, '') === '' || !isNaN(user)) {
       await messageService({
         action: 'removeAdmin',
@@ -120,7 +123,11 @@ export const commandActions = ({
       (admin) => admin.login.toLowerCase() === user.toLowerCase()
     );
     if (userIndex === -1) {
-      await messageService({ action: 'removeAdmin', event: 'notFound', variables: { user, server } });
+      await messageService({
+        action: 'removeAdmin',
+        event: 'notFound',
+        variables: { user, server }
+      });
       Logger.error(`${user} is not an admin.`);
       return;
     }
@@ -140,7 +147,8 @@ export const commandActions = ({
     });
     return { success: true, data: removedUser };
   },
-  addMod: async (user) => {
+  addMod: async (argument) => {
+    const user = argument.commandArg;
     if (typeof user !== 'string' || user.trim().replace(/\s/g, '') === '' || !isNaN(user)) {
       await messageService({
         action: 'addMod',
@@ -155,7 +163,11 @@ export const commandActions = ({
 
     for (const mod of modUsers) {
       if (mod.login === user.toLowerCase()) {
-        await messageService({ action: 'addMod', event: 'alreadyMod', variables: { user, server } });
+        await messageService({
+          action: 'addMod',
+          event: 'alreadyMod',
+          variables: { user, server }
+        });
         Logger.error(`${user} is already a mod.`);
         return;
       }
@@ -182,7 +194,8 @@ export const commandActions = ({
     await messageService({ action: 'addMod', event: 'success', variables: { user, server } });
     return { success: true, data: userObj };
   },
-  removeMod: async (user) => {
+  removeMod: async (argument) => {
+    const user = argument.commandArg;
     if (typeof user !== 'string' || user.trim().replace(/\s/g, '') === '' || !isNaN(user)) {
       await messageService({
         action: 'removeMod',
@@ -221,7 +234,11 @@ export const commandActions = ({
     const res = await setCurrentProgramScene(scene);
     if (res.success) {
       console.log(scene);
-      await messageService({ action: 'switchScene', event: 'success', variables: { scene, server } });
+      await messageService({
+        action: 'switchScene',
+        event: 'success',
+        variables: { scene, server }
+      });
       Logger.log('Switched to low scene.');
     } else {
       await messageService({ action: 'switchScene', event: 'error', variables: { scene, server } });
@@ -232,7 +249,11 @@ export const commandActions = ({
     const scene = switcherConfig.get('sceneLive');
     const res = await setCurrentProgramScene(scene);
     if (res.success) {
-      await messageService({ action: 'switchScene', event: 'success', variables: { scene, server } });
+      await messageService({
+        action: 'switchScene',
+        event: 'success',
+        variables: { scene, server }
+      });
     } else {
       await messageService({ action: 'switchScene', event: 'error', variables: { scene, server } });
       Logger.error(`Failed to switch to live scene: ${res.error}`);
@@ -242,7 +263,11 @@ export const commandActions = ({
     const scene = switcherConfig.get('sceneOffline');
     const res = await setCurrentProgramScene(scene);
     if (res.success) {
-      await messageService({ action: 'switchScene', event: 'success', variables: { scene, server } });
+      await messageService({
+        action: 'switchScene',
+        event: 'success',
+        variables: { scene, server }
+      });
       Logger.log('Switched to offline scene.');
     } else {
       await messageService({ action: 'switchScene', event: 'error', variables: { scene, server } });
@@ -254,14 +279,19 @@ export const commandActions = ({
     const res = await setCurrentProgramScene(scene);
 
     if (res.success) {
-      await messageService({ action: 'switchScene', event: 'success', variables: { scene, server } });
+      await messageService({
+        action: 'switchScene',
+        event: 'success',
+        variables: { scene, server }
+      });
       Logger.log('Switched to privacy scene.');
     } else {
       await messageService({ action: 'switchScene', event: 'error', variables: { scene, server } });
       Logger.error(`Failed to switch to privacy scene: ${res.error}`);
     }
   },
-  switchScene: async (sceneName) => {
+  switchScene: async (argument) => {
+    const sceneName = argument.commandArg;
     if (typeof sceneName !== 'string' || sceneName.trim().replace(/\s/g, '') === '') {
       await messageService({
         action: 'switchScene',
@@ -302,7 +332,8 @@ export const commandActions = ({
       Logger.error(`Failed to refresh media sources: ${res.error}`);
     }
   },
-  setTrigger: async (triggerValue) => {
+  setTrigger: async (argument) => {
+    let triggerValue = argument.commandArg;
     triggerValue = Number(triggerValue);
 
     if (typeof triggerValue !== 'number' || isNaN(triggerValue)) {
@@ -322,7 +353,8 @@ export const commandActions = ({
       variables: { trigger: triggerValue, server }
     });
   },
-  setRTrigger: async (rTriggerValue) => {
+  setRTrigger: async (argument) => {
+    let rTriggerValue = argument.commandArg;
     rTriggerValue = Number(rTriggerValue);
 
     if (typeof rTriggerValue !== 'number' || isNaN(rTriggerValue)) {
@@ -348,6 +380,130 @@ export const commandActions = ({
       action: 'bitrate',
       event: 'success',
       variables: { bitrate: stats.bitrate, speed: stats.rtt, server }
+    });
+  },
+  addAlias: async (argument) => {
+    const command = argument.aliasCommand;
+    const alias = argument.alias;
+
+    const commandsData = commandsConfig.get('commands') || [];
+    const allCommands = commandsData.map((cmd) => cmd.action.toLowerCase());
+    const allAliases = commandsData.map((cmd) => cmd.cmd.map((c) => c.toLowerCase())).flat();
+
+    // check if command or alias is empty or undefined
+    if (!command || !alias) {
+      await messageService({
+        action: 'addAlias',
+        event: 'error',
+        variables: { command: command || 'undefined', alias: alias || 'undefined', server }
+      });
+      Logger.error(
+        `Command or alias is undefined for addAlias command. Command: "${command}", Alias: "${alias}"`
+      );
+      return;
+    }
+
+    // Check if the command exists
+    if (!allCommands.includes(command.toLowerCase())) {
+      await messageService({
+        action: 'addAlias',
+        event: 'commandNotFound',
+        variables: { command, alias, server }
+      });
+      Logger.error(`Command: "${command}" not found for addAlias command.`);
+      return;
+    }
+
+    // Check if the alias already exists as an alias for an command
+    if (allAliases.includes(alias.toLowerCase())) {
+      const existingCommand = commandsData.find((cmd) =>
+        cmd.cmd.map((c) => c.toLowerCase()).includes(alias.toLowerCase())
+      );
+      await messageService({
+        action: 'addAlias',
+        event: 'alreadyExists',
+        variables: { command: existingCommand.action, alias, server }
+      });
+
+      Logger.error(`Alias: "${alias}" already exists for command: "${existingCommand.action}"`);
+      return;
+    }
+
+    const commandToAddAlias = commandsData.find(
+      (cmd) => cmd.action.toLowerCase() === command.toLowerCase()
+    );
+    if (!commandToAddAlias) {
+      await messageService({
+        action: 'addAlias',
+        event: 'error',
+        variables: { command, alias, server }
+      });
+      Logger.error(`Command: "${command}" not found for addAlias command.`);
+      return;
+    }
+
+    commandToAddAlias.cmd.push(alias);
+    commandsConfig.set('commands', commandsData);
+
+    await messageService({
+      action: 'addAlias',
+      event: 'success',
+      variables: { command, alias, server }
+    });
+  },
+  removeAlias: async (argument) => {
+    const alias = argument.aliasToRemove;
+    const commandsData = commandsConfig.get('commands') || [];
+    const allAliases = commandsData.map((cmd) => cmd.cmd.map((c) => c.toLowerCase())).flat();
+
+    console.log(argument);
+    console.log(alias);
+
+    // check if alias is empty or undefined
+    if (!alias) {
+      await messageService({
+        action: 'removeAlias',
+        event: 'error',
+        variables: { alias: 'undefined', server }
+      });
+      Logger.error(`Alias is undefined`);
+      return;
+    }
+
+    // Check if the alias exists
+    if (!allAliases.includes(alias.toLowerCase())) {
+      await messageService({
+        action: 'removeAlias',
+        event: 'notFound',
+        variables: { alias, server }
+      });
+      Logger.error(`Alias: "${alias}" not found in commands`);
+      return;
+    }
+
+    const commandToAddAlias = commandsData.find((cmd) =>
+      cmd.cmd.map((c) => c.toLowerCase()).includes(alias.toLowerCase())
+    );
+
+    if (!commandToAddAlias) {
+      await messageService({
+        action: 'removeAlias',
+        event: 'error',
+        variables: { alias, server }
+      });
+      Logger.error(`No command found with alias: "${alias}"`);
+      return;
+    }
+
+    commandToAddAlias.cmd = commandToAddAlias.cmd.filter(
+      (c) => c.toLowerCase() !== alias.toLowerCase()
+    );
+    commandsConfig.set('commands', commandsData);
+
+    await messageService({
+      action: 'removeAlias',
+      event: 'success',
+      variables: { command: commandToAddAlias.action, alias, server }
     });
   }
 });

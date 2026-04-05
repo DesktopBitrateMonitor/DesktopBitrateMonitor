@@ -35,14 +35,17 @@ export async function startFetchingServerStats(mainWindow = null) {
   const currentType = serverConfig.get('currentType');
   if (currentType === 'openirl') {
     await startFetchingStats(true, 'openirl', mainWindow);
-  } 
-  
+  }
+
   if (currentType === 'srt-live-server') {
     await startFetchingStats(true, 'srt-live-server', mainWindow);
   }
 
-  if(currentType === 'belabox'){
+  if (currentType === 'belabox') {
     await startFetchingStats(true, 'belabox', mainWindow);
+  }
+  if (currentType === 'nginx-rtmp') {
+    await startFetchingStats(true, 'nginx-rtmp', mainWindow);
   }
 
   return { success: true, data: { message: 'Server stats fetching started' }, error: null };

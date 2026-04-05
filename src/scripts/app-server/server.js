@@ -5,6 +5,8 @@ import router from './base-router';
 import { overlayFilePath } from '../overlay/overlay-router';
 import { injectDefaults } from '../store/defaults';
 
+const {overlayConfig} = injectDefaults();
+
 const express = require('express');
 const app = express();
 app.use(express.json());
@@ -27,6 +29,8 @@ function getOverlayData() {
 }
 
 export function broadcastOverlay(data) {
+  const host = overlayConfig.get('host')
+
   const dataString = JSON.stringify(data);
   wss.clients.forEach((client) => {
     if (client.readyState === 1) {

@@ -54,7 +54,8 @@ const ConnectionTile = ({
   const SERVER_NAME_MAP = {
     openirl: t('dashboard.connectionStates.serverNames.openIrl'),
     'srt-live-server': t('dashboard.connectionStates.serverNames.srtLiveServer'),
-    belabox: t('dashboard.connectionStates.serverNames.belabox')
+    belabox: t('dashboard.connectionStates.serverNames.belabox'),
+    'nginx-rtmp': t('dashboard.connectionStates.serverNames.nginxRtmp')
   };
 
   const BROADCAST_SOFTWARE_NAME_MAP = {

@@ -100,9 +100,14 @@ export const DEFAULT_CONNECTION_LISTENERS = [
       api.serverConnected((response = {}) => {
         const success = Boolean(response?.success);
         const publishers = response?.data?.publishers;
-        const publisherKeys =
-          publishers && typeof publishers === 'object' ? Object.keys(publishers) : [];
-
+        const serverType = response?.server ?? 'unknown';
+        let publisherKeys = [];
+        if (serverType !== 'nginx-rtmp') {
+          publisherKeys =
+            publishers && typeof publishers === 'object' ? Object.keys(publishers) : [];
+        } else {
+          publisherKeys.push(response?.publisher);
+        }
         dispatch({
           type: 'server:update',
           payload: {
