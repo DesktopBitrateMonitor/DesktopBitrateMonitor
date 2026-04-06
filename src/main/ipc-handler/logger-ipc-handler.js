@@ -13,8 +13,6 @@ let sessionFeedLoggerKey = null;
 let actionsFeedLogger = null;
 let actionsFeedLoggerKey = null;
 
-
-
 function getSessionFeedLogger({ dir, baseName, format, maxSizeMB }) {
   const normalizedMaxSizeMB = Number(maxSizeMB) || 5;
   const loggerKey = `${dir}|${baseName}|${format}|${normalizedMaxSizeMB}`;
@@ -80,9 +78,9 @@ export async function initializeLoggerIpc(ipcMain) {
     console.log('IPC read-log-file called with:', fullPath);
   });
 
-  ipcMain.handle('open-file-dialog', (event, options) => {
+  ipcMain.handle('open-file-dialog', async (event, options) => {
     try {
-      const res = dialog.showOpenDialog(options);
+      const res = await dialog.showOpenDialog(options);
       return res;
     } catch (error) {
       Logger.error(`Error in open-file-dialog IPC handler: ${error.message}`);
@@ -129,7 +127,7 @@ export async function initializeLoggerIpc(ipcMain) {
       return { success: false, error: error.message };
     }
   });
-  
+
   ipcMain.handle('write-to-actions-log-file', (event, content) => {
     if (!content) return { success: false, message: 'Missing content to write' };
 
@@ -156,6 +154,34 @@ export async function initializeLoggerIpc(ipcMain) {
       return { success: true, message: 'Content written successfully' };
     } catch (error) {
       Logger.error(`Error in write-to-actions-log-file IPC handler: ${error.message}`);
+      return { success: false, error: error.message };
+    }
+  });
+
+  ipcMain.handle('read-session-log-file', async (event, options) => {
+    try {
+      const res = await dialog.showOpenDialog(options);
+
+      if (res.canceled || res.filePaths.length === 0) {
+        return { success: false, message: 'No file selected' };
+      }
+
+      // read .jsonl file and parse each line as JSON
+      const filePath = res.filePaths[0];
+      const fileContent = fs.readFileSync(filePath, 'utf-8');
+      const lines = fileContent.split('\n').filter((line) => line.trim() !== '');
+      const parsedEntries = lines.map((line) => {
+        try {
+          return JSON.parse(line);
+        } catch (err) {
+          Logger.error(`Error parsing line in log file: ${err.message}`);
+          return null;
+        }
+      });
+
+      return { success: true, data: parsedEntries };
+    } catch (error) {
+      Logger.error(`Error in read-session-log-file IPC handler: ${error.message}`);
       return { success: false, error: error.message };
     }
   });

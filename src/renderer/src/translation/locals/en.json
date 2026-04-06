@@ -821,6 +821,21 @@
       "cancelledMessage": "Export cancelled",
       "errorMessage": "Error exporting logs: {{error}}",
       "successMessage": "Logs successfully exported to: {{path}}"
+    },
+    "import":{
+      "header":"Choose a log file to import",
+      "filters":{
+        "name":"Log File"
+      }
+    },
+    "historyWatcher":{
+      "header":"Log Visualization",
+      "description":"Displays the history of a stream's bitrate",
+      "toolTip":"Load a log",
+      "currentLog":{
+        "header":"Current Log",
+        "description": "The data of the current log is displayed here"
+      }
     }
   },
   "appSettings": {

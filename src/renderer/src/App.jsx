@@ -34,6 +34,7 @@ import { useStreamStats } from './contexts/StreamStatsContext';
 import { useConnectionStates } from './contexts/ConnectionStatesContext';
 import { useLogger } from './contexts/LoggerContext';
 import generateId from '../../scripts/lib/id-generator';
+import HistoryWatcher from './panels/history-watcher/HistoryWatcher';
 
 const STATS_PAYLOAD_FLUSH_INTERVAL = 50;
 const ACTIONS_PAYLOAD_FLUSH_INTERVAL = 10;
@@ -175,8 +176,6 @@ function App() {
     }
   }, [status]);
 
-  useEffect(() => {}, []);
-
   return (
     <Container>
       <Router>
@@ -186,6 +185,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />}>
             <Route index element={<Main />} />
             <Route path="logs" element={<LoggingFeed />} />
+            <Route path="history-watcher" element={<HistoryWatcher />} />
 
             {/* ACCOUNT SETTINGS */}
             <Route path="accountssettings" element={<AccountsSettings />}>

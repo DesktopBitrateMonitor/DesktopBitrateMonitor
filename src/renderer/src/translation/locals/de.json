@@ -825,6 +825,21 @@
         "txt": "Textdateien (*.txt)",
         "csv": "CSV-Dateien (*.csv)"
       }
+    },
+    "import":{
+      "header":"Wähle eine Protokolldatei aus",
+      "filters":{
+        "name":"Log Datei"
+      }
+    },
+    "historyWatcher":{
+      "header":"Protokoll Visualisierung",
+      "description":"Zeigt die Historie der Bitrate eines Streams an",
+      "toolTip":"Ein Protokoll laden",
+      "currentLog":{
+        "header":"Aktuelles Protokoll",
+        "description": "Die Daten des aktuellen Protokolls werden hier angezeigt"
+      }
     }
   },
   "appSettings": {

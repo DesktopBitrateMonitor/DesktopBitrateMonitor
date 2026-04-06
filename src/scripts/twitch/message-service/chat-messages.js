@@ -29,10 +29,12 @@ export async function twitchMessageService({ action, event, variables = {} }) {
   const res = await sendChatMessage(access_token, accountType, broadcaster_id, sender_id, message);
 
   if (res.success) {
-    Logger.log('Chat message sent successfully');
+    Logger.log(`Chat message for action: "${action}" and event: "${event}" sent successfully`);
     return { success: true, error: null };
   } else {
-    Logger.error(`Failed to send chat message: ${res.error}`);
+    Logger.error(
+      `Failed to send chat message for action: "${action}" and event: "${event}": ${res.error}`
+    );
     return { success: false, error: res.error };
   }
 }

@@ -1,11 +1,13 @@
 import {
   Box,
   Divider,
+  IconButton,
   ListItemIcon,
   ListItemText,
   ListSubheader,
   Menu,
   MenuItem,
+  Tooltip,
   Typography
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
@@ -23,6 +25,7 @@ import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import ViewComfyIcon from '@mui/icons-material/ViewComfy';
+import FileOpenOutlinedIcon from '@mui/icons-material/FileOpenOutlined';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import '../../assets/custom-grid-styles.css';
@@ -34,6 +37,8 @@ import ReactGridLayout, {
 import { defaultLayout } from './components/layout-default';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+
+const isDev = import.meta.env.DEV;
 
 const breakpoints = { lg: 1400, md: 996, sm: 768, xs: 480, xxs: 0 };
 const colsConfig = { lg: 16, md: 10, sm: 8, xs: 6, xxs: 6 };
@@ -138,6 +143,22 @@ const Main = () => {
     setLockLayoutState(nextLockState);
   };
 
+  const handleOpenHistoryLog = async () => {
+    const res = await window.loggerApi.readSessionLogFile({
+      title: t('logging.import.header'),
+      filters: [{ name: t('logging.import.filters.name'), extensions: ['jsonl'] }],
+      properties: ['openFile']
+    });
+
+    if (res.success && res?.data?.length > 0) {
+      handleRouteToHistoryWatcher(res.data);
+    }
+  };
+
+  const handleRouteToHistoryWatcher = (logData) => {
+    navigate('/dashboard/history-watcher', { state: { logData } });
+  };
+
   return (
     <Box
       sx={{ display: 'flex', flexDirection: 'column', gap: 3, flex: 1, minHeight: 0 }}
@@ -237,6 +258,15 @@ const Main = () => {
                 <InfoCard
                   className={'draggable-handle'}
                   title={t('dashboard.feedChart.header')}
+                  actions={
+                    isDev && (
+                      <Tooltip title="Open a history log file" arrow placement="top">
+                        <IconButton onClick={() => handleOpenHistoryLog()} size="small">
+                          <FileOpenOutlinedIcon />
+                        </IconButton>
+                      </Tooltip>
+                    )
+                  }
                   showHandles={showHandles}
                   sx={{ height: '100%' }}
                   content={<FeedChart />}
