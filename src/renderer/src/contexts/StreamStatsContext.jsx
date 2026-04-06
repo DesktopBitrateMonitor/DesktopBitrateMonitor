@@ -36,9 +36,8 @@ export const StreamStatsProvider = ({ children }) => {
       const nextBitrate = Number(incoming?.bitrate) || 0;
       const nextRtt = Number(incoming?.rtt) || 0;
       const nextUptime = Number(incoming?.uptime) || 0;
-      const nextServerType = incoming?.serverType || null;
 
-      setStats({ bitrate: nextBitrate, rtt: nextRtt, uptime: nextUptime, serverType: nextServerType });
+      setStats({ bitrate: nextBitrate, rtt: nextRtt, uptime: nextUptime });
 
       // accumulate uptime across page changes (resets only on app restart)
       const delta = Math.max(nextUptime - (lastUptimeRef.current || 0), 0);

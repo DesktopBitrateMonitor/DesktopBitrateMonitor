@@ -290,6 +290,22 @@ export const commandActions = ({
       Logger.error(`Failed to switch to privacy scene: ${res.error}`);
     }
   },
+  switchToStart: async () => {
+    const scene = switcherConfig.get('sceneStart');
+    const res = await setCurrentProgramScene(scene);
+
+    if (res.success) {
+      await messageService({
+        action: 'switchScene',
+        event: 'success',
+        variables: { scene, server }
+      });
+      Logger.log('Switched to start scene.');
+    } else {
+      await messageService({ action: 'switchScene', event: 'error', variables: { scene, server } });
+      Logger.error(`Failed to switch to start scene: ${res.error}`);
+    }
+  },
   switchScene: async (argument) => {
     const sceneName = argument.commandArg;
     if (typeof sceneName !== 'string' || sceneName.trim().replace(/\s/g, '') === '') {

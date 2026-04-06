@@ -1,9 +1,12 @@
-# First Beta release for testing functionality and get UI/functionality feedback
+# Full Release
 
 ## v1.0.0 - First full release
 
 - Fix Data display for stats data
+- Fix try to send chat messages without logged in broadcaster for the selected platform
 - Implement Nginx-RTMP stats watching and switching
+- Add Icons for multi platform settings (commands, messages)
+- Add command to switch to starting scene
 
 ---
 

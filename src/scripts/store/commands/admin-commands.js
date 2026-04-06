@@ -75,6 +75,15 @@ export const adminCommands = [
   },
   {
     id: generateId(),
+    action: 'switchToStart',
+    requiredRole: 'admin',
+    label: 'Switch to Start Scene',
+    cmd:['!intro'],
+    description: 'Switches to the start scene.',
+    enabled: true
+  },
+  {
+    id: generateId(),
     action: 'addMod',
     requiredRole: 'admin',
     label: 'Add Mod',

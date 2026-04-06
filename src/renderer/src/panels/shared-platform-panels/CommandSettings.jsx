@@ -1,16 +1,15 @@
 import React, { act, useCallback, useEffect, useMemo, useState } from 'react';
-import { Box, Stack, TextField, Typography } from '@mui/material';
-import { useCommandsConfigStore } from '../../../contexts/DataContext';
-import LayoutToggle from '../../../components/functional/LayoutToggle';
-import RoleSortControls from '../../../components/functional/RoleSortControls';
-import RoleFilterControls from '../../../components/functional/RoleFilterControls';
-import { sortTwitchCommands } from '../../../../../scripts/lib/shared-functions';
-import CommandPanel from './panels/CommandPanel';
-import { useAlert } from '../../../contexts/AlertContext';
+import { Box, Stack, TextField, Tooltip, Typography } from '@mui/material';
+import { useCommandsConfigStore } from '../../contexts/DataContext';
+import LayoutToggle from '../../components/functional/LayoutToggle';
+import RoleSortControls from '../../components/functional/RoleSortControls';
+import RoleFilterControls from '../../components/functional/RoleFilterControls';
+import { sortTwitchCommands } from '../../../../scripts/lib/shared-functions';
+import CommandPanel from '../twitch/components/panels/CommandPanel';
+import { useAlert } from '../../contexts/AlertContext';
 import { useTranslation } from 'react-i18next';
-import TwitchIcon from '../../../assets/icons/TwitchIcon';
-import KickIcon from '../../../assets/icons/KickIcon';
-import { useLocation } from 'react-router-dom';
+import TwitchIcon from '../../assets/icons/TwitchIcon';
+import KickIcon from '../../assets/icons/KickIcon';
 
 const CommandSettings = () => {
   const ALLOWED_SORTS = [
@@ -24,13 +23,6 @@ const CommandSettings = () => {
   ];
 
   const { commandsConfig, updateCommandsConfig } = useCommandsConfigStore();
-  const location = useLocation();
-
-  // Determine platform from route to select appropriate icon
-  const platformRout = location.pathname.split('/')[3] || '';
-  let PlatformIcon;
-  if (platformRout === 'twitch') PlatformIcon = TwitchIcon;
-  if (platformRout === 'kick') PlatformIcon = KickIcon;
 
   const { showAlert } = useAlert();
 
@@ -265,7 +257,9 @@ const CommandSettings = () => {
       >
         <Box>
           <Stack direction={'row'} alignItems={'center'} gap={1}>
-            {<PlatformIcon />}
+            <Tooltip title={t('platforms.commands.headerToolTip')} arrow placement="top">
+              <KickIcon /> <TwitchIcon />
+            </Tooltip>
             <Typography variant="h5" sx={{ mb: 0.5 }}>
               {t('platforms.commands.header')}
             </Typography>

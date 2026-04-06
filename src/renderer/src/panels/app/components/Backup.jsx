@@ -350,8 +350,8 @@ const Backup = () => {
 
       <Dialog open={openWarningDialog} onClose={() => setOpenWarningDialog(false)}>
         <DialogTitle>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Warning color="warning" />
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+            <Warning color="warning" sx={{ fontSize: 32 }} />
             <Typography variant="h6" component="span" ml={1}>
               {t('appSettings.backup.dialog.header')}
             </Typography>

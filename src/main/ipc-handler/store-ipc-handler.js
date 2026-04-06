@@ -75,10 +75,10 @@ export async function initializeElectronStoreIpc(ipcMain) {
     }
     return { success: false };
   });
-  ipcMain.handle('electron-store:reset', (event, file, key) => {
+  ipcMain.handle('electron-store:clear', (event, file, key) => {
     const store = getStore(file);
     if (store) {
-      store.reset(key);
+      store.clear(key);
       return { success: true };
     }
     return { success: false };

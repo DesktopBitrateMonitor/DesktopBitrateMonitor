@@ -65,7 +65,7 @@ function createWindow(displayIsAvailable = false) {
     show: false,
     autoHideMenuBar: true,
     // titleBarStyle: 'hidden',
-    title: `Desktop Bitrate Monitor (${app.getVersion()}) - BETA`,
+    title: `Desktop Bitrate Monitor (${app.getVersion()})`,
     icon: windowIcon,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {

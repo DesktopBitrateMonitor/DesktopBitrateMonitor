@@ -241,6 +241,7 @@
     "commands": {
       "header": "Chat Commands",
       "description": "Configure chat commands that can be used to trigger actions in the app.",
+      "headerToolTip": "Commands are used for all platforms",
       "restrictedHint": "If restricted, only the broadcaster and admins can switch away from the privacy scene",
       "restricted": "Restricted",
       "notRestricted": "Not Restricted",
@@ -297,6 +298,10 @@
         "label": "Switch to Privacy Scene",
         "description": "Switches to the privacy scene"
       },
+      "switchToStart": {
+        "label": "Switch to Intro Scene",
+        "description": "Switches to the intro scene"
+      },
       "addMod": {
         "label": "Add Moderator",
         "description": "Adds a new moderator, e.g., !addmod username. The user does NOT need to be a Twitch moderator!"
@@ -325,18 +330,19 @@
         "label": "Get Bitrate",
         "description": "Returns the current bitrate and speed"
       },
-      "addAlias":{
+      "addAlias": {
         "label": "Add Alias",
-        "hint":"Add a alias for an existing command"
+        "hint": "Add a alias for an existing command"
       },
-      "removeAlias":{
+      "removeAlias": {
         "label": "Remove Alias",
-        "hint":"Remove a alias for an existing command"
+        "hint": "Remove a alias for an existing command"
       }
     },
     "messages": {
       "header": "Chat Messages",
       "description": "Configure messages that are posted in the chat when actions are triggered.",
+      "headerToolTip": "Messages are used for all platforms",
       "searchBox": {
         "label": "Search messages",
         "placeholder": "Title or text"
@@ -493,7 +499,7 @@
           "hint": "Available variables: ${user}, ${server}"
         }
       },
-      "addAlias":{
+      "addAlias": {
         "success": {
           "label": "Add Alias Success Message",
           "hint": "Available variables: ${alias}, ${command}, ${server}"
@@ -507,7 +513,7 @@
           "hint": "Available variables: ${alias}, ${command}, ${server}"
         }
       },
-      "removeAlias":{
+      "removeAlias": {
         "success": {
           "label": "Remove Alias Success Message",
           "hint": "Available variables: ${alias}, ${command}, ${server}"

@@ -242,6 +242,7 @@
     "commands": {
       "header": "Chat Befehle ",
       "description": "Bearbeite die Chat Befehle für die verschiedenen Aktionen der Anwendung.",
+      "headerToolTip": "Befehle werden für alle Platformen verwendet",
       "restrictedHint": "Wenn eingeschränkt, können nur der StreamerIn und Admins von der Pause Scene weg wechseln",
       "restricted": "Eingeschränkt",
       "notRestricted": "Nicht eingeschränkt",
@@ -298,6 +299,10 @@
         "label": "Zur Pause/Privatsphäre-Szene",
         "description": "Wechselt zur Pause/Privatsphäre-Szene"
       },
+      "switchToStart": {
+        "label": "Zur Intro-Szene",
+        "description": "Wechselt zur Intro-Szene"
+      },
       "addMod": {
         "label": "Moderator hinzufügen",
         "description": "Fügt einen neuen Moderator hinzu, z.B. !addmod username. Der Benutzer muss KEIN Twitch-Moderator sein!"
@@ -326,11 +331,11 @@
         "label": "Bitrate abrufen",
         "description": "Gibt die aktuelle Bitrate und Geschwindigkeit zurück"
       },
-      "addAlias":{
-        "label":"Alias hinzufügen",
+      "addAlias": {
+        "label": "Alias hinzufügen",
         "hint": "Fügt einen Alias für einen Command hinzu"
       },
-      "removeAlias":{
+      "removeAlias": {
         "label": "Alias entfernen",
         "hint": "Entfernt einen Alias für einen Command"
       }
@@ -338,6 +343,7 @@
     "messages": {
       "header": "Chat Nachrichten",
       "description": "Bearbeite die Chat Nachrichten für die verschiedenen Aktionen der Anwendung.",
+      "headerToolTip": "Nachirchten werden für alle Platformen verwendet",
       "searchBox": {
         "label": "Nachricht suchen",
         "placeholder": "Titel oder Text"
@@ -494,7 +500,7 @@
           "hint": "Verfügbare Variablen: ${user}, ${server}"
         }
       },
-      "addAlias":{
+      "addAlias": {
         "success": {
           "label": "Alias hinzufügen erfolgreich Nachricht",
           "hint": "Verfügbare Variablen: ${alias}, ${command}, ${server}"
@@ -508,7 +514,7 @@
           "hint": "Verfügbare Variablen: ${alias}, ${command}, ${server}"
         }
       },
-      "removeAlias":{
+      "removeAlias": {
         "success": {
           "label": "Alias entfernen erfolgreich Nachricht",
           "hint": "Verfügbare Variablen: ${alias}, ${command}, ${server}"

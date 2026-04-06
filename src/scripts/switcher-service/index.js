@@ -41,7 +41,14 @@ const streamStateCache = {
   ttlMs: 500
 };
 
-const { appConfig, switcherConfig, streamingSoftwareConfig, serverConfig } = injectDefaults();
+const {
+  appConfig,
+  switcherConfig,
+  streamingSoftwareConfig,
+  serverConfig,
+  twitchAccountsConfig,
+  kickAccountsConfig
+} = injectDefaults();
 
 // Hysteresis helper so we don't bounce bands when rTrigger > trigger.
 const computeBand = (bitrate, t, previous) => {
@@ -71,8 +78,17 @@ export async function switcherService(data, mainWindow = null) {
   const serverType = serverSettings.currentType;
   const serverName = serverSettings[serverType].name;
   const appSettings = appConfig.get('');
+  const twitchAccountsSettings = twitchAccountsConfig.get('');
+  const kickAccountsSettings = kickAccountsConfig.get('');
+
+  const ACCOUNTS_MAPPING = {
+    twitch: twitchAccountsSettings,
+    kick: kickAccountsSettings
+  };
 
   const platform = appSettings.activePlatform;
+  const broadcasterToken = ACCOUNTS_MAPPING[platform]['broadcaster'].access_token;
+  const tokenAvailable = Boolean(broadcasterToken);
 
   const vars = {
     switcherEnabled: switcherSettings.switcherEnabled,
@@ -101,8 +117,7 @@ export async function switcherService(data, mainWindow = null) {
     toOffline: switcherSettings.triggerToOffline
   };
 
-  // Optional stability levers (safe defaults if missing in config).
-  const retryAttempts = Number(switcherSettings.retryAttempts ?? 1);
+  const retryAttempts = 1;
 
   // If the offToLiveTrigger is set to 0, allow instant recovery from offline to live without requiring repeated confirmations.
   const allowInstantRecover = Number(delays.toLive) === 0;
@@ -227,6 +242,13 @@ export async function switcherService(data, mainWindow = null) {
 
         if (vars.enableChatNotifications) {
           Logger.log(`Switched to ${key.toUpperCase()} scene`);
+
+          if (!tokenAvailable) {
+            Logger.log(
+              `No broadcaster token available, skipping chat notification for switching to ${key} scene`
+            );
+            return;
+          }
 
           // Send chat message on scene switch if enabled
           if (platform === 'twitch') {

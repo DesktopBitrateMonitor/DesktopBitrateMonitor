@@ -39,34 +39,39 @@ const mergeByKey = (existingList, defaultList, getKey) => {
     if (key) defaultByKey.set(key, item);
   }
 
-  const merged = [];
-  const seen = new Set();
-
+  const existingByKey = new Map();
   for (const item of existing) {
     const key = getKey(item);
-    if (!key) {
-      merged.push(item);
-      continue;
-    }
-
-    const defaultItem = defaultByKey.get(key);
-    if (defaultItem) {
-      // Keep user customizations while filling any newly added default fields.
-      merged.push({ ...defaultItem, ...item });
-      seen.add(key);
-      continue;
-    }
-
-    // Keep deprecated/custom entries already present in the user's store.
-    merged.push(item);
-    seen.add(key);
+    if (!key || existingByKey.has(key)) continue;
+    existingByKey.set(key, item);
   }
 
-  for (const item of defaults) {
+  const merged = [];
+
+  // Ensure merged entries follow the exact default order.
+  for (const defaultItem of defaults) {
+    const key = getKey(defaultItem);
+    if (!key) {
+      merged.push(defaultItem);
+      continue;
+    }
+
+    const existingItem = existingByKey.get(key);
+    if (existingItem) {
+      // Keep user customizations while filling any newly added default fields.
+      merged.push({ ...defaultItem, ...existingItem });
+      continue;
+    }
+
+    merged.push(defaultItem);
+  }
+
+  // Keep deprecated/custom entries already present in the user's store.
+  for (const item of existing) {
     const key = getKey(item);
-    if (!key || seen.has(key)) continue;
-    merged.push(item);
-    seen.add(key);
+    if (!key || !defaultByKey.has(key)) {
+      merged.push(item);
+    }
   }
 
   return merged;

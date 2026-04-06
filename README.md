@@ -242,6 +242,14 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
         <td></td>
       </tr>
       <tr>
+        <td>switch_to_starting</td>
+        <td>Switch to Starting Scene</td>
+        <td>!intro</td>
+        <td>Admin</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
         <td>switch_to_scene</td>
         <td>Switch Scene</td>
         <td>!switch, !ss</td>

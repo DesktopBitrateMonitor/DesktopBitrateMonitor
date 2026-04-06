@@ -1,27 +1,18 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { useMessagesConfigStore } from '../../../contexts/DataContext';
-import { Box, Stack, TextField, Typography } from '@mui/material';
-import RoleFilterControls from '../../../components/functional/RoleFilterControls';
-import RoleSortControls from '../../../components/functional/RoleSortControls';
-import LayoutToggle from '../../../components/functional/LayoutToggle';
-import MessagePanel from './panels/MessagePanel';
-import { sortTwitchCommands } from '../../../../../scripts/lib/shared-functions';
-import { useAlert } from '../../../contexts/AlertContext';
+import { useMessagesConfigStore } from '../../contexts/DataContext';
+import { Box, Stack, TextField, Tooltip, Typography } from '@mui/material';
+import RoleFilterControls from '../../components/functional/RoleFilterControls';
+import RoleSortControls from '../../components/functional/RoleSortControls';
+import LayoutToggle from '../../components/functional/LayoutToggle';
+import MessagePanel from '../twitch/components/panels/MessagePanel';
+import { sortTwitchCommands } from '../../../../scripts/lib/shared-functions';
+import { useAlert } from '../../contexts/AlertContext';
 import { useTranslation } from 'react-i18next';
-import TwitchIcon from '../../../assets/icons/TwitchIcon';
-import KickIcon from '../../../assets/icons/KickIcon';
-import { useLocation } from 'react-router-dom';
+import TwitchIcon from '../../assets/icons/TwitchIcon';
+import KickIcon from '../../assets/icons/KickIcon';
 
 const MessageSettings = () => {
   const ALLOWED_SORTS = ['none', 'enabled', 'disabled'];
-
-  const location = useLocation();
-
-  // Determine platform from route to select appropriate icon
-  const platformRout = location.pathname.split('/')[3] || '';
-  let PlatformIcon;
-  if (platformRout === 'twitch') PlatformIcon = TwitchIcon;
-  if (platformRout === 'kick') PlatformIcon = KickIcon;
 
   const { messagesConfig, updateMessagesConfig } = useMessagesConfigStore();
 
@@ -244,7 +235,9 @@ const MessageSettings = () => {
       >
         <Box>
           <Stack direction={'row'} alignItems={'center'} gap={1}>
-            <PlatformIcon />
+            <Tooltip title={t('platforms.messages.headerToolTip')} arrow placement="top">
+              <KickIcon /> <TwitchIcon />
+            </Tooltip>
             <Typography variant="h5" sx={{ mb: 0.5 }}>
               {t('platforms.messages.header')}
             </Typography>
