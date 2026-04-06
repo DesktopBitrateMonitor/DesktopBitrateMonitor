@@ -217,10 +217,25 @@ export async function switcherService(data, mainWindow = null) {
         pending[key] = null;
 
         const latestScene = await getCurrentScene();
-        if (latestScene?.data.toLowerCase() === targetScene?.toLowerCase()) return;
-        if (latestScene?.data.toLowerCase() === switcherSettings?.scenePrivacy?.toLowerCase())
+        const latestSceneName = latestScene?.data?.toLowerCase();
+
+        const isStartScene = latestSceneName === switcherSettings?.sceneStart?.toLowerCase();
+        const isLiveTarget =
+          targetScene?.toLowerCase() === switcherSettings?.sceneLive?.toLowerCase();
+        const isPrivacyScene = latestSceneName === switcherSettings?.scenePrivacy?.toLowerCase();
+
+        // Re-check conditions at the end of the delay to avoid switching if the scene has been changed in the meantime (e.g., by the user or another tool).
+        if (latestSceneName === targetScene?.toLowerCase()) return;
+        if (isPrivacyScene) return;
+        if (!scenes.includes(latestSceneName)) return;
+        if (
+          isStartScene &&
+          targetScene?.toLowerCase() !== switcherSettings?.sceneLive?.toLowerCase()
+        )
           return;
-        if (!scenes.includes(latestScene?.data?.toLowerCase())) return;
+        if (isStartScene && (!vars.switchFromStartingToLive || !isLiveTarget)) {
+          return;
+        }
 
         const res = await setCurrentProgramScene(targetScene);
         if (!res.success) {

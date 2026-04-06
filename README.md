@@ -939,7 +939,7 @@ uptime;
 - ✅ Add a overlay served by the app to display the feed stats in the broadcasting software
 - ✅ Add a Backup / Import function
 - ✅ Add a logging functionality to save session / actions logs
-- Add a option for full managed app versions
+- ✅ Add Nginx-RTMP Server
 - Add more different server types
 - Add more broadcasting softwares
 - Add more platforms (if there are more relevant in future)

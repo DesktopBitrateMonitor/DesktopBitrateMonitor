@@ -1,5 +1,11 @@
 # Full Release
 
+## v1.0.1
+
+- Fix unwanted switches away from intro on stream start
+
+---
+
 ## v1.0.0 - First full release
 
 - Fix Data display for stats data
