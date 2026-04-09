@@ -32,6 +32,7 @@
 - ✅ Add a Backup / Import function
 - ✅ Add a logging functionality to save session / actions logs
 - ✅ Add Nginx-RTMP Server
+- Add multi feed stats watching 
 - Add more different server types
 - Add more broadcasting softwares
 - Add more platforms (if there are more relevant in future)
