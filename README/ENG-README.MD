@@ -36,6 +36,10 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
       <ul>
         <li>Displays the live bitrate in a line chart</li>
       </ul>
+      <ul>
+        <li>Select a history logs file and show the stats</li>
+        <img src="readme-assets/dashboard/history-watcher.png" alt="image">
+      </ul>
     <li>Feed statistics:</li>
       <ul>
         <li>Current bitrate - refetching every 1000ms</li>
@@ -901,5 +905,3 @@ uptime;
       </tr>
     </tbody>
   </table>
-- Find some translators to add more languages to the application
-- Get community feedback and make the app well for them
