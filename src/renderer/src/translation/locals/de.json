@@ -798,6 +798,7 @@
       "actionsFileSizeLabel": "Dateigröße für Aktionsprotokolle (MB)",
       "saveTooltip": "Zum Speichern klicken",
       "directoryDialogTitle": "Verzeichnis für {{label}} auswählen",
+      "loggingStartHeader": "Start der Protokollierung",
       "logSessionsOnAppStart": "Sitzungsprotokollierung beim App-Start starten",
       "logSessionsOnStreamStart": "Sitzungsprotokollierung beim Stream-Start starten",
       "validation": {
@@ -806,7 +807,8 @@
         "fileSizeInteger": "Dateigröße muss eine ganze Zahl sein.",
         "fileSizeRange": "Dateigröße muss zwischen 0 und 10 liegen.",
         "fileSizeEmpty": "Dateigröße darf nicht leer sein."
-      }
+      },
+      "warning": "Achtung! Die Sitzungsprotokollierung erzeugt eine große Menge an Daten (etwa 1,5 MB pro Stunde)... Stelle sicher, dass du die Menge an Protokolldaten speichern kannst, die erstellt wird!"
     },
     "filtering": {
       "all": "Alle",
@@ -826,19 +828,27 @@
         "csv": "CSV-Dateien (*.csv)"
       }
     },
-    "import":{
-      "header":"Wähle eine Protokolldatei aus",
-      "filters":{
-        "name":"Log Datei"
+    "import": {
+      "header": "Wähle eine Protokolldatei aus",
+      "filters": {
+        "name": "Log Datei"
       }
     },
-    "historyWatcher":{
-      "header":"Protokoll Visualisierung",
-      "description":"Zeigt die Historie der Bitrate eines Streams an",
-      "toolTip":"Ein Protokoll laden",
-      "currentLog":{
-        "header":"Aktuelles Protokoll",
+    "historyWatcher": {
+      "header": "Protokoll Visualisierung",
+      "description": "Zeigt die Historie der Bitrate eines Streams an",
+      "toolTip": "Ein Protokoll laden",
+      "x-label": "Zeit",
+      "y-label": "Bitrate (kbps)",
+      "currentLog": {
+        "header": "Aktuelles Protokoll",
         "description": "Die Daten des aktuellen Protokolls werden hier angezeigt"
+      },
+      "dataPointBox": {
+        "title": "Stream Titel",
+        "directory": "Stream Kategorie",
+        "bitrate": "Bitrate",
+        "noDataSelected": "Klicke auf einen Datenpunkt im Diagramm, um die Details zu sehen"
       }
     }
   },
@@ -947,7 +957,7 @@
   "overlayEditor": {
     "header": "Overlay Editor",
     "description": "Einstellungen für das Stats-Overlay. Änderungen werden automatisch beim Speichern an das Overlay übertragen, nicht gespeicherte Änderungen gehen verloren beim wechsel des Tabs",
-    "expertMode": "Expertenmodus",
+    "expertMode": "Entwicklermodus",
     "statsOverlayUrl": " Stats-Overlay URL",
     "hostLabel": "Stats-Overlay Host",
     "hostToolTip": "Die Host URL, wo die Softare installiert ist",

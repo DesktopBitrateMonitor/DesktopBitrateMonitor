@@ -1,3 +1,26 @@
+Version 1.0.3:
+  Fixes:
+    Broadcasting Software:
+      ✔ Fix the broadcasting state if the stream is already running when the app starts @done(26-04-08 14:10)
+    Server Connection:
+      ✔ Fix RTMP Frontend connection state in the frontend @done(26-04-08 17:35)
+      ☐ Check if the BELABOX stats fetching from the cloud is working same like self hosted BELABOX relays
+    HistoryWatcher:
+      ✘ Show markers where start and stop streaming --> Not included in the community package @cancelled(26-04-08 21:58)
+      ✔ Remove thumbnails @done(26-04-08 21:58)
+      ✔ Add a warning about the amount of created data when the session logging is enabled. (round about 1,5MB per hour) @done(26-04-08 21:21)
+  Changes:
+    Updates:
+      ✔ Move the releases to the new Github repo in the account "DesktopBitrateMonitor @done(26-04-09 11:39)
+      ✔ Update the build and release pipeline to the new Github repo @done(26-04-09 11:39)
+      /* 
+       * If i change the repo, old versions should check for in the old repo, get the new version
+       * and then update to the new repo. So the old versions should also check the old repo for updates, 
+       * if there is a new version, show a notification and update to the new repo.
+       * After that, the app will check for updates in the new repo.
+       */
+      
+
 Version 0.0.10-beta:
   Fixes:
     Backups:

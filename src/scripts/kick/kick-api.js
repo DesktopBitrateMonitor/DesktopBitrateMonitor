@@ -268,6 +268,50 @@ export async function getUser(access_token, username) {
 }
 
 /**
+ * @typedef getStreamInfo
+ * @prop {Number} broadcaster_user_id The broadcaster's unique identifier.
+ * @prop {object} category An object containing information about the stream's category.
+ * @prop {boolean} has_mature_content Indicates if the stream has mature content.
+ * @prop {string} language The language of the stream.
+ * @prop {string} profile_picture The URL of the broadcaster's profile picture.
+ * @prop {string} slug The broadcaster's channel slug (name).
+ * @prop {string} started_at The date and time when the stream started.
+ * @prop {string} stream_title The title of the stream.
+ * @prop {string} thumbnail The URL of the stream's thumbnail image.
+ * @prop {Number} viewer_count The current number of viewers watching the stream.
+ */
+
+/**
+ * @param {string} access_token The access token to use for authentication.
+ * @param {string|number} broadcaster_user_id The ID of the broadcaster's channel.
+ * @returns {Promise<getStreamInfo|null>} The result of the stream info fetch operation.
+ */
+
+export async function getStreams(access_token, broadcaster_user_id) {
+  return await validateAndProceed(access_token, 'broadcaster', async (validToken) => {
+    const qs = new URLSearchParams({
+      broadcaster_user_id
+    });
+    const {
+      data: { data }
+    } = await kickApi.get(`/v1/livestreams?${qs}`, {
+      headers: {
+        Authorization: `Bearer ${validToken}`
+      }
+    });
+
+    const returnData = {
+      channel_Id: data[0]?.channel_id || '',
+      title: data[0]?.stream_title || '',
+      directory: data[0]?.category?.name || '',
+      directory_thumbnail: data[0]?.category?.thumbnail || '',
+    };
+
+    return returnData;
+  });
+}
+
+/**
  * @typedef revokeKickAccessToken
  * @prop {string} access_token
  */

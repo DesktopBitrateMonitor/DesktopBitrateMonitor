@@ -797,6 +797,7 @@
       "actionsFileSizeLabel": "Actions Logs File Size (MB)",
       "saveTooltip": "Click to save changes",
       "directoryDialogTitle": "Select directory for {{label}}",
+      "loggingStartHeader":"Logging Start",
       "logSessionsOnAppStart": "Log sessions on app start",
       "logSessionsOnStreamStart": "Log sessions on stream start",
       "validation": {
@@ -805,7 +806,8 @@
         "fileSizeInteger": "File size must be an integer",
         "fileSizeRange": "File size must be between 0 and 10.",
         "fileSizeEmpty": "File size cannot be empty."
-      }
+      },      "warning": "Be careful! The stats logging creates a lot of data (round about 1,5MB per hour)... Make sure you can handle the amount of logs data they will be created!"
+
     },
     "filtering": {
       "all": "All",
@@ -832,9 +834,17 @@
       "header":"Log Visualization",
       "description":"Displays the history of a stream's bitrate",
       "toolTip":"Load a log",
+      "x-label":"Time",
+      "y-label":"Bitrate (kbps)",
       "currentLog":{
         "header":"Current Log",
         "description": "The data of the current log is displayed here"
+      },
+      "dataPointBox":{
+        "title": "Stream Title",
+        "directory":"Stream Directory",
+        "bitrate": "Bitrate",
+        "noDataSelected": "Click on a data point in the graph to see the details"
       }
     }
   },
@@ -943,7 +953,7 @@
   "overlayEditor": {
     "header": "Overlay Editor",
     "description": "Settings for the bitrate stats overlay. Changes are applied in real-time in the preview. On save your broadcasting overlay will be updated. Not saved changes will be lost on change the settings tab.",
-    "expertMode": "Expert Mode",
+    "expertMode": "Developer Mode",
     "statsOverlayUrl": "Stats Overlay URL",
     "hostLabel": "Overlay Host",
     "hostToolTip": "The host address where the app is installed",

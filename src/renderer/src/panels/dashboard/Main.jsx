@@ -259,13 +259,11 @@ const Main = () => {
                   className={'draggable-handle'}
                   title={t('dashboard.feedChart.header')}
                   actions={
-                    isDev && (
-                      <Tooltip title="Open a history log file" arrow placement="top">
-                        <IconButton onClick={() => handleOpenHistoryLog()} size="small">
-                          <FileOpenOutlinedIcon />
-                        </IconButton>
-                      </Tooltip>
-                    )
+                    <Tooltip title={t('logging.historyWatcher.toolTip')} arrow placement="top">
+                      <IconButton onClick={() => handleOpenHistoryLog()} size="small">
+                        <FileOpenOutlinedIcon />
+                      </IconButton>
+                    </Tooltip>
                   }
                   showHandles={showHandles}
                   sx={{ height: '100%' }}

@@ -97,7 +97,7 @@ export async function startFetchingStats(
         if (mainWindow?.webContents && !mainWindow.isDestroyed()) {
           const result = {
             ...response,
-            data: res.data
+            data: res?.data
           };
           mainWindow?.webContents?.send('server-connected', result);
         }

@@ -32,13 +32,14 @@ export function timestamp() {
 }
 
 export async function stringifyBackupData(data) {
-  const encodedData = btoa(JSON.stringify(data));
+  const json = JSON.stringify(data);
+  const encodedData = btoa(unescape(encodeURIComponent(json)));
   return encodedData;
 }
 
 export async function parseBackupData(encodedData) {
   try {
-    const decodedData = atob(encodedData);
+    const decodedData = decodeURIComponent(escape(atob(encodedData)));
     return { success: true, data: JSON.parse(decodedData) };
   } catch (error) {
     return { success: false };

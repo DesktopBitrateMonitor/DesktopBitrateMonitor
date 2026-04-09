@@ -3,7 +3,16 @@ import { useLoggingConfigStore } from '../../contexts/DataContext';
 import { useAlert } from '../../contexts/AlertContext';
 import CollapsibleCard from '../../components/functional/CollapsibleCard';
 import SaveIcon from '@mui/icons-material/Save';
-import { Box, Stack, Switch, TextField, Typography } from '@mui/material';
+import {
+  Box,
+  FormControlLabel,
+  Radio,
+  RadioGroup,
+  Stack,
+  Switch,
+  TextField,
+  Typography
+} from '@mui/material';
 import InputEndAdornment from '../../components/feedback/InputEndAdornment';
 import NumericInput from '../../components/functional/NumericInput';
 import LayoutToggle from '../../components/functional/LayoutToggle';
@@ -315,17 +324,37 @@ const LoggingSettings = () => {
                 }}
               />
             </Stack>
-            <Stack direction={'row'} alignItems={'center'} gap={1}>
-              <Switch
-                checked={loggingData.logSessionsOnAppStart}
-                onChange={(e) => changeLoggingState('logSessionsOnAppStart', e.target.checked)}
-              />
-              <Typography variant="body2" color="text.secondary">
-                {loggingData.logSessionsOnAppStart
-                  ? t('logging.settings.logSessionsOnAppStart')
-                  : t('logging.settings.logSessionsOnStreamStart')}
-              </Typography>
-            </Stack>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Box sx={{ flex: 2 }}>
+                <Typography variant="body2" color="text.secondary">
+                  {t('logging.settings.loggingStartHeader')}
+                </Typography>
+                <RadioGroup
+                  value={loggingData.logSessionsOnAppStart}
+                  onChange={() =>
+                    changeLoggingState('logSessionsOnAppStart', !loggingData.logSessionsOnAppStart)
+                  }
+                >
+                  <FormControlLabel
+                    value={true}
+                    control={<Radio />}
+                    label={t('logging.settings.logSessionsOnAppStart')}
+                  />
+                  <FormControlLabel
+                    value={false}
+                    control={<Radio />}
+                    label={t('logging.settings.logSessionsOnStreamStart')}
+                  />
+                </RadioGroup>
+              </Box>
+              {loggingData.logSessions && (
+                <Box sx={{ flex: { sm: 1, md: 1, lg: 2 } }}>
+                  <Typography variant="body2" color="warning">
+                    {t('logging.settings.warning')}
+                  </Typography>
+                </Box>
+              )}
+            </Box>
           </CollapsibleCard>
 
           <CollapsibleCard

@@ -4,8 +4,10 @@ import { FeedLogger } from '../../scripts/logging/feed-logger';
 import { dialog } from 'electron';
 
 import { injectDefaults } from '../../scripts/store/defaults';
+import { getStreams as getKickStreams } from '../../scripts/kick/kick-api';
+import { getStreams as getTwitchStreams } from '../../scripts/twitch/twitch-api';
 
-const { loggingConfig } = injectDefaults();
+const { loggingConfig, appConfig, twitchAccountsConfig, kickAccountsConfig } = injectDefaults();
 
 let isLoggerIpcInitialized = false;
 let sessionFeedLogger = null;
@@ -74,10 +76,6 @@ export async function initializeLoggerIpc(ipcMain) {
     }
   });
 
-  ipcMain.handle('read-log-file', (event, fullPath) => {
-    console.log('IPC read-log-file called with:', fullPath);
-  });
-
   ipcMain.handle('open-file-dialog', async (event, options) => {
     try {
       const res = await dialog.showOpenDialog(options);
@@ -98,10 +96,21 @@ export async function initializeLoggerIpc(ipcMain) {
     }
   });
 
-  ipcMain.handle('write-to-session-log-file', (event, content) => {
+  const apiCallsFunctions = {
+    kick: getKickStreams,
+    twitch: getTwitchStreams
+  };
+
+  const configMapping = {
+    kick: kickAccountsConfig,
+    twitch: twitchAccountsConfig
+  };
+
+  ipcMain.handle('write-to-session-log-file', async (event, content) => {
     if (!content) return { success: false, message: 'Missing content to write' };
 
     const loggingSettings = loggingConfig.get('');
+    const activePlatform = appConfig.get('activePlatform');
     const loggingEnabled = loggingSettings.logSessions;
     const sessionLogsPath = loggingSettings.sessionLogsPath;
 
@@ -110,6 +119,38 @@ export async function initializeLoggerIpc(ipcMain) {
     if (!sessionLogsPath)
       return { success: false, message: 'Session logs path is not set in settings' };
 
+    const config = configMapping[activePlatform];
+    const apiFn = apiCallsFunctions[activePlatform];
+
+    const access_token = config.get('broadcaster.access_token');
+    const broadcaster_user_id = config.get('broadcaster.id');
+    const streamInfo = {
+      channel_Id: '',
+      title: '',
+      directory: '',
+      channel_Id: '',
+      title: '',
+      directory: '',
+      directory_thumbnail: '',
+    };
+
+    if (Boolean(access_token)) {
+      const streamData = await apiFn(access_token, broadcaster_user_id);
+
+      streamInfo.channel_Id = streamData.channel_Id;
+      streamInfo.title = streamData.title;
+      streamInfo.directory = streamData.directory;
+      streamInfo.directory_thumbnail = streamData.directory_thumbnail;
+    }
+
+    const mergedContent = [...content].map((entry) => ({
+      ...entry,
+      channel_Id: streamInfo.channel_Id,
+      title: streamInfo.title,
+      directory: streamInfo.directory,
+      directory_thumbnail: streamInfo.directory_thumbnail
+    }));
+
     try {
       const feedLogger = getSessionFeedLogger({
         dir: sessionLogsPath,
@@ -117,7 +158,7 @@ export async function initializeLoggerIpc(ipcMain) {
         maxSizeMB: loggingSettings.sessionLogsFileSize
       });
 
-      const entries = Array.isArray(content) ? content : [content];
+      const entries = Array.isArray(mergedContent) ? mergedContent : [mergedContent];
 
       feedLogger.write(entries);
 

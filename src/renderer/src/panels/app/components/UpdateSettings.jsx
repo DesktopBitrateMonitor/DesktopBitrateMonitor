@@ -61,7 +61,7 @@ const UpdateSettings = ({ setOpenUpdateCard }) => {
   };
 
   const openReleaseNotes = async () => {
-    const url = `https://github.com/yinks87/desktop-bitrate-monitor/releases/`;
+    const url = `https://github.com/DesktopBitrateMonitor/DesktopBitrateMonitor/releases/`;
     await window.updateApi.openExternal(url);
   };
 

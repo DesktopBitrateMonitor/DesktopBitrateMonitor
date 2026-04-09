@@ -1,12 +1,4 @@
-import {
-  alpha,
-  Box,
-  IconButton,
-  Tooltip,
-  Typography,
-  useMediaQuery,
-  useTheme
-} from '@mui/material';
+import { alpha, Box, IconButton, Tooltip, Typography, useTheme } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import CollapsibleCard from '../../components/functional/CollapsibleCard';
@@ -22,6 +14,7 @@ const HistoryWatcher = () => {
   const logData = location.state?.logData || [];
 
   const [logs, setLogs] = useState([]);
+  const [selectedLogId, setSelectedLogId] = useState(null);
 
   useEffect(() => {
     const handleResize = () => setViewportHeight(window.innerHeight);
@@ -29,11 +22,14 @@ const HistoryWatcher = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const chartHeight = Math.max(240, Math.floor(viewportHeight * 0.6));
+  const chartHeight = Math.max(240, Math.floor(viewportHeight * 0.5));
 
   useEffect(() => {
     setLogs(logData);
+    setSelectedLogId(null);
   }, [logData]);
+
+  const selectedLog = logs.find((log) => log.id === selectedLogId) || null;
 
   const handleOpenHistoryLog = async () => {
     const res = await window.loggerApi.readSessionLogFile({
@@ -44,7 +40,19 @@ const HistoryWatcher = () => {
 
     if (res.success && res?.data?.length > 0) {
       setLogs(res.data);
+      setSelectedLogId(null);
     }
+  };
+
+  const handleAxisClick = (_event, axisData) => {
+    const dataIndex = axisData?.dataIndex;
+    const point = logs[dataIndex];
+
+    if (!point) {
+      return;
+    }
+    console.log(point);
+    setSelectedLogId(point.id || null);
   };
 
   return (
@@ -74,7 +82,7 @@ const HistoryWatcher = () => {
           collapsible={false}
           defaultExpanded={true}
           actions={
-            <Tooltip title={t('logging.historyWatcher.currentLog.toolTip')} arrow placement="top">
+            <Tooltip title={t('logging.historyWatcher.toolTip')} arrow placement="top">
               <IconButton onClick={() => handleOpenHistoryLog()} size="small">
                 <FileOpenOutlinedIcon />
               </IconButton>
@@ -87,13 +95,15 @@ const HistoryWatcher = () => {
             series={[
               {
                 data: logs.map((log) => log.bitrate),
-                showMark: false,
-                label: 'Bitrate (kbps)'
+                label: `${t('logging.historyWatcher.y-label')}`,
+                showMark: false
               }
             ]}
+            onAxisClick={handleAxisClick}
             xAxis={[
               {
                 scaleType: 'time',
+                label: `🕐 ${t('logging.historyWatcher.x-label')}`,
                 data: logs.map((log) => new Date(log.ts))
               }
             ]}
@@ -105,9 +115,10 @@ const HistoryWatcher = () => {
                 colorMap: {
                   type: 'continuous',
                   min: 0,
-                  max: 6500,
+                  max: 4000,
                   color: ['red', 'green']
-                }
+                },
+                label: `🛜 ${t('logging.historyWatcher.y-label')}`
               }
             ]}
             grid={{ vertical: true, horizontal: true }}
@@ -118,6 +129,43 @@ const HistoryWatcher = () => {
               }
             }}
           />
+
+          <Box
+            sx={{
+              mt: 2,
+              p: 1.5,
+              borderRadius: 1,
+              border: (theme) => `1px solid ${theme.palette.divider}`,
+              backgroundColor: (theme) =>
+                alpha(theme.palette.background.default, theme.palette.mode === 'dark' ? 0.35 : 0.6)
+            }}
+          >
+            {!selectedLog ? (
+              <Typography variant="body2" color="text.secondary">
+                {t('logging.historyWatcher.dataPointBox.noDataSelected')}
+              </Typography>
+            ) : (
+              <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                {!selectedLog.directory_thumbnail ||
+                selectedLog.directory_thumbnail === '' ? null : (
+                  <Box sx={{ display: 'flex', gap: 2 }}>
+                    {Boolean(selectedLog.directory_thumbnail) && (
+                      <img
+                        style={{ width: '52px' }}
+                        src={selectedLog.directory_thumbnail || null}
+                        alt="Log Directory Thumbnail"
+                      />
+                    )}
+                  </Box>
+                )}
+                <Box>
+                  <Typography variant="body2">{`${t('logging.historyWatcher.dataPointBox.title')}: ${selectedLog.title || '-'}`}</Typography>
+                  <Typography variant="body2">{`${t('logging.historyWatcher.dataPointBox.directory')}: ${selectedLog.directory || '-'}`}</Typography>
+                  <Typography variant="body2">{`${t('logging.historyWatcher.dataPointBox.bitrate')}: ${selectedLog.bitrate ?? 0} kbps`}</Typography>
+                </Box>
+              </Box>
+            )}
+          </Box>
         </CollapsibleCard>
       </Box>
     </Box>

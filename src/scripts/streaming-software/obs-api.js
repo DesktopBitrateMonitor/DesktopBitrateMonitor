@@ -59,6 +59,19 @@ export async function startOBSConnectionLoop(mainWindow = null) {
         const res = await connectToOBS(mainWindow);
         if (res.success) {
           Logger.log('Connected to OBS Studio successfully.');
+
+          // Check stream state immediately after connecting to update the broadcast state in the frontend
+          const streamState = await getStreamState();
+          const outputActive = streamState?.data?.outputActive ?? false;
+
+          mainWindow?.webContents.send('software-connection', {
+            success: true,
+            status: 'connected',
+            softwareType: 'obs-studio',
+            data: { outputActive },
+            error: null
+          });
+
           reconnectLoop = false;
           return { success: true, data: null, error: null };
         }

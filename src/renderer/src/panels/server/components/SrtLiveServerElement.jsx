@@ -112,9 +112,9 @@ const SrtLiveServerElement = () => {
         ...prev,
         [name]: false
       }));
-      showAlert({ message: t('alerts.success'), severity: 'success' });
+      showAlert({ message: t('alerts.saveSuccess'), severity: 'success' });
     } else {
-      showAlert({ message: t('alerts.error'), severity: 'error' });
+      showAlert({ message: t('alerts.saveError'), severity: 'error' });
     }
   };
 

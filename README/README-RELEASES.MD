@@ -1,4 +1,18 @@
-# Full Release
+## v1.0.3
+
+- Fix RTMP Frontend connection state
+- Fix broadcasting state if the stream is already running before starting the app
+- Add a warning about the amount of logo data created on enabling session logs
+- Move the app to his own [GITHUB REPOSITORY](https://github.com/DesktopBitrateMonitor/DesktopBitrateMonitor). Look for older versions in the [OLD REPOSITORY](https://github.com/Yinks87/desktop-bitrate-monitor/)
+
+---
+
+## v1.0.2
+
+- Fix encoding backup data
+- Implement a historic stats watcher chart - Beta
+
+---
 
 ## v1.0.1
 

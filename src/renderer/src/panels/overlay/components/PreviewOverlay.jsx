@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Box } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import { useStreamStats } from '../../../contexts/StreamStatsContext';
 import { useOverlayConfigStore } from '../../../contexts/DataContext';
 import { templateParser } from '../../../../../scripts/lib/template-parser.js';
 
 const PreviewOverlay = ({ workingConfig, fullWidth = false, ...props }) => {
+  const theme = useTheme();
   const { stats } = useStreamStats();
   const { overlayConfig } = useOverlayConfigStore();
   const [previewConfig, setPreviewConfig] = useState({ html: '', css: '', js: '' });
@@ -84,7 +85,7 @@ const PreviewOverlay = ({ workingConfig, fullWidth = false, ...props }) => {
         style={{
           width: fullWidth ? '100%' : '50%',
           height: 200,
-          border: '1px solid rgba(255,255,255,0.12)',
+          border: `1px solid ${theme.palette.divider}`,
           borderRadius: 4
         }}
         srcDoc={srcDoc}

@@ -121,7 +121,7 @@ const FeedChart = () => {
                 colorMap: {
                   type: 'continuous',
                   min: 0,
-                  max: 6500 || undefined,
+                  max: 4000 || undefined,
                   color: ['red', 'green']
                 }
               }

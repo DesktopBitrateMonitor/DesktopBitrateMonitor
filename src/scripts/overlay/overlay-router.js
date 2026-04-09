@@ -52,7 +52,7 @@ overlayRouter.get('/overlay/stats', (req, res) => {
           html, body {
             margin: 0;
             padding: 0;
-            ${isDev ? 'background: #555;' : 'background: transparent;'}
+            background: transparent;
             overflow: hidden;
           }
         </style>

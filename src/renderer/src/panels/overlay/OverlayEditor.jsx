@@ -223,7 +223,6 @@ const OverlayEditor = () => {
       <Box
         sx={{
           display: 'flex',
-          // flexWrap: 'wrap',
           alignItems: 'center',
           justifyContent: 'space-between',
           gap: 1.5

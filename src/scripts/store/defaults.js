@@ -148,7 +148,7 @@ export const injectDefaults = () => {
       sessionLogsFileSize: 5,
       actionsLogsFileSize: 5,
       actionsLogsPath: defaultActionsLoggingPath,
-      logActions: false,
+      logActions: true,
       logSessions: false,
       logSessionsOnAppStart: false,
       messageMode: 'simple' // 'simple' or 'detailed'

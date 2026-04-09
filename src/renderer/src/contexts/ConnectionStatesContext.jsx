@@ -101,6 +101,7 @@ export const DEFAULT_CONNECTION_LISTENERS = [
         const success = Boolean(response?.success);
         const publishers = response?.data?.publishers;
         const serverType = response?.server ?? 'unknown';
+
         let publisherKeys = [];
         if (serverType !== 'nginx-rtmp') {
           publisherKeys =

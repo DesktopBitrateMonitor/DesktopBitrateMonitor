@@ -1,6 +1,7 @@
 import axios from 'axios';
 import Logger from '../logging/logger';
 import { injectDefaults } from '../store/defaults';
+import { templateParser } from '../lib/template-parser';
 
 const { twitchAccountsConfig } = injectDefaults();
 
@@ -153,6 +154,69 @@ export async function getUsers(access_token, userData, accountType) {
 }
 
 /**
+ * @typedef getStreamInfo
+ * @prop {string} id
+ * @prop {string} user_id
+ * @prop {string} user_login
+ * @prop {string} user_name
+ * @prop {string} game_id
+ * @prop {string} game_name
+ * @prop {string} type
+ * @prop {string} title
+ * @prop {array} tags
+ * @prop {string} viewer_count
+ * @prop {string} language
+ * @prop {string} thumbnail_url
+ * @prop {array} tag_ids
+ * @prop {boolean} is_mature
+ */
+
+/**
+ *
+ * @param {string} access_token
+ * @param {string|number} broadcaster_user_id
+ * @returns {Promise<getStreamInfo|null>} The result of the stream info fetch operation.
+ */
+
+export async function getStreams(access_token, broadcaster_user_id) {
+  return validateAndProceed(access_token, 'broadcaster', async (validToken) => {
+    const qs = new URLSearchParams({
+      user_id: broadcaster_user_id
+    });
+
+    const {
+      data: { data }
+    } = await helixAPI.get(`/streams?${qs}`, {
+      headers: {
+        'Client-ID': client_id,
+        Authorization: `Bearer ${validToken}`
+      }
+    });
+
+    const {
+      data: { data: categoryData }
+    } = await helixAPI.get(`/search/categories?query=${data[0]?.game_name}`, {
+      headers: {
+        'Client-ID': client_id,
+        Authorization: `Bearer ${validToken}`
+      }
+    });
+
+    const directory_thumbnail =
+      categoryData?.find((cat) => cat.id === data[0]?.game_id)?.box_art_url || null;
+
+    const returnData = {
+      channel_Id: data[0]?.user_id || '',
+      title: data[0]?.title || '',
+      directory: data[0]?.game_name || '',
+      directory_thumbnail: directory_thumbnail
+    };
+
+    return returnData;
+  });
+}
+
+/**
  * @typedef validateAccessToken
  * @prop {string} client_id
  * @prop {string} login
@@ -173,12 +237,7 @@ export async function validateAccessToken(access_token) {
         Authorization: `Bearer ${access_token}`
       }
     });
-    Logger.log(`Token validation successful: 
-      ${JSON.stringify({
-        user_id: data.user_id,
-        login: data.login,
-        expires_in: data.expires_in
-      })}`);
+    Logger.log(`Token validation successful`);
     return data;
   } catch (error) {
     if (error.response && error.response.status === 401) {

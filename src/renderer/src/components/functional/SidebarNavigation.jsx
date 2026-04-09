@@ -197,7 +197,7 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
   );
 
   const handleOpenDocuments = async () => {
-    const url = `https://github.com/yinks87/desktop-bitrate-monitor`;
+    const url = `https://github.com/DesktopBitrateMonitor/DesktopBitrateMonitor`;
     await window.servicesApi.openExternal(url);
   };
 
