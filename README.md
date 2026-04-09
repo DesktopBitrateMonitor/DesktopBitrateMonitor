@@ -20,7 +20,7 @@
     🌟 Fully customizable chat messages and commands
   </li>
   <li>
-    🌟 Multi-platform support (Twitch, Kick)
+    🌟 Multi-platform support (Twitch, Kick) and in app authentication, no third party services required
   </li>
 </ul>
 
