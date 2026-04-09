@@ -35,3 +35,9 @@
 - Add more different server types
 - Add more broadcasting softwares
 - Add more platforms (if there are more relevant in future)
+
+<div align="center">
+  <h1>
+    Big tanks to <span> <a href="https://github.com/NOALBS/nginx-obs-automatic-low-bitrate-switching">NOALBS</a> </span> for the inspiration to build this application
+  </h1>
+</div>
