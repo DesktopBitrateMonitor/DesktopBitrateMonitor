@@ -258,15 +258,15 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
         <td>Set a alias for a command</td>
         <td>!addalias</td>
         <td>Moderator</td>
-        <td>command, alias</td>
-        <td>!addalias live !L</td>
+        <td>existing alias, new alias</td>
+        <td>!addalias !live !L</td>
       </tr>
       <tr>
         <td>remove_alias</td>
         <td>Removes a alias</td>
         <td>!removealias</td>
         <td>Moderator</td>
-        <td>alias</td>
+        <td>existing alias</td>
         <td>!removealias !L</td>
       </tr>
       <tr>
