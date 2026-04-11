@@ -280,6 +280,10 @@ const Backup = () => {
         UPDATE_MAPPINGS[store](mergedData);
       }
     }
+
+    // Restart the stats fetcher service
+    await window.servicesApi.restartStatsFetcherService();
+
     showAlert({ message: t('alerts.loadSuccess'), severity: 'success' });
   };
 

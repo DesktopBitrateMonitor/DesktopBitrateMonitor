@@ -11,6 +11,7 @@
 - Fix add alias chat command 
   - add alias command needs the actions for finding the command to add the alias. Changed to command only needs an existing alias to add an alias to the command
 - Fix overlay URL copy function
+- Fix backup import does not restart fetching the server stats
 - Start YT implementation -> just for information, not visible in the app right now
 
 ---
