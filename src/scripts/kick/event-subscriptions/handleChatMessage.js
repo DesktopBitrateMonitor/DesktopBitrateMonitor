@@ -23,7 +23,7 @@ export async function handleChatMessage(rawMessage) {
   const allAliases = commandsArray.map((cmd) => cmd.cmd).flat();
 
   // TODO
-  // Check if the message comes from the write channel
+  // Check if the message comes from the logged in channel
   // Figure out if Kick has a multi chat feature and if so, how to identify the source channel of the message
   // if (source_broadcaster_user_id && broadcaster_user_id !== source_broadcaster_user_id) return;
 

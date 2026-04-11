@@ -1,3 +1,5 @@
+//TODO: add logger levels
+
 class Logger {
   static mainWindow = null;
 

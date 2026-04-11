@@ -15,15 +15,14 @@ let sessionFeedLoggerKey = null;
 let actionsFeedLogger = null;
 let actionsFeedLoggerKey = null;
 
-function getSessionFeedLogger({ dir, baseName, format, maxSizeMB }) {
+function getSessionFeedLogger({ dir, baseName, maxSizeMB }) {
   const normalizedMaxSizeMB = Number(maxSizeMB) || 5;
-  const loggerKey = `${dir}|${baseName}|${format}|${normalizedMaxSizeMB}`;
+  const loggerKey = `${dir}|${baseName}|${normalizedMaxSizeMB}`;
 
   if (!sessionFeedLogger || sessionFeedLoggerKey !== loggerKey) {
     sessionFeedLogger = new FeedLogger({
       dir,
       baseName: `feed-log-${new Date().toISOString().replace(/[:.]/g, '-')}`,
-      format: format || 'ndjson',
       maxFileSize: normalizedMaxSizeMB * 1024 * 1000,
       bufferSize: 1
     });
@@ -33,15 +32,14 @@ function getSessionFeedLogger({ dir, baseName, format, maxSizeMB }) {
   return sessionFeedLogger;
 }
 
-function getActionsFeedLogger({ dir, baseName, format, maxSizeMB }) {
+function getActionsFeedLogger({ dir, baseName, maxSizeMB }) {
   const normalizedMaxSizeMB = Number(maxSizeMB) || 5;
-  const loggerKey = `${dir}|${baseName}|${format}|${normalizedMaxSizeMB}`;
+  const loggerKey = `${dir}|${baseName}|${normalizedMaxSizeMB}`;
 
   if (!actionsFeedLogger || actionsFeedLoggerKey !== loggerKey) {
     actionsFeedLogger = new FeedLogger({
       dir,
       baseName: `feed-log-${new Date().toISOString().replace(/[:.]/g, '-')}`,
-      format: format || 'ndjson',
       maxFileSize: normalizedMaxSizeMB * 1024 * 1000,
       bufferSize: 1
     });
@@ -154,7 +152,6 @@ export async function initializeLoggerIpc(ipcMain) {
     try {
       const feedLogger = getSessionFeedLogger({
         dir: sessionLogsPath,
-        format: loggingSettings.sessionLogsFormat,
         maxSizeMB: loggingSettings.sessionLogsFileSize
       });
 
@@ -184,7 +181,6 @@ export async function initializeLoggerIpc(ipcMain) {
     try {
       const feedLogger = getActionsFeedLogger({
         dir: actionsLogsPath,
-        format: loggingSettings.actionsLogsFormat,
         maxSizeMB: loggingSettings.actionsLogsFileSize
       });
 

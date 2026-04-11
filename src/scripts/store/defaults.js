@@ -292,6 +292,7 @@ export const injectDefaults = () => {
     }
   });
 
+  // Migrate servers from older app version (below 1.0.4) - remove this migration code in future versions
   const existingServerInstances = serverConfig.get('serverInstances');
   const shouldMigrateLegacyServers =
     !Array.isArray(existingServerInstances) || existingServerInstances.length === 0;

@@ -28,12 +28,12 @@ overlayRouter.get('/overlay/stats', (req, res) => {
   const { key } = req.query;
 
   if (!key) {
-    console.warn('Unauthorized overlay access attempt with missing key');
+    console.error('Unauthorized overlay access attempt with missing key');
     return res.status(401).send('Key is required');
   }
 
   if (key !== overlayKey) {
-    console.warn(`Unauthorized overlay access attempt with key: ${key}`);
+    console.error(`Unauthorized overlay access attempt with key: ${key}`);
     return res.status(401).send('Unauthorized');
   }
 

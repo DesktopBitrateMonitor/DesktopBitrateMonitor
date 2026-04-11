@@ -13,10 +13,11 @@ import globalInternalStore from '../store/global-internal-store';
 /**
  *
  * @param {string} platform - The streaming platform (e.g., 'twitch' or 'kick') that the command is being executed on.
- * @param {function} messageService - A function to send messages back to the chat, typically for command execution feedback.
- * @param {string} server - The current server type (e.g., 'belabox', 'openirl', 'srt-live-server') from which stats are being fetched, used for context in command actions.
+ * @param {string} server - The current server name
+ * @param {function} messageService - A function to send messages back to the chat.
  * @param {object} switcherConfig - The configuration object for stream switching, containing scene names and bitrate triggers.
  * @param {object} accountConfig - The configuration object for account details, including broadcaster info and user lists.
+ * @param {object} commandsConfig - The configuration object for command settings and permissions.
  * @returns {object} An object mapping command action names to their corresponding async functions that execute the desired behavior.
  */
 

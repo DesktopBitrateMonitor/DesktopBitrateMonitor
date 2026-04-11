@@ -1,8 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-type LogFormat = 'csv' | 'ndjson';
-
 export interface LogEntry {
   bitrate: number;
   speed: number;
@@ -14,7 +12,6 @@ export interface LogEntry {
 interface FeedLoggerOptions {
   dir?: string;
   baseName?: string;
-  format?: LogFormat;
   maxFileSize?: number;
   bufferSize?: number;
 }
@@ -22,7 +19,6 @@ interface FeedLoggerOptions {
 export class FeedLogger {
   private dir: string;
   private baseName: string;
-  private format: LogFormat;
   private maxFileSize: number;
   private bufferSize: number;
 
@@ -32,13 +28,11 @@ export class FeedLogger {
   constructor(options: FeedLoggerOptions = {}) {
     this.dir = options.dir || './logs';
     this.baseName = options.baseName || 'log';
-    this.format = options.format || 'ndjson';
     this.maxFileSize = options.maxFileSize || 5 * 1024 * 1024;
     this.bufferSize = options.bufferSize || 50;
 
     this.ensureDir();
     this.currentFile = this.getCurrentFile();
-    this.ensureHeaderIfCSV();
   }
 
   private ensureDir(): void {
@@ -48,8 +42,7 @@ export class FeedLogger {
   }
 
   private getFilePath(index: number): string {
-    const ext = this.format === 'csv' ? 'csv' : 'jsonl';
-    return path.join(this.dir, `${this.baseName}_${index}.${ext}`);
+    return path.join(this.dir, `${this.baseName}_${index}.jsonl`);
   }
 
   private getCurrentFile(): string {
@@ -68,15 +61,6 @@ export class FeedLogger {
       }
 
       index++;
-    }
-  }
-
-  private ensureHeaderIfCSV(): void {
-    if (this.format !== 'csv') return;
-
-    if (!fs.existsSync(this.currentFile)) {
-      const header = 'bitrate,speed,uptime,totalUptime,timestamp\n';
-      fs.writeFileSync(this.currentFile, header, 'utf-8');
     }
   }
 
@@ -103,19 +87,10 @@ export class FeedLogger {
 
     if (size + incomingSize >= this.maxFileSize) {
       this.currentFile = this.getCurrentFile();
-      this.ensureHeaderIfCSV();
     }
   }
 
   private serializeEntries(entries: LogEntry[]): string {
-    if (this.format === 'csv') {
-      return (
-        entries
-          .map((e) => `${e.bitrate},${e.speed},${e.uptime},${e.totalUptime},${e.timestamp}`)
-          .join('\n') + '\n'
-      );
-    }
-
     return entries.map((e) => JSON.stringify(e)).join('\n') + '\n';
   }
 

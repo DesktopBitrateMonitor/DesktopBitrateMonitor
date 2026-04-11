@@ -4,6 +4,7 @@ import { getCurrentProgramScene } from "../streaming-software/obs-api";
 
 const { switcherConfig, streamingSoftwareConfig } = injectDefaults();
 
+// Helper for permission checks
 export const ifCurrentSceneIsPrivacyScene = async () => {
   const currentSoftware = streamingSoftwareConfig.get('currentType');
 

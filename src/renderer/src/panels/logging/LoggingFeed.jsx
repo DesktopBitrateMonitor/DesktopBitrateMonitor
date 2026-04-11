@@ -179,10 +179,7 @@ const LoggingFeed = () => {
     const options = {
       title: t('logging.export.header'),
       defaultPath: logPath + '\\logs_' + new Date().toISOString().replace(/[:.]/g, '-') + '.txt',
-      filters: [
-        { name: t('logging.export.filter.txt'), extensions: ['txt'] },
-        { name: t('logging.export.filter.csv'), extensions: ['csv'] }
-      ]
+      filters: [{ name: t('logging.export.filter.txt'), extensions: ['txt'] }]
     };
     const result = await window.loggerApi.saveFileDialog(options);
 
