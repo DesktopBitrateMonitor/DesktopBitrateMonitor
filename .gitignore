@@ -15,4 +15,6 @@ out
 cspell.json
 dev-app-update.yml
 electron-builder.yml
+electron.vite.config.mjs
+eslint.config.js
 TODO

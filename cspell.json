@@ -9,11 +9,20 @@
         "bitrates",
         "eventsubs",
         "kbps",
+        "KICKBOT",
+        "KICKBROADCASTER",
+        "KICKCLIENTID",
+        "KICKCLIENTSECRET",
         "noalbs",
         "rtmp",
         "Rtmp",
+        "SERVERHOST",
+        "SERVERPORT",
         "streamlabs",
-        "TWITCHCLIENTID"
+        "TWITCHBOT",
+        "TWITCHBROADCASTER",
+        "TWITCHCLIENTID",
+        "TWITCHCLIENTSECRET"
     ],
     "ignoreWords": [],
     "import": []
