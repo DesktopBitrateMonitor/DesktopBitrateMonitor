@@ -3,7 +3,7 @@ import {
   connectToKickEventSub
 } from '../../scripts/kick/event-subscriptions/eventsubs';
 import Logger from '../../scripts/logging/logger';
-import { startFetchingAllInstances, stopFetchingStats } from '../../scripts/stats-watcher/stats-fetcher';
+import { startFetchingAllInstances, stopFetchingStats } from '../../scripts/stats-fetcher/stats-fetcher';
 import { injectDefaults } from '../../scripts/store/defaults';
 import { startOBSConnectionLoop } from '../../scripts/streaming-software/obs-api';
 import {

@@ -11,10 +11,10 @@ out
 .env.production
 .npmrc
 .prettierignore
-.prettierrc.yml
+.prettierrc.yaml
 cspell.json
 dev-app-update.yml
 electron-builder.yml
 electron.vite.config.mjs
-eslint.config.js
+eslint.config.mjs
 TODO
