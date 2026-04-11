@@ -25,26 +25,26 @@ export const statesApi = {
     };
   },
 
-  twitchEventSubConnected: (callback) => {
-    const listener = (event, args = {}) => {
-      callback(args);
-    };
+  // twitchEventSubConnected: (callback) => {
+  //   const listener = (event, args = {}) => {
+  //     callback(args);
+  //   };
 
-    ipcRenderer.on('twitch-eventsub-connection', listener);
+  //   ipcRenderer.on('twitch-eventsub-connection', listener);
 
-    return () => {
-      ipcRenderer.removeListener('twitch-eventsub-connection', listener);
-    };
-  },
+  //   return () => {
+  //     ipcRenderer.removeListener('twitch-eventsub-connection', listener);
+  //   };
+  // },
 
-  switchCounterUpdate: (callback) => {
-    const listener = (event, args = {}) => {
-      callback(args);
-    };
-    ipcRenderer.on('switch-counter-update', listener);
+  // switchCounterUpdate: (callback) => {
+  //   const listener = (event, args = {}) => {
+  //     callback(args);
+  //   };
+  //   ipcRenderer.on('switch-counter-update', listener);
 
-    return () => {
-      ipcRenderer.removeListener('switch-counter-update', listener);
-    };
-  }
+  //   return () => {
+  //     ipcRenderer.removeListener('switch-counter-update', listener);
+  //   };
+  // }
 };

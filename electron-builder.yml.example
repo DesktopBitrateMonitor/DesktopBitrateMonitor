@@ -1,7 +1,6 @@
 appId: your.app.id
 productName: Product Name
 directories:
-  # Point to our existing resources folder where icons live
   buildResources: resources
 files:
   - '!**/.vscode/*'

@@ -114,29 +114,29 @@ export const DEFAULT_CONNECTION_LISTENERS = [
           }
         });
       })
-  },
-  {
-    key: 'twitch-eventsub',
-    subscribe: ({ api, dispatch }) =>
-      api.twitchEventSubConnected((response = {}) => {
-        dispatch({ type: 'twitch:update', payload: { success: Boolean(response?.success) } });
-      })
-  },
-  {
-    key: 'switch-counter-update',
-    subscribe: ({ api, dispatch }) =>
-      api.switchCounterUpdate((response = {}) => {
-        const { changesToLow, changesToLive, changesToOffline } = response;
-        dispatch({
-          type: 'counter:update',
-          payload: {
-            changesToLow: Number.isInteger(changesToLow) ? changesToLow : 0,
-            changesToLive: Number.isInteger(changesToLive) ? changesToLive : 0,
-            changesToOffline: Number.isInteger(changesToOffline) ? changesToOffline : 0
-          }
-        });
-      })
   }
+  // {
+  //   key: 'twitch-eventsub',
+  //   subscribe: ({ api, dispatch }) =>
+  //     api.twitchEventSubConnected((response = {}) => {
+  //       dispatch({ type: 'twitch:update', payload: { success: Boolean(response?.success) } });
+  //     })
+  // },
+  // {
+  //   key: 'switch-counter-update',
+  //   subscribe: ({ api, dispatch }) =>
+  //     api.switchCounterUpdate((response = {}) => {
+  //       const { changesToLow, changesToLive, changesToOffline } = response;
+  //       dispatch({
+  //         type: 'counter:update',
+  //         payload: {
+  //           changesToLow: Number.isInteger(changesToLow) ? changesToLow : 0,
+  //           changesToLive: Number.isInteger(changesToLive) ? changesToLive : 0,
+  //           changesToOffline: Number.isInteger(changesToOffline) ? changesToOffline : 0
+  //         }
+  //       });
+  //     })
+  // }
 ];
 
 export const ConnectionStatesProvider = ({
