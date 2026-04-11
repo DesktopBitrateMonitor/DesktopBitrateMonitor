@@ -3,21 +3,6 @@ import { TextField, InputAdornment, Box, ButtonGroup, Button, Divider, alpha } f
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
-/**
- * NumericInput component
- * A controlled number-only text field with inline increment/decrement round IconButtons.
- *
- * Props:
- *  - value (number|string)
- *  - onChange (eventLike) -> called with synthetic event { target: { value: number|string } }
- *  - min (number)
- *  - max (number)
- *  - step (number) default 1
- *  - allowEmpty (boolean) allow blank value mid-edit (default true)
- *  - clampOnBlur (boolean) clamp to range on blur (default true)
- *  - label / name / disabled / size / fullWidth ... forwarded to TextField
- */
-
 const NumericInput = React.forwardRef(function NumericInput(props, ref) {
   const preventEnterDefault = (event) => {
     if (event.key === 'Enter') {

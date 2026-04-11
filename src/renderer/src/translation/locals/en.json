@@ -63,7 +63,7 @@
   "welcome": {
     "title": "Desktop Bitrate Monitor",
     "description": "Initializing data sources... the dashboard will appear automatically when the startup checks finish.",
-    "loading": "Loading experience (5s)"
+    "loading": "Loading..."
   },
   "navigation": {
     "brand": "Bitrate Monitor",

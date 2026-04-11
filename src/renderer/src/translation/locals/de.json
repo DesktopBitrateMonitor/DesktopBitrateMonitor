@@ -63,7 +63,7 @@
   "welcome": {
     "title": "Desktop Bitratenmonitor",
     "description": "Datenquellen werden initialisiert ... das Dashboard erscheint automatisch, sobald die Startprüfungen abgeschlossen sind.",
-    "loading": "Erlebnis wird geladen (5 s)"
+    "loading": "Lade..."
   },
   "navigation": {
     "brand": "Bitratenmonitor",

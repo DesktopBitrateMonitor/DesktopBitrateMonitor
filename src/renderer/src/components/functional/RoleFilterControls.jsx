@@ -19,7 +19,6 @@ import ToggleOnOutlinedIcon from '@mui/icons-material/ToggleOnOutlined';
 import ToggleOffOutlinedIcon from '@mui/icons-material/ToggleOffOutlined';
 import { useTranslation } from 'react-i18next';
 
-// value: 'all' | 'broadcaster' | 'admin' | 'mod' | 'user' | 'enabled' | 'disabled'
 const RoleFilterControls = ({
   value = 'all',
   onChange,

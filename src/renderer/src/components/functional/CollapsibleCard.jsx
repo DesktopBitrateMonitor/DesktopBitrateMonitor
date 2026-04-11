@@ -3,17 +3,6 @@ import { Box, Collapse, Divider, IconButton, Paper, Stack, Typography } from '@m
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-/**
- * Generic, reusable collapsible card shell.
- *
- * Props:
- * - title: string | ReactNode (main title)
- * - subtitle?: string | ReactNode (supporting text under title)
- * - actions?: ReactNode (right-aligned header actions)
- * - defaultExpanded?: boolean (initial expanded state)
- * - collapsible?: boolean (show collapse toggle and allow collapsing)
- * - children: ReactNode (body content)
- */
 const CollapsibleCard = ({
   startIcon,
   centerElement,

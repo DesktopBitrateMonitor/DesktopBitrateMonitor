@@ -4,8 +4,6 @@ import { alpha } from '@mui/material/styles';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import ViewAgendaIcon from '@mui/icons-material/ViewAgenda';
 
-// value: 'grid' | 'list'
-// onChange(next)
 const LayoutToggle = ({ value = 'grid', onChange }) => {
   return (
     <Wrapper role="group" aria-label="Toggle layout">

@@ -1,6 +1,5 @@
 import { createContext, useContext, useMemo, useState, useCallback, useEffect } from 'react';
 import { ThemeProvider as MuiThemeProvider, CssBaseline } from '@mui/material';
-// Use custom theme settings provided in assets
 import { themes } from '../assets/themes';
 import { createMuiTheme } from '../assets/mui-themes-override';
 
