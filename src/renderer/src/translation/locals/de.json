@@ -11,7 +11,8 @@
         "remove": "Entfernen",
         "export": "Exportieren",
         "import": "Importieren",
-        "exportAnyway": "Trotzdem exportieren"
+        "exportAnyway": "Trotzdem exportieren",
+        "addInstance": "Server hinzufügen"
       },
       "inputAdornment": {
         "add": "Zum Hinzufügen klicken oder Enter drücken",
@@ -556,17 +557,19 @@
     "error5": "Publisher darf keine Leerzeichen enthalten",
     "error6": "Name darf nicht leer sein",
     "inputAdornment": "Zum speichern klicken oder Enter drücken",
+    "primaryInstance": "Primäre Instanz",
+    "noInstances": "Noch keine Serverinstanzen konfiguriert",
     "select": {
       "label": "Server Typ",
       "placeholder": "Server Typ",
       "options": {
-        "srtLiveServer": "SrtLiveServer",
-        "openIrl": "OpenIRL",
+        "srt-live-server": "SrtLiveServer",
+        "openirl": "OpenIRL",
         "belabox": "Belabox",
-        "nginxRtmp": "Nginx RTMP"
+        "nginx-rtmp": "Nginx RTMP"
       }
     },
-    "srtLiveServer": {
+    "srt-live-server": {
       "header": "SrtLiveServer Einstellungen",
       "description": "Konfiguriere die Einstellungen für die SrtLiveServer-Verbindung",
       "nameBox": {
@@ -585,7 +588,7 @@
         "hint": "Beispiel: publish/live/dein_stream_key"
       }
     },
-    "openIrl": {
+    "openirl": {
       "header": "OpenIRL Einstellungen",
       "description": "Konfiguriere die Einstellungen für die OpenIRL-Verbindung",
       "nameBox": {
@@ -623,7 +626,7 @@
         "hint": "Beispiel: live/stream/dein_stream_key"
       }
     },
-    "nginxRtmp": {
+    "nginx-rtmp": {
       "header": "Nginx RTMP Einstellungen",
       "description": "Konfiguriere die Einstellungen für die Nginx RTMP-Verbindung",
       "nameBox": {
@@ -848,6 +851,7 @@
         "title": "Stream Titel",
         "directory": "Stream Kategorie",
         "bitrate": "Bitrate",
+        "primaryInstance":"Primäre Instanz",
         "noDataSelected": "Klicke auf einen Datenpunkt im Diagramm, um die Details zu sehen"
       }
     }

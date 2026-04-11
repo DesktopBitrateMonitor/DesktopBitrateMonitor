@@ -13,9 +13,7 @@ export async function handleChatMessage(eventSub) {
   const args = message.split(' ');
   const commandName = args[0].toLowerCase();
   const commandArg = args.slice(1).join(' ').toLowerCase();
-  const aliasCommand = args[1]?.toLowerCase().startsWith('!')
-    ? args[1].toLowerCase().slice(1)
-    : args[1]?.toLowerCase();
+  const aliasCommand = args[1]?.toLowerCase();
   const alias = args[2]?.toLowerCase();
   const aliasToRemove = args[1]?.toLowerCase();
 
@@ -44,8 +42,7 @@ export async function handleChatMessage(eventSub) {
   // If the user has permissions, execute the command action
 
   const serverSettings = serverConfig.get('');
-  const serverType = serverSettings.currentType;
-  const serverName = serverSettings[serverType].name;
+  const serverName = serverSettings.serverInstances?.[0]?.name || 'undefined';
 
   if (
     hasPermission({

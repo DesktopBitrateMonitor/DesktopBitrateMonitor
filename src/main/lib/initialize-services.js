@@ -3,7 +3,7 @@ import {
   connectToKickEventSub
 } from '../../scripts/kick/event-subscriptions/eventsubs';
 import Logger from '../../scripts/logging/logger';
-import { startFetchingStats, stopFetchingStats } from '../../scripts/stats-watcher/stats-fetcher';
+import { startFetchingAllInstances, stopFetchingStats } from '../../scripts/stats-watcher/stats-fetcher';
 import { injectDefaults } from '../../scripts/store/defaults';
 import { startOBSConnectionLoop } from '../../scripts/streaming-software/obs-api';
 import {
@@ -30,23 +30,11 @@ export async function initializeServices(mainWindow = null) {
 }
 
 export async function startFetchingServerStats(mainWindow = null) {
-  stopFetchingStats(mainWindow);
+  stopFetchingStats();
 
-  const currentType = serverConfig.get('currentType');
-  if (currentType === 'openirl') {
-    await startFetchingStats(true, 'openirl', mainWindow);
-  }
-
-  if (currentType === 'srt-live-server') {
-    await startFetchingStats(true, 'srt-live-server', mainWindow);
-  }
-
-  if (currentType === 'belabox') {
-    await startFetchingStats(true, 'belabox', mainWindow);
-  }
-  if (currentType === 'nginx-rtmp') {
-    await startFetchingStats(true, 'nginx-rtmp', mainWindow);
-  }
+  const instances = serverConfig.get('serverInstances') ?? [];
+  const enabledInstances = instances.filter((i) => i.enabled);
+  startFetchingAllInstances(enabledInstances, mainWindow);
 
   return { success: true, data: { message: 'Server stats fetching started' }, error: null };
 }

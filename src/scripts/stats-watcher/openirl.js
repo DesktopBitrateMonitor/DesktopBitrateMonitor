@@ -1,29 +1,19 @@
-import { broadcastOverlay } from '../app-server/server';
-import { injectDefaults } from '../store/defaults';
-import globalInternalStore from '../store/global-internal-store';
+const ZERO_STATS = { bitrate: 0, rtt: 0, uptime: 0 };
 
-export async function formatStatsOpenIrl(statsData) {
-  if (!statsData.success) return;
-  const { serverConfig } = injectDefaults();
-
-  const statsUrl = serverConfig.get('openirl.statsUrl');
+/**
+ * @param {object} statsData  - Raw response envelope from stats-fetcher
+ * @param {object} instance   - Server instance { statsUrl, publisher, ... }
+ */
+export async function formatStatsOpenIrl(statsData, instance) {
+  if (!statsData.success) return { success: false, data: ZERO_STATS, error: null };
 
   try {
-    // Handle non-legacy responses
-    if (!statsUrl.includes('legacy')) {
-      const { data } = statsData;
-      const publisherData = data?.publisher || {};
+    const isLegacy = instance.statsUrl.includes('legacy');
+
+    if (!isLegacy) {
+      const publisherData = statsData.data?.publisher || {};
 
       if (Object.keys(publisherData).length > 0) {
-        // Store the latest stats in the global internal store for usage in the app backend
-        globalInternalStore.stats.set(publisherData);
-
-        // Broadcast the stats to the overlay
-        broadcastOverlay({
-          type: 'stats',
-          stats: publisherData
-        });
-
         return {
           success: true,
           data: {
@@ -33,107 +23,33 @@ export async function formatStatsOpenIrl(statsData) {
           },
           error: null
         };
-      } else {
-        // Store the latest stats in the global internal store for usage in the app backend
-        globalInternalStore.stats.set({ bitrate: 0, rtt: 0, uptime: 0 });
-
-        // Broadcast the stats to the overlay
-        broadcastOverlay({
-          type: 'stats',
-          stats: { bitrate: 0, rtt: 0, uptime: 0 }
-        });
-
-        return {
-          success: true,
-          data: {
-            bitrate: 0,
-            rtt: 0,
-            uptime: 0
-          },
-          error: null
-        };
       }
-    } else {
-      // Handle legacy responses
-      const { data } = statsData;
 
-      if (Object.keys(data.publishers).length > 0) {
-        if (serverConfig.get('openirl.publisher') === Object.keys(data.publishers)[0]) {
-          const livePublisherKey = Object.keys(data.publishers)[0];
-          const livePublisherData = data.publishers[livePublisherKey];
+      return { success: true, data: ZERO_STATS, error: null };
+    }
 
-          // Store the latest stats in the global internal store for usage in the app backend
-          globalInternalStore.stats.set(livePublisherData);
-
-          // Broadcast the stats to the overlay
-          broadcastOverlay({
-            type: 'stats',
-            stats: livePublisherData
-          });
-
-          return {
-            success: true,
-            data: {
-              bitrate: livePublisherData.bitrate,
-              rtt: livePublisherData.rtt,
-              uptime: livePublisherData.uptime
-            },
-            error: null
-          };
-        } else {
-          // Store the latest stats in the global internal store for usage in the app backend
-          globalInternalStore.stats.set({ bitrate: 0, rtt: 0, uptime: 0 });
-
-          // Broadcast the stats to the overlay
-          broadcastOverlay({
-            type: 'stats',
-            stats: { bitrate: 0, rtt: 0, uptime: 0 }
-          });
-
-          return {
-            success: true,
-            data: {
-              bitrate: 0,
-              rtt: 0,
-              uptime: 0
-            },
-            error: null
-          };
-        }
-      } else {
-        // Store the latest stats in the global internal store for usage in the app backend
-        globalInternalStore.stats.set({ bitrate: 0, rtt: 0, uptime: 0 });
-
-        // Broadcast the stats to the overlay
-        broadcastOverlay({
-          type: 'stats',
-          stats: { bitrate: 0, rtt: 0, uptime: 0 }
-        });
-
+    // Legacy response — publisher key must match instance.publisher
+    const publishers = statsData.data?.publishers ?? {};
+    if (Object.keys(publishers).length > 0) {
+      if (instance.publisher === Object.keys(publishers)[0]) {
+        const livePublisherData = publishers[Object.keys(publishers)[0]];
         return {
           success: true,
           data: {
-            bitrate: 0,
-            rtt: 0,
-            uptime: 0
+            bitrate: livePublisherData.bitrate,
+            rtt: livePublisherData.rtt,
+            uptime: livePublisherData.uptime
           },
           error: null
         };
       }
     }
+
+    return { success: true, data: ZERO_STATS, error: null };
   } catch (error) {
-    // Store the latest stats in the global internal store for usage in the app backend
-    globalInternalStore.stats.set({ bitrate: 0, rtt: 0, uptime: 0 });
-
-    // Broadcast the stats to the overlay
-    broadcastOverlay({
-      type: 'stats',
-      stats: { bitrate: 0, rtt: 0, uptime: 0 }
-    });
-
     return {
       success: false,
-      data: null,
+      data: ZERO_STATS,
       error: { message: `Error parsing OpenIRL stats: ${error.message}` }
     };
   }

@@ -1,15 +1,15 @@
 import { ipcRenderer } from 'electron';
 
 export const statesApi = {
-  serverConnected: (callback) => {
-    const listener = (event, args = {}) => {
+  instancesStats: (callback) => {
+    const listener = (event, args = []) => {
       callback(args);
     };
 
-    ipcRenderer.on('server-connected', listener);
+    ipcRenderer.on('instances-stats', listener);
 
     return () => {
-      ipcRenderer.removeListener('server-connected', listener);
+      ipcRenderer.removeListener('instances-stats', listener);
     };
   },
 

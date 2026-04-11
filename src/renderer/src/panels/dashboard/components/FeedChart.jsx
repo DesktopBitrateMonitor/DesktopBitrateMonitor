@@ -23,7 +23,7 @@ const FeedChart = () => {
   const [startTs, setStartTs] = useState(null);
   const [maxY, setMaxY] = useState(0);
 
-  const serverType = serverConfig.currentType;
+  const serverType = serverConfig.serverInstances[0]?.serverType ?? null;
 
   useEffect(() => {
     if (!startTs) {

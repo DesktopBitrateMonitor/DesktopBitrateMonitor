@@ -8,8 +8,7 @@ const { kickAccountsConfig, switcherConfig, serverConfig } = injectDefaults();
 
 export async function handleRaid(eventSub) {
   const serverSettings = serverConfig.get('');
-  const serverType = serverSettings.currentType;
-  const serverName = serverSettings[serverType].name;
+  const serverName = serverSettings.serverInstances?.[0]?.name || 'undefined';
 
   const fromBroadcaster = eventSub.channel.slug;
   const relevantBroadcaster = kickAccountsConfig.get('broadcaster.login').toLowerCase() || null;

@@ -31,15 +31,9 @@ export async function initializeServicesIpc(ipcMain, mainWindow = null) {
     }
   });
 
-  ipcMain.handle('restart-stats-fetcher-service', async (event, serviceName) => {
-    switch (serviceName) {
-      case 'server-stats-fetcher':
-        const res = await startFetchingServerStats(mainWindow);
-        return res;
-      default:
-        Logger.warn(`Unknown service name: ${serviceName}`);
-        break;
-    }
+  ipcMain.handle('restart-stats-fetcher-service', async (event) => {
+    const res = await startFetchingServerStats(mainWindow);
+    return res;
   });
 
   ipcMain.handle('connect-to-active-platform', async (event, platform) => {

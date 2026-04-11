@@ -335,7 +335,7 @@ const OverlayEditor = () => {
                       fontSize="small"
                       onClick={(e) => {
                         e.stopPropagation();
-                        const value = `${overlayData.host === '' ? 'http://localhost' : overlayData.host}:${PORT}/overlay/stats?key=${overlayData.overlayKey}&layer-name=StreamStats&layer-width=400&layer-height=200`;
+                        const value = `${overlayData.host === '' ? 'http://localhost' : overlayData.host}:${PORT}/overlay/stats?key=${overlayData.overlayKey}`;
                         handleCopyStatsUrl(value);
                       }}
                     />

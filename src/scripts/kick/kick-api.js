@@ -22,11 +22,6 @@ export const channelDataAPI = axios.create({
 const client_id = import.meta.env.VITE_KICKCLIENTID;
 const client_secret = import.meta.env.VITE_KICKCLIENTSECRET;
 
-//TODO: Add token validation and refresh logic like twitch for kick as well.
-// 1. Check if the access token is valid before making API calls.
-// 2. If the token is invalid or expired, use the refresh token to get a new access token.
-// 3. Update the stored access token and refresh token in the app's state and storage.
-// 4. Retry the original API call with the new access token after refreshing.
 
 /**
  *

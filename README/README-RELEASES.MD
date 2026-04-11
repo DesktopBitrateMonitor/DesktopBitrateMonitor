@@ -1,9 +1,26 @@
+## v1.1.0
+
+- Rework the complete switcher and server logic.
+  - Implement multi stats watching
+  - Monitor all stats from all configured server instances
+  - Switcher logic rework, check readme for the logic
+    - At first same logic like noalbs (check out noalbs if you wan't a very functional, small, non UI - App) 
+  - Old server settings should be moved into the new logic
+- Edit the frontend to display the new server logic states
+- Edit the session logging to display the primary instance on each data point
+- Fix add alias chat command 
+  - add alias command needs the actions for finding the command to add the alias. Changed to command only needs an existing alias to add an alias to the command
+- Fix overlay URL copy function
+- Start YT implementation -> just for information, not visible in the app right now
+
+---
+
 ## v1.0.3
 
 - Fix RTMP Frontend connection state
 - Fix broadcasting state if the stream is already running before starting the app
 - Add a warning about the amount of logo data created on enabling session logs
-- Move the app to his own [GITHUB REPOSITORY](https://github.com/DesktopBitrateMonitor/DesktopBitrateMonitor). Look for older versions in the [OLD REPOSITORY](https://github.com/Yinks87/desktop-bitrate-monitor/)
+- Move the app to his own repository: github.com/DesktopBitrateMonitor/DesktopBitrateMonitor. Look for older versions in the old repository: github.com/Yinks87/desktop-bitrate-monitor/
 
 ---
 

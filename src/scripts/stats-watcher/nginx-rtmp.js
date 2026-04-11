@@ -1,106 +1,57 @@
-import { broadcastOverlay } from '../app-server/server';
-import { injectDefaults } from '../store/defaults';
-import globalInternalStore from '../store/global-internal-store';
+const ZERO_STATS = { bitrate: 0, rtt: 0, uptime: 0 };
 
-export async function formatStatsNginxRtmp(statsData) {
-  if (!statsData.success) return;
-  const { serverConfig } = injectDefaults();
-
-  const publisher = serverConfig.get('nginx-rtmp.publisher');
+/**
+ * @param {object} statsData  - Raw response envelope from stats-fetcher
+ * @param {object} instance   - Server instance { statsUrl, publisher, ... }
+ */
+export async function formatStatsNginxRtmp(statsData, instance) {
+  if (!statsData.success) return { success: false, data: ZERO_STATS, error: null };
 
   try {
-    const res = findStreamByName(statsData.data, publisher.split('/').slice(-1)[0]);
+    const streamName = instance.publisher.split('/').slice(-1)[0];
+    const res = findStreamByName(statsData.data, streamName);
 
-    const streamData = res.data;
-
-    // if the stream was not started the streamname won't be found in the stats
     if (!res.success) {
-      // Store the latest stats in the global internal store for usage in the app backend
-      globalInternalStore.stats.set({ bitrate: 0, rtt: 0, uptime: 0 });
-
-      // Broadcast the stats to the overlay
-      broadcastOverlay({
-        type: 'stats',
-        stats: { bitrate: 0, rtt: 0, uptime: 0 }
-      });
-
       return {
         success: true,
-        data: { bitrate: 0, rtt: 0, uptime: 0 },
-        error: { message: `Stream with name ${publisher} not found in Nginx RTMP stats` }
+        data: ZERO_STATS,
+        error: { message: `Stream "${streamName}" not found in Nginx RTMP stats` }
       };
     }
 
-    // Check the stream has an active tag
+    const streamData = res.data;
     const isLive = streamData?.includes('<active/>');
 
-    // Extract the bits/s and calculate the kbps bitrate
     const bwVideo = extractXmlValue(streamData, 'bw_video');
     const bitrate = bwVideo ? parseInt(bwVideo) / 1024 : 0;
-
-    // Extract the uptime in seconds
     const time = extractXmlValue(streamData, 'time');
     const uptime = time ? parseInt(time / 1000) : 0;
-
     const width = parseInt(extractXmlValue(streamData, 'width')) || 0;
     const height = parseInt(extractXmlValue(streamData, 'height')) || 0;
     const framerate = parseInt(extractXmlValue(streamData, 'frame_rate')) || 0;
 
-    // If <active/> tag are found the stream is live, otherwise we determine the stream as offline
     if (isLive) {
-      const response = {
-        bitrate: Number(bitrate.toFixed(0)), // Format bitrate to 0 decimal places
-        publisher: publisher,
-        rtt: 0, // Nginx RTMP does not provide RTT, so set to 0
-        uptime,
-        width,
-        height,
-        framerate,
-        isLive // Returns true for active streams
-      };
-      // Store the latest stats in the global internal store for usage in the app backend
-      globalInternalStore.stats.set(response);
-
-      // Broadcast the stats to the overlay
-      broadcastOverlay({
-        type: 'stats',
-        stats: response
-      });
-
       return {
         success: true,
-        data: response,
-        error: null
-      };
-    } else {
-      // Store the latest stats in the global internal store for usage in the app backend
-      globalInternalStore.stats.set({ bitrate: 0, rtt: 0, uptime: 0 });
-
-      // Broadcast the stats to the overlay
-      broadcastOverlay({
-        type: 'stats',
-        stats: { bitrate: 0, rtt: 0, uptime: 0 }
-      });
-
-      return {
-        success: true,
-        data: { bitrate: 0, rtt: 0, uptime: 0 },
+        data: {
+          bitrate: Number(bitrate.toFixed(0)),
+          publisher: instance.publisher,
+          rtt: 0,
+          uptime,
+          width,
+          height,
+          framerate,
+          isLive
+        },
         error: null
       };
     }
+
+    return { success: true, data: ZERO_STATS, error: null };
   } catch (error) {
-    // Store the latest stats in the global internal store for usage in the app backend
-    globalInternalStore.stats.set({ bitrate: 0, rtt: 0, uptime: 0 });
-
-    // Broadcast the stats to the overlay
-    broadcastOverlay({
-      type: 'stats',
-      stats: { bitrate: 0, rtt: 0, uptime: 0 }
-    });
-
     return {
       success: false,
-      data: null,
+      data: ZERO_STATS,
       error: { message: `Error parsing Nginx RTMP stats: ${error.message}` }
     };
   }

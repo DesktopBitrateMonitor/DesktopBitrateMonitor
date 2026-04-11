@@ -15,6 +15,8 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
  * - children: ReactNode (body content)
  */
 const CollapsibleCard = ({
+  startIcon,
+  centerElement,
   title,
   subtitle,
   actions,
@@ -54,19 +56,37 @@ const CollapsibleCard = ({
       ]}
     >
       <Stack spacing={2}>
-        <Stack direction={'row' } justifyContent="space-between" spacing={2}>
-          <Box sx={{ flex: 1, minWidth: 0 }}>
+        <Stack
+          direction={'row'}
+          justifyContent={'space-between'}
+          alignItems={'center'}
+          spacing={2}
+        >
+          <Box
+            sx={{
+              flex: 1,
+              minWidth: 0,
+              display: 'flex',
+              flexDirection: startIcon ? 'row' : 'column',
+              alignItems: startIcon ? 'center' : 'flex-start'
+            }}
+          >
+            {startIcon && (
+              <Box sx={{ mr: 1, display: 'flex', alignItems: 'center' }}>{startIcon}</Box>
+            )}
             {title && (
               <Typography variant="subtitle1" noWrap={!subtitle}>
                 {title}
               </Typography>
             )}
             {subtitle && (
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, maxWidth:'80%' }}>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, maxWidth: '80%' }}>
                 {subtitle}
               </Typography>
             )}
           </Box>
+
+          {centerElement && <Box sx={{ flex: 1 }}>{centerElement}</Box>}
 
           <Stack direction="row" spacing={1} alignItems="center">
             {actions}

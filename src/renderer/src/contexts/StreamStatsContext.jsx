@@ -13,50 +13,49 @@ const INITIAL_STATS = {
 export const StreamStatsProvider = ({ children }) => {
   const [stats, setStats] = useState(INITIAL_STATS);
   const [totalUptime, setTotalUptime] = useState(0);
+  const [instancesStats, setInstancesStats] = useState([]);
   const lastUptimeRef = useRef(0);
 
   useEffect(() => {
     const api = window?.statesApi;
-    if (!api?.serverConnected) return undefined;
+    if (!api?.instancesStats) return undefined;
 
-    const unsubscribe = api.serverConnected((response = {}) => {
-      const publisherData = response?.data?.publisher;
-      const legacyPublishers = response?.data?.publishers;
-      const firstLegacyPublisherKey = legacyPublishers ? Object.keys(legacyPublishers)[0] : null;
-      const legacyData = firstLegacyPublisherKey ? legacyPublishers[firstLegacyPublisherKey] : null;
-      let incoming = null;
+    const unsubscribe = api.instancesStats((aggregatedArray = []) => {
+      setInstancesStats(aggregatedArray);
 
-      // If not nginx-rtmp use publishers key data (new format), otherwise use the root response data (nginx-rtmp format)
-      if (response?.server !== 'nginx-rtmp') {
-        incoming = publisherData && typeof publisherData === 'object' ? publisherData : legacyData;
-      } else {
-        incoming = response?.data;
+      // Update primary stats from the highest-priority (first) instance
+      if (aggregatedArray.length > 0) {
+        const primaryInstance = aggregatedArray[0];
+        const incoming = primaryInstance?.data ?? {};
+
+        const nextBitrate = Number(incoming?.bitrate) || 0;
+        const nextRtt = Number(incoming?.rtt) || 0;
+        const nextUptime = Number(incoming?.uptime) || 0;
+
+        setStats({ bitrate: nextBitrate, rtt: nextRtt, uptime: nextUptime });
+
+        // accumulate uptime across page changes (resets only on app restart)
+        const delta = Math.max(nextUptime - (lastUptimeRef.current || 0), 0);
+        if (delta > 0) {
+          setTotalUptime((prev) => prev + delta);
+        }
+        lastUptimeRef.current = nextUptime;
       }
-
-      const nextBitrate = Number(incoming?.bitrate) || 0;
-      const nextRtt = Number(incoming?.rtt) || 0;
-      const nextUptime = Number(incoming?.uptime) || 0;
-
-      setStats({ bitrate: nextBitrate, rtt: nextRtt, uptime: nextUptime });
-
-      // accumulate uptime across page changes (resets only on app restart)
-      const delta = Math.max(nextUptime - (lastUptimeRef.current || 0), 0);
-      if (delta > 0) {
-        setTotalUptime((prev) => prev + delta);
-      }
-      lastUptimeRef.current = nextUptime;
     });
 
     return () => {
       try {
         unsubscribe?.();
       } catch (error) {
-        console.warn('Failed to cleanup serverConnected listener', error);
+        console.warn('Failed to cleanup instancesStats listener', error);
       }
     };
   }, []);
 
-  const value = useMemo(() => ({ stats, totalUptime }), [stats, totalUptime]);
+  const value = useMemo(
+    () => ({ stats, totalUptime, instancesStats }),
+    [stats, totalUptime, instancesStats]
+  );
 
   return <StreamStatsContext.Provider value={value}>{children}</StreamStatsContext.Provider>;
 };

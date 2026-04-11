@@ -1,6 +1,6 @@
 {
   "name": "desktop-bitrate-monitor",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "An app to listen for SRT(LA) stream stats and change scenes in a broadcasting software",
   "main": "./out/main/index.js",
   "author": "yinks87",
@@ -18,6 +18,9 @@
     "build:linux": "npm run build && electron-builder --linux"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/modifiers": "^9.0.0",
+    "@dnd-kit/sortable": "^10.0.0",
     "@electron-toolkit/preload": "^3.0.2",
     "@electron-toolkit/utils": "^4.0.0",
     "@emotion/react": "^11.14.0",

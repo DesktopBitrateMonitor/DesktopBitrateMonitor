@@ -1,90 +1,82 @@
-# Quick Start Guide
+# Schnellstart Anleitung
 
-- Download the "Desktop-bitrate-monitor-x.x.x-setup.exe file
+- Lade die "Desktop-bitrate-monitor-x.x.x-setup.exe Datei aus dem letzten Release runter
 
   ![downloader-exe](readme-assets/quick-start/downloader-exe.png)
 
-- Run the installer
-  - You may see a security warning. This occurs because the app is not code-signed
-- Select your platform and configure your account
-  - The enabled switch shows which platform is currently active for chat listening
-- Configure your stats server
-- Connect your broadcasting software via WebSocket (OBS WebSocket 5.x or higher)
-  - If credentials are correct, the connection will be established automatically
-- If everything is connected properly:
-  - Both connection indicators turn green
-  - Your account name will be displayed
+- Führe den Installer aus
+  - Es sollte eine Sicherheitswarnung auftauchen. Diese kommt aufgrund der fehlenden Security-Policy
+- Wähle die Streaming Plattform und registriere deinen Account
+  - Der aktive Switcher zeigt welche Plattform gerade ausgewählt ist
+- Stelle deinen Server und die URL/Publisher Informationen ein
+- Verbinde deine Streaming Software per Websocket (OBS WebSocket 5.x or higher)
+  - Wenn alle Informationen korrekt eingestellt sind, dann verbindet sich die App automatisch mit der Streaming Software
+- Wenn alles richtig verbunden ist, dann ist folgendes im Dashboard zu sehen:
+  - Beide Verbindungsanzeigen sind grün
+  - Der Twitch Account Name wird angezeigt
 
-Once you start an SRT feed and the server publishes stats, you will see live data in the chart.
+Nach start des SRT/RTMP Streams werden die Daten im Chart angezeigt
 
 ---
 
 # Dashboard
 
 <details>
-  <summary> Show all dashboard descriptions  </summary>
-
-#### The view of the full dashboard and short descriptions of the components
-
+  <summary> Zeige alle Dashboard Erklärungen </summary>
   <img src="readme-assets/dashboard/dashboard-full.png" alt="image" />
   <ol>
-    <li>Navigation sidebar with all sections</li>
+    <li>Navigation Seiten-Menü</li>
       <ul>
-        <li>Platform button opens a card to change the active platform and switch to the platform-settings</li>
-        <li>Only one active platform is allowed</li>
+        <li>Die Plattform Schaltfläche öffnet ein Panel um die aktive Plattform zu wählen und zu den Einstellungen zu gelangen</li>
+        <li>Nur eine aktive Plattform ist erlaubt</li>
         <img src="readme-assets/dashboard/platform-select.png" alt="image">
       </ul>
-    <li>Toggle button for collapsing/expanding the sidebar (state is saved)</li>
-    <li>Full Feed-Chart</li>
+    <li>Schaltfläche um die Seiten-Navigation ein oder aus zu klappen</li>
+    <li>Das Chart für die Live Anzeige der Verbindung</li>
       <ul>
-        <li>Displays the live bitrate in a line chart from the main server instance (top instance in the list)</li>
-      </ul>
-      <ul>
-        <li>Select a history logs file and show the stats</li>
+        <li>Wähle ein Logfile von einem altem Stream aus um die Statistik anzuzeigen</li>
         <img src="readme-assets/dashboard/history-watcher.png" alt="image">
       </ul>
     <li>Feed statistics:</li>
       <ul>
-        <li>Current bitrate - refetching every 1000ms</li>
-        <li>Current speed - refetching every 1000ms</li>
-        <li>Current uptime - resets after restarting the feed</li>
-        <li>The total uptime - resets when app restart</li>
+        <li>Aktuelle Bitrate - Aktualisierung alle 1000ms</li>
+        <li>Aktuelle Geschwindigkeit - Aktualisierung alle 1000ms</li>
+        <li>Aktuelle Zeit - Neustart nach jedem Feed Neustart</li>
+        <li>Gesamte Zeit der Live Feeds - Neustart nach App Neustart</li>
       </ul>
-    <li>Connection status:</li>
+    <li>Verbindungsstatus:</li>
       <ul>
-        <li>Gray: No connection</li>
-        <li>Orange: Not all connected</li>
-        <li>Green: Connected</li>
-        <li>Red: Connection error</li>
+        <li>Grau: Nicht verbunden</li>
+        <li>Grün: Verbunden</li>
       </ul>
-    <li>Active platform and broadcaster account name</li>
-    <li>Session log viewer</li>
+    <li>Aktive Plattform und Name des Accounts/li>
+    <li>Log Datein der Aktions-Logs seit Start der App</li>
   </ul>
 
 </details>
 
 ---
 
-# Platform Setup
+# Plattform Einstellungen
 
 <details>
-  <summary>Display all platform settings</summary>
+  <summary>Zeige alle Plattform Einstellungen</summary>
 
   <div align="center">
     <ul>
       <li>
-        Only <span><u><b>one</b></u></span> platform can be active at a time
+        Nur <span><u><b>eine</b></u></span> Plattform kann aktiviert sein
       </li>
       <li>
-        When switching platforms, the app automatically connects to chat if an account is available
+        Wird die Plattform gewechselt verbindet sich die App automatisch mit dem Chat des Registrierten Accounts für die Plattform
       </li>
     </ul>
   </div>
 
 ### Chat Commands
 
-- Commands are shared across all platforms
-- Changes apply globally (aliases, roles, enabled state)
+- Commands Sind für alle Plattformen übergreifend
+- Änderungen sind global (Aliase, Rollen, Aktiv Status)
 
 ![image](readme-assets/platform/chat-commands.png)
 
@@ -263,15 +255,15 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
         <td>Set a alias for a command</td>
         <td>!addalias</td>
         <td>Moderator</td>
-        <td>existing alias, new alias</td>
-        <td>!addalias !live !L</td>
+        <td>command, alias</td>
+        <td>!addalias live !L</td>
       </tr>
       <tr>
         <td>remove_alias</td>
         <td>Removes a alias</td>
         <td>!removealias</td>
         <td>Moderator</td>
-        <td>existing alias</td>
+        <td>alias</td>
         <td>!removealias !L</td>
       </tr>
       <tr>
@@ -388,44 +380,31 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
 <details>
   <summary>Display all server settings</summary>
 
-- The Bitrate Monitor listens for all active server instances
-- The top instance ist the "Primary Instance"
-  - Stats displayed in the live chart
-  - Stats logged in the sessions logs
-- To set a instance to the primary instance, drag & drop the instance to the top of the list
-  - After reordering the stats fetching automatically restarts
+- The Bitrate Monitor is only able to listen for one server stats url
 
 ![image](readme-assets/server/server-settings.png)
 
   <ol>
     <li>
-      Add a server instance
+      Server Type
     </li>
-    <img src="readme-assets/server/new-instance.png" />
+    <li>
+      Server Name
+    </li>
     <ul>
       <li>
-        New instance are disabled
-      </li>
-      <li>
-        Server Type Select
-      </li>
-      <li>
-        Server Name: The name are used for logging and is displayed in the connection states
-      </li>
-      <li>
-        Stats URL: The URL to listen for the feed stats
-      </li>
-      <li>
-        Publisher
+        A random name
       </li>
     </ul>
     <li>
-      Edit Instance
+      Stats URL
     </li>
-    <img src="readme-assets/server/edit-instance.png" />
+    <li>
+      Publisher
+    </li>
     <ul>
       <li>
-        Edit any setting, disable/enable the instance or remove it
+        The publisher from your server stats
       </li>
     </ul>
   </ol>
@@ -488,13 +467,6 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
   <summary>Display all switcher settings</summary>
 
 - The switcher automatically changes scenes based on bitrate conditions.
-
-### Switching logic
-
-- Switch from Offline/Starting to live without any active feed: Any of the instances is above the "to live" threshold
-- Switch from live to low: All of the active feeds must be below the "to low" threshold
-- Switch from to live from low: The "Primary Instance" above the "to live" threshold to recover
-  - If the "Primary Instance" stays below the threshold and all other instance above the threshold, the switcher will <b> NOT </b> recover to live
 
 ##
 
@@ -738,7 +710,7 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
 
 ##
 
-### Developer Mode
+### Expert Mode
 
 ![image](readme-assets/overlay/expert.png)
 

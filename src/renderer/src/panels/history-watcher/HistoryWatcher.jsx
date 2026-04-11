@@ -160,6 +160,7 @@ const HistoryWatcher = () => {
                 )}
                 <Box>
                   <Typography variant="body2">{`${t('logging.historyWatcher.dataPointBox.title')}: ${selectedLog.title || '-'}`}</Typography>
+                  <Typography variant="body2">{`${t('logging.historyWatcher.dataPointBox.primaryInstance')}: ${selectedLog.primaryInstance || '-'}`}</Typography>
                   <Typography variant="body2">{`${t('logging.historyWatcher.dataPointBox.directory')}: ${selectedLog.directory || '-'}`}</Typography>
                   <Typography variant="body2">{`${t('logging.historyWatcher.dataPointBox.bitrate')}: ${selectedLog.bitrate ?? 0} kbps`}</Typography>
                 </Box>

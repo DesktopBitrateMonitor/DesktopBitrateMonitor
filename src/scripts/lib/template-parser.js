@@ -6,8 +6,6 @@
  * @returns {string} Parsed String
  */
 
-// TODO: Check the parser can handle templates in templates like ${variable1 ${variable2}}
-
 export function templateParser(template, obj = {}) {
   if (typeof template !== 'string') return template;
 

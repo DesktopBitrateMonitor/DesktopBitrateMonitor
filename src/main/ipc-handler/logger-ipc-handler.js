@@ -131,7 +131,7 @@ export async function initializeLoggerIpc(ipcMain) {
       channel_Id: '',
       title: '',
       directory: '',
-      directory_thumbnail: '',
+      directory_thumbnail: ''
     };
 
     if (Boolean(access_token)) {

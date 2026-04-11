@@ -403,7 +403,6 @@ export const commandActions = ({
     const alias = argument.alias;
 
     const commandsData = commandsConfig.get('commands') || [];
-    const allCommands = commandsData.map((cmd) => cmd.action.toLowerCase());
     const allAliases = commandsData.map((cmd) => cmd.cmd.map((c) => c.toLowerCase())).flat();
 
     // check if command or alias is empty or undefined
@@ -420,7 +419,8 @@ export const commandActions = ({
     }
 
     // Check if the command exists
-    if (!allCommands.includes(command.toLowerCase())) {
+
+    if (!allAliases.includes(command.toLowerCase())) {
       await messageService({
         action: 'addAlias',
         event: 'commandNotFound',
@@ -445,8 +445,8 @@ export const commandActions = ({
       return;
     }
 
-    const commandToAddAlias = commandsData.find(
-      (cmd) => cmd.action.toLowerCase() === command.toLowerCase()
+    const commandToAddAlias = commandsData.find((cmd) =>
+      cmd.cmd.map((c) => c.toLowerCase()).includes(command.toLowerCase())
     );
     if (!commandToAddAlias) {
       await messageService({

@@ -11,7 +11,8 @@
         "remove": "Remove",
         "export": "Export",
         "import": "Import",
-        "exportAnyway": "Export Anyway"
+        "exportAnyway": "Export Anyway",
+        "addInstance": "Add Server"
       },
       "inputAdornment": {
         "add": "Click or press Enter to add",
@@ -555,17 +556,19 @@
     "error5": "Publisher cannot contain spaces",
     "error6": "Name cannot be empty",
     "inputAdornment": "Click or press Enter to save",
+    "primaryInstance": "Primary Instance",
+    "noInstances": "No server instances configured yet",
     "select": {
       "label": "Server Type",
       "placeholder": "Server Type",
       "options": {
-        "srtLiveServer": "SrtLiveServer",
-        "openIrl": "OpenIRL",
+        "srt-live-server": "SrtLiveServer",
+        "openirl": "OpenIRL",
         "belabox": "Belabox",
-        "nginxRtmp": "Nginx RTMP"
+        "nginx-rtmp": "Nginx RTMP"
       }
     },
-    "srtLiveServer": {
+    "srt-live-server": {
       "header": "SrtLiveServer Settings",
       "description": "Configure the settings for the SrtLiveServer connection",
       "nameBox": {
@@ -584,7 +587,7 @@
         "hint": "Example: stream/live/your_stream_key"
       }
     },
-    "openIrl": {
+    "openirl": {
       "header": "OpenIRL Settings",
       "description": "Configure the settings for the OpenIRL connection",
       "nameBox": {
@@ -622,7 +625,7 @@
         "hint": "Example: live/stream/your_stream_key"
       }
     },
-    "nginxRtmp": {
+    "nginx-rtmp": {
       "header": "Nginx RTMP Settings",
       "description": "Configure the settings for the Nginx RTMP connection",
       "nameBox": {
@@ -797,7 +800,7 @@
       "actionsFileSizeLabel": "Actions Logs File Size (MB)",
       "saveTooltip": "Click to save changes",
       "directoryDialogTitle": "Select directory for {{label}}",
-      "loggingStartHeader":"Logging Start",
+      "loggingStartHeader": "Logging Start",
       "logSessionsOnAppStart": "Log sessions on app start",
       "logSessionsOnStreamStart": "Log sessions on stream start",
       "validation": {
@@ -806,8 +809,8 @@
         "fileSizeInteger": "File size must be an integer",
         "fileSizeRange": "File size must be between 0 and 10.",
         "fileSizeEmpty": "File size cannot be empty."
-      },      "warning": "Be careful! The stats logging creates a lot of data (round about 1,5MB per hour)... Make sure you can handle the amount of logs data they will be created!"
-
+      },
+      "warning": "Be careful! The stats logging creates a lot of data (round about 1,5MB per hour)... Make sure you can handle the amount of logs data they will be created!"
     },
     "filtering": {
       "all": "All",
@@ -824,26 +827,27 @@
       "errorMessage": "Error exporting logs: {{error}}",
       "successMessage": "Logs successfully exported to: {{path}}"
     },
-    "import":{
-      "header":"Choose a log file to import",
-      "filters":{
-        "name":"Log File"
+    "import": {
+      "header": "Choose a log file to import",
+      "filters": {
+        "name": "Log File"
       }
     },
-    "historyWatcher":{
-      "header":"Log Visualization",
-      "description":"Displays the history of a stream's bitrate",
-      "toolTip":"Load a log",
-      "x-label":"Time",
-      "y-label":"Bitrate (kbps)",
-      "currentLog":{
-        "header":"Current Log",
+    "historyWatcher": {
+      "header": "Log Visualization",
+      "description": "Displays the history of a stream's bitrate",
+      "toolTip": "Load a log",
+      "x-label": "Time",
+      "y-label": "Bitrate (kbps)",
+      "currentLog": {
+        "header": "Current Log",
         "description": "The data of the current log is displayed here"
       },
-      "dataPointBox":{
+      "dataPointBox": {
         "title": "Stream Title",
-        "directory":"Stream Directory",
+        "directory": "Stream Directory",
         "bitrate": "Bitrate",
+        "primaryInstance": "Primary Instance",
         "noDataSelected": "Click on a data point in the graph to see the details"
       }
     }

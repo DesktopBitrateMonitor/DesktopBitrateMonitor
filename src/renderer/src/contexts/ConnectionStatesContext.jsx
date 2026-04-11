@@ -11,6 +11,7 @@ const initialState = {
     feed: 'unknown'
   },
   serverType: null,
+  activeInstanceNames: [],
   softwareType: null,
   broadcastState: false,
   incomingPublisher: null,
@@ -25,11 +26,13 @@ const setStatus = (statuses, key, value) => ({
 function reducer(state, action) {
   switch (action.type) {
     case 'server:update': {
-      const { success, serverType, storedPublisher, incomingPublisher } = action.payload;
+      const { success, serverType, activeInstanceNames, storedPublisher, incomingPublisher } =
+        action.payload;
       return {
         ...state,
         statuses: setStatus(state.statuses, 'server', success ? 'connected' : 'disconnected'),
         serverType: success ? (serverType ?? null) : null,
+        activeInstanceNames: success ? (activeInstanceNames ?? []) : [],
         storedPublisher: success ? (storedPublisher ?? '') : '',
         incomingPublisher: success ? (incomingPublisher ?? null) : null
       };
@@ -94,32 +97,6 @@ function reducer(state, action) {
  * - subscribe: ({ api, dispatch }) => unsubscribe?
  */
 export const DEFAULT_CONNECTION_LISTENERS = [
-  {
-    key: 'server-connected',
-    subscribe: ({ api, dispatch }) =>
-      api.serverConnected((response = {}) => {
-        const success = Boolean(response?.success);
-        const publishers = response?.data?.publishers;
-        const serverType = response?.server ?? 'unknown';
-
-        let publisherKeys = [];
-        if (serverType !== 'nginx-rtmp') {
-          publisherKeys =
-            publishers && typeof publishers === 'object' ? Object.keys(publishers) : [];
-        } else {
-          publisherKeys.push(response?.publisher);
-        }
-        dispatch({
-          type: 'server:update',
-          payload: {
-            success,
-            serverType: response?.server,
-            storedPublisher: response?.storedPublisher,
-            incomingPublisher: publisherKeys.length > 0 ? publisherKeys[0] : null
-          }
-        });
-      })
-  },
   {
     key: 'streaming-software',
     subscribe: ({ api, dispatch }) =>

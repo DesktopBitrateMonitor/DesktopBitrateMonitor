@@ -42,8 +42,7 @@ export async function handleChatMessage(rawMessage) {
   if (!requiredCommandRole) return;
 
   const serverSettings = serverConfig.get('');
-  const serverType = serverSettings.currentType;
-  const serverName = serverSettings[serverType].name;
+  const serverName = serverSettings.serverInstances?.[0]?.name || 'undefined';
 
   if (
     hasPermission({

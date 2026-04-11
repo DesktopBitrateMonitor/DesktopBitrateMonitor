@@ -43,7 +43,7 @@ function App() {
   const { appConfig, updateAppConfig } = useAppConfigStore();
   const { status } = useUpdate();
   const { alerts } = useAlert();
-  const { stats, totalUptime } = useStreamStats();
+  const { stats, totalUptime, instancesStats } = useStreamStats();
   const { broadcastState } = useConnectionStates();
   const { loggingConfig } = useLoggingConfigStore();
   const { getLastLog } = useLogger();
@@ -89,9 +89,18 @@ function App() {
 
       if (!shouldStartLogging) return;
 
+      const primaryInstance = instancesStats?.[0]?.instance?.name || 'unknown';
+
       statsPayloadRef.current = [
         ...statsPayloadRef.current,
-        { id: generateId(32), ...stats, totalUptime, broadcastState, ts: Date.now() }
+        {
+          id: generateId(32),
+          ...stats,
+          primaryInstance,
+          totalUptime,
+          broadcastState,
+          ts: Date.now()
+        }
       ];
 
       if (statsPayloadRef.current.length >= STATS_PAYLOAD_FLUSH_INTERVAL) {

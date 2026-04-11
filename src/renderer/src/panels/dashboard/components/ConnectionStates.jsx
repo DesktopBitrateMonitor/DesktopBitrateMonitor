@@ -1,10 +1,11 @@
 import React from 'react';
-import { Box, Stack, Tooltip, Typography } from '@mui/material';
+import { Box, Chip, Stack, Typography } from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
 import StorageRoundedIcon from '@mui/icons-material/StorageRounded';
 import DesktopWindowsRoundedIcon from '@mui/icons-material/DesktopWindowsRounded';
 import { useConnectionStates } from '../../../contexts/ConnectionStatesContext.jsx';
 import { useTranslation } from 'react-i18next';
+import { useStreamStats } from '../../../contexts/StreamStatsContext.jsx';
 
 const getToneColors = (theme, tone) => {
   switch (tone) {
@@ -31,15 +32,41 @@ const getToneColors = (theme, tone) => {
   }
 };
 
+const getInstanceChipColors = (theme, stat, index) => {
+  if (stat?.success) {
+    if (index === 0) {
+      return {
+        border: alpha(theme.palette.secondary.main, theme.palette.mode === 'dark' ? 0.54 : 0.42),
+        text: theme.palette.text.primary,
+        dot: theme.palette.secondary.main,
+        bg: alpha(theme.palette.background.paper, theme.palette.mode === 'dark' ? 0.92 : 0.98)
+      };
+    }
+    return {
+      border: alpha(theme.palette.success.main, theme.palette.mode === 'dark' ? 0.5 : 0.38),
+      text: theme.palette.text.primary,
+      dot: theme.palette.success.main,
+      bg: alpha(theme.palette.background.paper, theme.palette.mode === 'dark' ? 0.92 : 0.98)
+    };
+  }
+
+  return {
+    border: alpha(theme.palette.error.main, theme.palette.mode === 'dark' ? 0.52 : 0.4),
+    text: theme.palette.text.primary,
+    dot: theme.palette.error.main,
+    bg: alpha(theme.palette.background.paper, theme.palette.mode === 'dark' ? 0.9 : 0.96)
+  };
+};
+
 const ConnectionTile = ({
-  icon,
+  icon = null,
   label,
   type,
+  typeLabel,
   typeKey = 'server',
   status = 'unknown',
   isLive = false,
-  speed = null,
-  bitrate = null
+  stats = null
 }) => {
   const { t } = useTranslation();
 
@@ -50,14 +77,6 @@ const ConnectionTile = ({
     disconnected: { label: t('dashboard.connectionStates.states.disconnected'), tone: 'error' },
     unknown: { label: t('dashboard.connectionStates.states.unknown'), tone: 'neutral' }
   };
-
-  const SERVER_NAME_MAP = {
-    openirl: t('dashboard.connectionStates.serverNames.openIrl'),
-    'srt-live-server': t('dashboard.connectionStates.serverNames.srtLiveServer'),
-    belabox: t('dashboard.connectionStates.serverNames.belabox'),
-    'nginx-rtmp': t('dashboard.connectionStates.serverNames.nginxRtmp')
-  };
-
   const BROADCAST_SOFTWARE_NAME_MAP = {
     'obs-studio': t('dashboard.connectionStates.softwareNames.obsStudio'),
     'streamlabs-obs': t('dashboard.connectionStates.softwareNames.streamlabsObs'),
@@ -65,40 +84,35 @@ const ConnectionTile = ({
   };
 
   const theme = useTheme();
-  const meta = STATUS_META[status];
+  const meta = STATUS_META[status] ?? STATUS_META.unknown;
   const colors = getToneColors(theme, meta.tone);
 
   return (
-    <Tooltip
-      title={t('dashboard.connectionStates.label', { label, meta: meta.label })}
-      placement="top"
-      arrow
+    <Box
+      role="group"
+      sx={{
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        borderRadius: 1.5,
+        border: '1px solid',
+        borderColor: 'divider',
+        px: 1.25,
+        py: 1,
+        minHeight: 84,
+        backgroundColor: colors.bg,
+        transition: (t) =>
+          t.transitions.create(['transform', 'background-color'], { duration: 150 }),
+        '&:hover': {
+          transform: 'translateY(-1px)',
+          backgroundColor: alpha(colors.dot, theme.palette.mode === 'dark' ? 0.2 : 0.14)
+        }
+      }}
     >
-      <Box
-        role="group"
-        aria-label={t('dashboard.connectionStates.label', { label, meta: meta.label })}
-        sx={{
-          position: 'relative',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: '100%',
-          borderRadius: 1.5,
-          border: '1px solid',
-          borderColor: 'divider',
-          px: 1.25,
-          py: 1,
-          minHeight: 84,
-          backgroundColor: colors.bg,
-          transition: (t) =>
-            t.transitions.create(['transform', 'background-color'], { duration: 150 }),
-          '&:hover': {
-            transform: 'translateY(-1px)',
-            backgroundColor: alpha(colors.dot, theme.palette.mode === 'dark' ? 0.2 : 0.14)
-          }
-        }}
-      >
-        <Stack direction="row" spacing={1} alignItems="center">
+      <Stack direction="row" spacing={1} alignItems="center">
+        {icon && (
           <Box
             sx={{
               width: 36,
@@ -116,104 +130,150 @@ const ConnectionTile = ({
           >
             {React.cloneElement(icon, { fontSize: 'small' })}
           </Box>
-
-          <Box display={'flex'} flexDirection="column" gap={1}>
-            <Typography variant="body2" sx={{ fontWeight: 600, lineHeight: 1 }} noWrap>
-              {label}
-            </Typography>
+        )}
+        <Box display={'flex'} flexDirection="column" gap={1}>
+          <Typography variant="body2" sx={{ fontWeight: 600, lineHeight: 1 }} noWrap>
+            {label}
+          </Typography>
+          {typeKey !== 'server' && (
             <Typography
               variant="body2"
               sx={{ fontWeight: 500, lineHeight: 1, color: 'text.secondary' }}
               noWrap
             >
-              {typeKey === 'software'
-                ? BROADCAST_SOFTWARE_NAME_MAP[type]
-                : typeKey === 'server'
-                  ? SERVER_NAME_MAP[type]
-                  : typeKey === 'feed'
-                    ? meta.label
-                    : null}
+              {typeLabel || (typeKey === 'software' ? BROADCAST_SOFTWARE_NAME_MAP[type] : null)}
             </Typography>
-            {(bitrate !== null || speed !== null) && (
+          )}
+          {typeKey === 'server' && stats.length > 0 ? (
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+              {stats.map((stat, index) => {
+                const chipColors = getInstanceChipColors(theme, stat, index);
+
+                return (
+                  <Chip
+                    key={stat.instance.id}
+                    label={`${stat.instance.name} ${Number(stat?.data?.bitrate) || 0} kbps`}
+                    size="small"
+                    sx={{
+                      height: 30,
+                      borderRadius: '999px',
+                      px: 0.45,
+                      fontWeight: 700,
+                      letterSpacing: '0.01em',
+                      color: chipColors.text,
+                      border: '1px solid',
+                      borderColor: chipColors.border,
+                      backgroundColor: chipColors.bg,
+                      backdropFilter: 'blur(10px)',
+                      boxShadow: theme.palette.mode === 'dark'
+                        ? `inset 0 1px 0 ${alpha(theme.palette.common.white, 0.08)}`
+                        : `inset 0 1px 0 ${alpha(theme.palette.common.white, 0.7)}, 0 1px 2px ${alpha(theme.palette.common.black, 0.08)}`,
+                      '& .MuiChip-label': {
+                        px: 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 0.75,
+                        '&::before': {
+                          content: '""',
+                          width: 7,
+                          height: 7,
+                          borderRadius: '50%',
+                          backgroundColor: chipColors.dot,
+                          boxShadow: `0 0 0 2px ${alpha(chipColors.dot, theme.palette.mode === 'dark' ? 0.2 : 0.16)}`
+                        }
+                      }
+                    }}
+                  />
+                );
+              })}
+            </Box>
+          ) : (
+            <></>
+          )}
+          {isLive ? (
+            <Stack
+              sx={{ position: 'absolute', top: 1, left: 5 }}
+              direction={'row'}
+              alignItems={'center'}
+              spacing={1}
+            >
+              <Box
+                sx={{
+                  width: 10,
+                  height: 10,
+                  borderRadius: '50%',
+                  backgroundColor: 'error.main',
+                  boxShadow: (t) => `0 0 0 3px ${alpha(t.palette.background.paper, 0.85)}`
+                }}
+              />
               <Typography
                 variant="caption"
-                sx={{ fontWeight: 500, color: 'text.secondary', lineHeight: 1 }}
-                noWrap
-              >
-                {`${bitrate ?? 0} kbps${speed !== null ? ` | ${speed} kB/s` : ''}`}
-              </Typography>
-            )}
-            {isLive ? (
-              <Stack
-                sx={{ position: 'absolute', top: 1, left: 5 }}
-                direction={'row'}
-                alignItems={'center'}
-                spacing={1}
-              >
-                <Box
-                  sx={{
-                    width: 10,
-                    height: 10,
-                    borderRadius: '50%',
-                    backgroundColor: 'error.main',
-                    boxShadow: (t) => `0 0 0 3px ${alpha(t.palette.background.paper, 0.85)}`
-                  }}
-                />
-                <Typography
-                  variant="caption"
-                  sx={{
-                    fontWeight: 600,
-                    color: 'error.main',
-                    animation: 'pulse 2s infinite',
-                    '@keyframes pulse': {
-                      '0%': {
-                        textShadow: `0 0 0 ${alpha(theme.palette.error.main, 0.7)}`
-                      },
-                      '70%': {
-                        textShadow: `0 0 10px ${alpha(theme.palette.error.main, 0)}`
-                      },
-                      '100%': {
-                        textShadow: `0 0 0 ${alpha(theme.palette.error.main, 0)}`
-                      }
+                sx={{
+                  fontWeight: 600,
+                  color: 'error.main',
+                  animation: 'pulse 2s infinite',
+                  '@keyframes pulse': {
+                    '0%': {
+                      textShadow: `0 0 0 ${alpha(theme.palette.error.main, 0.7)}`
+                    },
+                    '70%': {
+                      textShadow: `0 0 10px ${alpha(theme.palette.error.main, 0)}`
+                    },
+                    '100%': {
+                      textShadow: `0 0 0 ${alpha(theme.palette.error.main, 0)}`
                     }
-                  }}
-                >
-                  LIVE
-                </Typography>
-                {bitrate !== null ||
-                  (speed !== null && (
-                    <Typography
-                      variant="caption"
-                      sx={{ fontWeight: 500, color: 'text.secondary', ml: 'auto' }}
-                    >
-                      {`${bitrate} kbps | ${speed} kB/s`}
-                    </Typography>
-                  ))}
-              </Stack>
-            ) : null}
-          </Box>
-        </Stack>
+                  }
+                }}
+              >
+                LIVE
+              </Typography>
+            </Stack>
+          ) : null}
+        </Box>
+      </Stack>
 
-        <Box
-          sx={{
-            position: 'absolute',
-            top: 5,
-            right: 5,
-            width: 10,
-            height: 10,
-            borderRadius: '50%',
-            backgroundColor: colors.dot,
-            boxShadow: (t) => `0 0 0 3px ${alpha(t.palette.background.paper, 0.85)}`
-          }}
-        />
-      </Box>
-    </Tooltip>
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 5,
+          right: 5,
+          width: 10,
+          height: 10,
+          borderRadius: '50%',
+          backgroundColor: colors.dot,
+          boxShadow: (t) => `0 0 0 3px ${alpha(t.palette.background.paper, 0.85)}`
+        }}
+      />
+    </Box>
   );
 };
 
 const ConnectionStates = ({ isMenu = false }) => {
   const { t } = useTranslation();
-  const { statuses, serverType, softwareType, broadcastState } = useConnectionStates();
+  const { statuses, softwareType, broadcastState } = useConnectionStates();
+  const { instancesStats } = useStreamStats();
+
+  const [instancesConnections, setInstancesConnections] = React.useState('unknown');
+
+  React.useEffect(() => {
+    if (instancesStats.length === 0) {
+      setInstancesConnections('unknown');
+      return;
+    }
+
+    const instancesSuccess = instancesStats.every((stat) => stat.success);
+    const instancesAllFailed = instancesStats.every((stat) => !stat.success);
+
+    if (instancesAllFailed) {
+      setInstancesConnections('unknown');
+      return;
+    }
+    if (!instancesSuccess) {
+      setInstancesConnections('asynchronous');
+      return;
+    }
+    setInstancesConnections('connected');
+  }, [instancesStats]);
 
   return (
     <Box
@@ -227,11 +287,11 @@ const ConnectionStates = ({ isMenu = false }) => {
       }}
     >
       <ConnectionTile
-        icon={<StorageRoundedIcon />}
-        type={serverType}
+        // icon={<StorageRoundedIcon />}
+        stats={instancesStats}
         typeKey="server"
         label={t('dashboard.connectionStates.serverTileLabel')}
-        status={statuses.server}
+        status={instancesConnections}
       />
       <ConnectionTile
         icon={<DesktopWindowsRoundedIcon />}

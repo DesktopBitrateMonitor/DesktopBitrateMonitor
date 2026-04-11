@@ -1,3 +1,17 @@
+Version 1.0.4:
+  Implementations:
+    Multi Stats fetching:
+      # The app should be able to fetch stats from multiple server instances
+      # Each server instance should have a active state.
+      Frontend:
+        - Create a switch to toggle switch between single and multi stats fetching mode
+        - Create a button to add a new server instance
+        - Open a dialog and choose witch server type, add the stats url and the publisher
+        - Show the server instances in a list with the active state and the publisher
+      Backend: 
+        - Store each server instance in a array of objects
+        - Add a active state to each server instance
+
 Version 1.0.3:
   Fixes:
     Broadcasting Software:
@@ -13,12 +27,6 @@ Version 1.0.3:
     Updates:
       ✔ Move the releases to the new Github repo in the account "DesktopBitrateMonitor @done(26-04-09 11:39)
       ✔ Update the build and release pipeline to the new Github repo @done(26-04-09 11:39)
-      /* 
-       * If i change the repo, old versions should check for in the old repo, get the new version
-       * and then update to the new repo. So the old versions should also check the old repo for updates, 
-       * if there is a new version, show a notification and update to the new repo.
-       * After that, the app will check for updates in the new repo.
-       */
       
 
 Version 0.0.10-beta:
