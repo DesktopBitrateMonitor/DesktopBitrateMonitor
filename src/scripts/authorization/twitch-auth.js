@@ -71,7 +71,8 @@ twitchRouter.get('/oauth/twitch', async (req, res) => {
     }
 
     // Send data to the main process
-    // Search for the main window in all open windows. It should be only one window open, so it should be safe to take the first one.
+    // Search for the main window in all open windows. 
+    // It should be only one window open, so it should be safe to take the first one.
     const mainWindow = BrowserWindow.getAllWindows()[0];
     mainWindow.webContents.send('send-twitch-oauth-data', { userType: type, data });
 

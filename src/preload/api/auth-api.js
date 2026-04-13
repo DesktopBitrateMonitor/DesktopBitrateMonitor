@@ -13,8 +13,8 @@ export const authApi = {
   startTwitchAuthProcess: (authType) => {
     ipcRenderer.invoke('start-twitch-auth-process', authType);
   },
-  revokeTwitchAccessToken: (authType, accessToken) => {
-    return ipcRenderer.invoke('revoke-twitch-auth-token', authType, accessToken);
+  revokeTwitchAccessToken: (accountType) => {
+    return ipcRenderer.invoke('revoke-twitch-auth-token', accountType);
   },
   // Send the new OAuth_token to the frontend
   setTwitchOauthData: (callback) =>
@@ -36,8 +36,8 @@ export const authApi = {
     ipcRenderer.invoke('start-kick-auth-process', authType);
   },
 
-  revokeKickAccessToken: (authType, accessToken) => {
-    return ipcRenderer.invoke('revoke-kick-auth-token', authType, accessToken);
+  revokeKickAccessToken: (accountType) => {
+    return ipcRenderer.invoke('revoke-kick-auth-token', accountType);
   },
 
   // Send the new OAuth_token to the frontend
@@ -52,6 +52,31 @@ export const authApi = {
 
   updateKickUser: (callback) => {
     ipcRenderer.on('update-kick-user', (event, data) => {
+      callback(data);
+    });
+  },
+
+  // YOUTUBE AUTH HANDLING
+  startYoutubeAuthProcess: (accountType) => {
+    ipcRenderer.invoke('start-youtube-auth-process', accountType);
+  },
+
+  revokeYoutubeAccessToken: (accountType) => {
+    return ipcRenderer.invoke('revoke-youtube-auth-token', accountType);
+  },
+
+  // Send the new OAuth_token to the frontend
+  setYoutubeOauthData: (callback) =>
+    ipcRenderer.on('send-youtube-oauth-data', (event, data) => {
+      callback(data);
+    }),
+
+  validateYoutubeUser: (userType, userName) => {
+    return ipcRenderer.invoke('validate-youtube-user', userType, userName);
+  },
+
+  updateYoutubeUser: (callback) => {
+    ipcRenderer.on('update-youtube-user', (event, data) => {
       callback(data);
     });
   }

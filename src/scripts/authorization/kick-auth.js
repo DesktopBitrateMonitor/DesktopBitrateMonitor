@@ -30,7 +30,6 @@ let code_challenge;
 
 export function startKickAuthorization(authType) {
   type = authType;
-
   const pkceCodes = createPKCECodes();
   code_verifier = pkceCodes.code_verifier;
   code_challenge = pkceCodes.code_challenge;
@@ -45,7 +44,8 @@ export function startKickAuthorization(authType) {
     state: generateId(16)
   });
 
-  return `${authBaseUrl}/oauth/authorize?${qs}`;
+  const url = `${authBaseUrl}/oauth/authorize?${qs}`;
+  return url;
 }
 
 kickRouter.get('/oauth/kick', async (req, res) => {

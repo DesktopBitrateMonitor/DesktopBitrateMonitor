@@ -3,9 +3,6 @@ import fs from 'fs';
 import Logger from '../logging/logger';
 import router from './base-router';
 import { overlayFilePath } from '../overlay/overlay-router';
-import { injectDefaults } from '../store/defaults';
-
-const {overlayConfig} = injectDefaults();
 
 const express = require('express');
 const app = express();
@@ -29,7 +26,6 @@ function getOverlayData() {
 }
 
 export function broadcastOverlay(data) {
-  const host = overlayConfig.get('host')
 
   const dataString = JSON.stringify(data);
   wss.clients.forEach((client) => {

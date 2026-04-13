@@ -35,6 +35,9 @@ import { useConnectionStates } from './contexts/ConnectionStatesContext';
 import { useLogger } from './contexts/LoggerContext';
 import generateId from '../../scripts/lib/id-generator';
 import HistoryWatcher from './panels/history-watcher/HistoryWatcher';
+import YoutubeAccountsSettings from './panels/youtube/components/YoutubeAccountsSettings';
+import YoutubeUserSettings from './panels/youtube/components/YoutubeUserSettings';
+import YoutubeSettings from './panels/youtube/YoutubeSettings';
 
 const STATS_PAYLOAD_FLUSH_INTERVAL = 50;
 const ACTIONS_PAYLOAD_FLUSH_INTERVAL = 10;
@@ -198,7 +201,7 @@ function App() {
 
             {/* ACCOUNT SETTINGS */}
             <Route path="accountssettings" element={<AccountsSettings />}>
-              <Route index element={<Navigate to="twitch" replace />} />
+              {/* <Route index element={<Navigate to="twitch" replace />} /> */}
               <Route path="twitch" element={<TwitchSettings />}>
                 <Route index element={<CommandSettings />} />
                 <Route path="commandsettings" element={<CommandSettings />} />
@@ -213,6 +216,14 @@ function App() {
                 <Route path="messagesettings" element={<MessageSettings />} />
                 <Route path="usersettings" element={<KickUserSettings />} />
                 <Route path="accountssettings" element={<KickAccountSettings />} />
+              </Route>
+
+              <Route path="youtube" element={<YoutubeSettings />}>
+                <Route index element={<CommandSettings />} />
+                <Route path="commandsettings" element={<CommandSettings />} />
+                <Route path="messagesettings" element={<MessageSettings />} />
+                <Route path="usersettings" element={<YoutubeUserSettings />} />
+                <Route path="accountssettings" element={<YoutubeAccountsSettings />} />
               </Route>
             </Route>
 

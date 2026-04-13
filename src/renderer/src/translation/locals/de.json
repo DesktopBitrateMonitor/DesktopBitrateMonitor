@@ -188,7 +188,57 @@
         }
       }
     },
-    "youtube": {},
+    "youtube": {
+      "users": {
+        "header": "Benutzereinstellungen",
+        "description": "Verwalte Admin- und Mod-Benutzer. Diese Benutzer müssen keine tatsächlichen YouTube-Admins oder Moderatoren sein, dies sind nur Rollen innerhalb der App, die jedem YouTube-Benutzer zugewiesen werden können. ALLE deine YouTube-Moderatoren werden automatisch als Moderatoren in der App zugewiesen. Admins haben Zugriff auf alle Befehle, Mods haben Zugriff auf alle Befehle, außer denen, die nur für Admins eingeschränkt sind.",
+        "noAccountRegistered": "Bitte melde ein StreamerIn-Konto im Reiter 'Konten', um Admins und Mods zu verwalten",
+        "error1": "Benutzername darf nicht leer sein",
+        "error2": "Benutzerüberprüfung fehlgeschlagen",
+        "error3": "Benutzer ist bereits ein Admin",
+        "error4": "Benutzer ist bereits ein Mod",
+        "error5": "Benutzer kann derzeit nicht überprüft werden",
+        "inputAdornmentAdmin": "Klicken oder Enter drücken, um Admin hinzuzufügen",
+        "inputAdornmentMod": "Klicken oder Enter drücken, um Mod hinzuzufügen",
+        "inputBox": {
+          "label": "YouTube Benutzername",
+          "placeholder": "Benutzername"
+        },
+        "admins": {
+          "header": "Admins",
+          "description": "Admins können alle Admin- und niedrigeren Rollenbefehle verwenden"
+        },
+        "mods": {
+          "header": "Moderatoren",
+          "description": "Moderatoren können alle Mod- und niedrigeren Rollenbefehle verwenden"
+        }
+      },
+      "accounts": {
+        "header": "Kontoeinstellungen",
+        "description": "Melde dich hier mit deinem StreamerIn- und Bot-Konto an. Du kannst entscheiden, welches Konto Nachrichten im YouTube-Chat postet. Fallback ist das StreamerIn-Konto. Die Anwendung hört automatisch auf das YouTube-Konto des StreamerIns, wenn YouTube die aktivierte Plattform ist.",
+        "notLoggedIn": "Nicht angemeldet",
+        "broadcasterConnected": "Mit StreamerIn-Konto verbunden",
+        "chatbotConnected": "Mit Chatbot-Konto verbunden",
+        "loggedOutBroadcaster": "StreamerIn-Konto erfolgreich abgemeldet, Tokens alle widerrufen, Daten wurden gelöscht",
+        "loggedOutChatbot": "Chatbot-Konto erfolgreich abgemeldet, Tokens alle widerrufen, Daten wurden gelöscht",
+        "enabledChatbot": "Chatbot Konto wird für Nachrichten verwendet",
+        "disabledChatbot": "StreamerIn Konto wird für Nachrichten verwendet",
+        "failure": "Fehler beim wechseln des Kontos für Nachrichten",
+        "broadcaster": {
+          "header": "StreamerIn Konto",
+          "description": "Melde das StreamerIn Konto hier an"
+        },
+        "chatbot": {
+          "header": "Chatbot Konto",
+          "description": "Melde das Chatbot Konto hier an",
+          "hint": "Verwende das Chatbot-Konto, um Nachrichten im Chat zu posten"
+        },
+        "button": {
+          "login": "Konto anmelden",
+          "logout": "Abmelden"
+        }
+      }
+    },
     "kick": {
       "users": {
         "header": "Benutzereinstellungen",
@@ -851,7 +901,7 @@
         "title": "Stream Titel",
         "directory": "Stream Kategorie",
         "bitrate": "Bitrate",
-        "primaryInstance":"Primäre Instanz",
+        "primaryInstance": "Primäre Instanz",
         "noDataSelected": "Klicke auf einen Datenpunkt im Diagramm, um die Details zu sehen"
       }
     }

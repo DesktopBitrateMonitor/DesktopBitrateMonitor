@@ -26,13 +26,12 @@ import Settings from '@mui/icons-material/Settings';
 import FeedIcon from '@mui/icons-material/Feed';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
-import YouTubeIcon from '@mui/icons-material/YouTube';
 import { useAppConfigStore } from '../../contexts/DataContext';
 import { useTranslation } from 'react-i18next';
 import TwitchIcon from '../../assets/icons/TwitchIcon';
 import KickIcon from '../../assets/icons/KickIcon';
+import YoutubeIcon from '../../assets/icons/YoutubeIcon';
 import appImage from '../../../../assets/icon.png';
-import ShieldIcon from '@mui/icons-material/Shield';
 
 const isDev = import.meta.env.DEV;
 
@@ -43,76 +42,74 @@ const NAV_ITEMS = [
     path: '/dashboard',
     icon: SpaceDashboardOutlinedIcon,
     matchPrefix: false,
-    development: false
+    dev: false
   },
   {
     translationKey: 'navigation.platformsSettings',
     path: ACCOUNTS_PATH,
     icon: ManageAccountsIcon,
     matchPrefix: true,
-    development: false
+    dev: false
   },
   {
     translationKey: 'navigation.serverSettings',
     path: '/dashboard/serversettings',
     icon: StorageIcon,
     matchPrefix: false,
-    development: false
+    dev: false
   },
   {
     translationKey: 'navigation.softwareSettings',
     path: '/dashboard/softwaresettings',
     icon: ComputerIcon,
     matchPrefix: false,
-    development: false
+    dev: false
   },
   {
     translationKey: 'navigation.switcherSettings',
     path: '/dashboard/switchersettings',
     icon: SyncIcon,
     matchPrefix: false,
-    development: false
+    dev: false
   },
   {
     translationKey: 'navigation.loggingSettings',
     path: '/dashboard/loggingsettings',
     icon: FeedIcon,
     matchPrefix: false,
-    development: false
+    dev: false
   },
   {
     translationKey: 'navigation.overlayEditor',
     path: '/dashboard/overlayeditor',
     icon: SportsEsportsIcon,
     matchPrefix: false,
-    development: false
+    dev: false
   },
   {
     translationKey: 'navigation.appSettings',
     path: '/dashboard/appsettings',
     icon: Settings,
     matchPrefix: true,
-    development: false
+    dev: false
   }
 ];
 
 const PLATFORM_ROUTES = [
-  { id: 'twitch', label: 'Twitch', path: `${ACCOUNTS_PATH}/twitch`, icon: TwitchIcon },
+  { id: 'twitch', label: 'Twitch', path: `${ACCOUNTS_PATH}/twitch`, icon: TwitchIcon, dev: false },
   {
     id: 'kick',
     label: 'Kick',
     path: `${ACCOUNTS_PATH}/kick`,
     icon: KickIcon,
-    disabled: false,
-    development: false
+    dev: false
   },
   {
     id: 'youtube',
-    label: 'YouTube (coming soon)',
+    label: 'YouTube',
     path: `${ACCOUNTS_PATH}/youtube`,
-    icon: YouTubeIcon,
-    disabled: true,
-    development: true
+    icon: YoutubeIcon,
+    dev: true
   }
 ];
 
@@ -262,7 +259,7 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
               }}
             >
               {NAV_ITEMS.map((item) => {
-                if (item.development && !isDev) return null;
+                if (item.dev && !isDev) return null;
                 const Icon = item.icon;
                 const isActive = item.matchPrefix
                   ? location.pathname === item.path || location.pathname.startsWith(`${item.path}/`)
@@ -348,7 +345,7 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
             >
               <List disablePadding sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                 {PLATFORM_ROUTES.map((platform) => {
-                  if (platform.development && !isDev) return null;
+                  if (platform.dev && !isDev) return null;
                   const Icon = platform.icon;
                   return (
                     <Box
@@ -365,7 +362,6 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
                         onChange={handleActivePlatformChange(platform.id)}
                         checked={activePlatform === platform.id}
                         name={platform.id}
-                        // disabled={activePlatform === platform.id}
                       />
                       <ListItemButton
                         key={platform.path}

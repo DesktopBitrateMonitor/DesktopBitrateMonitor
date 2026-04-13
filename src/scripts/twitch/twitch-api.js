@@ -302,11 +302,12 @@ export async function sendChatMessage(
 
 /**
  *
- * @param {string} access_token The access token to revoke
+ * @param {string} accountType The account type ('broadcaster' or 'bot') whose access token to revoke
  * @returns Status 200 on success, 400 on error
  */
 
-export async function revokeTwitchAccessToken(access_token) {
+export async function revokeTwitchAccessToken(accountType) {
+  const access_token = twitchAccountsConfig.get(`${accountType}.access_token`);
   try {
     const qs = new URLSearchParams({
       client_id,

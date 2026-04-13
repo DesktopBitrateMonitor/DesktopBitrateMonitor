@@ -11,7 +11,8 @@ const {
   serverConfig,
   streamingSoftwareConfig,
   switcherConfig,
-  overlayConfig
+  overlayConfig,
+  youtubeAccountsConfig
 } = injectDefaults();
 
 // Map store names to their instances for ipc usage
@@ -25,7 +26,8 @@ const STORES = {
   'server-config': serverConfig,
   'streaming-software-config': streamingSoftwareConfig,
   'switcher-config': switcherConfig,
-  'overlay-config': overlayConfig
+  'overlay-config': overlayConfig,
+  'youtube-accounts-config': youtubeAccountsConfig
 };
 
 // Helper function to get a store by name

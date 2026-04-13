@@ -34,6 +34,7 @@
     "dotenv": "^17.2.3",
     "electron-updater": "^6.3.9",
     "express": "^5.2.1",
+    "googleapis": "^171.4.0",
     "i18next": "^25.7.3",
     "i18next-http-backend": "^3.0.2",
     "mui-color-input": "^7.0.0",

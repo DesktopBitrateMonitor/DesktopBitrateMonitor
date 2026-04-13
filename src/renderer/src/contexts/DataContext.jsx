@@ -42,6 +42,9 @@ const [StreamingSoftwareConfigContext, useStreamingSoftwareConfigInternal] = cre
 const [SwitcherConfigContext, useSwitcherConfigInternal] =
   createStoreContext('SwitcherConfigContext');
 const [OverlayConfigContext, useOverlayConfigInternal] = createStoreContext('OverlayConfigContext');
+const [YoutubeAccountsConfigContext, useYoutubeAccountsConfigInternal] = createStoreContext(
+  'YoutubeAccountsConfigContext'
+);
 
 const useStoreState = (file) => {
   const [config, setConfig] = useState(null);
@@ -105,7 +108,8 @@ export const DataProvider = ({ children }) => {
       { Provider: ServerConfigContext.Provider, file: 'server-config' },
       { Provider: StreamingSoftwareConfigContext.Provider, file: 'streaming-software-config' },
       { Provider: SwitcherConfigContext.Provider, file: 'switcher-config' },
-      { Provider: OverlayConfigContext.Provider, file: 'overlay-config' }
+      { Provider: OverlayConfigContext.Provider, file: 'overlay-config' },
+      { Provider: YoutubeAccountsConfigContext.Provider, file: 'youtube-accounts-config' }
     ],
     []
   );
@@ -261,6 +265,20 @@ export const useOverlayConfigStore = () => {
   );
 };
 
+export const useYoutubeAccountsConfig = () => {
+  const { config, loading, error, reload, updateLocal } = useYoutubeAccountsConfigInternal();
+  return useMemo(
+    () => ({
+      youtubeAccountsConfig: config,
+      loading,
+      error,
+      reloadYoutubeAccountsConfig: reload,
+      updateYoutubeAccountsConfig: updateLocal
+    }),
+    [config, loading, error, reload, updateLocal]
+  );
+};
+
 // Backwards-compat helper for debugging or boot screens if needed
 // NOTE: Avoid this in performance-critical code, as it combines all stores again.
 export const useAllStores = () => {
@@ -274,6 +292,7 @@ export const useAllStores = () => {
   const streaming = useStreamingSoftwareConfigStore();
   const switcher = useSwitcherConfigStore();
   const overlay = useOverlayConfigStore();
+  const youtubeAccounts = useYoutubeAccountsConfig();
   return {
     appConfig: app.appConfig,
     loggingConfig: logging.loggingConfig,
@@ -284,6 +303,7 @@ export const useAllStores = () => {
     serverConfig: server.serverConfig,
     streamingSoftwareConfig: streaming.streamingSoftwareConfig,
     switcherConfig: switcher.switcherConfig,
-    overlayConfig: overlay.overlayConfig
+    overlayConfig: overlay.overlayConfig,
+    youtubeAccountsConfig: youtubeAccounts.youtubeAccountsConfig
   };
 };

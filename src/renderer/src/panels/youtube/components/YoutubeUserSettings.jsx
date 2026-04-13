@@ -11,63 +11,63 @@ import {
   useTheme
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
-import { useTwitchAccountsConfig } from '../../../contexts/DataContext';
+import { useYoutubeAccountsConfig } from '../../../contexts/DataContext';
 import CollapsibleCard from '../../../components/functional/CollapsibleCard';
 import LayoutToggle from '../../../components/functional/LayoutToggle';
 import InputEndAdornment from '../../../components/feedback/InputEndAdornment';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { useTranslation } from 'react-i18next';
-import TwitchIcon from '../../../assets/icons/TwitchIcon';
+import YoutubeIcon from '../../../assets/icons/YoutubeIcon';
 
-const TwitchUserSettings = () => {
+const YoutubeUserSettings = () => {
   const { t } = useTranslation();
-  const { twitchAccountsConfig, updateTwitchAccountsConfig } = useTwitchAccountsConfig();
+  const { youtubeAccountsConfig, updateYoutubeAccountsConfig } = useYoutubeAccountsConfig();
   const { showAlert } = useAlert();
   const theme = useTheme();
 
-  const [layoutMode, setLayoutMode] = React.useState(twitchAccountsConfig?.userLayout || 'list');
+  const [layoutMode, setLayoutMode] = React.useState(youtubeAccountsConfig?.userLayout || 'list');
   const [users, setUsers] = React.useState({ admin: '', mod: '' });
-  const [adminsList, setAdminsList] = React.useState(twitchAccountsConfig?.admins ?? []);
-  const [modsList, setModsList] = React.useState(twitchAccountsConfig?.mods ?? []);
+  const [adminsList, setAdminsList] = React.useState(youtubeAccountsConfig?.admins ?? []);
+  const [modsList, setModsList] = React.useState(youtubeAccountsConfig?.mods ?? []);
   const [isValidating, setIsValidating] = React.useState({ admin: false, mod: false });
 
   useEffect(() => {
-    const storedLayout = twitchAccountsConfig?.userLayout;
+    const storedLayout = youtubeAccountsConfig?.userLayout;
     if (storedLayout === 'grid' || storedLayout === 'list') {
       setLayoutMode(storedLayout);
     } else {
       setLayoutMode('list');
     }
 
-    setAdminsList(twitchAccountsConfig?.admins);
-    setModsList(twitchAccountsConfig?.mods);
-  }, [twitchAccountsConfig]);
+    setAdminsList(youtubeAccountsConfig?.admins);
+    setModsList(youtubeAccountsConfig?.mods);
+  }, [youtubeAccountsConfig]);
 
   useEffect(() => {
-    window.authApi.updateTwitchUser((data) => {
+    window.authApi.updateYoutubeUser((data) => {
       if (data?.type === 'admin') {
         if (data?.action === 'add') {
           const updatedAdmins = [...adminsList, data.user];
           setAdminsList(updatedAdmins);
-          updateTwitchAccountsConfig((prev) => ({ ...(prev || {}), admins: updatedAdmins }));
+          updateYoutubeAccountsConfig((prev) => ({ ...(prev || {}), admins: updatedAdmins }));
         } else if (data?.action === 'remove') {
           const updatedAdmins = adminsList.filter((admin) => admin.id !== data.user.id);
           setAdminsList(updatedAdmins);
-          updateTwitchAccountsConfig((prev) => ({ ...(prev || {}), admins: updatedAdmins }));
+          updateYoutubeAccountsConfig((prev) => ({ ...(prev || {}), admins: updatedAdmins }));
         }
       } else if (data?.type === 'mod') {
         if (data?.action === 'add') {
           const updatedMods = [...modsList, data.user];
           setModsList(updatedMods);
-          updateTwitchAccountsConfig((prev) => ({ ...(prev || {}), mods: updatedMods }));
+          updateYoutubeAccountsConfig((prev) => ({ ...(prev || {}), mods: updatedMods }));
         } else if (data?.action === 'remove') {
           const updatedMods = modsList.filter((mod) => mod.id !== data.user.id);
           setModsList(updatedMods);
-          updateTwitchAccountsConfig((prev) => ({ ...(prev || {}), mods: updatedMods }));
+          updateYoutubeAccountsConfig((prev) => ({ ...(prev || {}), mods: updatedMods }));
         }
       }
     });
-  }, [updateTwitchAccountsConfig, adminsList, modsList]);
+  }, [updateYoutubeAccountsConfig, adminsList, modsList]);
 
   const isUserInputValid = (value = '') => value.trim().replace(/\s/g, '').length > 0;
 
@@ -75,10 +75,10 @@ const TwitchUserSettings = () => {
     async (nextLayout) => {
       if (!nextLayout || nextLayout === layoutMode) return;
       setLayoutMode(nextLayout);
-      updateTwitchAccountsConfig((prev) => ({ ...(prev || {}), userLayout: nextLayout }));
-      await window.storeApi.set('twitch-accounts-config', 'userLayout', nextLayout);
+      updateYoutubeAccountsConfig((prev) => ({ ...(prev || {}), userLayout: nextLayout }));
+      await window.storeApi.set('youtube-accounts-config', 'userLayout', nextLayout);
     },
-    [twitchAccountsConfig, updateTwitchAccountsConfig]
+    [youtubeAccountsConfig, updateYoutubeAccountsConfig]
   );
 
   const handleInputChange = (userType, value) => {
@@ -87,41 +87,41 @@ const TwitchUserSettings = () => {
 
   const handleAddUser = async (userType, user) => {
     if (!isUserInputValid(user)) {
-      showAlert({ message: t('platforms.twitch.users.error1'), severity: 'error' });
+      showAlert({ message: t('platforms.youtube.users.error1'), severity: 'error' });
       return;
     }
     setIsValidating((prev) => ({ ...prev, [userType]: true }));
     try {
-      const res = await window.authApi.validateTwitchUser(userType, user);
-      if (!res.data || res?.data?.user === undefined) {
-        showAlert({ message: t('platforms.twitch.users.error2'), severity: 'error' });
+      const res = await window.authApi.validateYoutubeUser(userType, user);
+      if (!res?.data || res?.data?.user === undefined) {
+        showAlert({ message: t('platforms.youtube.users.error2'), severity: 'error' });
         return;
       }
       const newUser = res.data.user;
       if (userType === 'admin') {
         if (adminsList.some((admin) => admin.id === newUser.id)) {
-          showAlert({ message: t('platforms.twitch.users.error3'), severity: 'error' });
+          showAlert({ message: t('platforms.youtube.users.error3'), severity: 'error' });
           return;
         }
         const updatedAdmins = [...adminsList, newUser];
         setAdminsList(updatedAdmins);
-        updateTwitchAccountsConfig((prev) => ({ ...(prev || {}), admins: updatedAdmins }));
-        await window.storeApi.set('twitch-accounts-config', 'admins', updatedAdmins);
+        updateYoutubeAccountsConfig((prev) => ({ ...(prev || {}), admins: updatedAdmins }));
+        await window.storeApi.set('youtube-accounts-config', 'admins', updatedAdmins);
       } else if (userType === 'mod') {
         if (modsList.some((mod) => mod.id === newUser.id)) {
-          showAlert({ message: t('platforms.twitch.users.error4'), severity: 'error' });
+          showAlert({ message: t('platforms.youtube.users.error4'), severity: 'error' });
           return;
         }
         const updatedMods = [...modsList, newUser];
         setModsList(updatedMods);
-        updateTwitchAccountsConfig((prev) => ({ ...(prev || {}), mods: updatedMods }));
-        await window.storeApi.set('twitch-accounts-config', 'mods', updatedMods);
+        updateYoutubeAccountsConfig((prev) => ({ ...(prev || {}), mods: updatedMods }));
+        await window.storeApi.set('youtube-accounts-config', 'mods', updatedMods);
       }
       setUsers((prev) => ({ ...prev, [userType]: '' }));
       (prev) => ({ ...prev, [userType]: '' });
     } catch (error) {
       console.error('validateUser failed', error);
-      showAlert({ message: t('platforms.twitch.users.error5'), severity: 'error' });
+      showAlert({ message: t('platforms.youtube.users.error5'), severity: 'error' });
     } finally {
       setIsValidating((prev) => ({ ...prev, [userType]: false }));
     }
@@ -131,13 +131,13 @@ const TwitchUserSettings = () => {
     if (userType === 'admin') {
       const updatedAdmins = adminsList.filter((admin) => admin.id !== user.id);
       setAdminsList(updatedAdmins);
-      updateTwitchAccountsConfig((prev) => ({ ...(prev || {}), admins: updatedAdmins }));
-      window.storeApi.set('twitch-accounts-config', 'admins', updatedAdmins);
+      updateYoutubeAccountsConfig((prev) => ({ ...(prev || {}), admins: updatedAdmins }));
+      window.storeApi.set('youtube-accounts-config', 'admins', updatedAdmins);
     } else if (userType === 'mod') {
       const updatedMods = modsList.filter((mod) => mod.id !== user.id);
       setModsList(updatedMods);
-      updateTwitchAccountsConfig((prev) => ({ ...(prev || {}), mods: updatedMods }));
-      window.storeApi.set('twitch-accounts-config', 'mods', updatedMods);
+      updateYoutubeAccountsConfig((prev) => ({ ...(prev || {}), mods: updatedMods }));
+      window.storeApi.set('youtube-accounts-config', 'mods', updatedMods);
     }
   };
 
@@ -160,8 +160,8 @@ const TwitchUserSettings = () => {
       <InputEndAdornment
         title={
           isAdmin
-            ? t('platforms.twitch.users.inputAdornmentAdmin')
-            : t('platforms.twitch.users.inputAdornmentMod')
+            ? t('platforms.youtube.users.inputAdornmentAdmin')
+            : t('platforms.youtube.users.inputAdornmentMod')
         }
         placement="top-start"
         open={Boolean(isUserInputValid(value))}
@@ -185,13 +185,13 @@ const TwitchUserSettings = () => {
       >
         <Box>
           <Stack direction={'row'} alignItems={'center'} gap={1}>
-            <TwitchIcon />
+            <YoutubeIcon />
             <Typography variant="h5" sx={{ mb: 0.5 }}>
-              {t('platforms.twitch.users.header')}
+              {t('platforms.youtube.users.header')}
             </Typography>
           </Stack>
           <Typography variant="body2" color="text.secondary" maxWidth={600}>
-            {t('platforms.twitch.users.description')}
+            {t('platforms.youtube.users.description')}
           </Typography>
         </Box>
 
@@ -213,17 +213,17 @@ const TwitchUserSettings = () => {
                 }
         }}
       >
-        {twitchAccountsConfig.broadcaster.login.length === 0 ? (
+        {youtubeAccountsConfig.broadcaster.login.length === 0 ? (
           <Box sx={{ mb: 2 }}>
             <Typography variant="body2" color="error.main">
-              {t('platforms.twitch.users.noAccountRegistered')}
+              {t('platforms.youtube.users.noAccountRegistered')}
             </Typography>
           </Box>
         ) : (
           <>
             <CollapsibleCard
-              title={t('platforms.twitch.users.admins.header')}
-              subtitle={t('platforms.twitch.users.admins.description')}
+              title={t('platforms.youtube.users.admins.header')}
+              subtitle={t('platforms.youtube.users.admins.description')}
               collapsible={false}
             >
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -258,8 +258,8 @@ const TwitchUserSettings = () => {
                   ))}
                 </Box>
                 <TextField
-                  label={t('platforms.twitch.users.inputBox.label')}
-                  placeholder={t('platforms.twitch.users.inputBox.placeholder')}
+                  label={t('platforms.youtube.users.inputBox.label')}
+                  placeholder={t('platforms.youtube.users.inputBox.placeholder')}
                   onChange={(e) => handleInputChange('admin', e.target.value)}
                   value={users.admin}
                   disabled={isValidating.admin}
@@ -279,8 +279,8 @@ const TwitchUserSettings = () => {
             </CollapsibleCard>
 
             <CollapsibleCard
-              title={t('platforms.twitch.users.mods.header')}
-              subtitle={t('platforms.twitch.users.mods.description')}
+              title={t('platforms.youtube.users.mods.header')}
+              subtitle={t('platforms.youtube.users.mods.description')}
               collapsible={false}
             >
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -315,8 +315,8 @@ const TwitchUserSettings = () => {
                   ))}
                 </Box>
                 <TextField
-                  label={t('platforms.twitch.users.inputBox.label')}
-                  placeholder={t('platforms.twitch.users.inputBox.placeholder')}
+                  label={t('platforms.youtube.users.inputBox.label')}
+                  placeholder={t('platforms.youtube.users.inputBox.placeholder')}
                   onChange={(e) => handleInputChange('mod', e.target.value)}
                   value={users.mod}
                   disabled={isValidating.mod}
@@ -341,4 +341,4 @@ const TwitchUserSettings = () => {
   );
 };
 
-export default TwitchUserSettings;
+export default YoutubeUserSettings;

@@ -22,7 +22,6 @@ export const channelDataAPI = axios.create({
 const client_id = import.meta.env.VITE_KICKCLIENTID;
 const client_secret = import.meta.env.VITE_KICKCLIENTSECRET;
 
-
 /**
  *
  * @param {string} access_token The Users Access token
@@ -299,7 +298,7 @@ export async function getStreams(access_token, broadcaster_user_id) {
       channel_Id: data[0]?.channel_id || '',
       title: data[0]?.stream_title || '',
       directory: data[0]?.category?.name || '',
-      directory_thumbnail: data[0]?.category?.thumbnail || '',
+      directory_thumbnail: data[0]?.category?.thumbnail || ''
     };
 
     return returnData;
@@ -317,7 +316,8 @@ export async function getStreams(access_token, broadcaster_user_id) {
  * @returns Status 200 on success, 400 on error
  */
 
-export async function revokeKickAccessToken(access_token) {
+export async function revokeKickAccessToken(accountType) {
+  const access_token = kickAccountsConfig.get(`${accountType}.access_token`);
   try {
     const qs = new URLSearchParams({
       token: access_token

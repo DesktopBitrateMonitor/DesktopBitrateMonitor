@@ -242,6 +242,40 @@ export const injectDefaults = () => {
     }
   });
 
+  const youtubeAccountsConfig = new Store({
+    name: 'youtube-accounts-config',
+    defaults: {
+      broadcaster: {
+        id: '',
+        login: '',
+        display_name: '',
+        customUrl: '',
+        access_token: '',
+        refresh_token: '',
+        expiry_date: null,
+        scopes: [],
+        profile_image_url: ''
+      },
+      bot: {
+        id: '',
+        login: '',
+        display_name: '',
+        customUrl: '',
+        access_token: '',
+        refresh_token: '',
+        expiry_date: null,
+        scopes: [],
+        profile_image_url: ''
+      },
+      layout: 'grid',
+      userLayout: 'grid',
+      collapsed: [],
+      useBotAccount: false,
+      admins: [],
+      mods: []
+    }
+  });
+
   const commandsConfig = new Store({
     name: 'commands-config',
     defaults: {
@@ -431,6 +465,7 @@ export const injectDefaults = () => {
     messagesConfig,
     twitchAccountsConfig,
     kickAccountsConfig,
+    youtubeAccountsConfig,
     serverConfig,
     streamingSoftwareConfig,
     switcherConfig,

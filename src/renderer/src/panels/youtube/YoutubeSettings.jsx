@@ -1,0 +1,111 @@
+import { Box, Tab, Tabs } from '@mui/material';
+import React, { useMemo } from 'react';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import EmojiMessagesIcon from '@mui/icons-material/QuestionAnswerOutlined';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import { useTranslation } from 'react-i18next';
+
+const YoutubeSettings = () => {
+  const { t } = useTranslation();
+  const TAB_CONFIG = [
+    {
+      value: 'commandsettings',
+      label: t('platforms.panels.commands'),
+      icon: ChatBubbleOutlineIcon
+    },
+    { value: 'messagesettings', label: t('platforms.panels.messages'), icon: EmojiMessagesIcon },
+    { value: 'usersettings', label: t('platforms.panels.users'), icon: AdminPanelSettingsIcon },
+    { value: 'accountssettings', label: t('platforms.panels.accounts'), icon: AccountCircleIcon }
+  ];
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const youtubeBasePath = useMemo(() => {
+    const parts = location.pathname.split('/').filter(Boolean);
+    const youtubeIndex = parts.indexOf('youtube');
+
+    if (youtubeIndex === -1) return location.pathname;
+
+    return `/${parts.slice(0, youtubeIndex + 1).join('/')}`;
+  }, [location.pathname]);
+
+  const activeValue = useMemo(() => {
+    const parts = location.pathname.split('/').filter(Boolean);
+    const last = parts[parts.length - 1] || '';
+
+    // When at /dashboard/accountssettings/youtube (index route), default to commands
+    if (last === 'youtube' || last === 'youtubesettings') return 'commandsettings';
+
+    return TAB_CONFIG.some((t) => t.value === last) ? last : 'commandsettings';
+  }, [location.pathname]);
+
+  const handleChange = (_event, newValue) => {
+    // Commands is the default: use index route when selecting it
+    if (newValue === 'commandsettings') {
+      navigate(youtubeBasePath, { replace: false });
+    } else {
+      navigate(`${youtubeBasePath}/${newValue}`, { replace: false });
+    }
+  };
+
+  return (
+    <Box
+      component={'main'}
+      sx={{
+        flex: '1 1 0',
+        p: 0,
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: 0,
+        maxHeight: '100%',
+        height: '100%'
+      }}
+    >
+      <Tabs
+        value={activeValue}
+        onChange={handleChange}
+        variant="scrollable"
+        scrollButtons="auto"
+        sx={{
+          borderBottom: 1,
+          borderColor: 'divider',
+          px: 1
+        }}
+      >
+        {TAB_CONFIG.map((tab) => {
+          const Icon = tab.icon;
+          return (
+            <Tab
+              key={tab.value}
+              value={tab.value}
+              label={tab.label}
+              icon={<Icon fontSize="small" />}
+              iconPosition="start"
+              sx={{ textTransform: 'none', fontWeight: 500, minHeight: 44 }}
+            />
+          );
+        })}
+      </Tabs>
+      <Box
+        sx={{
+          flex: '1 1 0',
+          pt: 2,
+          px: 1.5,
+          pb: 1.5,
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          minHeight: 0,
+          height: '100%'
+        }}
+      >
+        <Outlet />
+      </Box>
+    </Box>
+  );
+};
+
+export default YoutubeSettings;

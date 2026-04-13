@@ -1,70 +1,69 @@
-import { Box, Stack, Switch, Tooltip, Typography } from '@mui/material';
-import React, { use, useCallback, useEffect } from 'react';
-import CollapsibleCard from '../../../components/functional/CollapsibleCard';
-import LayoutToggle from '../../../components/functional/LayoutToggle';
-import { useTwitchAccountsConfig } from '../../../contexts/DataContext';
-import { useAlert } from '../../../contexts/AlertContext';
-import AccountPanel from './panels/AccountPanel';
+import React, { useCallback, useEffect } from 'react';
+import { useYoutubeAccountsConfig } from '../../../contexts/DataContext';
 import { useTranslation } from 'react-i18next';
-import TwitchIcon from '../../../assets/icons/TwitchIcon';
+import { useAlert } from '../../../contexts/AlertContext';
+import CollapsibleCard from '../../../components/functional/CollapsibleCard';
+import YoutubeAccountsPanel from './panels/YoutubeAccountsPanel';
+import { Box, Stack, Switch, Tooltip, Typography } from '@mui/material';
+import LayoutToggle from '../../../components/functional/LayoutToggle';
+import YoutubeIcon from '../../../assets/icons/YoutubeIcon';
 
-const AccountsSettings = () => {
-  const { twitchAccountsConfig, updateTwitchAccountsConfig } = useTwitchAccountsConfig();
+const YoutubeAccountsSettings = () => {
+  const { youtubeAccountsConfig, updateYoutubeAccountsConfig } = useYoutubeAccountsConfig();
   const { t } = useTranslation();
   const { showAlert } = useAlert();
 
   const [broadcasterData, setBroadcasterData] = React.useState(null);
   const [chatbotData, setChatbotData] = React.useState(null);
-  const [layoutMode, setLayoutMode] = React.useState(twitchAccountsConfig?.layout || 'list');
+  const [layoutMode, setLayoutMode] = React.useState(youtubeAccountsConfig?.layout || 'list');
   const [collapsedIds, setCollapsedIds] = React.useState([]);
 
   useEffect(() => {
-    const storedLayout = twitchAccountsConfig?.layout;
+    const storedLayout = youtubeAccountsConfig?.layout;
     if (storedLayout === 'grid' || storedLayout === 'list') {
       setLayoutMode(storedLayout);
     } else {
       setLayoutMode('list');
     }
 
-    setBroadcasterData(twitchAccountsConfig?.broadcaster);
-    setChatbotData(twitchAccountsConfig?.bot);
+    setBroadcasterData(youtubeAccountsConfig?.broadcaster);
+    setChatbotData(youtubeAccountsConfig?.bot);
 
-    const savedCollapsed = Array.isArray(twitchAccountsConfig?.collapsed)
-      ? twitchAccountsConfig.collapsed
+    const savedCollapsed = Array.isArray(youtubeAccountsConfig?.collapsed)
+      ? youtubeAccountsConfig.collapsed
       : [];
     setCollapsedIds(savedCollapsed);
 
     // Listen for OAuth data updates and update the frontend state accordingly
-    window.authApi.setTwitchOauthData((data) => {
+    window.authApi.setYoutubeOauthData((data) => {
       if (data.userType === 'broadcaster') {
         setBroadcasterData(data.data);
         showAlert({
-          message: t('platforms.twitch.accounts.broadcasterConnected'),
+          message: t('platforms.youtube.accounts.broadcasterConnected'),
           severity: 'success'
         });
       } else if (data.userType === 'bot') {
         setChatbotData(data.data);
         showAlert({
-          message: t('platforms.twitch.accounts.chatbotConnected'),
+          message: t('platforms.youtube.accounts.chatbotConnected'),
           severity: 'success'
         });
       }
-
-      updateTwitchAccountsConfig((prev) => ({
+      updateYoutubeAccountsConfig((prev) => ({
         ...(prev || {}),
         [data.userType]: data.data
       }));
     });
-  }, [twitchAccountsConfig]);
+  }, [youtubeAccountsConfig]);
 
   const handleLayoutChange = useCallback(
-    (nextLayout) => {
+    async (nextLayout) => {
       if (!nextLayout || nextLayout === layoutMode) return;
       setLayoutMode(nextLayout);
-      updateTwitchAccountsConfig((prev) => ({ ...(prev || {}), layout: nextLayout }));
-      window.storeApi.set('twitch-accounts-config', 'layout', nextLayout);
+      updateYoutubeAccountsConfig((prev) => ({ ...(prev || {}), layout: nextLayout }));
+      await window.storeApi.set('youtube-accounts-config', 'layout', nextLayout);
     },
-    [twitchAccountsConfig, updateTwitchAccountsConfig]
+    [youtubeAccountsConfig, updateYoutubeAccountsConfig]
   );
 
   const toggleCollapsed = useCallback(
@@ -74,91 +73,87 @@ const AccountsSettings = () => {
         : [...collapsedIds, accountType];
       setCollapsedIds(next);
 
-      updateTwitchAccountsConfig((prev) => ({
+      updateYoutubeAccountsConfig((prev) => ({
         ...(prev || {}),
         collapsed: next
       }));
 
-      await window.storeApi.set('twitch-accounts-config', 'collapsed', next);
+      await window.storeApi.set('youtube-accounts-config', 'collapsed', next);
     },
-    [collapsedIds, updateTwitchAccountsConfig]
+    [collapsedIds, updateYoutubeAccountsConfig]
   );
 
-  const handleLogin = async (accountType) => {
-    await window.authApi.startTwitchAuthProcess(accountType);
-  };
+  const handleLogin = useCallback(async (accountType) => {
+    await window.authApi.startYoutubeAuthProcess(accountType);
+  }, []);
 
   const handleLogout = useCallback(
     async (accountType) => {
-      const res = await window.authApi.revokeTwitchAccessToken(accountType);
+      const res = await window.authApi.revokeYoutubeAccessToken(accountType);
 
-      if (res.status === 400) {
-        const data = {
+      if (res) {
+        const userData = {
           id: '',
           login: '',
           display_name: '',
           access_token: '',
+          customUrl: '',
           refresh_token: '',
+          expiry_date: null,
           scopes: [],
           profile_image_url: ''
         };
 
+        await window.storeApi.set(`youtube-accounts-config`, accountType, userData);
+
+        updateYoutubeAccountsConfig((prev) => ({
+          ...(prev || {}),
+          [accountType]: userData
+        }));
+
+        if (accountType === 'broadcaster') {
+          setBroadcasterData(userData);
+        } else if (accountType === 'bot') {
+          setChatbotData(userData);
+        }
+
         showAlert({
           message:
             accountType === 'broadcaster'
-              ? t('platforms.twitch.accounts.loggedOutBroadcaster')
-              : t('platforms.twitch.accounts.loggedOutChatbot'),
+              ? t('platforms.youtube.accounts.loggedOutBroadcaster')
+              : t('platforms.youtube.accounts.loggedOutChatbot'),
           severity: 'success'
         });
-
-        await window.storeApi.set(`twitch-accounts-config`, accountType, data);
-
-        if (accountType === 'broadcaster') {
-          setBroadcasterData(data);
-          // Disable chatbot usage when broadcaster logs out
-          await window.storeApi.set('twitch-accounts-config', 'useBotAccount', false);
-          updateTwitchAccountsConfig((prev) => ({
-            ...(prev || {}),
-            [accountType]: data,
-            useBotAccount: false
-          }));
-        } else {
-          setChatbotData(data);
-          updateTwitchAccountsConfig((prev) => ({
-            ...(prev || {}),
-            [accountType]: data
-          }));
-        }
       }
     },
-    [chatbotData, broadcasterData, twitchAccountsConfig, updateTwitchAccountsConfig]
+    [youtubeAccountsConfig, updateYoutubeAccountsConfig]
   );
 
   const handleSwitchChange = useCallback(
     async (event) => {
       const useBot = event.target.checked;
 
-      const res = await window.storeApi.set('twitch-accounts-config', 'useBotAccount', useBot);
+      const res = await window.storeApi.set('youtube-accounts-config', 'useBotAccount', useBot);
       if (res.success) {
         showAlert({
           message: useBot
-            ? t('platforms.twitch.accounts.enabledChatbot')
-            : t('platforms.twitch.accounts.disabledChatbot'),
+            ? t('platforms.youtube.accounts.enabledChatbot')
+            : t('platforms.youtube.accounts.disabledChatbot'),
           severity: 'success'
         });
       } else {
         showAlert({
-          message: t('platforms.twitch.accounts.failure'),
+          message: t('platforms.youtube.accounts.failure'),
           severity: 'error'
         });
       }
 
-      updateTwitchAccountsConfig((prev) => ({
+      updateYoutubeAccountsConfig((prev) => ({
         ...(prev || {}),
         useBotAccount: useBot
       }));
     },
-    [twitchAccountsConfig, updateTwitchAccountsConfig]
+    [youtubeAccountsConfig, updateYoutubeAccountsConfig]
   );
 
   return (
@@ -179,13 +174,13 @@ const AccountsSettings = () => {
       >
         <Box>
           <Stack direction={'row'} alignItems={'center'} gap={1}>
-            <TwitchIcon />
+            <YoutubeIcon />
             <Typography variant="h5" sx={{ mb: 0.5 }}>
-              {t('platforms.twitch.accounts.header')}
+              {t('platforms.youtube.accounts.header')}
             </Typography>
           </Stack>
           <Typography variant="body2" color="text.secondary">
-            {t('platforms.twitch.accounts.description')}
+            {t('platforms.youtube.accounts.description')}
           </Typography>
         </Box>
 
@@ -208,13 +203,13 @@ const AccountsSettings = () => {
         }}
       >
         <CollapsibleCard
-          title={t('platforms.twitch.accounts.broadcaster.header')}
-          subtitle={t('platforms.twitch.accounts.broadcaster.description')}
+          title={t('platforms.youtube.accounts.broadcaster.header')}
+          subtitle={t('platforms.youtube.accounts.broadcaster.description')}
           collapsible={layoutMode === 'list'}
           expanded={!collapsedIds.includes('broadcaster')}
           onExpandedChange={() => toggleCollapsed('broadcaster')}
         >
-          <AccountPanel
+          <YoutubeAccountsPanel
             data={broadcasterData}
             accountType="broadcaster"
             login={() => handleLogin('broadcaster')}
@@ -223,14 +218,14 @@ const AccountsSettings = () => {
         </CollapsibleCard>
 
         <CollapsibleCard
-          title={t('platforms.twitch.accounts.chatbot.header')}
-          subtitle={t('platforms.twitch.accounts.chatbot.description')}
+          title={t('platforms.youtube.accounts.chatbot.header')}
+          subtitle={t('platforms.youtube.accounts.chatbot.description')}
           actions={
             <Box>
-              <Tooltip title={t('platforms.twitch.accounts.chatbot.hint')}>
+              <Tooltip title={t('platforms.youtube.accounts.chatbot.hint')}>
                 <Typography variant="body2" color="text.secondary"></Typography>
                 <Switch
-                  checked={twitchAccountsConfig.useBotAccount}
+                  checked={youtubeAccountsConfig.useBotAccount}
                   onChange={handleSwitchChange}
                   disabled={!broadcasterData?.id}
                 />
@@ -241,7 +236,7 @@ const AccountsSettings = () => {
           expanded={!collapsedIds.includes('bot')}
           onExpandedChange={() => toggleCollapsed('bot')}
         >
-          <AccountPanel
+          <YoutubeAccountsPanel
             data={chatbotData}
             accountType="bot"
             login={() => handleLogin('bot')}
@@ -253,4 +248,4 @@ const AccountsSettings = () => {
   );
 };
 
-export default AccountsSettings;
+export default YoutubeAccountsSettings;
