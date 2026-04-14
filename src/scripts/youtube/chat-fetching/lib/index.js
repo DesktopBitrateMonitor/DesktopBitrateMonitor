@@ -10,18 +10,17 @@ import { injectDefaults } from '../../../store/defaults';
  */
 
 export const hasPermission = ({ event, requiredRole, restricted, inPrivacyScene }) => {
-  const { broadcaster_user_id, chatter_user_id, user_type, badges } = event;
   const { twitchAccountsConfig } = injectDefaults();
 
-  const isBroadcaster = broadcaster_user_id === chatter_user_id;
-  const admins = twitchAccountsConfig.get('admins').map((admin) => admin.login);
-  const mods = twitchAccountsConfig.get('mods').map((mod) => mod.login);
+  const isBroadcaster = event.authorDetails.isChatOwner;
+  const admins = twitchAccountsConfig.get('admins').map((admin) => admin.login.toLowerCase());
+  const mods = twitchAccountsConfig.get('mods').map((mod) => mod.login.toLowerCase());
 
-  const isAdmin = admins.includes(event.chatter_user_login.toLowerCase());
-  const isMod =
-    mods.includes(event.chatter_user_login.toLowerCase()) ||
-    (badges.length > 0 &&
-      badges.some((badge) => badge.set_id === 'moderator' || badge.set_id === 'lead_moderator'));
+  const displayName = event.authorDetails.displayName;
+  const normalizedDisplayName = normalizeDisplayName(displayName);
+
+  const isAdmin = admins.includes(normalizedDisplayName);
+  const isMod = mods.includes(normalizedDisplayName) || event.authorDetails.isChatModerator;
 
   // If the command is restricted and the current scene is the privacy scene, only allow broadcaster and admins to execute it
   if (restricted && inPrivacyScene) return isBroadcaster || isAdmin;
@@ -31,4 +30,8 @@ export const hasPermission = ({ event, requiredRole, restricted, inPrivacyScene 
   if (requiredRole === 'admin') return isAdmin;
   if (requiredRole === 'mod') return isAdmin || isMod;
   return false;
+};
+
+const normalizeDisplayName = (displayName) => {
+  return !displayName.startsWith('@') ? `@${displayName.toLowerCase()}` : displayName.toLowerCase();
 };

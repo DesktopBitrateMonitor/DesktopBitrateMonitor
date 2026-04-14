@@ -10,7 +10,7 @@ const port = import.meta.env.VITE_SERVERPORT;
 const client_id = import.meta.env.VITE_YOUTUBECLIENTID;
 const client_secret = import.meta.env.VITE_YOUTUBECLIENTSECRET;
 
-function createOAuth2Client(credentials = {}) {
+export function createOAuth2Client(credentials = {}) {
   const client = new google.auth.OAuth2(
     client_id,
     client_secret,
@@ -141,14 +141,12 @@ export async function userAuthorization(client) {
 /**
  * Fetches channel data for the authenticated user.
  * @param {string} access_token
- * @param {string} accountType
  * @param {object} userData
+ * @param {string} accountType
  * @returns {youTubeUserData|null} User data object or null on failure
  */
 export async function getYoutubeUsers(access_token, userData, accountType) {
   const userName = userData;
-
-  console.log(userName);
 
   return validateAndProceed(access_token, accountType, async (client) => {
     const youtube = google.youtube({ version: ApiVersion, auth: client });
@@ -173,7 +171,7 @@ export async function getYoutubeUsers(access_token, userData, accountType) {
 
     const userData = {
       id: data?.id || '',
-      login: data?.snippet?.title || '',
+      login: data?.snippet?.customUrl || '',
       display_name: data?.snippet?.title || '',
       customUrl: data?.snippet?.customUrl || '',
       profile_image_url: data?.snippet?.thumbnails?.default?.url || ''

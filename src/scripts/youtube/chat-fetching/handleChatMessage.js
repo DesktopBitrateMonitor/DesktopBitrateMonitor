@@ -1,13 +1,13 @@
-import { injectDefaults } from '../../store/defaults';
-import { hasPermission } from '../lib';
-import { kickMessageService } from '../messages-service/chat-messages';
 import { commandActions } from '../../shared-chat-functions/command-actions';
 import { ifCurrentSceneIsPrivacyScene } from '../../shared-chat-functions/lib';
+import { injectDefaults } from '../../store/defaults';
+import { hasPermission } from './lib';
+import { youtubeMessageService } from '../message-service/chat-messages';
 
-const { commandsConfig, kickAccountsConfig, switcherConfig, serverConfig } = injectDefaults();
+const { commandsConfig, youtubeAccountsConfig, switcherConfig, serverConfig } = injectDefaults();
 
 export async function handleChatMessage(rawMessage) {
-  const message = rawMessage.content;
+  const message = rawMessage.snippet.displayMessage;
   const args = message.split(' ');
   const commandName = args[0].toLowerCase();
   const commandArg = args.slice(1).join(' ').toLowerCase();
@@ -19,11 +19,6 @@ export async function handleChatMessage(rawMessage) {
 
   const commandsArray = commandsConfig.get('commands').map((cmd) => ({ ...cmd }));
   const allAliases = commandsArray.map((cmd) => cmd.cmd).flat();
-
-  // TODO
-  // Check if the message comes from the logged in channel
-  // Figure out if Kick has a multi chat feature and if so, how to identify the source channel of the message
-  // if (source_broadcaster_user_id && broadcaster_user_id !== source_broadcaster_user_id) return;
 
   // Check if the command exists in the list of all aliases, otherwise ignore
   if (!allAliases.includes(commandName)) return;
@@ -50,13 +45,15 @@ export async function handleChatMessage(rawMessage) {
       inPrivacyScene: await ifCurrentSceneIsPrivacyScene()
     })
   ) {
-    commandActions({
-      platform: 'kick',
-      messageService: kickMessageService,
-      server: serverName,
-      switcherConfig,
-      commandsConfig,
-      accountConfig: kickAccountsConfig
-    })[commandObject.action](commandArgs);
+    console.log('ready to execute command action');
+    // commandActions({
+    //   platform: 'youtube',
+    //   messageService: youtubeMessageService,
+    //   server: serverName,
+    //   switcherConfig,
+    //   commandsConfig,
+    //   accountConfig: youtubeAccountsConfig
+    // })[commandObject.action](commandArgs);
   }
+  console.log(rawMessage);
 }

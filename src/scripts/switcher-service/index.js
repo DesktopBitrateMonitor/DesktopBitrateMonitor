@@ -44,7 +44,8 @@ const {
   streamingSoftwareConfig,
   serverConfig,
   twitchAccountsConfig,
-  kickAccountsConfig
+  kickAccountsConfig,
+  youtubeAccountsConfig
 } = injectDefaults();
 
 const normalizeInstancesStats = (payload) => {
@@ -195,12 +196,10 @@ export async function switcherService(data, mainWindow = null) {
   const serverSettings = serverConfig.get('');
   const serverName = serverSettings.serverInstances?.[0]?.name || 'undefined';
   const appSettings = appConfig.get('');
-  const twitchAccountsSettings = twitchAccountsConfig.get('');
-  const kickAccountsSettings = kickAccountsConfig.get('');
-
   const ACCOUNTS_MAPPING = {
-    twitch: twitchAccountsSettings,
-    kick: kickAccountsSettings
+    twitch: twitchAccountsConfig.get(''),
+    kick: kickAccountsConfig.get(''),
+    youtube: youtubeAccountsConfig.get('')
   };
 
   const platform = appSettings.activePlatform;
@@ -399,7 +398,11 @@ export async function switcherService(data, mainWindow = null) {
   };
 
   // Respect manual hold-start setting.
-  if (logicalSwitcherState === 'start' && desiredState === 'live' && !vars.switchFromStartingToLive) {
+  if (
+    logicalSwitcherState === 'start' &&
+    desiredState === 'live' &&
+    !vars.switchFromStartingToLive
+  ) {
     Logger.log(
       'Currently in starting scene and automatic switch starting -> live is disabled. Switcher will not switch to live scene.'
     );

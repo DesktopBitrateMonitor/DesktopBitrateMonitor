@@ -102,14 +102,16 @@ const PLATFORM_ROUTES = [
     label: 'Kick',
     path: `${ACCOUNTS_PATH}/kick`,
     icon: KickIcon,
-    dev: false
+    dev: false,
+    disabled: false
   },
   {
     id: 'youtube',
     label: 'YouTube',
     path: `${ACCOUNTS_PATH}/youtube`,
     icon: YoutubeIcon,
-    dev: true
+    dev: true,
+    disabled: true
   }
 ];
 
@@ -346,6 +348,7 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
               <List disablePadding sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
                 {PLATFORM_ROUTES.map((platform) => {
                   if (platform.dev && !isDev) return null;
+                  if (platform.disabled) return null;
                   const Icon = platform.icon;
                   return (
                     <Box

@@ -3,21 +3,30 @@ import {
   connectToKickEventSub
 } from '../../scripts/kick/event-subscriptions/eventsubs';
 import Logger from '../../scripts/logging/logger';
-import { startFetchingAllInstances, stopFetchingStats } from '../../scripts/stats-fetcher/stats-fetcher';
+import {
+  startFetchingAllInstances,
+  stopFetchingStats
+} from '../../scripts/stats-fetcher/stats-fetcher';
 import { injectDefaults } from '../../scripts/store/defaults';
 import { startOBSConnectionLoop } from '../../scripts/streaming-software/obs-api';
 import {
   connectToTwitchEventSubs,
   disconnectTwitchEventSubs
 } from '../../scripts/twitch/event-subscriptions/eventsubs';
+import {
+  startYouTubeChatPolling,
+  stopYouTubeChatPolling
+} from '../../scripts/youtube/chat-fetching/chat-fetcher';
 
 const {
   appConfig,
   twitchAccountsConfig,
   kickAccountsConfig,
+  youtubeAccountsConfig,
   streamingSoftwareConfig,
   serverConfig
 } = injectDefaults();
+
 const client_id = import.meta.env.VITE_TWITCHCLIENTID;
 
 export async function initializeServices(mainWindow = null) {
@@ -50,6 +59,7 @@ export async function connectToActivePlatform(mainWindow, platform) {
   Logger.info('Cleanup all platform connections before reconnecting to the selected platform...');
   disconnectTwitchEventSubs(mainWindow);
   disconnectKickEventSub(mainWindow);
+  stopYouTubeChatPolling(mainWindow);
 
   // Add a short delay to ensure all disconnections are processed before attempting new connections
   await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -71,6 +81,11 @@ export async function connectToActivePlatform(mainWindow, platform) {
     await connectToKickEventSub(mainWindow);
   }
   if (platform === 'youtube') {
-    Logger.log('YouTube connection not implemented yet.');
+    const youtubeChannelToConnect = youtubeAccountsConfig.get('broadcaster.login');
+    if (youtubeChannelToConnect.length === 0) {
+      Logger.log('No YouTube channel found in youtubeAccountsConfig. Skipping YouTube connection.');
+      return;
+    }
+    await startYouTubeChatPolling(mainWindow);
   }
 }
