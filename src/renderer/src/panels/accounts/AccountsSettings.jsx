@@ -23,7 +23,6 @@ const AccountsSettings = () => {
           flexDirection: 'column',
           flex: '1 1 0',
           pt: 2,
-          px: 1.5,
           pb: 1.5,
           overflowY: 'auto',
           overflowX: 'hidden',

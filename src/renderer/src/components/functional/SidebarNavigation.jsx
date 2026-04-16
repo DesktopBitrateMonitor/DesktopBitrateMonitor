@@ -10,6 +10,7 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Paper,
   Popover,
   Switch,
   Tooltip,
@@ -345,29 +346,43 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
                 }
               }}
             >
-              <List disablePadding sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: 'auto 1fr',
+                  columnGap: 1,
+                  rowGap: 0.5,
+                  alignItems: 'center'
+                }}
+              >
+                <Typography
+                  variant="subtitle2"
+                  sx={{ pt: 1, pb: 0.5, textAlign: 'center', justifySelf: 'center' }}
+                >
+                  Active
+                </Typography>
+                <Typography
+                  variant="subtitle2"
+                  sx={{ pt: 1, pb: 0.5, textAlign: 'center', justifySelf: 'center' }}
+                >
+                  Platform
+                </Typography>
+                <Divider flexItem orientation="horizontal" sx={{ gridColumn: '1 / -1' }} />
+
                 {PLATFORM_ROUTES.map((platform) => {
                   if (platform.dev && !isDev) return null;
                   if (platform.disabled) return null;
                   const Icon = platform.icon;
                   return (
-                    <Box
-                      key={platform.id}
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        px: 1
-                      }}
-                    >
-                      <Switch
-                        key={platform.id}
-                        onChange={handleActivePlatformChange(platform.id)}
-                        checked={activePlatform === platform.id}
-                        name={platform.id}
-                      />
+                    <Fragment key={platform.id}>
+                      <Box sx={{ px: 0.5, display: 'flex', justifyContent: 'center' }}>
+                        <Switch
+                          onChange={handleActivePlatformChange(platform.id)}
+                          checked={activePlatform === platform.id}
+                          name={platform.id}
+                        />
+                      </Box>
                       <ListItemButton
-                        key={platform.path}
                         disabled={platform.disabled}
                         onClick={() => handleSelectPlatform(platform.path)}
                         sx={{ borderRadius: 1, px: 1.5, py: 1 }}
@@ -377,10 +392,10 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
                         </ListItemIcon>
                         <ListItemText primary={platform.label} />
                       </ListItemButton>
-                    </Box>
+                    </Fragment>
                   );
                 })}
-              </List>
+              </Box>
             </Popover>
           </Box>
 

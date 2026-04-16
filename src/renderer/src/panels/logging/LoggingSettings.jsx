@@ -215,22 +215,34 @@ const LoggingSettings = () => {
           gap: 1.5
         }}
       >
-        <Box>
-          <Typography variant="h5" sx={{ mb: 0.5 }}>
-            {t('logging.settings.header')}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {t('logging.settings.description')}
-          </Typography>
+        <Box
+          sx={{
+            display: 'flex',
+            padding: '1.5rem 1.5rem 0 1.5rem',
+            width: '100%',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}
+        >
+          <Box>
+            <Typography variant="h5" sx={{ mb: 0.5 }}>
+              {t('logging.settings.header')}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {t('logging.settings.description')}
+            </Typography>
+          </Box>
+          <Box>
+            <LayoutToggle value={layoutMode} onChange={handleLayoutChange} />
+          </Box>
         </Box>
-        <LayoutToggle value={layoutMode} onChange={handleLayoutChange} />
       </Box>
 
       <Box
         sx={{
           flex: '1 1 0',
+          borderTop: (theme) => `1px solid ${theme.palette.divider}`,
           pt: 2,
-          px: 1.5,
           pb: 1.5,
           overflowY: 'auto',
           overflowX: 'hidden',
@@ -241,6 +253,7 @@ const LoggingSettings = () => {
           sx={{
             display: 'grid',
             gap: 2,
+            px: 3,
             gridTemplateColumns:
               layoutMode === 'list'
                 ? { xs: '1fr' }

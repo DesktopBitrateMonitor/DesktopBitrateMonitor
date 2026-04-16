@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 import Logger from '../../scripts/logging/logger';
 import { FeedLogger } from '../../scripts/logging/feed-logger';
 import { dialog } from 'electron';
@@ -203,18 +204,41 @@ export async function initializeLoggerIpc(ipcMain) {
         return { success: false, message: 'No file selected' };
       }
 
-      // read .jsonl file and parse each line as JSON
-      const filePath = res.filePaths[0];
-      const fileContent = fs.readFileSync(filePath, 'utf-8');
-      const lines = fileContent.split('\n').filter((line) => line.trim() !== '');
-      const parsedEntries = lines.map((line) => {
-        try {
-          return JSON.parse(line);
-        } catch (err) {
-          Logger.error(`Error parsing line in log file: ${err.message}`);
-          return null;
+      // Read every selected .jsonl file in order and append entries sequentially.
+      const parsedEntries = [];
+
+      for (const [fileIndex, filePath] of res.filePaths.entries()) {
+        const fileName = path.basename(filePath);
+        const fileContent = fs.readFileSync(filePath, 'utf-8');
+        const lines = fileContent.split('\n').filter((line) => line.trim() !== '');
+
+        for (const [lineIndex, line] of lines.entries()) {
+          try {
+            const parsedLine = JSON.parse(line);
+
+            if (parsedLine && typeof parsedLine === 'object' && !Array.isArray(parsedLine)) {
+              parsedEntries.push({
+                ...parsedLine,
+                sourceFileName: fileName,
+                sourceFilePath: filePath,
+                sourceFileIndex: fileIndex,
+                sourceFileLine: lineIndex + 1
+              });
+              continue;
+            }
+
+            parsedEntries.push({
+              value: parsedLine,
+              sourceFileName: fileName,
+              sourceFilePath: filePath,
+              sourceFileIndex: fileIndex,
+              sourceFileLine: lineIndex + 1
+            });
+          } catch (err) {
+            Logger.error(`Error parsing line in log file (${filePath}): ${err.message}`);
+          }
         }
-      });
+      }
 
       return { success: true, data: parsedEntries };
     } catch (error) {

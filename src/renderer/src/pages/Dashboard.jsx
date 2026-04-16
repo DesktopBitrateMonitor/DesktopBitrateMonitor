@@ -19,7 +19,7 @@ const Dashboard = () => {
         component="main"
         sx={{
           flexGrow: 1,
-          p: 3,
+          // p: 3,
           width: '100%',
           display: 'flex',
           flexDirection: 'column',

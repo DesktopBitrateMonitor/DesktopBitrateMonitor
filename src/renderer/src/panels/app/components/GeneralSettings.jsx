@@ -61,23 +61,11 @@ const GeneralSettings = () => {
   );
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, p: 3 }}>
       <CollapsibleCard
         title={t('appSettings.general.header')}
         subtitle={t('appSettings.general.description')}
         collapsible={false}
-        // actions={
-        //   <TextField
-        //     label={t('appSettings.general.search')}
-        //     value={searchTerm}
-        //     onChange={(event) => setSearchTerm(event.target.value)}
-        //     slotProps={{
-        //       input: {
-        //         endAdornment: <Search />
-        //       }
-        //     }}
-        //   />
-        // }
       >
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <Box>

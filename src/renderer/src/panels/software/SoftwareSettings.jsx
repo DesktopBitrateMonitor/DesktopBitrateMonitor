@@ -38,7 +38,7 @@ const SoftwareSettings = () => {
   );
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, flex: 1, minHeight: 0 }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, flex: 1, p: 3 }}>
       <Box
         sx={{
           display: 'flex',
@@ -79,7 +79,6 @@ const SoftwareSettings = () => {
         sx={{
           flex: '1 1 0',
           pt: 2,
-          px: 1.5,
           pb: 1.5,
           overflowY: 'auto',
           overflowX: 'hidden',

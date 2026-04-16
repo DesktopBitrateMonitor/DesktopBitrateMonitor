@@ -288,7 +288,7 @@ const Backup = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, p: 3 }}>
       <CollapsibleCard
         title={t('appSettings.backup.header')}
         subtitle={t('appSettings.backup.description')}

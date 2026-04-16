@@ -248,7 +248,7 @@ export async function switcherService(data, mainWindow = null) {
 
   // If unable to get stream state, exit the switcher
   if (!streamState.success) {
-    Logger.log('Unable to get stream state from streaming software.');
+    // Logger.log('Unable to get stream state from streaming software.');
     return;
   }
 

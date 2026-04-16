@@ -7,15 +7,17 @@ import { useTranslation } from 'react-i18next';
 const StyleSettings = () => {
   const { t } = useTranslation();
   return (
-    <CollapsibleCard
-      title={t('appSettings.style.header')}
-      subtitle={t('appSettings.style.description')}
-      collapsible={false}
-    >
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-        <ThemeSelector />
-      </Box>
-    </CollapsibleCard>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, p: 3 }}>
+      <CollapsibleCard
+        title={t('appSettings.style.header')}
+        subtitle={t('appSettings.style.description')}
+        collapsible={false}
+      >
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <ThemeSelector />
+        </Box>
+      </CollapsibleCard>
+    </Box>
   );
 };
 

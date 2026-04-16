@@ -147,7 +147,7 @@ const Main = () => {
     const res = await window.loggerApi.readSessionLogFile({
       title: t('logging.import.header'),
       filters: [{ name: t('logging.import.filters.name'), extensions: ['jsonl'] }],
-      properties: ['openFile']
+      properties: ['openFile', 'multiSelections']
     });
 
     if (res.success && res?.data?.length > 0) {
@@ -222,7 +222,7 @@ const Main = () => {
           gap: 1.5
         }}
       >
-        <Box>
+        <Box padding={'1.5rem 1.5rem 0 1.5rem '}>
           <Typography variant="h5" sx={{ mb: 0.5 }}>
             {t('dashboard.header')}
           </Typography>
@@ -235,8 +235,6 @@ const Main = () => {
         sx={{
           flex: '1 1 0',
           borderTop: (theme) => `1px solid ${theme.palette.divider}`,
-          pt: 2,
-
           px: 1.5,
           pb: 3,
           overflowY: 'auto',

@@ -4,7 +4,7 @@ import LayoutToggle from '../../components/functional/LayoutToggle';
 import Scenes from './components/Scenes.jsx';
 import Switches from './components/Switches.jsx';
 import Triggers from './components/Triggers.jsx';
-import { Box, Divider, Typography } from '@mui/material';
+import { Box, Divider, Stack, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
 const SwitcherSettings = () => {
@@ -62,7 +62,7 @@ const SwitcherSettings = () => {
   );
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, flex: 1, minHeight: 0 }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, flex: 1 }}>
       <Box
         sx={{
           display: 'flex',
@@ -72,22 +72,33 @@ const SwitcherSettings = () => {
           gap: 1.5
         }}
       >
-        <Box>
-          <Typography variant="h5" sx={{ mb: 0.5 }}>
-            {t('switcher.header')}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {t('switcher.description')}
-          </Typography>
+        <Box
+          sx={{
+            display: 'flex',
+            padding: '1.5rem 1.5rem 0 1.5rem',
+            width: '100%',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}
+        >
+          <Box>
+            <Typography variant="h5" sx={{ mb: 0.5 }}>
+              {t('switcher.header')}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {t('switcher.description')}
+            </Typography>
+          </Box>
+          <Box>
+            <LayoutToggle value={layoutMode} onChange={handleLayoutChange} />
+          </Box>
         </Box>
-        <LayoutToggle value={layoutMode} onChange={handleLayoutChange} />
       </Box>
       <Box
         sx={{
           flex: '1 1 0',
           borderTop: (theme) => `1px solid ${theme.palette.divider}`,
           pt: 2,
-          px: 1.5,
           pb: 1.5,
           overflowY: 'auto',
           overflowX: 'hidden',
@@ -98,6 +109,7 @@ const SwitcherSettings = () => {
           sx={{
             display: 'grid',
             gap: 2,
+            px: 3,
             gridTemplateColumns:
               layoutMode === 'list'
                 ? { xs: '1fr' }

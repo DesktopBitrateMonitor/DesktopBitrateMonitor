@@ -174,7 +174,7 @@ const KickUserSettings = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, p: 3 }}>
       <Box
         sx={{
           display: 'flex',

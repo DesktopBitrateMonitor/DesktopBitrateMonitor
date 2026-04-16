@@ -219,7 +219,7 @@ const OverlayEditor = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, flex: 1, minHeight: 0 }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, flex: 1 }}>
       <Box
         sx={{
           display: 'flex',
@@ -228,37 +228,50 @@ const OverlayEditor = () => {
           gap: 1.5
         }}
       >
-        <Box>
-          <Typography variant="h5" sx={{ mb: 0.5 }}>
-            {t('overlayEditor.header')}
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ maxWidth: '80%' }}>
-            {t('overlayEditor.description')}
-          </Typography>
-        </Box>
-        <Box sx={{ display: 'flex', gap: '1rem' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mr: 2 }}>
-            <Switch
-              onChange={(e) => {
-                const checked = e.target.checked;
-                setExpertMode(checked);
-                handleSwitchChange('expertMode', checked);
-              }}
-              checked={expertMode}
-            />
-            <Typography variant="body2" color="text.secondary" component="span" sx={{ mr: 1 }}>
-              {t('overlayEditor.expertMode')}
+        <Box
+          sx={{
+            display: 'flex',
+            padding: '1.5rem 1.5rem 0 1.5rem',
+            width: '100%',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}
+        >
+          <Box>
+            <Typography variant="h5" sx={{ mb: 0.5 }}>
+              {t('overlayEditor.header')}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ maxWidth: '80%' }}>
+              {t('overlayEditor.description')}
             </Typography>
           </Box>
-          <Button onClick={handleSaveOverlay}>{t('app.global.button.save')}</Button>
+          <Box sx={{ display: 'flex', gap: '1rem' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mr: 2 }}>
+              <Switch
+                onChange={(e) => {
+                  const checked = e.target.checked;
+                  setExpertMode(checked);
+                  handleSwitchChange('expertMode', checked);
+                }}
+                checked={expertMode}
+              />
+              <Typography variant="body2" color="text.secondary" component="span" sx={{ mr: 1 }}>
+                {t('overlayEditor.expertMode')}
+              </Typography>
+            </Box>
+            <Box>
+              <Button onClick={handleSaveOverlay}>{t('app.global.button.save')}</Button>
+            </Box>
+          </Box>
         </Box>
       </Box>
+
       <Box
         sx={{
           flex: '1 1 0',
           borderTop: (theme) => `1px solid ${theme.palette.divider}`,
           pt: 2,
-          px: 1.5,
+          px: 3,
           pb: 1.5,
           overflowX: 'hidden',
           overflowY: 'auto',

@@ -72,8 +72,7 @@ const TwitchSettings = () => {
         scrollButtons="auto"
         sx={{
           borderBottom: 1,
-          borderColor: 'divider',
-          px: 1
+          borderColor: 'divider'
         }}
       >
         {TAB_CONFIG.map((tab) => {
@@ -94,7 +93,6 @@ const TwitchSettings = () => {
         sx={{
           flex: '1 1 0',
           pt: 2,
-          px: 1.5,
           pb: 1.5,
           overflowY: 'auto',
           overflowX: 'hidden',

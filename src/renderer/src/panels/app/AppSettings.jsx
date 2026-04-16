@@ -7,8 +7,6 @@ import ColorLensIcon from '@mui/icons-material/ColorLens';
 import { useTranslation } from 'react-i18next';
 import { Backup } from '@mui/icons-material';
 
-
-
 const AppSettings = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -66,12 +64,13 @@ const AppSettings = () => {
       component={'main'}
       sx={{
         flex: '1 1 0',
-        p: 0,
+        pt: 1.5,
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
         minHeight: 0,
-        maxHeight: '100%'
+        maxHeight: '100%',
+        height: '100%'
       }}
     >
       <Tabs
@@ -81,8 +80,7 @@ const AppSettings = () => {
         scrollButtons="auto"
         sx={{
           borderBottom: 1,
-          borderColor: 'divider',
-          px: 1
+          borderColor: 'divider'
         }}
       >
         {TAB_CONFIG.map((tab) => {
@@ -104,11 +102,11 @@ const AppSettings = () => {
         sx={{
           flex: '1 1 0',
           pt: 2,
-          px: 1.5,
           pb: 1.5,
           overflowY: 'auto',
           overflowX: 'hidden',
-          minHeight: 0
+          minHeight: 0,
+          height: '100%'
         }}
       >
         <Outlet />

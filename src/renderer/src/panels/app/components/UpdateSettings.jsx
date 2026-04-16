@@ -66,7 +66,7 @@ const UpdateSettings = ({ setOpenUpdateCard }) => {
   };
 
   return (
-    <Box>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, p: 3 }}>
       <CollapsibleCard
         title={t('appSettings.update.settings.header')}
         subtitle={t('appSettings.update.settings.description')}

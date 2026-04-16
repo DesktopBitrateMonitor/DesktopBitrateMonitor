@@ -5,7 +5,18 @@ import Logger from '../logging/logger';
 let obs;
 let isConnected = false;
 let reconnectLoop = false;
-let reconnectInterval = 5000;
+let reconnectAttempt = 0;
+let reconnectDelaySeconds = 5;
+
+const MAX_RECONNECT_DELAY_SECONDS = 120;
+
+function getNextReconnectDelaySeconds(currentDelaySeconds) {
+  if (currentDelaySeconds < 20) {
+    return Math.min(currentDelaySeconds + 5, MAX_RECONNECT_DELAY_SECONDS);
+  }
+
+  return Math.min(currentDelaySeconds + 10, MAX_RECONNECT_DELAY_SECONDS);
+}
 
 function getOBSInstance(mainWindow = null) {
   if (!obs) {
@@ -51,10 +62,18 @@ function getOBSInstance(mainWindow = null) {
 export async function startOBSConnectionLoop(mainWindow = null) {
   if (reconnectLoop) return;
   reconnectLoop = true;
+  reconnectAttempt = 0;
+  reconnectDelaySeconds = 5;
+
+  const scheduleNextReconnect = (attemptReconnect) => {
+    const delaySeconds = reconnectDelaySeconds;
+    setTimeout(attemptReconnect, delaySeconds * 1000);
+    reconnectDelaySeconds = getNextReconnectDelaySeconds(reconnectDelaySeconds);
+  };
 
   const attemptReconnect = async () => {
     if (!isConnected) {
-      Logger.log('Attempting to connect to OBS Studio...');
+      reconnectAttempt += 1;
       try {
         const res = await connectToOBS(mainWindow);
         if (res.success) {
@@ -72,6 +91,8 @@ export async function startOBSConnectionLoop(mainWindow = null) {
             error: null
           });
 
+          reconnectAttempt = 0;
+          reconnectDelaySeconds = 5;
           reconnectLoop = false;
           return { success: true, data: null, error: null };
         }
@@ -80,13 +101,19 @@ export async function startOBSConnectionLoop(mainWindow = null) {
         mainWindow?.webContents.send('software-connection', { success: false });
         return { success: false, data: null, error: err };
       }
-      setTimeout(attemptReconnect, reconnectInterval);
+
+      Logger.info(
+        `Connection try #${reconnectAttempt} failed. Next try in ${reconnectDelaySeconds} seconds.`
+      );
+      scheduleNextReconnect(attemptReconnect);
     } else {
+      reconnectAttempt = 0;
+      reconnectDelaySeconds = 5;
       reconnectLoop = false;
     }
   };
 
-  setTimeout(attemptReconnect, reconnectInterval);
+  scheduleNextReconnect(attemptReconnect);
 }
 
 export async function connectToOBS(mainWindow = null) {

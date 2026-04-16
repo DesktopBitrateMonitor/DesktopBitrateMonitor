@@ -166,7 +166,8 @@ const AccountsSettings = () => {
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        gap: 3
+        gap: 3,
+        p: 3,
       }}
     >
       <Box
