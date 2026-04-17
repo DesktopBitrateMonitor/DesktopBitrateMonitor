@@ -1,6 +1,6 @@
 {
   "name": "desktop-bitrate-monitor",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "description": "An app to listen for SRT(LA) stream stats and change scenes in a broadcasting software",
   "main": "./out/main/index.js",
   "author": "yinks87",
