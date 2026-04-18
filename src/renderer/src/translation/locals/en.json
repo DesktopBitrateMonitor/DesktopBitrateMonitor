@@ -76,7 +76,11 @@
     "switcherSettings": "Switcher Settings",
     "loggingSettings": "Logging Settings",
     "appSettings": "App Settings",
-    "overlayEditor": "Overlay Editor"
+    "overlayEditor": "Overlay Editor",
+    "platforms": {
+      "activeState": "Active State",
+      "platformName": "Platform Name"
+    }
   },
   "dashboard": {
     "header": "Dashboard",
@@ -898,7 +902,13 @@
         "directory": "Stream Directory",
         "bitrate": "Bitrate",
         "primaryInstance": "Primary Instance",
+        "file": "Log File",
         "noDataSelected": "Click on a data point in the graph to see the details"
+      },
+      "stats": {
+        "uptime": "Stream Uptime",
+        "switches": "Switches",
+        "noSceneData": "No scene data available"
       }
     }
   },

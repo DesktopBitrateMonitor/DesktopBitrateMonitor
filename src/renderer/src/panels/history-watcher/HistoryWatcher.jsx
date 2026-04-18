@@ -5,6 +5,8 @@ import CollapsibleCard from '../../components/functional/CollapsibleCard';
 import FileOpenOutlinedIcon from '@mui/icons-material/FileOpenOutlined';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import HistoryRangeBrush from './components/HistoryRangeBrush';
+import OverallStats from './components/OverallStats';
+import { computeStats } from './lib/stats-calculator';
 
 import { LineChart } from '@mui/x-charts';
 import { useTranslation } from 'react-i18next';
@@ -30,7 +32,13 @@ const ChartSelectionOverlay = React.memo(({ theme, overlayRef }) => {
 });
 
 const HistoryWatcher = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const locale = useMemo(() => {
+    const lang = String(i18n?.resolvedLanguage || i18n?.language || '').toLowerCase();
+    if (lang.startsWith('en')) return 'en-US';
+    if (lang.startsWith('de')) return 'de-DE';
+    return i18n?.resolvedLanguage || i18n?.language || undefined;
+  }, [i18n?.language, i18n?.resolvedLanguage]);
   const theme = useTheme();
   const [viewportHeight, setViewportHeight] = useState(window.innerHeight);
   const location = useLocation();
@@ -125,8 +133,13 @@ const HistoryWatcher = () => {
     return logsWithTs.filter((log) => log._ts >= startTs && log._ts <= endTs);
   }, [logsWithTs, effectiveRange]);
 
+  const overallStats = useMemo(() => computeStats(logsWithTs), [logsWithTs]);
+
   useEffect(() => {
-    setLogs(logData);
+    if (logData.length > 0) {
+      setLogs(logData);
+      setZoomRange(null);
+    }
     setSelectedLog(null);
   }, [logData]);
 
@@ -164,6 +177,7 @@ const HistoryWatcher = () => {
 
     if (res.success && res?.data?.length > 0) {
       setLogs(res.data);
+      setZoomRange(null);
       setSelectedLog(null);
     }
   };
@@ -443,7 +457,13 @@ const HistoryWatcher = () => {
                 {
                   scaleType: 'time',
                   label: `🕐 ${t('logging.historyWatcher.x-label')}`,
-                  data: visibleLogs.map((log) => new Date(log._ts))
+                  data: visibleLogs.map((log) => new Date(log._ts)),
+                  valueFormatter: (date) =>
+                    new Intl.DateTimeFormat(locale, {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      second: '2-digit'
+                    }).format(date)
                 }
               ]}
               yAxis={[
@@ -478,40 +498,53 @@ const HistoryWatcher = () => {
           <Box
             sx={{
               mt: 2,
-              p: 1.5,
-              borderRadius: 1,
-              border: (theme) => `1px solid ${theme.palette.divider}`,
-              backgroundColor: (theme) =>
-                alpha(theme.palette.background.default, theme.palette.mode === 'dark' ? 0.35 : 0.6)
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+              gap: 1.5,
+              alignItems: 'start'
             }}
           >
-            {!selectedLog ? (
-              <Typography variant="body2" color="text.secondary">
-                {t('logging.historyWatcher.dataPointBox.noDataSelected')}
-              </Typography>
-            ) : (
-              <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-                {!selectedLog.directory_thumbnail ||
-                selectedLog.directory_thumbnail === '' ? null : (
-                  <Box sx={{ display: 'flex', gap: 2 }}>
-                    {Boolean(selectedLog.directory_thumbnail) && (
-                      <img
-                        style={{ width: '52px' }}
-                        src={selectedLog.directory_thumbnail || null}
-                        alt="Log Directory Thumbnail"
-                      />
-                    )}
+            <Box
+              sx={{
+                p: 1.5,
+                borderRadius: 1,
+                border: (theme) => `1px solid ${theme.palette.divider}`,
+                backgroundColor: (theme) =>
+                  alpha(
+                    theme.palette.background.default,
+                    theme.palette.mode === 'dark' ? 0.35 : 0.6
+                  )
+              }}
+            >
+              {!selectedLog ? (
+                <Typography variant="body2" color="text.secondary">
+                  {t('logging.historyWatcher.dataPointBox.noDataSelected')}
+                </Typography>
+              ) : (
+                <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                  {!selectedLog.directory_thumbnail ||
+                  selectedLog.directory_thumbnail === '' ? null : (
+                    <Box sx={{ display: 'flex', gap: 2 }}>
+                      {Boolean(selectedLog.directory_thumbnail) && (
+                        <img
+                          style={{ width: '52px' }}
+                          src={selectedLog.directory_thumbnail || null}
+                          alt="Log Directory Thumbnail"
+                        />
+                      )}
+                    </Box>
+                  )}
+                  <Box>
+                    <Typography variant="body2">{`${t('logging.historyWatcher.dataPointBox.title')}: ${selectedLog.title || '-'}`}</Typography>
+                    <Typography variant="body2">{`${t('logging.historyWatcher.dataPointBox.primaryInstance')}: ${selectedLog.primaryInstance || '-'}`}</Typography>
+                    <Typography variant="body2">{`${t('logging.historyWatcher.dataPointBox.directory')}: ${selectedLog.directory || '-'}`}</Typography>
+                    <Typography variant="body2">{`${t('logging.historyWatcher.dataPointBox.bitrate')}: ${selectedLog.bitrate ?? 0} kbps`}</Typography>
+                    <Typography variant="body2">{`${t('logging.historyWatcher.dataPointBox.file')}: ${selectedLog.sourceFileName || '-'}`}</Typography>
                   </Box>
-                )}
-                <Box>
-                  <Typography variant="body2">{`${t('logging.historyWatcher.dataPointBox.title')}: ${selectedLog.title || '-'}`}</Typography>
-                  <Typography variant="body2">{`${t('logging.historyWatcher.dataPointBox.primaryInstance')}: ${selectedLog.primaryInstance || '-'}`}</Typography>
-                  <Typography variant="body2">{`${t('logging.historyWatcher.dataPointBox.directory')}: ${selectedLog.directory || '-'}`}</Typography>
-                  <Typography variant="body2">{`${t('logging.historyWatcher.dataPointBox.bitrate')}: ${selectedLog.bitrate ?? 0} kbps`}</Typography>
-                  <Typography variant="body2">{`File: ${selectedLog.sourceFileName || '-'}`}</Typography>
                 </Box>
-              </Box>
-            )}
+              )}
+            </Box>
+            <OverallStats stats={overallStats} />
           </Box>
         </CollapsibleCard>
       </Box>

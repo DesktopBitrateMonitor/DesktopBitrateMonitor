@@ -115,12 +115,15 @@ function updatePrimaryStats() {
 function sendAggregatedStats(mainWindow) {
   // Build an array of all active instances with their latest stats
   const aggregatedArray = activeInstances.map((instance) => {
+    const currentScene = globalInternalStore.currentScene.get();
+
     const result = instanceStats.get(instance.id);
     return {
       success: result?.success ?? false,
       data: result?.data ?? { bitrate: 0, rtt: 0, uptime: 0 },
       instance,
-      fetchingInterval: FETCH_INTERVAL_MS
+      fetchingInterval: FETCH_INTERVAL_MS,
+      currentScene
     };
   });
 

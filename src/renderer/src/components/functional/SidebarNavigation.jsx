@@ -359,13 +359,13 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
                   variant="subtitle2"
                   sx={{ pt: 1, pb: 0.5, textAlign: 'center', justifySelf: 'center' }}
                 >
-                  Active
+                  {t('navigation.platforms.activeState')}
                 </Typography>
                 <Typography
                   variant="subtitle2"
                   sx={{ pt: 1, pb: 0.5, textAlign: 'center', justifySelf: 'center' }}
                 >
-                  Platform
+                  {t('navigation.platforms.platformName')}
                 </Typography>
                 <Divider flexItem orientation="horizontal" sx={{ gridColumn: '1 / -1' }} />
 

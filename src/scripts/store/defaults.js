@@ -126,9 +126,6 @@ export const injectDefaults = () => {
     defaults: {
       theme: isSystemDark ? 'dark' : 'light',
       language,
-      layout: {
-        sidebarCollapsed: false
-      },
       position: {
         x: null,
         y: null
@@ -146,6 +143,7 @@ export const injectDefaults = () => {
       autoInstallUpdates: false,
       lastUpdateCheck: null,
       layout: {
+        sidebarCollapsed: false,
         dashboardLayout: { ...defaultLayout }
       },
       backup: {

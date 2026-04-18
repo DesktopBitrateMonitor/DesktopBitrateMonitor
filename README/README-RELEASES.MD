@@ -1,14 +1,25 @@
 ## v1.1.0
 
+- Implement and finish the historic stats watching
+  - Add Multi file loading
+  - Add zooming with shift + mouse wheel
+  - Add zooming selecting a area with right click
+  - Add basic information display about a stream
+- Some styling approvement around the app
+
+---
+
+## v1.0.4
+
 - Rework the complete switcher and server logic.
   - Implement multi stats watching
   - Monitor all stats from all configured server instances
   - Switcher logic rework, check readme for the logic
-    - At first same logic like noalbs (check out noalbs if you wan't a very functional, small, non UI - App) 
+    - At first same logic like noalbs (check out noalbs if you wan't a very functional, small, non UI - App)
   - Old server settings should be moved into the new logic
 - Edit the frontend to display the new server logic states
 - Edit the session logging to display the primary instance on each data point
-- Fix add alias chat command 
+- Fix add alias chat command
   - add alias command needs the actions for finding the command to add the alias. Changed to command only needs an existing alias to add an alias to the command
 - Fix overlay URL copy function
 - Fix backup import does not restart fetching the server stats

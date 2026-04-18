@@ -23,7 +23,7 @@ export const statesApi = {
     return () => {
       ipcRenderer.removeListener('software-connection', listener);
     };
-  },
+  }
 
   // twitchEventSubConnected: (callback) => {
   //   const listener = (event, args = {}) => {

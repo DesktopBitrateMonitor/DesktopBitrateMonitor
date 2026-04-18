@@ -8,6 +8,7 @@ import {
 } from '../streaming-software/obs-api';
 import { twitchMessageService } from '../twitch/message-service/chat-messages';
 import { kickMessageService } from '../kick/messages-service/chat-messages';
+import globalInternalStore from '../store/global-internal-store';
 
 // TODO: Implement different streaming software support
 
@@ -294,6 +295,7 @@ export async function switcherService(data, mainWindow = null) {
     switcherSettings,
     logicalSwitcherState
   );
+  globalInternalStore.currentScene.set(logicalSwitcherState || null);
 
   const { desiredState } = computeDesiredState(instancesStats, triggers, logicalSwitcherState);
 
@@ -349,6 +351,7 @@ export async function switcherService(data, mainWindow = null) {
         if (key === 'offline') logicalSwitcherState = 'offline';
         if (key === 'low') logicalSwitcherState = 'low';
         if (key === 'live') logicalSwitcherState = 'live';
+        globalInternalStore.currentScene.set(logicalSwitcherState || null);
 
         if (key === 'live') {
           const refRes = await fixMediaSources();

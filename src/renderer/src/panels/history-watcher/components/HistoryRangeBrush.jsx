@@ -1,4 +1,4 @@
-import { alpha, Box, Typography } from '@mui/material';
+import { alpha, Box } from '@mui/material';
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
@@ -345,21 +345,7 @@ const HistoryRangeBrush = memo(({ theme, fullRange, effectiveRange, onCommitRang
         )}
       </Box>
 
-      <Box
-        sx={{
-          mt: 0.5,
-          display: 'flex',
-          justifyContent: 'space-between',
-          color: 'text.secondary'
-        }}
-      >
-        <Typography variant="caption">
-          {effectiveRange ? new Date(effectiveRange[0]).toLocaleString() : '-'}
-        </Typography>
-        <Typography variant="caption">
-          {effectiveRange ? new Date(effectiveRange[1]).toLocaleString() : '-'}
-        </Typography>
-      </Box>
+
     </Box>
   );
 });
