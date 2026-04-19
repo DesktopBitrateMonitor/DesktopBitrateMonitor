@@ -1,8 +1,13 @@
 import { injectDefaults } from '../../store/defaults';
-import { hasPermission } from '../lib';
+import { getKickUserRole, hasPermission } from '../lib';
 import { kickMessageService } from '../messages-service/chat-messages';
 import { commandActions } from '../../shared-chat-functions/command-actions';
-import { ifCurrentSceneIsPrivacyScene } from '../../shared-chat-functions/lib';
+import {
+  getRemainingCommandCooldown,
+  ifCurrentSceneIsPrivacyScene,
+  startCommandCooldown
+} from '../../shared-chat-functions/lib';
+import Logger from '../../logging/logger';
 
 const { commandsConfig, kickAccountsConfig, switcherConfig, serverConfig } = injectDefaults();
 
@@ -42,6 +47,18 @@ export async function handleChatMessage(rawMessage) {
   const serverSettings = serverConfig.get('');
   const serverName = serverSettings.serverInstances?.[0]?.name || 'undefined';
 
+  const role = getKickUserRole({ event: rawMessage });
+  const remainingCooldownMs = getRemainingCommandCooldown({
+    commandId: commandObject.id,
+    role,
+    coolDowns: commandObject.coolDowns
+  });
+
+  if (remainingCooldownMs > 0) {
+    Logger.info(`Command: ${commandName} is on cooldown for ${remainingCooldownMs}ms`);
+    return;
+  }
+
   if (
     hasPermission({
       event: rawMessage,
@@ -59,4 +76,6 @@ export async function handleChatMessage(rawMessage) {
       accountConfig: kickAccountsConfig
     })[commandObject.action](commandArgs);
   }
+
+  startCommandCooldown({ commandId: commandObject.id, role, coolDowns: commandObject.coolDowns });
 }

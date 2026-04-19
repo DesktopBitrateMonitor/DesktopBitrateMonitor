@@ -1,35 +1,3 @@
-import Logger from '../logging/logger';
-import { injectDefaults } from '../store/defaults';
-import { getCurrentProgramScene } from '../streaming-software/obs-api';
-
-const { switcherConfig, streamingSoftwareConfig } = injectDefaults();
-
-// Helper for permission checks
-
-/**
- *
- * @returns {boolean} true or false
- */
-export const ifCurrentSceneIsPrivacyScene = async () => {
-  const currentSoftware = streamingSoftwareConfig.get('currentType');
-
-  let sceneData;
-
-  if (currentSoftware === 'obs-studio') {
-    sceneData = await getCurrentProgramScene();
-  }
-
-  if (!sceneData.success) {
-    Logger.error(`Failed to get current scene: ${sceneData.error}`);
-    return;
-  }
-  const currentScene = sceneData?.data?.currentProgramSceneName || '';
-  const privacyScene = switcherConfig.get('scenePrivacy');
-
-  const inPrivacyScene = currentScene.toLowerCase() === privacyScene.toLowerCase();
-  return inPrivacyScene;
-};
-
 const commandCooldowns = new Map();
 
 const cooldownScopesByRole = {
@@ -53,9 +21,6 @@ const cooldownScopesByRole = {
  */
 
 export const getRemainingCommandCooldown = ({ commandId, role, coolDowns }) => {
-  // Clean up expired cooldowns before calculating remaining time
-  cleanExpiredCooldowns();
-
   const now = Date.now();
   const scopes = cooldownScopesByRole[role] || ['all'];
 
@@ -88,14 +53,5 @@ export const startCommandCooldown = ({ commandId, role, coolDowns }) => {
     if (seconds <= 0) continue;
 
     commandCooldowns.set(`${commandId}:${scope}`, now + seconds * 1000);
-  }
-};
-
-const cleanExpiredCooldowns = () => {
-  const now = Date.now();
-  for (const [key, expiresAt] of commandCooldowns.entries()) {
-    if (expiresAt <= now) {
-      commandCooldowns.delete(key);
-    }
   }
 };

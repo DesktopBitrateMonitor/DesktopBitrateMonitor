@@ -6,17 +6,7 @@ let obs;
 let isConnected = false;
 let reconnectLoop = false;
 let reconnectAttempt = 0;
-let reconnectDelaySeconds = 5;
-
-const MAX_RECONNECT_DELAY_SECONDS = 120;
-
-function getNextReconnectDelaySeconds(currentDelaySeconds) {
-  if (currentDelaySeconds < 20) {
-    return Math.min(currentDelaySeconds + 5, MAX_RECONNECT_DELAY_SECONDS);
-  }
-
-  return Math.min(currentDelaySeconds + 10, MAX_RECONNECT_DELAY_SECONDS);
-}
+const OBS_RECONNECT_DELAY_SECONDS = 5;
 
 function getOBSInstance(mainWindow = null) {
   if (!obs) {
@@ -63,12 +53,17 @@ export async function startOBSConnectionLoop(mainWindow = null) {
   if (reconnectLoop) return;
   reconnectLoop = true;
   reconnectAttempt = 0;
-  reconnectDelaySeconds = 5;
 
   const scheduleNextReconnect = (attemptReconnect) => {
-    const delaySeconds = reconnectDelaySeconds;
+    const delaySeconds = OBS_RECONNECT_DELAY_SECONDS;
     setTimeout(attemptReconnect, delaySeconds * 1000);
-    reconnectDelaySeconds = getNextReconnectDelaySeconds(reconnectDelaySeconds);
+    mainWindow?.webContents.send('software-connection', {
+      success: false,
+      status: 'reconnecting',
+      softwareType: 'obs-studio',
+      data: { attempt: reconnectAttempt, nextAttemptInSeconds: delaySeconds },
+      error: null
+    });
   };
 
   const attemptReconnect = async () => {
@@ -92,7 +87,6 @@ export async function startOBSConnectionLoop(mainWindow = null) {
           });
 
           reconnectAttempt = 0;
-          reconnectDelaySeconds = 5;
           reconnectLoop = false;
           return { success: true, data: null, error: null };
         }
@@ -103,12 +97,11 @@ export async function startOBSConnectionLoop(mainWindow = null) {
       }
 
       Logger.info(
-        `Connection try #${reconnectAttempt} failed. Next try in ${reconnectDelaySeconds} seconds.`
+        `Connection try #${reconnectAttempt} failed. Next try in ${OBS_RECONNECT_DELAY_SECONDS} seconds.`
       );
       scheduleNextReconnect(attemptReconnect);
     } else {
       reconnectAttempt = 0;
-      reconnectDelaySeconds = 5;
       reconnectLoop = false;
     }
   };

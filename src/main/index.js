@@ -6,6 +6,7 @@ import icon from '../../resources/icon.png?asset';
 import windowIcon from '../assets/icon.ico?asset';
 import { injectDefaults } from '../scripts/store/defaults';
 import Logger from '../scripts/logging/logger';
+import { stopFetchingStats } from '../scripts/stats-fetcher/stats-fetcher';
 import { initializeElectronStoreIpc } from './ipc-handler/store-ipc-handler';
 import { initializeUpdateIpc } from './ipc-handler/update-ipc-handler';
 import { initializeAuthIpc } from './ipc-handler/auth-ipc-handler';
@@ -118,7 +119,14 @@ function createWindow(displayIsAvailable = false) {
       mainWindow.hide();
     } else {
       isQuitting = true;
+      stopFetchingStats();
     }
+  });
+
+  mainWindow.on('closed', () => {
+    stopFetchingStats();
+    Logger.setMainWindow(null);
+    mainWindow = null;
   });
 
   // HMR for renderer base on electron-vite cli.
@@ -193,6 +201,7 @@ app.whenReady().then(async () => {
 
 app.on('before-quit', () => {
   isQuitting = true;
+  stopFetchingStats();
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common

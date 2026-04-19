@@ -9,18 +9,17 @@ import { injectDefaults } from '../../store/defaults';
  * @returns true or false based on whether the user has the required permissions
  */
 
+const { kickAccountsConfig } = injectDefaults();
+
 export const hasPermission = ({ event, requiredRole, restricted, inPrivacyScene }) => {
   const { badges } = event.sender?.identity || [];
 
-  const { kickAccountsConfig } = injectDefaults();
+  const role = getKickUserRole({ event });
 
-  const isBroadcaster = badges.length > 0 && badges.some((badge) => badge.type === 'broadcaster');
-  const isModerator = badges.length > 0 && badges.some((badge) => badge.type === 'moderator');
-  const admins = kickAccountsConfig.get('admins').map((admin) => admin.login.toLowerCase());
-  const mods = kickAccountsConfig.get('mods').map((mod) => mod.login.toLowerCase());
-
-  const isAdmin = admins.includes(event.sender?.username?.toLowerCase());
-  const isMod = mods.includes(event.sender?.username?.toLowerCase()) || isModerator;
+  const isBroadcaster = role === 'broadcaster';
+  const isModerator = role === 'mod';
+  const isAdmin = role === 'admin';
+  const isMod = role === 'mod';
 
   // If the command is restricted and the current scene is the privacy scene, only allow broadcaster and admins to execute it
   if (restricted && inPrivacyScene) return isBroadcaster || isAdmin;
@@ -30,6 +29,23 @@ export const hasPermission = ({ event, requiredRole, restricted, inPrivacyScene 
   if (requiredRole === 'admin') return isAdmin;
   if (requiredRole === 'mod') return isAdmin || isMod;
   return false;
+};
+
+export const getKickUserRole = ({ event }) => {
+  const { badges } = event.sender?.identity || [];
+
+  const isBroadcaster = badges.length > 0 && badges.some((badge) => badge.type === 'broadcaster');
+  const isModerator = badges.length > 0 && badges.some((badge) => badge.type === 'moderator');
+  const admins = kickAccountsConfig.get('admins').map((admin) => admin.login.toLowerCase());
+  const mods = kickAccountsConfig.get('mods').map((mod) => mod.login.toLowerCase());
+
+  const isAdmin = admins.includes(event.sender?.username?.toLowerCase());
+  const isMod = mods.includes(event.sender?.username?.toLowerCase()) || isModerator;
+
+  if (isBroadcaster) return 'broadcaster';
+  if (isAdmin) return 'admin';
+  if (isMod) return 'mod';
+  return 'user';
 };
 
 /*

@@ -8,7 +8,12 @@ export const adminCommands = [
     label: 'Start Stream',
     description: 'Starts the stream.',
     cmd: ['!start'],
-    enabled: true
+    enabled: true,
+    coolDowns: {
+      all: 0,
+      mod: 0,
+      user: 5
+    }
   },
   {
     id: generateId(),
@@ -17,7 +22,12 @@ export const adminCommands = [
     label: 'Stop Stream',
     description: 'Stops the stream.',
     cmd: ['!stop'],
-    enabled: true
+    enabled: true,
+    coolDowns: {
+      all: 0,
+      mod: 0,
+      user: 5
+    }
   },
   {
     id: generateId(),
@@ -26,7 +36,12 @@ export const adminCommands = [
     label: 'Add Admin',
     description: 'Adds a new admin.',
     cmd: ['!addadmin'],
-    enabled: true
+    enabled: true,
+    coolDowns: {
+      all: 0,
+      mod: 0,
+      user: 5
+    }
   },
   {
     id: generateId(),
@@ -35,52 +50,82 @@ export const adminCommands = [
     label: 'Remove Admin',
     description: 'Removes an admin.',
     cmd: ['!removeadmin'],
-    enabled: true
+    enabled: true,
+    coolDowns: {
+      all: 0,
+      mod: 0,
+      user: 5
+    }
   },
   {
     id: generateId(),
     action: 'switchToLive',
     requiredRole: 'admin',
     label: 'Switch to Live Scene',
-    cmd:['!live'],
+    cmd: ['!live'],
     description: 'Switches to the live scene.',
-    enabled: true
+    enabled: true,
+    coolDowns: {
+      all: 0,
+      mod: 0,
+      user: 5
+    }
   },
   {
     id: generateId(),
     action: 'switchToLow',
     requiredRole: 'admin',
     label: 'Switch to Low Scene',
-    cmd:['!low'],
+    cmd: ['!low'],
     description: 'Switches to the Low scene.',
-    enabled: true
+    enabled: true,
+    coolDowns: {
+      all: 0,
+      mod: 0,
+      user: 5
+    }
   },
   {
     id: generateId(),
     action: 'switchToOffline',
     requiredRole: 'admin',
     label: 'Switch to Offline Scene',
-    cmd:['!offline'],
+    cmd: ['!offline'],
     description: 'Switches to the offline scene.',
-    enabled: true
+    enabled: true,
+    coolDowns: {
+      all: 0,
+      mod: 0,
+      user: 5
+    }
   },
   {
     id: generateId(),
     action: 'switchToPrivacy',
     requiredRole: 'admin',
     label: 'Switch to Privacy Scene',
-    cmd:['!privacy'],
+    cmd: ['!privacy'],
     description: 'Switches to the privacy scene.',
-    enabled: true
+    enabled: true,
+    coolDowns: {
+      all: 0,
+      mod: 0,
+      user: 5
+    }
   },
   {
     id: generateId(),
     action: 'switchToStart',
     requiredRole: 'admin',
     label: 'Switch to Start Scene',
-    cmd:['!intro'],
+    cmd: ['!intro'],
     description: 'Switches to the start scene.',
-    enabled: true
+    enabled: true,
+    coolDowns: {
+      all: 0,
+      mod: 0,
+      user: 5
+    }
   },
   {
     id: generateId(),
@@ -89,7 +134,12 @@ export const adminCommands = [
     label: 'Add Mod',
     description: 'Adds a new moderator.',
     cmd: ['!addmod'],
-    enabled: true
+    enabled: true,
+    coolDowns: {
+      all: 0,
+      mod: 0,
+      user: 5
+    }
   },
   {
     id: generateId(),
@@ -98,6 +148,11 @@ export const adminCommands = [
     label: 'Remove Mod',
     description: 'Removes a moderator.',
     cmd: ['!removemod'],
-    enabled: true
+    enabled: true,
+    coolDowns: {
+      all: 0,
+      mod: 0,
+      user: 5
+    }
   }
 ];

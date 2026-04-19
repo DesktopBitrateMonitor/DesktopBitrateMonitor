@@ -66,25 +66,25 @@ function reducer(state, action) {
       };
     }
 
-    case 'twitch:update': {
-      const { success } = action.payload;
-      return {
-        ...state,
-        statuses: setStatus(state.statuses, 'chat', success ? 'connected' : 'disconnected')
-      };
-    }
+    // case 'twitch:update': {
+    //   const { success } = action.payload;
+    //   return {
+    //     ...state,
+    //     statuses: setStatus(state.statuses, 'chat', success ? 'connected' : 'disconnected')
+    //   };
+    // }
 
-    case 'counter:update': {
-      const { changesToLow, changesToLive, changesToOffline } = action.payload;
-      return {
-        ...state,
-        switcherCounters: {
-          changesToLow,
-          changesToLive,
-          changesToOffline
-        }
-      };
-    }
+    // case 'counter:update': {
+    //   const { changesToLow, changesToLive, changesToOffline } = action.payload;
+    //   return {
+    //     ...state,
+    //     switcherCounters: {
+    //       changesToLow,
+    //       changesToLive,
+    //       changesToOffline
+    //     }
+    //   };
+    // }
 
     default:
       return state;

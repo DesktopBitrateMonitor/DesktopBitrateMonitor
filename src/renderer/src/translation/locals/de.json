@@ -298,7 +298,7 @@
       "header": "Chat Befehle ",
       "description": "Bearbeite die Chat Befehle für die verschiedenen Aktionen der Anwendung.",
       "headerToolTip": "Befehle werden für alle Platformen verwendet",
-      "restrictedHint": "Wenn eingeschränkt, können nur der StreamerIn und Admins von der Pause Scene weg wechseln",
+      "restrictedHint": "Wenn eingeschränkt, können nur StreamerIn und Admins von der Pause Szene in eine andere Szene wechseln",
       "restricted": "Eingeschränkt",
       "notRestricted": "Nicht eingeschränkt",
       "searchBox": {
@@ -306,6 +306,12 @@
         "placeholder": "Titel oder Alias"
       },
       "roleDescription": "Mindestens erforderliche Rolle",
+      "cooldowns": {
+        "label": "Abklingzeiten (s)",
+        "all": "Alle",
+        "mod": "Moderator",
+        "user": "Benutzer"
+      },
       "subHeader": "Aliase",
       "aliasBox": {
         "label": "Alias hinzufügen",

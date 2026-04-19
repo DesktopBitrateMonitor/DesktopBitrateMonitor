@@ -4,7 +4,7 @@ import { Box, Stack, TextField, Tooltip, Typography } from '@mui/material';
 import RoleFilterControls from '../../components/functional/RoleFilterControls';
 import RoleSortControls from '../../components/functional/RoleSortControls';
 import LayoutToggle from '../../components/functional/LayoutToggle';
-import MessagePanel from '../twitch/components/panels/MessagePanel';
+import MessagePanel from './panels/MessagePanel';
 import { sortTwitchCommands } from '../../../../scripts/lib/shared-functions';
 import { useAlert } from '../../contexts/AlertContext';
 import { useTranslation } from 'react-i18next';

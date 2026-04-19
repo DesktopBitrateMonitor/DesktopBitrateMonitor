@@ -1,3 +1,13 @@
+## v1.2.0
+
+- Add command cool downs /All, Moderator, User
+  - All: Cool down is for all Users (Broadcaster and Admins as well)
+  - Mod: Cool down only for Moderators and lower permissions
+  - User: Cool down is only for User
+- Fix main process error "object has been destroyed at sendAggregatedStats" on closing the app
+
+---
+
 ## v1.1.0
 
 - Implement and finish the historic stats watching

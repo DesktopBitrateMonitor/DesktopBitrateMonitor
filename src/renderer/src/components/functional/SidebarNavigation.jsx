@@ -185,7 +185,6 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
       if (platformId === activePlatform) return;
 
       const active = event.target.checked;
-      console.log('Setting active platform to', active ? platformId : null);
       updateAppConfig((prev) => ({
         ...(prev || {}),
         activePlatform: platformId

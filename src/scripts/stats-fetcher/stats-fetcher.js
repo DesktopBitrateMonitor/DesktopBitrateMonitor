@@ -130,10 +130,13 @@ function sendAggregatedStats(mainWindow) {
   // Run switcher against all active instance bitrates in priority order.
   switcherService({ instancesStats: aggregatedArray }, mainWindow);
 
-  if (!mainWindow?.webContents || mainWindow.isDestroyed()) return;
+  if (!mainWindow || mainWindow.isDestroyed() || !mainWindow.webContents) return;
 
-  // Send the aggregated array to the renderer
-  mainWindow.webContents.send('instances-stats', aggregatedArray);
+  try {
+    mainWindow.webContents.send('instances-stats', aggregatedArray);
+  } catch (error) {
+    Logger.warn(`Skipping instances-stats send: ${error?.message || error}`);
+  }
 }
 
 async function parseInstanceStats(rawEnvelope, instance) {

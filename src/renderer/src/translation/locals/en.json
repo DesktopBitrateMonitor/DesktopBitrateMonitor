@@ -305,6 +305,12 @@
         "placeholder": "Title or text"
       },
       "roleDescription": "Minimum required role",
+      "cooldowns": {
+        "label": "Cooldowns (s)",
+        "all": "All",
+        "mod": "Moderator",
+        "user": "User"
+      },
       "subHeader": "Aliases",
       "aliasBox": {
         "label": "Add Alias",

@@ -9,9 +9,27 @@ import { injectDefaults } from '../../../store/defaults';
  * @returns {boolean} - Whether the user has the required permissions
  */
 
+const { twitchAccountsConfig } = injectDefaults();
+
 export const hasPermission = ({ event, requiredRole, restricted, inPrivacyScene }) => {
+  const role = getTwitchUserRole({ event });
+
+  const isBroadcaster = role === 'broadcaster';
+  const isAdmin = role === 'admin';
+  const isMod = role === 'mod';
+
+  // If the command is restricted and the current scene is the privacy scene, only allow broadcaster and admins to execute it
+  if (restricted && inPrivacyScene) return isBroadcaster || isAdmin;
+  // Broadcaster has all permissions, always return true
+  if (isBroadcaster) return true;
+  if (requiredRole === 'user') return true;
+  if (requiredRole === 'admin') return isAdmin;
+  if (requiredRole === 'mod') return isAdmin || isMod;
+  return false;
+};
+
+export const getTwitchUserRole = ({ event }) => {
   const { broadcaster_user_id, chatter_user_id, user_type, badges } = event;
-  const { twitchAccountsConfig } = injectDefaults();
 
   const isBroadcaster = broadcaster_user_id === chatter_user_id;
   const admins = twitchAccountsConfig.get('admins').map((admin) => admin.login);
@@ -23,12 +41,8 @@ export const hasPermission = ({ event, requiredRole, restricted, inPrivacyScene 
     (badges.length > 0 &&
       badges.some((badge) => badge.set_id === 'moderator' || badge.set_id === 'lead_moderator'));
 
-  // If the command is restricted and the current scene is the privacy scene, only allow broadcaster and admins to execute it
-  if (restricted && inPrivacyScene) return isBroadcaster || isAdmin;
-  // Broadcaster has all permissions, always return true
-  if (isBroadcaster) return true;
-  if (requiredRole === 'user') return true;
-  if (requiredRole === 'admin') return isAdmin;
-  if (requiredRole === 'mod') return isAdmin || isMod;
-  return false;
+  if (isBroadcaster) return 'broadcaster';
+  if (isAdmin) return 'admin';
+  if (isMod) return 'mod';
+  return 'user';
 };

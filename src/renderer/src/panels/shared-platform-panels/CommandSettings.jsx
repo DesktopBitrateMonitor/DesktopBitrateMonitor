@@ -5,7 +5,7 @@ import LayoutToggle from '../../components/functional/LayoutToggle';
 import RoleSortControls from '../../components/functional/RoleSortControls';
 import RoleFilterControls from '../../components/functional/RoleFilterControls';
 import { sortTwitchCommands } from '../../../../scripts/lib/shared-functions';
-import CommandPanel from '../twitch/components/panels/CommandPanel';
+import CommandPanel from './panels/CommandPanel';
 import { useAlert } from '../../contexts/AlertContext';
 import { useTranslation } from 'react-i18next';
 import TwitchIcon from '../../assets/icons/TwitchIcon';

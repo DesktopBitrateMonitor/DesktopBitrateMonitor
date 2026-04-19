@@ -1,8 +1,8 @@
 import React from 'react';
-import CollapsibleCard from '../../../../components/functional/CollapsibleCard';
+import CollapsibleCard from '../../../components/functional/CollapsibleCard';
 import { Switch, TextField, Typography } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
-import InputEndAdornment from '../../../../components/feedback/InputEndAdornment';
+import InputEndAdornment from '../../../components/feedback/InputEndAdornment';
 import { useTranslation } from 'react-i18next';
 
 const MessagePanel = ({
