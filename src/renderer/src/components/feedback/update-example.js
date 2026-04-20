@@ -91,5 +91,15 @@ export const exampleData = [
       bytesPerSecond: 9800000,
       percent: 100
     }
+  },
+  {
+    status: 'update-downloaded',
+    data: {
+      total: 103562941,
+      delta: 0,
+      transferred: 103562941,
+      bytesPerSecond: 9800000,
+      percent: 100
+    }
   }
 ];

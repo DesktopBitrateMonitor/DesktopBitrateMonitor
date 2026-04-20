@@ -16,6 +16,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import { useUpdate } from '../../contexts/UpdateContext';
 import { useTranslation } from 'react-i18next';
+import { updateApi } from '../../../preload/api/update-api';
 
 // TODO: Add a button to abort the update process (if possible)
 
@@ -121,6 +122,13 @@ const UpdateCard = ({ open = true, onClose }) => {
 
   const { t } = useTranslation();
 
+  const handleReleaseNotesClick = (event) => {
+    if (event.target.tagName === 'A' && event.target.href) {
+      event.preventDefault();
+      updateApi.openExternal(event.target.href);
+    }
+  };
+
   const notesHtml = data?.releaseNotes?.trim();
   const releaseName = data?.releaseName || data?.version;
   const releaseDate = formatDate(data?.releaseDate);
@@ -180,10 +188,14 @@ const UpdateCard = ({ open = true, onClose }) => {
             <Box
               component="section"
               aria-label="Release notes"
+              onClick={handleReleaseNotesClick}
               sx={(theme) => ({
                 ...releaseNotesStyles(theme),
                 maxHeight: '45vh',
-                overflowY: 'auto'
+                overflowY: 'auto',
+                '& a': {
+                  cursor: 'pointer'
+                }
               })}
               dangerouslySetInnerHTML={{ __html: notesHtml }}
             />

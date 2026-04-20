@@ -111,6 +111,12 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
       </li>
     </ul>
     <li>Minimum required Role</li>
+    <li>Cooldown's</li>
+    <ul>
+      <li>All: Cooldown is for everyone (Broadcaster and Admins included)</li>
+      <li>Moderator: Cooldown is for Moderators and lower permission users</li>
+      <li>User: Cooldown only for the role "All"</li>
+    </ul>
     <li>Aliases</li>
     <ul>
       <li>
