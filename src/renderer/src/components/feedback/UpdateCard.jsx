@@ -16,7 +16,6 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import { useUpdate } from '../../contexts/UpdateContext';
 import { useTranslation } from 'react-i18next';
-import { updateApi } from '../../../preload/api/update-api';
 
 // TODO: Add a button to abort the update process (if possible)
 
@@ -119,13 +118,12 @@ const releaseNotesStyles = (theme) => ({
 
 const UpdateCard = ({ open = true, onClose }) => {
   const { status, data, startUpdate } = useUpdate();
-
   const { t } = useTranslation();
 
   const handleReleaseNotesClick = (event) => {
     if (event.target.tagName === 'A' && event.target.href) {
       event.preventDefault();
-      updateApi.openExternal(event.target.href);
+      window?.updateApi?.openExternal(event.target.href);
     }
   };
 
