@@ -7,6 +7,13 @@ import { buildMessages } from './messages/messages';
 import Store from './store';
 import { defaultLayout } from '../../renderer/src/panels/dashboard/components/layout-default';
 import generateId from '../lib/id-generator';
+import {
+  mergeByKey,
+  getCommandMergeKey,
+  getMessageMergeKey,
+  isSameJson
+} from './lib/merge-helpers';
+import { migrateServerConfig } from './lib/server-migration';
 
 const defaultSessionLoggingPath = path.join(
   app.getPath('documents'),
@@ -24,93 +31,6 @@ const language =
   preferredSystemLanguages && preferredSystemLanguages.length > 0
     ? preferredSystemLanguages[0].split('-')[0]
     : 'en';
-
-const isArray = (value) => Array.isArray(value);
-
-const isSameJson = (a, b) => JSON.stringify(a) === JSON.stringify(b);
-
-const mergeByKey = (existingList, defaultList, getKey) => {
-  const existing = isArray(existingList) ? existingList : [];
-  const defaults = isArray(defaultList) ? defaultList : [];
-
-  const defaultByKey = new Map();
-  for (const item of defaults) {
-    const key = getKey(item);
-    if (key) defaultByKey.set(key, item);
-  }
-
-  const existingByKey = new Map();
-  for (const item of existing) {
-    const key = getKey(item);
-    if (!key || existingByKey.has(key)) continue;
-    existingByKey.set(key, item);
-  }
-
-  const merged = [];
-
-  // Ensure merged entries follow the exact default order.
-  for (const defaultItem of defaults) {
-    const key = getKey(defaultItem);
-    if (!key) {
-      merged.push(defaultItem);
-      continue;
-    }
-
-    const existingItem = existingByKey.get(key);
-    if (existingItem) {
-      // Keep user customizations while filling any newly added default fields.
-      merged.push({ ...defaultItem, ...existingItem });
-      continue;
-    }
-
-    merged.push(defaultItem);
-  }
-
-  // Keep deprecated/custom entries already present in the user's store.
-  for (const item of existing) {
-    const key = getKey(item);
-    if (!key || !defaultByKey.has(key)) {
-      merged.push(item);
-    }
-  }
-
-  return merged;
-};
-
-const getCommandMergeKey = (command) => {
-  if (!command || !command.action) return null;
-  return `${command.action}`;
-};
-
-const getMessageMergeKey = (message) => {
-  if (!message || !message.action || !message.event) return null;
-  return `${message.group || ''}:${message.action}:${message.event}`;
-};
-
-const legacyServerTypeDefaults = {
-  openirl: {
-    name: 'OpenIRL',
-    statsUrl: 'http://xxx.xxx.xxx.xxx:8080/stats/play/live/key_xxxxxxx?legacy=1',
-    publisher: 'live'
-  },
-  'srt-live-server': {
-    name: 'SrtLiveServer',
-    statsUrl: 'http://xxx.xxx.xxx.xxx:8080/stats',
-    publisher: 'publish/live/key_xxxxxxx'
-  },
-  belabox: {
-    name: 'Belabox',
-    statsUrl: 'http://xxx.xxx.xxx.xxx:8080/stats',
-    publisher: 'publish/live/key_xxxxxxx'
-  },
-  'nginx-rtmp': {
-    name: 'Nginx RTMP',
-    statsUrl: 'http://xxx.xxx.xxx.xxx:8080/stats',
-    publisher: 'stream/key_xxxxxxx'
-  }
-};
-
-const legacyServerTypeKeys = Object.keys(legacyServerTypeDefaults);
 
 /**
  * Inject default values into the store.
@@ -324,42 +244,7 @@ export const injectDefaults = () => {
     }
   });
 
-  // Migrate servers from older app version (below 1.0.4) - remove this migration code in future versions
-  const existingServerInstances = serverConfig.get('serverInstances');
-  const shouldMigrateLegacyServers =
-    !Array.isArray(existingServerInstances) || existingServerInstances.length === 0;
-
-  if (shouldMigrateLegacyServers) {
-    const migratedServers = [];
-
-    for (const serverType of legacyServerTypeKeys) {
-      const legacyServer = serverConfig.get(serverType);
-      if (!legacyServer || typeof legacyServer !== 'object') continue;
-
-      if (!isSameJson(legacyServer, legacyServerTypeDefaults[serverType])) {
-        migratedServers.push({
-          id: generateId(),
-          serverType: serverType,
-          name: legacyServer.name,
-          statsUrl: legacyServer.statsUrl,
-          publisher: legacyServer.publisher,
-          enabled: true
-        });
-      }
-    }
-
-    if (migratedServers.length > 0) {
-      serverConfig.set('serverInstances', migratedServers);
-      serverConfig.delete('currentType');
-    }
-
-    for (const serverType of legacyServerTypeKeys) {
-      if (serverConfig.has(serverType)) {
-        serverConfig.delete(serverType);
-        serverConfig.delete('currentType');
-      }
-    }
-  }
+  migrateServerConfig(serverConfig);
 
   const streamingSoftwareConfig = new Store({
     name: 'streaming-software-config',

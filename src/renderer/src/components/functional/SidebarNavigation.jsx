@@ -2,6 +2,7 @@ import { Fragment, useCallback, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Box,
+  Checkbox,
   Divider,
   Drawer,
   IconButton,
@@ -375,10 +376,10 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
                   return (
                     <Fragment key={platform.id}>
                       <Box sx={{ px: 0.5, display: 'flex', justifyContent: 'center' }}>
-                        <Switch
-                          onChange={handleActivePlatformChange(platform.id)}
+                        <Checkbox
+                          disabled={platform.disabled}
                           checked={activePlatform === platform.id}
-                          name={platform.id}
+                          onChange={handleActivePlatformChange(platform.id)}
                         />
                       </Box>
                       <ListItemButton
