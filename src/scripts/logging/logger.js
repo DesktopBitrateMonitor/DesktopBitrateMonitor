@@ -1,5 +1,3 @@
-//TODO: add logger levels
-
 class Logger {
   static mainWindow = null;
 
@@ -22,39 +20,49 @@ class Logger {
     return new Date();
   }
 
-  static log(message) {
+  static log(message, backendOnly = false) {
     const logMessage = `[LOG] ${this._timestamp()}: ${message}`;
     console.log(logMessage);
     const windowLog = { type: 'log', timestamp: this._logTimeStamp(), message: message };
-    this._sendToMainWindow(windowLog);
+    if (!backendOnly) {
+      this._sendToMainWindow(windowLog);
+    }
   }
 
-  static info(message) {
+  static info(message, backendOnly = false) {
     const logMessage = `[INFO] ${this._timestamp()}: ${message}`;
     console.log(logMessage);
     const windowLog = { type: 'info', timestamp: this._logTimeStamp(), message: message };
-    this._sendToMainWindow(windowLog);
+    if (!backendOnly) {
+      this._sendToMainWindow(windowLog);
+    }
   }
 
-  static warn(message) {
+  static warn(message, backendOnly = false) {
     const logMessage = `[WARNING] ${this._timestamp()}: ${message}`;
     console.warn(logMessage);
     const windowLog = { type: 'warning', timestamp: this._logTimeStamp(), message: message };
-    this._sendToMainWindow(windowLog);
+    if (!backendOnly) {
+      this._sendToMainWindow(windowLog);
+    }
   }
 
-  static error(message) {
+  static error(message, backendOnly = false) {
     const logMessage = `[ERROR] ${this._timestamp()}: ${message}`;
     console.error(logMessage);
     const windowLog = { type: 'error', timestamp: this._logTimeStamp(), message: message };
-    this._sendToMainWindow(windowLog);
+    if (!backendOnly) {
+      this._sendToMainWindow(windowLog);
+    }
   }
 
-  static success(message) {
+  static success(message, backendOnly = false) {
     const logMessage = `[SUCCESS] ${this._timestamp()}: ${message}`;
     console.log(logMessage);
     const windowLog = { type: 'success', timestamp: this._logTimeStamp(), message: message };
-    this._sendToMainWindow(windowLog);
+    if (!backendOnly) {
+      this._sendToMainWindow(windowLog);
+    }
   }
 
   static async _sendToMainWindow(message) {
