@@ -109,7 +109,6 @@ export async function initializeLoggerIpc(ipcMain) {
     if (!content) return { success: false, message: 'Missing content to write' };
 
     const loggingSettings = loggingConfig.get('');
-    const activePlatform = appConfig.get('activePlatform');
     const loggingEnabled = loggingSettings.logSessions;
     const sessionLogsPath = loggingSettings.sessionLogsPath;
 
@@ -118,36 +117,45 @@ export async function initializeLoggerIpc(ipcMain) {
     if (!sessionLogsPath)
       return { success: false, message: 'Session logs path is not set in settings' };
 
-    const config = configMapping[activePlatform];
-    const apiFn = apiCallsFunctions[activePlatform];
+    const activePlatforms = appConfig.get('activePlatforms') || [];
+    const streamInformation = [];
 
-    const access_token = config.get('broadcaster.access_token');
-    const broadcaster_user_id = config.get('broadcaster.id');
-    const streamInfo = {
-      channel_Id: '',
-      title: '',
-      directory: '',
-      channel_Id: '',
-      title: '',
-      directory: '',
-      directory_thumbnail: ''
-    };
+    for (const platform of activePlatforms) {
+      const config = configMapping[platform];
+      const access_token = config.get('broadcaster.access_token');
+      const broadcaster_user_id = config.get('broadcaster.id');
+      const streamInfo = {
+        platform,
+        channel_Id: '',
+        title: '',
+        directory: '',
+        channel_Id: '',
+        title: '',
+        directory: '',
+        directory_thumbnail: ''
+      };
 
-    if (Boolean(access_token)) {
+      if (!access_token) {
+        Logger.warn(
+          `Active platform "${platform}" does not have a broadcaster access token configured. Skipping stream info fetching for log enrichment.`
+        );
+        continue;
+      }
+
+      const apiFn = apiCallsFunctions[platform];
+
       const streamData = await apiFn(access_token, broadcaster_user_id);
 
       streamInfo.channel_Id = streamData.channel_Id;
       streamInfo.title = streamData.title;
       streamInfo.directory = streamData.directory;
       streamInfo.directory_thumbnail = streamData.directory_thumbnail;
+      streamInformation.push(streamInfo);
     }
 
     const mergedContent = [...content].map((entry) => ({
       ...entry,
-      channel_Id: streamInfo.channel_Id,
-      title: streamInfo.title,
-      directory: streamInfo.directory,
-      directory_thumbnail: streamInfo.directory_thumbnail
+      streamInformation
     }));
 
     try {

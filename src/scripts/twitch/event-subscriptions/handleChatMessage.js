@@ -51,6 +51,7 @@ export async function handleChatMessage(eventSub) {
 
   const role = getTwitchUserRole({ event });
   const remainingCooldownMs = getRemainingCommandCooldown({
+    platform: 'twitch',
     commandId: commandObject.id,
     role,
     coolDowns: commandObject.coolDowns
@@ -79,5 +80,10 @@ export async function handleChatMessage(eventSub) {
     })[commandObject.action](commandArgs);
   }
 
-  startCommandCooldown({ commandId: commandObject.id, role, coolDowns: commandObject.coolDowns });
+  startCommandCooldown({
+    platform: 'twitch',
+    commandId: commandObject.id,
+    role,
+    coolDowns: commandObject.coolDowns
+  });
 }

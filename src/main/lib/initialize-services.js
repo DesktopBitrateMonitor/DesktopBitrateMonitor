@@ -34,8 +34,8 @@ export async function initializeServices(mainWindow = null) {
   await connectStreamingSoftware(mainWindow);
   Logger.log('Starting server stats fetching');
   await startFetchingServerStats(mainWindow);
-  Logger.log('Connecting active platform');
-  await connectToActivePlatform(mainWindow, appConfig.get('activePlatform'));
+  Logger.log('Connecting active platforms');
+  await connectToActivePlatforms(mainWindow, appConfig.get('activePlatforms'));
 }
 
 export async function startFetchingServerStats(mainWindow = null) {
@@ -54,9 +54,11 @@ export async function connectStreamingSoftware(mainWindow) {
   }
 }
 
-export async function connectToActivePlatform(mainWindow, platform) {
+export async function connectToActivePlatforms(mainWindow) {
+  const platforms = appConfig.get('activePlatforms') || [];
   // Disconnect from all platforms first to ensure a clean slate before reconnecting
-  Logger.info('Cleanup all platform connections before reconnecting to the selected platform...');
+  Logger.info('Cleanup all platform connections before reconnecting to the selected platforms...');
+
   disconnectTwitchEventSubs(mainWindow);
   disconnectKickEventSub(mainWindow);
   // stopYouTubeChatPolling(mainWindow);
@@ -64,22 +66,26 @@ export async function connectToActivePlatform(mainWindow, platform) {
   // Add a short delay to ensure all disconnections are processed before attempting new connections
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
-  if (platform === 'twitch') {
-    const twitchChannelToConnect = twitchAccountsConfig.get('broadcaster.login');
-    if (twitchChannelToConnect.length === 0) {
-      Logger.log('No Twitch channel found in twitchAccountsConfig. Skipping Twitch connection.');
-      return;
+  for (const platform of platforms) {
+    if (platform === 'twitch') {
+      if (twitchAccountsConfig.get('broadcaster.login').length === 0) {
+        Logger.log('No Twitch channel found in twitchAccountsConfig. Skipping Twitch connection.');
+        continue;
+      }
+      connectToTwitchEventSubs(client_id, mainWindow);
     }
-    await connectToTwitchEventSubs(client_id, mainWindow);
-  }
-  if (platform === 'kick') {
-    const kickChannelToConnect = kickAccountsConfig.get('broadcaster.login');
-    if (kickChannelToConnect.length === 0) {
-      Logger.log('No Kick channel found in kickAccountsConfig. Skipping Kick connection.');
-      return;
+
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    if (platform === 'kick') {
+      if (kickAccountsConfig.get('broadcaster.login').length === 0) {
+        Logger.log('No Kick channel found in kickAccountsConfig. Skipping Kick connection.');
+        continue;
+      }
+      connectToKickEventSub(mainWindow);
     }
-    await connectToKickEventSub(mainWindow);
   }
+
   // if (platform === 'youtube') {
   //   const youtubeChannelToConnect = youtubeAccountsConfig.get('broadcaster.login');
   //   if (youtubeChannelToConnect.length === 0) {

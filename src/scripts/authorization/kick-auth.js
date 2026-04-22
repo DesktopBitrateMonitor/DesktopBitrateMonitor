@@ -97,7 +97,7 @@ kickRouter.get('/oauth/kick', async (req, res) => {
     const mainWindow = BrowserWindow.getAllWindows()[0];
     mainWindow.webContents.send('send-kick-oauth-data', { userType: type, data });
 
-    if (type === 'broadcaster' && appConfig.get('activePlatform') === 'kick') {
+    if (type === 'broadcaster' && appConfig.get('activePlatforms').includes('kick')) {
       async function connectEventSubs() {
         await disconnectKickEventSub(mainWindow);
         await new Promise((resolve) => setTimeout(resolve, 1000));

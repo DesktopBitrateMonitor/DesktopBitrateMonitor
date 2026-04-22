@@ -9,7 +9,7 @@ import {
 } from '../streaming-software/obs-api';
 import Logger from '../logging/logger';
 import globalInternalStore from '../store/global-internal-store';
-import { getYoutubeUsers } from '../youtube/youtube-api';
+// import { getYoutubeUsers } from '../youtube/youtube-api';
 
 /**
  *
@@ -94,9 +94,9 @@ export const commandActions = ({
     if (platform === 'kick') {
       userObj = await getUser(access_token, user);
     }
-    if (platform === 'youtube') {
-      userObj = await getYoutubeUsers(access_token, user, 'broadcaster');
-    }
+    // if (platform === 'youtube') {
+    //   userObj = await getYoutubeUsers(access_token, user, 'broadcaster');
+    // }
 
     adminUsers.push(userObj);
     accountConfig.set('admins', adminUsers);

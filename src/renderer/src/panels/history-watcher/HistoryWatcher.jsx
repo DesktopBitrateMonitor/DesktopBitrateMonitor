@@ -521,26 +521,86 @@ const HistoryWatcher = () => {
                   {t('logging.historyWatcher.dataPointBox.noDataSelected')}
                 </Typography>
               ) : (
-                <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-                  {!selectedLog.directory_thumbnail ||
-                  selectedLog.directory_thumbnail === '' ? null : (
-                    <Box sx={{ display: 'flex', gap: 2 }}>
-                      {Boolean(selectedLog.directory_thumbnail) && (
-                        <img
-                          style={{ width: '52px' }}
-                          src={selectedLog.directory_thumbnail || null}
-                          alt="Log Directory Thumbnail"
-                        />
-                      )}
-                    </Box>
-                  )}
-                  <Box>
-                    <Typography variant="body2">{`${t('logging.historyWatcher.dataPointBox.title')}: ${selectedLog.title || '-'}`}</Typography>
-                    <Typography variant="body2">{`${t('logging.historyWatcher.dataPointBox.primaryInstance')}: ${selectedLog.primaryInstance || '-'}`}</Typography>
-                    <Typography variant="body2">{`${t('logging.historyWatcher.dataPointBox.directory')}: ${selectedLog.directory || '-'}`}</Typography>
-                    <Typography variant="body2">{`${t('logging.historyWatcher.dataPointBox.bitrate')}: ${selectedLog.bitrate ?? 0} kbps`}</Typography>
+                <Box>
+                  <Box sx={{ mb: 2 }}>
+                    <Typography
+                      variant="body2"
+                      sx={{ mb: 1 }}
+                    >{`${t('logging.historyWatcher.dataPointBox.primaryInstance')}: ${selectedLog.primaryInstance || '-'}`}</Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{ mb: 1 }}
+                    >{`${t('logging.historyWatcher.dataPointBox.bitrate')}: ${selectedLog.bitrate ?? 0} kbps`}</Typography>
                     <Typography variant="body2">{`${t('logging.historyWatcher.dataPointBox.file')}: ${selectedLog.sourceFileName || '-'}`}</Typography>
                   </Box>
+                  {selectedLog.streamInformation &&
+                  Array.isArray(selectedLog.streamInformation) &&
+                  selectedLog.streamInformation.length > 0 ? (
+                    <Box
+                      sx={{
+                        display: 'grid',
+                        gridTemplateColumns: {
+                          xs: '1fr',
+                          sm:
+                            selectedLog.streamInformation.length > 2
+                              ? 'repeat(2, 1fr)'
+                              : 'repeat(auto-fit, minmax(150px, 1fr))',
+                          md: `repeat(${Math.min(selectedLog.streamInformation.length, 3)}, 1fr)`
+                        },
+                        gap: 1.5
+                      }}
+                    >
+                      {selectedLog.streamInformation.map((streamInfo, idx) => (
+                        <Box
+                          key={idx}
+                          sx={{
+                            p: 1.5,
+                            borderRadius: 1,
+                            border: (theme) => `1px solid ${theme.palette.divider}`,
+                            backgroundColor: (theme) =>
+                              alpha(
+                                theme.palette.primary.main,
+                                theme.palette.mode === 'dark' ? 0.08 : 0.04
+                              ),
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: 1
+                          }}
+                        >
+                          {streamInfo.directory_thumbnail &&
+                            streamInfo.directory_thumbnail !== '' && (
+                              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                <img
+                                  style={{ width: '64px', borderRadius: '4px' }}
+                                  src={streamInfo.directory_thumbnail}
+                                  alt={`${streamInfo.platform} thumbnail`}
+                                />
+                              </Box>
+                            )}
+                          <Box>
+                            <Typography variant="caption" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                              {streamInfo.platform?.toUpperCase() || 'PLATFORM'}
+                            </Typography>
+                            <Typography variant="body2" sx={{ wordBreak: 'break-word', mb: 0.5 }}>
+                              {streamInfo.title || '-'}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary">
+                              {streamInfo.directory || '-'}
+                            </Typography>
+                            {streamInfo.channel_Id && streamInfo.channel_Id !== '' && (
+                              <Typography
+                                variant="caption"
+                                color="text.secondary"
+                                sx={{ display: 'block' }}
+                              >
+                                ID: {streamInfo.channel_Id}
+                              </Typography>
+                            )}
+                          </Box>
+                        </Box>
+                      ))}
+                    </Box>
+                  ) : null}
                 </Box>
               )}
             </Box>

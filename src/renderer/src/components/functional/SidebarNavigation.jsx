@@ -132,7 +132,7 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
 
   const [collapsed, setCollapsed] = useState(initialCollapsed);
   const [accountsAnchorEl, setAccountsAnchorEl] = useState(null);
-  const activePlatform = appConfig?.activePlatform || null;
+  const activePlatforms = appConfig?.activePlatforms || [];
   const drawerWidth = collapsed ? DRAWER_WIDTH.collapsed : DRAWER_WIDTH.expanded;
   const widthTransition = theme.transitions.create('width', {
     easing: theme.transitions.easing.sharp,
@@ -183,17 +183,26 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
 
   const handleActivePlatformChange = useCallback(
     (platformId) => async (event) => {
-      if (platformId === activePlatform) return;
+      const newState = event.target.checked;
 
-      const active = event.target.checked;
+      if (newState) {
+        activePlatforms.push(platformId);
+      } else {
+        const index = activePlatforms.findIndex((p) => p === platformId);
+        if (index !== -1) {
+          activePlatforms.splice(index, 1);
+        }
+      }
+
       updateAppConfig((prev) => ({
         ...(prev || {}),
-        activePlatform: platformId
+        activePlatforms: activePlatforms
       }));
-      await window.storeApi.set('app-config', 'activePlatform', platformId);
-      await window.servicesApi.connectToActivePlatform(platformId);
+
+      await window.storeApi.set('app-config', 'activePlatforms', activePlatforms);
+      await window.servicesApi.connectToActivePlatforms();
     },
-    [activePlatform, updateAppConfig]
+    [updateAppConfig, activePlatforms]
   );
 
   const handleOpenDocuments = async () => {
@@ -378,7 +387,7 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
                       <Box sx={{ px: 0.5, display: 'flex', justifyContent: 'center' }}>
                         <Checkbox
                           disabled={platform.disabled}
-                          checked={activePlatform === platform.id}
+                          checked={activePlatforms.includes(platform.id)}
                           onChange={handleActivePlatformChange(platform.id)}
                         />
                       </Box>

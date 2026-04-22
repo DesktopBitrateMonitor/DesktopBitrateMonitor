@@ -1,3 +1,14 @@
+## v1.3.0
+
+- Add multi chat connection
+  - Listen to Twitch and Kick chat simultaneously
+  - Command cooldowns behave independently in each chat where commands are triggered
+  - History displays information's for all active platforms (title, directory,...)
+  - Chatbot messages are posted in all chats
+- Fix Twitch access token removal from data storage
+
+---
+
 ## v1.2.0
 
 - Add command cooldown's (All, Moderator, User)

@@ -76,7 +76,7 @@ twitchRouter.get('/oauth/twitch', async (req, res) => {
     const mainWindow = BrowserWindow.getAllWindows()[0];
     mainWindow.webContents.send('send-twitch-oauth-data', { userType: type, data });
 
-    if (type === 'broadcaster' && appConfig.get('activePlatform') === 'twitch') {
+    if (type === 'broadcaster' && appConfig.get('activePlatforms').includes('twitch')) {
       async function connectEventSubs() {
         await disconnectTwitchEventSubs(mainWindow);
         await new Promise((resolve) => setTimeout(resolve, 1000));

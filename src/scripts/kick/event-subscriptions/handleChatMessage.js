@@ -49,6 +49,7 @@ export async function handleChatMessage(rawMessage) {
 
   const role = getKickUserRole({ event: rawMessage });
   const remainingCooldownMs = getRemainingCommandCooldown({
+    platform: 'kick',
     commandId: commandObject.id,
     role,
     coolDowns: commandObject.coolDowns
@@ -77,5 +78,10 @@ export async function handleChatMessage(rawMessage) {
     })[commandObject.action](commandArgs);
   }
 
-  startCommandCooldown({ commandId: commandObject.id, role, coolDowns: commandObject.coolDowns });
+  startCommandCooldown({
+    platform: 'kick',
+    commandId: commandObject.id,
+    role,
+    coolDowns: commandObject.coolDowns
+  });
 }

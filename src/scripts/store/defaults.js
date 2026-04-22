@@ -14,6 +14,7 @@ import {
   isSameJson
 } from './lib/merge-helpers';
 import { migrateServerConfig } from './lib/server-migration';
+import migrateActivePlatforms from './lib/multi-platform-migration';
 
 const defaultSessionLoggingPath = path.join(
   app.getPath('documents'),
@@ -58,7 +59,7 @@ export const injectDefaults = () => {
         id: null
       },
       onQuit: 'quit',
-      activePlatform: 'twitch',
+      activePlatforms: [],
       autoCheckForUpdates: true,
       autoInstallUpdates: false,
       lastUpdateCheck: null,
@@ -80,6 +81,8 @@ export const injectDefaults = () => {
       }
     }
   });
+
+  migrateActivePlatforms(appConfig);
 
   const loggingConfig = new Store({
     name: 'logging-config',

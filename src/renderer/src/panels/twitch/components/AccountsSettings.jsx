@@ -90,45 +90,43 @@ const AccountsSettings = () => {
 
   const handleLogout = useCallback(
     async (accountType) => {
-      const res = await window.authApi.revokeTwitchAccessToken(accountType);
+      await window.authApi.revokeTwitchAccessToken(accountType);
 
-      if (res.status === 400) {
-        const data = {
-          id: '',
-          login: '',
-          display_name: '',
-          access_token: '',
-          refresh_token: '',
-          scopes: [],
-          profile_image_url: ''
-        };
+      const data = {
+        id: '',
+        login: '',
+        display_name: '',
+        access_token: '',
+        refresh_token: '',
+        scopes: [],
+        profile_image_url: ''
+      };
 
-        showAlert({
-          message:
-            accountType === 'broadcaster'
-              ? t('platforms.twitch.accounts.loggedOutBroadcaster')
-              : t('platforms.twitch.accounts.loggedOutChatbot'),
-          severity: 'success'
-        });
+      showAlert({
+        message:
+          accountType === 'broadcaster'
+            ? t('platforms.twitch.accounts.loggedOutBroadcaster')
+            : t('platforms.twitch.accounts.loggedOutChatbot'),
+        severity: 'success'
+      });
 
-        await window.storeApi.set(`twitch-accounts-config`, accountType, data);
+      await window.storeApi.set(`twitch-accounts-config`, accountType, data);
 
-        if (accountType === 'broadcaster') {
-          setBroadcasterData(data);
-          // Disable chatbot usage when broadcaster logs out
-          await window.storeApi.set('twitch-accounts-config', 'useBotAccount', false);
-          updateTwitchAccountsConfig((prev) => ({
-            ...(prev || {}),
-            [accountType]: data,
-            useBotAccount: false
-          }));
-        } else {
-          setChatbotData(data);
-          updateTwitchAccountsConfig((prev) => ({
-            ...(prev || {}),
-            [accountType]: data
-          }));
-        }
+      if (accountType === 'broadcaster') {
+        setBroadcasterData(data);
+        // Disable chatbot usage when broadcaster logs out
+        await window.storeApi.set('twitch-accounts-config', 'useBotAccount', false);
+        updateTwitchAccountsConfig((prev) => ({
+          ...(prev || {}),
+          [accountType]: data,
+          useBotAccount: false
+        }));
+      } else {
+        setChatbotData(data);
+        updateTwitchAccountsConfig((prev) => ({
+          ...(prev || {}),
+          [accountType]: data
+        }));
       }
     },
     [chatbotData, broadcasterData, twitchAccountsConfig, updateTwitchAccountsConfig]
@@ -167,7 +165,7 @@ const AccountsSettings = () => {
         display: 'flex',
         flexDirection: 'column',
         gap: 3,
-        p: 3,
+        p: 3
       }}
     >
       <Box

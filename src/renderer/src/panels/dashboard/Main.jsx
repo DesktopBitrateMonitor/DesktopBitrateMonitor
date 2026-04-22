@@ -59,10 +59,9 @@ const Main = () => {
   const [layouts, setLayouts] = useState(createInitialLayouts);
   const [compactor] = useState(verticalCompactor);
 
-  const [activePlatform, setActivePlatform] = React.useState('');
+  const [activePlatforms, setActivePlatforms] = React.useState([]);
   const [kickBroadcaster, setKickBroadcaster] = React.useState('');
   const [twitchBroadcaster, setTwitchBroadcaster] = React.useState('');
-  const [broadcasterConnected, setBroadcasterConnected] = React.useState(false);
   const [contextMenuPosition, setContextMenuPosition] = useState(null);
   const [elementsMenuAnchor, setElementsMenuAnchor] = useState(null);
   const [lockLayoutState, setLockLayoutState] = useState(true);
@@ -79,17 +78,9 @@ const Main = () => {
   useEffect(() => {
     if (!appConfig) return;
 
-    setActivePlatform(appConfig.activePlatform);
+    setActivePlatforms(appConfig.activePlatforms);
     setKickBroadcaster(kickAccountsConfig?.broadcaster?.display_name);
     setTwitchBroadcaster(twitchAccountsConfig?.broadcaster?.display_name);
-
-    if (appConfig.activePlatform === 'kick') {
-      setBroadcasterConnected(kickAccountsConfig?.broadcaster?.login !== '');
-    }
-
-    if (appConfig.activePlatform === 'twitch') {
-      setBroadcasterConnected(twitchAccountsConfig?.broadcaster?.login !== '');
-    }
 
     const storedLayouts = appConfig.layout?.dashboardLayout;
     if (storedLayouts && !Array.isArray(storedLayouts)) {
@@ -285,22 +276,77 @@ const Main = () => {
                   showHandles={showHandles}
                   sx={{ height: '100%' }}
                   content={
-                    <Box display="flex" flexDirection={'column'} alignItems="center" gap={1}>
-                      <>
-                        {activePlatform === 'twitch' ? (
-                          <TwitchIcon height={48} width={48} />
-                        ) : (
-                          <KickIcon height={48} width={48} />
-                        )}
-                      </>
-                      {!broadcasterConnected ? (
-                        <Typography variant="body1" textAlign={'center'}>
-                          {t('dashboard.activePlatform.noData')}
-                        </Typography>
+                    <Box display="flex" flexDirection={'column'} alignItems="center" gap={2}>
+                      {Array.isArray(activePlatforms) && activePlatforms.length > 1 ? (
+                        <>
+                          <Box display="flex" alignItems="center" gap={2}>
+                            {activePlatforms.includes('twitch') && (
+                              <Box
+                                display="flex"
+                                flexDirection="column"
+                                alignItems="center"
+                                gap={0.5}
+                              >
+                                <TwitchIcon height={40} width={40} />
+                                {twitchBroadcaster ? (
+                                  <Typography variant="body2" textAlign="center">
+                                    {twitchBroadcaster}
+                                  </Typography>
+                                ) : (
+                                  <Typography variant="body2" textAlign="center" color="error">
+                                    {t('dashboard.activePlatform.noData')}
+                                  </Typography>
+                                )}
+                              </Box>
+                            )}
+                            {activePlatforms.includes('kick') && (
+                              <Box
+                                display="flex"
+                                flexDirection="column"
+                                alignItems="center"
+                                gap={0.5}
+                              >
+                                <KickIcon height={40} width={40} />
+                                {kickBroadcaster ? (
+                                  <Typography variant="body2" textAlign="center">
+                                    {kickBroadcaster}
+                                  </Typography>
+                                ) : (
+                                  <Typography variant="body2" textAlign="center" color="error">
+                                    {t('dashboard.activePlatform.noData')}
+                                  </Typography>
+                                )}
+                              </Box>
+                            )}
+                          </Box>
+                        </>
                       ) : (
-                        <Typography variant="h6" color="text.primary">
-                          {activePlatform === 'twitch' ? twitchBroadcaster : kickBroadcaster}
-                        </Typography>
+                        <>
+                          {activePlatforms.includes('twitch') ? (
+                            <TwitchIcon height={48} width={48} />
+                          ) : (
+                            <KickIcon height={48} width={48} />
+                          )}
+                          {activePlatforms.includes('twitch') ? (
+                            twitchBroadcaster ? (
+                              <Typography variant="h6" color="text.primary">
+                                {twitchBroadcaster}
+                              </Typography>
+                            ) : (
+                              <Typography variant="body1" textAlign={'center'}>
+                                {t('dashboard.activePlatform.noData')}
+                              </Typography>
+                            )
+                          ) : kickBroadcaster ? (
+                            <Typography variant="h6" color="text.primary">
+                              {kickBroadcaster}
+                            </Typography>
+                          ) : (
+                            <Typography variant="body1" textAlign={'center'}>
+                              {t('dashboard.activePlatform.noData')}
+                            </Typography>
+                          )}
+                        </>
                       )}
                     </Box>
                   }

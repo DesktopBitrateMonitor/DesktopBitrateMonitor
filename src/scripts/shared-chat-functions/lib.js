@@ -46,13 +46,14 @@ const cooldownScopesByRole = {
 
 /**
  *
+ * @param {string} platform - The platform on which the command is executed
  * @param {string} commandId - The unique identifier of the command
  * @param {string} role - The role of the user executing the command
  * @param {object} coolDowns - The cooldown configuration for the command, with properties like 'all', 'mod', 'user' specifying cooldown durations in seconds
  * @returns {getRemainingCommandCooldown} The remaining cooldown time in milliseconds. Returns 0 if no cooldown is active.
  */
 
-export const getRemainingCommandCooldown = ({ commandId, role, coolDowns }) => {
+export const getRemainingCommandCooldown = ({ platform, commandId, role, coolDowns }) => {
   // Clean up expired cooldowns before calculating remaining time
   cleanExpiredCooldowns();
 
@@ -65,7 +66,7 @@ export const getRemainingCommandCooldown = ({ commandId, role, coolDowns }) => {
     const seconds = Number(coolDowns?.[scope] ?? 0);
     if (seconds <= 0) continue;
 
-    const expiresAt = commandCooldowns.get(`${commandId}:${scope}`) ?? 0;
+    const expiresAt = commandCooldowns.get(`${platform}:${commandId}:${scope}`) ?? 0;
     remainingMs = Math.max(remainingMs, expiresAt - now);
   }
 
@@ -73,13 +74,13 @@ export const getRemainingCommandCooldown = ({ commandId, role, coolDowns }) => {
 };
 
 /**
- *
+ * @param {string} platform - The platform on which the command is executed
  * @param {string} commandId - The unique identifier of the command
  * @param {string} role - The role of the user executing the command
  * @param {object} coolDowns - The cooldown configuration for the command, with properties like 'all', 'mod', 'user' specifying cooldown durations in seconds
  */
 
-export const startCommandCooldown = ({ commandId, role, coolDowns }) => {
+export const startCommandCooldown = ({ platform, commandId, role, coolDowns }) => {
   const now = Date.now();
   const scopes = cooldownScopesByRole[role] || ['all'];
 
@@ -87,7 +88,7 @@ export const startCommandCooldown = ({ commandId, role, coolDowns }) => {
     const seconds = Number(coolDowns?.[scope] ?? 0);
     if (seconds <= 0) continue;
 
-    commandCooldowns.set(`${commandId}:${scope}`, now + seconds * 1000);
+    commandCooldowns.set(`${platform}:${commandId}:${scope}`, now + seconds * 1000);
   }
 };
 

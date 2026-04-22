@@ -45,8 +45,7 @@ const {
   streamingSoftwareConfig,
   serverConfig,
   twitchAccountsConfig,
-  kickAccountsConfig,
-  youtubeAccountsConfig
+  kickAccountsConfig
 } = injectDefaults();
 
 const normalizeInstancesStats = (payload) => {
@@ -197,15 +196,6 @@ export async function switcherService(data, mainWindow = null) {
   const serverSettings = serverConfig.get('');
   const serverName = serverSettings.serverInstances?.[0]?.name || 'undefined';
   const appSettings = appConfig.get('');
-  const ACCOUNTS_MAPPING = {
-    twitch: twitchAccountsConfig.get(''),
-    kick: kickAccountsConfig.get(''),
-    youtube: youtubeAccountsConfig.get('')
-  };
-
-  const platform = appSettings.activePlatform;
-  const broadcasterToken = ACCOUNTS_MAPPING[platform]['broadcaster'].access_token;
-  const tokenAvailable = Boolean(broadcasterToken);
 
   const vars = {
     switcherEnabled: switcherSettings.switcherEnabled,
@@ -368,17 +358,20 @@ export async function switcherService(data, mainWindow = null) {
         if (vars.enableChatNotifications) {
           Logger.log('Switched to ' + key.toUpperCase() + ' scene');
 
-          if (!tokenAvailable) {
-            Logger.log(
-              'No broadcaster token available, skipping chat notification for switching to ' +
-                key +
-                ' scene'
-            );
-            return;
-          }
+          const platforms = appSettings.activePlatforms || [];
 
-          // Chat notification
-          if (platform === 'twitch') {
+          // Twitch Chat notification
+          if (platforms.includes('twitch')) {
+            const broadcasterToken = twitchAccountsConfig.get('broadcaster.access_token');
+            if (!Boolean(broadcasterToken)) {
+              Logger.log(
+                'No Twitch broadcaster token available, skipping Twitch chat notification for switching to ' +
+                  key +
+                  ' scene'
+              );
+              return;
+            }
+
             await twitchMessageService({
               action: 'switchScene',
               event: 'success',
@@ -386,7 +379,19 @@ export async function switcherService(data, mainWindow = null) {
             });
             Logger.log(`Automatic switch to scene ${key}`);
           }
-          if (platform === 'kick') {
+
+          // Kick Chat notification
+          if (platforms.includes('kick')) {
+            const broadcasterToken = kickAccountsConfig.get('broadcaster.access_token');
+            if (!Boolean(broadcasterToken)) {
+              Logger.log(
+                'No Kick broadcaster token available, skipping Kick chat notification for switching to ' +
+                  key +
+                  ' scene'
+              );
+              return;
+            }
+
             await kickMessageService({
               action: 'switchScene',
               event: 'success',

@@ -3,7 +3,7 @@ import fs from 'fs';
 import { broadcastOverlay } from '../../scripts/app-server/server';
 import Logger from '../../scripts/logging/logger';
 import { reconnectToOBS } from '../../scripts/streaming-software/obs-api';
-import { connectToActivePlatform, startFetchingServerStats } from '../lib/initialize-services';
+import { connectToActivePlatforms, startFetchingServerStats } from '../lib/initialize-services';
 
 let isServicesInitialized = false;
 
@@ -36,9 +36,8 @@ export async function initializeServicesIpc(ipcMain, mainWindow = null) {
     return res;
   });
 
-  ipcMain.handle('connect-to-active-platform', async (event, platform) => {
-    console.log(`Received request to connect to active platform: ${platform}`);
-    await connectToActivePlatform(mainWindow, platform);
+  ipcMain.handle('connect-to-active-platform', async (event) => {
+    await connectToActivePlatforms(mainWindow);
   });
 
   ipcMain.on('reload-overlay', async (event, data) => {
