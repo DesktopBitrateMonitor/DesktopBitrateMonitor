@@ -24,7 +24,14 @@
   </li>
 </ul>
 
-## [ENGLISH README](https://github.com/DesktopBitrateMonitor/DesktopBitrateMonitor/blob/main/README/ENG-README.MD)
+<div align="center">
+  <h1>
+    <a href="https://github.com/DesktopBitrateMonitor/DesktopBitrateMonitor/releases">DOWNLOAD THE LAST RELEASE</a>
+  </h1>
+</div>
+
+
+#### [ENGLISH README](https://github.com/DesktopBitrateMonitor/DesktopBitrateMonitor/blob/main/README/ENG-README.MD)
 
 # Roadmap
 
