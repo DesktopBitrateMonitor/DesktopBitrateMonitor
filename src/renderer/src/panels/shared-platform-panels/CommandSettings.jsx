@@ -10,6 +10,7 @@ import { useAlert } from '../../contexts/AlertContext';
 import { useTranslation } from 'react-i18next';
 import TwitchIcon from '../../assets/icons/TwitchIcon';
 import KickIcon from '../../assets/icons/KickIcon';
+import YoutubeIcon from '../../assets/icons/YoutubeIcon';
 
 const CommandSettings = () => {
   const ALLOWED_SORTS = [
@@ -258,7 +259,20 @@ const CommandSettings = () => {
         <Box>
           <Stack direction={'row'} alignItems={'center'} gap={1}>
             <Tooltip title={t('platforms.commands.headerToolTip')} arrow placement="top">
-              <KickIcon /> <TwitchIcon />
+              <Stack
+                sx={{
+                  flexWrap: { xs: 'wrap', sm: 'wrap' },
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+                direction="row"
+                alignItems="center"
+                gap={0.75}
+              >
+                <KickIcon />
+                <TwitchIcon />
+                <YoutubeIcon />
+              </Stack>
             </Tooltip>
             <Typography variant="h5" sx={{ mb: 0.5 }}>
               {t('platforms.commands.header')}
@@ -269,7 +283,16 @@ const CommandSettings = () => {
           </Typography>
         </Box>
 
-        <Stack direction="row" spacing={1.5} alignItems="center">
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexDirection: { xs: 'column', sm: 'column', md: 'row' }
+          }}
+          gap={1}
+          spacing={1.5}
+        >
           <TextField
             size="small"
             label={t('platforms.commands.searchBox.label')}
@@ -278,10 +301,12 @@ const CommandSettings = () => {
             onChange={(event) => setSearchTerm(event.target.value)}
             sx={{ minWidth: { xs: '100%', sm: 240 } }}
           />
-          <RoleFilterControls value={filterMode} onChange={handleFilterChange} />
-          <RoleSortControls value={sortMode} onChange={handleSortChange} />
-          <LayoutToggle value={layoutMode} onChange={handleLayoutChange} />
-        </Stack>
+          <Stack direction={'row'} alignItems="center" justifyContent={'center'} spacing={1.5}>
+            <RoleFilterControls value={filterMode} onChange={handleFilterChange} />
+            <RoleSortControls value={sortMode} onChange={handleSortChange} />
+            <LayoutToggle value={layoutMode} onChange={handleLayoutChange} />
+          </Stack>
+        </Box>
       </Box>
       <Box
         sx={{

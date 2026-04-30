@@ -171,22 +171,16 @@ export const injectDefaults = () => {
         login: '',
         display_name: '',
         customUrl: '',
-        access_token: '',
-        refresh_token: '',
-        expiry_date: null,
-        scopes: [],
-        profile_image_url: ''
+        profile_image_url: '',
+        cookies: ''
       },
       bot: {
         id: '',
         login: '',
         display_name: '',
         customUrl: '',
-        access_token: '',
-        refresh_token: '',
-        expiry_date: null,
-        scopes: [],
-        profile_image_url: ''
+        profile_image_url: '',
+        cookies: ''
       },
       layout: 'grid',
       userLayout: 'grid',

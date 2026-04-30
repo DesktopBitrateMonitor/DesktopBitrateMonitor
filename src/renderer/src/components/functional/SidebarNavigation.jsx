@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useState } from 'react';
+import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -36,6 +36,8 @@ import YoutubeIcon from '../../assets/icons/YoutubeIcon';
 import appImage from '../../../../assets/icon.png';
 
 const isDev = import.meta.env.DEV;
+
+const DISABLE_CHECKBOXES_DURATION = 4;
 
 const ACCOUNTS_PATH = '/dashboard/accountssettings';
 const NAV_ITEMS = [
@@ -113,7 +115,7 @@ const PLATFORM_ROUTES = [
     path: `${ACCOUNTS_PATH}/youtube`,
     icon: YoutubeIcon,
     dev: true,
-    disabled: true
+    disabled: false
   }
 ];
 
@@ -132,6 +134,8 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
 
   const [collapsed, setCollapsed] = useState(initialCollapsed);
   const [accountsAnchorEl, setAccountsAnchorEl] = useState(null);
+  const [disabledAfterChange, setDisabledAfterChange] = useState(false);
+  const disableCheckboxesTimeoutRef = useRef(null);
   const activePlatforms = appConfig?.activePlatforms || [];
   const drawerWidth = collapsed ? DRAWER_WIDTH.collapsed : DRAWER_WIDTH.expanded;
   const widthTransition = theme.transitions.create('width', {
@@ -146,6 +150,14 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
   useEffect(() => {
     setCollapsed(appConfig?.layout?.sidebarCollapsed || false);
   }, [appConfig?.layout?.sidebarCollapsed]);
+
+  useEffect(() => {
+    return () => {
+      if (disableCheckboxesTimeoutRef.current) {
+        clearTimeout(disableCheckboxesTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleNavigate = (path) => {
     if (location.pathname === path) return;
@@ -183,6 +195,17 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
 
   const handleActivePlatformChange = useCallback(
     (platformId) => async (event) => {
+      setDisabledAfterChange(true);
+
+      if (disableCheckboxesTimeoutRef.current) {
+        clearTimeout(disableCheckboxesTimeoutRef.current);
+      }
+
+      disableCheckboxesTimeoutRef.current = setTimeout(() => {
+        setDisabledAfterChange(false);
+        disableCheckboxesTimeoutRef.current = null;
+      }, DISABLE_CHECKBOXES_DURATION * 1000);
+
       const newState = event.target.checked;
 
       if (newState) {
@@ -386,7 +409,7 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
                     <Fragment key={platform.id}>
                       <Box sx={{ px: 0.5, display: 'flex', justifyContent: 'center' }}>
                         <Checkbox
-                          disabled={platform.disabled}
+                          disabled={platform.disabled || disabledAfterChange}
                           checked={activePlatforms.includes(platform.id)}
                           onChange={handleActivePlatformChange(platform.id)}
                         />

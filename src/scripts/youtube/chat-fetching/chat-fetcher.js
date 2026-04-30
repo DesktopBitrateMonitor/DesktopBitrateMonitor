@@ -1,126 +1,235 @@
-import { google } from 'googleapis';
 import Logger from '../../logging/logger';
 import { injectDefaults } from '../../store/defaults';
 import { handleChatMessage } from './handleChatMessage';
-import { createOAuth2Client } from '../youtube-api';
-
-const LIVE_DISCOVERY_RETRY_MS = 5000;
-const DEFAULT_CHAT_POLL_MS = 5000;
-
-let discoveryTimeoutId = null;
-let chatPollTimeoutId = null;
-let activeLiveChatId = null;
-let nextPageToken = null;
-let isPollingStopped = false;
+import { isYoutubeReauthRequiredError, withYoutubeRetry } from '../../authorization/youtube-auth';
 
 const { youtubeAccountsConfig } = injectDefaults();
 
-export async function startYouTubeChatPolling(mainWindow = null) {
-  await stopYouTubeChatPolling();
+let liveChatInstance = null;
+let reconnectTimeoutId = null;
+let keepConnectionLoopRunning = false;
+let isConnecting = false;
+let lastKnownLivestreamId = null;
+let lastKnownLivestreamAt = 0;
 
-  const youtubeConfig = youtubeAccountsConfig.get('broadcaster');
-  if (!youtubeConfig?.access_token || !youtubeConfig?.refresh_token) {
-    Logger.error('No YouTube broadcaster auth found. Skipping YouTube chat polling.');
+const NO_STREAM_RETRY_DELAY_MS = 5 * 1000;
+const CONNECTION_RETRY_DELAY_MS = 5 * 1000;
+const LIVESTREAM_CACHE_TTL_MS = 2 * 60 * 1000;
+
+function rememberLivestreamId(livestreamId) {
+  if (!livestreamId) {
     return;
   }
 
-  isPollingStopped = false;
+  lastKnownLivestreamId = livestreamId;
+  lastKnownLivestreamAt = Date.now();
+}
 
-  const client = createOAuth2Client({
-    refresh_token: youtubeConfig.refresh_token,
-    access_token: youtubeConfig.access_token,
-    expiry_date: youtubeConfig.expiry_date
+function clearRememberedLivestreamId() {
+  lastKnownLivestreamId = null;
+  lastKnownLivestreamAt = 0;
+}
+
+export function getCachedActiveLivestreamId() {
+  if (!lastKnownLivestreamId) {
+    return null;
+  }
+
+  if (Date.now() - lastKnownLivestreamAt > LIVESTREAM_CACHE_TTL_MS) {
+    clearRememberedLivestreamId();
+    return null;
+  }
+
+  return lastKnownLivestreamId;
+}
+
+export function getCurrentLiveChatInstance() {
+  return liveChatInstance;
+}
+
+function clearReconnectTimer() {
+  if (reconnectTimeoutId) {
+    clearTimeout(reconnectTimeoutId);
+    reconnectTimeoutId = null;
+  }
+}
+
+function scheduleReconnect(reason, delayMs = CONNECTION_RETRY_DELAY_MS) {
+  if (!keepConnectionLoopRunning) {
+    return;
+  }
+
+  clearReconnectTimer();
+  Logger.log(`${reason}. Retrying YouTube chat connection in ${Math.floor(delayMs / 1000)}s...`);
+
+  reconnectTimeoutId = setTimeout(() => {
+    reconnectTimeoutId = null;
+    void connectToLiveChat();
+  }, delayMs);
+}
+
+function stopCurrentLiveChat() {
+  if (!liveChatInstance) {
+    return;
+  }
+
+  try {
+    liveChatInstance.stop();
+  } catch (error) {
+    Logger.warn(`Error while stopping YouTube live chat instance: ${error.message}`);
+  }
+
+  liveChatInstance = null;
+}
+
+/**
+ * Gets the active livestream video ID from a channel
+ */
+export async function getActiveLivestreamId(yt, channelId) {
+  const channel = await yt.getChannel(channelId);
+
+  if (!channel.has_live_streams) {
+    Logger.warn('Channel has no live streams tab');
+    return null;
+  }
+
+  const liveStreamsTab = await channel.getLiveStreams();
+  const videos = liveStreamsTab?.videos || [];
+
+  // Only look for active live streams or upcoming streams, ignore past streams
+  const activeStream = videos.find((video) => video?.is_live || video?.is_upcoming);
+
+  const livestreamId = activeStream?.video_id || activeStream?.id;
+
+  if (livestreamId) {
+    rememberLivestreamId(livestreamId);
+    Logger.log(`Found active livestream video ID: ${livestreamId}`);
+    return livestreamId;
+  }
+
+  Logger.warn('No active livestream found in channel');
+  return getCachedActiveLivestreamId();
+}
+
+async function getLiveChatConnection(channelId) {
+  return await withYoutubeRetry('broadcaster', 'connect live chat', async (yt) => {
+    const livestreamId = await getActiveLivestreamId(yt, channelId);
+
+    if (!livestreamId) {
+      return { livestreamId: null, liveChat: null };
+    }
+
+    const response = await yt.getInfo(livestreamId);
+    return {
+      livestreamId,
+      liveChat: response.getLiveChat()
+    };
   });
+}
 
-  const youtube = google.youtube({ version: 'v3', auth: client });
+function handleConnectError(error) {
+  if (isYoutubeReauthRequiredError(error)) {
+    keepConnectionLoopRunning = false;
+    Logger.error(`YouTube chat requires re-authentication: ${error.message}`);
+    return;
+  }
 
-  const waitForActiveLiveChat = async () => {
-    if (isPollingStopped) return;
+  Logger.error(`Error fetching YouTube chat messages: ${error.message}`);
+  stopCurrentLiveChat();
+  scheduleReconnect('Failed to connect to YouTube live chat');
+}
 
-    const liveChatId = await getLiveChatId(youtube);
-    if (!liveChatId) {
-      Logger.info('No active YouTube live chat found. Retrying in 5000 ms.');
-      discoveryTimeoutId = setTimeout(waitForActiveLiveChat, LIVE_DISCOVERY_RETRY_MS);
+async function connectToLiveChat() {
+  if (!keepConnectionLoopRunning || isConnecting) {
+    return;
+  }
+
+  try {
+    isConnecting = true;
+
+    const youtubeConfig = youtubeAccountsConfig.get('');
+    const channelId = youtubeConfig?.broadcaster?.id;
+    const cookies = youtubeConfig?.broadcaster?.cookies;
+
+    if (!cookies) {
+      Logger.error(
+        'No cookies found for YouTube broadcaster account. Cannot fetch live chat messages.'
+      );
+      keepConnectionLoopRunning = false;
       return;
     }
 
-    activeLiveChatId = liveChatId;
-    nextPageToken = undefined;
-    Logger.info('Active YouTube live chat found. Starting message polling.');
-    await pollLiveChat(youtube);
-  };
-
-  await waitForActiveLiveChat();
-}
-
-async function pollLiveChat(youtube) {
-  if (isPollingStopped || !activeLiveChatId) return;
-
-  try {
-    const response = await youtube.liveChatMessages.list({
-      liveChatId: activeLiveChatId,
-      part: 'id,snippet,authorDetails',
-      maxResults: 2000,
-      pageToken: nextPageToken
-    });
-
-    const messages = response.data.items || [];
-    nextPageToken = response.data.nextPageToken;
-
-    for (const message of messages) {
-      await handleChatMessage(message);
+    if (!channelId) {
+      Logger.error(
+        'No channel ID found for YouTube broadcaster account. Cannot fetch live chat messages.'
+      );
+      keepConnectionLoopRunning = false;
+      return;
     }
 
-    const delay = response.data.pollingIntervalMillis ?? DEFAULT_CHAT_POLL_MS;
-    chatPollTimeoutId = setTimeout(() => {
-      void pollLiveChat(youtube);
-    }, delay);
-  } catch (error) {
-    Logger.error(`Error fetching YouTube chat messages: ${error.message}`);
+    const { livestreamId, liveChat: nextLiveChatInstance } = await getLiveChatConnection(channelId);
 
-    activeLiveChatId = null;
-    nextPageToken = null;
-
-    if (!isPollingStopped) {
-      discoveryTimeoutId = setTimeout(() => {
-        void startYouTubeChatPolling();
-      }, LIVE_DISCOVERY_RETRY_MS);
+    if (!livestreamId) {
+      scheduleReconnect('No active or upcoming YouTube livestream found', NO_STREAM_RETRY_DELAY_MS);
+      return;
     }
-  }
-}
 
-async function getLiveChatId(youtube) {
-  try {
-    const response = await youtube.liveBroadcasts.list({
-      part: 'snippet,status',
-      mine: true,
-      broadcastType: 'all',
-      maxResults: 1
+    if (!nextLiveChatInstance) {
+      scheduleReconnect('YouTube livestream found, but live chat is not available yet');
+      return;
+    }
+
+    stopCurrentLiveChat();
+    liveChatInstance = nextLiveChatInstance;
+
+    liveChatInstance.on('start', () => {
+      Logger.log('YouTube live chat started, now listening for messages...');
     });
 
-    const liveBroadcast = response.data.items?.[0];
-    return liveBroadcast?.snippet?.liveChatId ?? null;
+    liveChatInstance.on('chat-update', async (chatItem) => {
+      try {
+        await handleChatMessage(chatItem);
+      } catch (error) {
+        Logger.error(`Error processing YouTube chat message: ${error.message}`);
+      }
+    });
+
+    liveChatInstance.on('error', (error) => {
+      Logger.error(`YouTube chat connection error: ${error.message}`);
+      stopCurrentLiveChat();
+      scheduleReconnect('YouTube chat connection dropped unexpectedly');
+    });
+
+    liveChatInstance.on('end', () => {
+      Logger.log('YouTube livestream ended or chat disconnected');
+      stopCurrentLiveChat();
+      scheduleReconnect('YouTube chat ended');
+    });
+
+    liveChatInstance.start();
   } catch (error) {
-    Logger.error(`Error fetching live chat ID: ${error.message}`);
-    return null;
+    handleConnectError(error);
+  } finally {
+    isConnecting = false;
   }
 }
 
-export async function stopYouTubeChatPolling() {
-  isPollingStopped = true;
-
-  if (discoveryTimeoutId) {
-    clearTimeout(discoveryTimeoutId);
-    discoveryTimeoutId = null;
+export async function fetchLiveChatMessages() {
+  if (keepConnectionLoopRunning) {
+    Logger.log('YouTube chat connection loop is already running');
+    return;
   }
 
-  if (chatPollTimeoutId) {
-    clearTimeout(chatPollTimeoutId);
-    chatPollTimeoutId = null;
-  }
+  keepConnectionLoopRunning = true;
+  clearReconnectTimer();
+  Logger.log('Starting YouTube chat connection loop');
+  await connectToLiveChat();
+}
 
-  activeLiveChatId = null;
-  nextPageToken = null;
-
-  Logger.info('Stopped YouTube chat polling.');
+export function stopYouTubeChatPolling() {
+  keepConnectionLoopRunning = false;
+  clearReconnectTimer();
+  stopCurrentLiveChat();
+  clearRememberedLivestreamId();
+  Logger.log('Stopped YouTube live chat polling');
 }

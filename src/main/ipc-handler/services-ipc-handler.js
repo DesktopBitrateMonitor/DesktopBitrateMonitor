@@ -36,8 +36,8 @@ export async function initializeServicesIpc(ipcMain, mainWindow = null) {
     return res;
   });
 
-  ipcMain.handle('connect-to-active-platform', async (event) => {
-    await connectToActivePlatforms(mainWindow);
+  ipcMain.handle('connect-to-active-platforms', async (event) => {
+    return await connectToActivePlatforms(mainWindow);
   });
 
   ipcMain.on('reload-overlay', async (event, data) => {

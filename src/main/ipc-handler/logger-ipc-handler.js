@@ -7,8 +7,15 @@ import { dialog } from 'electron';
 import { injectDefaults } from '../../scripts/store/defaults';
 import { getStreams as getKickStreams } from '../../scripts/kick/kick-api';
 import { getStreams as getTwitchStreams } from '../../scripts/twitch/twitch-api';
+import { getLiveStreamInfo } from '../../scripts/youtube/youtube-api';
 
-const { loggingConfig, appConfig, twitchAccountsConfig, kickAccountsConfig } = injectDefaults();
+const {
+  loggingConfig,
+  appConfig,
+  twitchAccountsConfig,
+  kickAccountsConfig,
+  youtubeAccountsConfig
+} = injectDefaults();
 
 let isLoggerIpcInitialized = false;
 let sessionFeedLogger = null;
@@ -97,12 +104,14 @@ export async function initializeLoggerIpc(ipcMain) {
 
   const apiCallsFunctions = {
     kick: getKickStreams,
-    twitch: getTwitchStreams
+    twitch: getTwitchStreams,
+    youtube: getLiveStreamInfo
   };
 
   const configMapping = {
     kick: kickAccountsConfig,
-    twitch: twitchAccountsConfig
+    twitch: twitchAccountsConfig,
+    youtube: youtubeAccountsConfig
   };
 
   ipcMain.handle('write-to-session-log-file', async (event, content) => {
@@ -122,13 +131,13 @@ export async function initializeLoggerIpc(ipcMain) {
 
     for (const platform of activePlatforms) {
       const config = configMapping[platform];
-      const access_token = config.get('broadcaster.access_token');
+      const access_token =
+        platform !== 'youtube'
+          ? config.get('broadcaster.access_token')
+          : config.get('broadcaster.login');
       const broadcaster_user_id = config.get('broadcaster.id');
       const streamInfo = {
         platform,
-        channel_Id: '',
-        title: '',
-        directory: '',
         channel_Id: '',
         title: '',
         directory: '',
@@ -251,6 +260,51 @@ export async function initializeLoggerIpc(ipcMain) {
       return { success: true, data: parsedEntries };
     } catch (error) {
       Logger.error(`Error in read-session-log-file IPC handler: ${error.message}`);
+      return { success: false, error: error.message };
+    }
+  });
+
+  ipcMain.handle('read-actions-log-file', async (event, options) => {
+    try {
+      const res = await dialog.showOpenDialog(options);
+
+      if (res.canceled || res.filePaths.length === 0) {
+        return { success: false, message: 'No file selected' };
+      }
+
+      const parsedEntries = [];
+      const filePath = res.filePaths[0];
+      const fileName = path.basename(filePath);
+      const fileContent = fs.readFileSync(filePath, 'utf-8');
+      const lines = fileContent.split('\n').filter((line) => line.trim() !== '');
+      for (const [lineIndex, line] of lines.entries()) {
+        try {
+          const parsedLine = JSON.parse(line);
+
+          if (parsedLine && typeof parsedLine === 'object' && !Array.isArray(parsedLine)) {
+            parsedEntries.push({
+              ...parsedLine,
+              sourceFileName: fileName,
+              sourceFilePath: filePath,
+              sourceFileLine: lineIndex + 1
+            });
+            continue;
+          }
+
+          parsedEntries.push({
+            value: parsedLine,
+            sourceFileName: fileName,
+            sourceFilePath: filePath,
+            sourceFileLine: lineIndex + 1
+          });
+        } catch (err) {
+          Logger.error(`Error parsing line in actions log file (${filePath}): ${err.message}`);
+        }
+      }
+
+      return { success: true, data: parsedEntries };
+    } catch (error) {
+      Logger.error(`Error in read-actions-log-file IPC handler: ${error.message}`);
       return { success: false, error: error.message };
     }
   });

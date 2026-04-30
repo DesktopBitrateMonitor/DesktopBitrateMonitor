@@ -3,16 +3,16 @@ import Logger from '../../scripts/logging/logger';
 import { startTwitchAuthorization } from '../../scripts/authorization/twitch-auth';
 import { getUsers, revokeTwitchAccessToken } from '../../scripts/twitch/twitch-api';
 import { getUser, revokeKickAccessToken } from '../../scripts/kick/kick-api';
-import { getYoutubeUsers, revokeYoutubeAccessToken } from '../../scripts/youtube/youtube-api';
+import { getYoutubeChannelByName, getYoutubeUserByName } from '../../scripts/youtube/youtube-api';
+import { refreshYoutubeCookies } from '../../scripts/authorization/youtube-auth';
 import { injectDefaults } from '../../scripts/store/defaults';
 import { disconnectTwitchEventSubs } from '../../scripts/twitch/event-subscriptions/eventsubs';
 import { startKickAuthorization } from '../../scripts/authorization/kick-auth';
 import { disconnectKickEventSub } from '../../scripts/kick/event-subscriptions/eventsubs';
-import { startYoutubeAuthorization } from '../../scripts/authorization/youtube-auth';
 
 let isAuthIpcInitialized = false;
 
-const { twitchAccountsConfig, kickAccountsConfig, youtubeAccountsConfig } = injectDefaults();
+const { twitchAccountsConfig, kickAccountsConfig } = injectDefaults();
 
 export async function initializeAuthIpc(ipcMain) {
   if (isAuthIpcInitialized) {
@@ -65,22 +65,37 @@ export async function initializeAuthIpc(ipcMain) {
     return { success: true, data: { user: user, userType } };
   });
 
-  ipcMain.handle('start-youtube-auth-process', async (event, accountType) => {
-    Logger.log(`Starting YouTube auth process for ${accountType}...`);
-    const url = await startYoutubeAuthorization(accountType);
-    shell.openExternal(url);
-  });
-
-  ipcMain.handle('revoke-youtube-auth-token', async (event, accountType) => {
-    Logger.log(`Revoking YouTube auth token...`);
-    const res = await revokeYoutubeAccessToken(accountType);
-    return res;
-  });
-
   // userType returned to the frontend to store the user in the write store (admin or moderator)
   ipcMain.handle('validate-youtube-user', async (event, userType, userName) => {
-    const access_token = youtubeAccountsConfig.get('broadcaster.access_token');
-    const user = await getYoutubeUsers(access_token, userName, 'broadcaster');
-    return { success: true, data: { user: user, userType } };
+    try {
+      const user = await getYoutubeUserByName(userName);
+      if (user && user.id) {
+        return { success: true, data: { user, userType } };
+      } else {
+        return { success: false, error: 'Channel not found' };
+      }
+    } catch (error) {
+      Logger.error(`Error validating YouTube user: ${error.message}`);
+      return { success: false, error: error.message };
+    }
+  });
+
+  // Validate YouTube channel by name (no authentication needed)
+  ipcMain.handle('validate-youtube-channel-by-name', async (event, channelName) => {
+    try {
+      const channelData = await getYoutubeChannelByName(channelName);
+      if (channelData && channelData.id) {
+        return { success: true, data: channelData };
+      } else {
+        return { success: false, error: 'Channel not found' };
+      }
+    } catch (error) {
+      Logger.error(`Error validating YouTube channel: ${error.message}`);
+      return { success: false, error: error.message };
+    }
+  });
+
+  ipcMain.handle('get-youtube-cookies', async (event, accountType = 'broadcaster') => {
+    return await refreshYoutubeCookies(accountType, { allowExistingCookies: true });
   });
 }

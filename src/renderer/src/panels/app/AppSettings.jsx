@@ -39,6 +39,12 @@ const AppSettings = () => {
       label: t('appSettings.panels.backup'),
       icon: Backup,
       isDev: false
+    },
+    {
+      value: 'devsettings',
+      label: 'Dev Settings',
+      icon: TuneIcon,
+      isDev: true
     }
   ];
 

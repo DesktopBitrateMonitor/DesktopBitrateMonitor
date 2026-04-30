@@ -17,6 +17,7 @@ export const loggerApi = {
   writeToSessionLogFile: (content) => ipcRenderer.invoke('write-to-session-log-file', content),
   writeToActionsLogFile: (content) => ipcRenderer.invoke('write-to-actions-log-file', content),
   readSessionLogFile: (options) => ipcRenderer.invoke('read-session-log-file', options),
+  readActionsLogFile: (options) => ipcRenderer.invoke('read-actions-log-file', options),
   openFileDialog: (options) => ipcRenderer.invoke('open-file-dialog', options),
   saveFileDialog: (options) => ipcRenderer.invoke('save-file-dialog', options)
 };

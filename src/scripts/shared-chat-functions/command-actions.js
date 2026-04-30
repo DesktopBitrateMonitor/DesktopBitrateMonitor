@@ -9,11 +9,11 @@ import {
 } from '../streaming-software/obs-api';
 import Logger from '../logging/logger';
 import globalInternalStore from '../store/global-internal-store';
-// import { getYoutubeUsers } from '../youtube/youtube-api';
+import { getYoutubeUserByName } from '../youtube/youtube-api';
 
 /**
  *
- * @param {string} platform - The streaming platform (e.g., 'twitch' or 'kick') that the command is being executed on.
+ * @param {string} platform - The streaming platform (e.g., 'twitch', 'kick', 'youtube') that the command is being executed on.
  * @param {string} server - The current server name
  * @param {function} messageService - A function to send messages back to the chat.
  * @param {object} switcherConfig - The configuration object for stream switching, containing scene names and bitrate triggers.
@@ -94,9 +94,9 @@ export const commandActions = ({
     if (platform === 'kick') {
       userObj = await getUser(access_token, user);
     }
-    // if (platform === 'youtube') {
-    //   userObj = await getYoutubeUsers(access_token, user, 'broadcaster');
-    // }
+    if (platform === 'youtube') {
+      userObj = await getYoutubeUserByName(user);
+    }
 
     adminUsers.push(userObj);
     accountConfig.set('admins', adminUsers);
@@ -112,7 +112,8 @@ export const commandActions = ({
     return { success: true, data: userObj };
   },
   removeAdmin: async (argument) => {
-    const user = argument.commandArg;
+    let user = argument.commandArg;
+
     if (typeof user !== 'string' || user.trim().replace(/\s/g, '') === '' || !isNaN(user)) {
       await messageService({
         action: 'removeAdmin',
@@ -121,6 +122,10 @@ export const commandActions = ({
       });
       Logger.error('Invalid username provided for removeAdmin command.');
       return;
+    }
+
+    if (platform === 'youtube') {
+      user = !user.startsWith('@') ? `@${user}` : user;
     }
 
     const adminUsers = accountConfig.get('admins');
@@ -186,6 +191,9 @@ export const commandActions = ({
     if (platform === 'kick') {
       userObj = await getUser(access_token, user);
     }
+    if (platform === 'youtube') {
+      userObj = await getYoutubeUserByName(user);
+    }
 
     modUsers.push(userObj);
     accountConfig.set('mods', modUsers);
@@ -200,7 +208,7 @@ export const commandActions = ({
     return { success: true, data: userObj };
   },
   removeMod: async (argument) => {
-    const user = argument.commandArg;
+    let user = argument.commandArg;
     if (typeof user !== 'string' || user.trim().replace(/\s/g, '') === '' || !isNaN(user)) {
       await messageService({
         action: 'removeMod',
@@ -209,6 +217,10 @@ export const commandActions = ({
       });
       Logger.error('Invalid username provided for removeMod command.');
       return;
+    }
+
+    if (platform === 'youtube') {
+      user = !user.startsWith('@') ? `@${user}` : user;
     }
 
     const modUsers = accountConfig.get('mods');

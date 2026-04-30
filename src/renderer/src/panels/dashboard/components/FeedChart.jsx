@@ -7,7 +7,7 @@ import TimelineRoundedIcon from '@mui/icons-material/TimelineRounded';
 import ScheduleRoundedIcon from '@mui/icons-material/ScheduleRounded';
 import AllInclusiveRoundedIcon from '@mui/icons-material/AllInclusiveRounded';
 import { useStreamStats } from '../../../contexts/StreamStatsContext.jsx';
-import { useServerConfigStore } from '../../../contexts/DataContext.jsx';
+import { useAppConfigStore, useServerConfigStore } from '../../../contexts/DataContext.jsx';
 import { useTranslation } from 'react-i18next';
 
 const isDev = import.meta.env.DEV;
@@ -18,12 +18,14 @@ const FeedChart = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const { stats, totalUptime } = useStreamStats();
+  const { appConfig } = useAppConfigStore();
   const { serverConfig } = useServerConfigStore();
   const [history, setHistory] = useState([]);
   const [startTs, setStartTs] = useState(null);
   const [maxY, setMaxY] = useState(0);
 
   const serverType = serverConfig.serverInstances[0]?.serverType ?? null;
+  const hasActivePlatforms = Array.isArray(appConfig?.activePlatforms) && appConfig.activePlatforms.length > 0;
 
   useEffect(() => {
     if (!startTs) {
@@ -150,8 +152,10 @@ const FeedChart = () => {
               )
             }}
           >
-            <Typography variant="body2" color="text.secondary">
-              {t('dashboard.feedChart.noData')}
+            <Typography variant="body2" color="text.secondary" textAlign="center">
+              {hasActivePlatforms
+                ? t('dashboard.feedChart.noData')
+                : t('dashboard.feedChart.noActivePlatforms')}
             </Typography>
           </Box>
         )}

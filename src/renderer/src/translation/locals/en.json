@@ -98,7 +98,8 @@
       "uptimeToolTip": "Stream Uptime: Only since the current feed has been started",
       "totalUptimeToolTip": "Total Uptime: sum of all feed uptimes since first connection detected since app start",
       "description": "Real-time bitrate feed from your server.",
-      "noData": "Waiting for data..."
+      "noData": "Waiting for data...",
+      "noActivePlatforms": "No active platforms selected"
     },
     "connectionStates": {
       "header": "Connection States",
@@ -127,7 +128,8 @@
     "activePlatform": {
       "header": "Active Platform",
       "description": "The currently active streaming platform",
-      "noData": "No broadcaster connected for the selected platform"
+      "noData": "No broadcaster connected for the selected platform",
+      "noneConnected": "No platforms connected"
     },
     "logs": {
       "header": "Recent Logs"
@@ -238,8 +240,15 @@
         },
         "button": {
           "login": "Log in",
-          "logout": "Log out"
-        }
+          "logout": "Log out",
+          "validate": "Validate Channel"
+        },
+        "channelName": "Channel Name/Username",
+        "enterChannelName": "Enter username",
+        "channelNameRequired": "Channel name is required",
+        "channelValidated": "Channel validated successfully",
+        "channelNotFound": "Channel not found. Please check the name and try again",
+        "validationError": "An error occurred during validation. Please try again"
       }
     },
     "kick": {

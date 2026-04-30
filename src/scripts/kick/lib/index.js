@@ -12,8 +12,6 @@ import { injectDefaults } from '../../store/defaults';
 const { kickAccountsConfig } = injectDefaults();
 
 export const hasPermission = ({ event, requiredRole, restricted, inPrivacyScene }) => {
-  const { badges } = event.sender?.identity || [];
-
   const role = getKickUserRole({ event });
 
   const isBroadcaster = role === 'broadcaster';

@@ -1,205 +1,298 @@
 import Logger from '../logging/logger';
-import { google } from 'googleapis';
 import { injectDefaults } from '../store/defaults';
+import {
+  getActiveLivestreamId,
+  getCachedActiveLivestreamId,
+  getCurrentLiveChatInstance
+} from './chat-fetching/chat-fetcher';
+import { isYoutubeReauthRequiredError, withYoutubeRetry } from '../authorization/youtube-auth';
 
 const { youtubeAccountsConfig } = injectDefaults();
 
-const ApiVersion = 'v3';
-
-const port = import.meta.env.VITE_SERVERPORT;
-const client_id = import.meta.env.VITE_YOUTUBECLIENTID;
-const client_secret = import.meta.env.VITE_YOUTUBECLIENTSECRET;
-
-export function createOAuth2Client(credentials = {}) {
-  const client = new google.auth.OAuth2(
-    client_id,
-    client_secret,
-    `http://localhost:${port}/oauth/youtube`
-  );
-  if (Object.keys(credentials).length) {
-    client.setCredentials(credentials);
-  }
-  return client;
+function normalizeChannelName(channelName) {
+  return channelName.startsWith('@') ? channelName : '@' + channelName;
 }
 
 /**
- * Validates an access token against Google's tokeninfo endpoint.
- * Returns the token info object on success, or null if invalid/expired.
- * @param {string} access_token
- * @returns {object|null}
+ * @typedef {Object} getYoutubeChannelByName
+ * @property {string} id - The YouTube channel ID.
+ * @property {string} login - The YouTube channel name.
+ * @property {string} display_name - The display name of the channel.
+ * @property {string} customUrl - The custom URL of the channel.
+ * @property {string} profile_image_url - URL to the channel's avatar image.
  */
-export async function validateYoutubeAccessToken(access_token) {
-  try {
-    const client = createOAuth2Client();
-    const tokenInfo = await client.getTokenInfo(access_token);
-    return tokenInfo;
-  } catch (error) {
-    Logger.error(`YouTube token validation failed: ${error.message}`);
+
+/**
+ * Fetches YouTube channel data by searching for a username (no authentication needed).
+ * Extracts channel ID and metadata from the public channel page.
+ * @param {string} channelName - Channel name, handle (@username), or custom URL
+ * @returns {getYoutubeChannelByName} Channel data or null on failure
+ */
+export async function getYoutubeChannelByName(channelName) {
+  if (!channelName || typeof channelName !== 'string') {
+    Logger.error('Invalid channel name provided');
     return null;
   }
-}
 
-/**
- * Refreshes the access token using the stored refresh token.
- * Returns new credentials object on success, or null on failure.
- * @param {string} refresh_token
- * @returns {object|null}
- */
-export async function refreshYoutubeAccessToken(refresh_token) {
   try {
-    const client = createOAuth2Client({ refresh_token });
-    const { credentials } = await client.refreshAccessToken();
-    return credentials;
-  } catch (error) {
-    Logger.error(`YouTube token refresh failed: ${error.message}`);
-    return null;
-  }
-}
+    const url = `https://www.youtube.com/${normalizeChannelName(channelName)}`;
 
-/**
- * Validates the access token; if expired/invalid, refreshes it and updates the store.
- * @param {string} access_token
- * @param {string} accountType - 'broadcaster'
- * @returns {Promise<{success: boolean, access_token: string|null, error: string|null}>}
- */
-export async function doTokenValidationProcess(access_token, accountType) {
-  if (!accountType) {
-    return { success: false, access_token: null, error: 'No account type specified' };
-  }
+    const response = await fetch(url);
+    if (!response.ok) return null;
+    const html = await response.text();
 
-  const selectedConfig = youtubeAccountsConfig.get(accountType);
+    // Extract initial data from the page
+    // YouTube embeds channel data in a script tag
+    let match = html.match(/var\s+ytInitialData\s*=\s*({.+?});/s);
 
-  const valid = await validateYoutubeAccessToken(access_token);
-  if (!valid) {
-    const newCredentials = await refreshYoutubeAccessToken(selectedConfig.refresh_token);
-    if (newCredentials) {
-      Logger.log('YouTube access token refreshed...');
-      youtubeAccountsConfig.set(accountType, {
-        ...selectedConfig,
-        access_token: newCredentials.access_token,
-        refresh_token: newCredentials.refresh_token ?? selectedConfig.refresh_token,
-        expiry_date: newCredentials.expiry_date
-      });
-      return { success: true, access_token: newCredentials.access_token };
+    if (!match) return null;
+
+    const jsonStr = match[1];
+    const data = JSON.parse(jsonStr);
+
+    // Extract channel header data
+    const channelData = extractChannelData(data);
+    if (channelData) {
+      return channelData;
     }
-    Logger.error('Failed to refresh YouTube access token.');
-    return { success: false, access_token: null, error: 'Token refresh failed' };
-  }
 
-  return { success: true, access_token };
+    Logger.warn(`Channel not found for name: ${channelName}`);
+    return null;
+  } catch (error) {
+    Logger.error(`Error fetching YouTube channel: ${error.message}`);
+    return null;
+  }
 }
 
 /**
- * Validates/refreshes the token, then executes the callback with the valid token.
- * @param {string} access_token
- * @param {string} accountType
- * @param {function} callback - receives a valid oauth2Client
- * @returns {Promise<*>} Result of the callback
+ * @typedef {Object} getYoutubeUserByName
+ * @property {string} id - The YouTube channel ID.
+ * @property {string} login - The YouTube channel name.
+ * @property {string} display_name - The display name of the channel.
+ * @property {string} customUrl - The custom URL of the channel (if any).
+ * @property {string} profile_image_url - URL to the channel's avatar image.
  */
-export async function validateAndProceed(access_token, accountType, callback) {
-  const {
-    success,
-    access_token: validToken,
-    error
-  } = await doTokenValidationProcess(access_token, accountType);
-  if (!success) {
-    throw new Error(error ?? 'Unable to validate or refresh YouTube access token.');
+
+/**
+ * Extracts channel information from YouTube's initial data JSON.
+ * @param {object} data - The user data object extracted from YouTube's page
+ * @returns {getYoutubeUserByName}
+ */
+function extractChannelData(data) {
+  try {
+    const header = data?.metadata?.channelMetadataRenderer;
+    if (!header) return null;
+
+    const title = data?.metadata?.channelMetadataRenderer?.title || '';
+    const channelId = data?.metadata?.channelMetadataRenderer?.externalId || '';
+    const vanityUrl = data?.metadata?.channelMetadataRenderer?.vanityChannelUrl || '';
+    const customUrl = vanityUrl.split('http://www.youtube.com/')?.[1] || '';
+
+    // Try to find avatar
+    let profileImageUrl = '';
+    const avatar =
+      data?.metadata?.channelMetadataRenderer?.avatar?.thumbnails?.[0]?.url.replace(
+        '=s900',
+        '=s72'
+      ) ||
+      data.header?.pageHeaderRenderer?.content?.pageHeaderViewModel?.image?.decoratedAvatarViewModel
+        ?.avatar?.avatarViewModel?.image?.sources?.[0]?.url ||
+      '';
+    if (avatar) {
+      profileImageUrl = avatar;
+    }
+
+    if (!channelId) {
+      // Try alternative method - extract from canonical URL
+      const canonical = data?.microformat?.microformatDataRenderer?.urlCanonical;
+      if (canonical && canonical.includes('/channel/')) {
+        const extractedId = canonical.split('/channel/')[1].split('?')?.[0];
+        if (extractedId) {
+          return {
+            id: extractedId,
+            login: customUrl,
+            display_name: title,
+            customUrl,
+            profile_image_url: profileImageUrl
+          };
+        }
+      }
+      return null;
+    }
+
+    return {
+      id: channelId,
+      login: customUrl,
+      display_name: title,
+      customUrl,
+      profile_image_url: profileImageUrl
+    };
+  } catch (error) {
+    Logger.error(`Error extracting channel data: ${error.message}`);
+    return null;
   }
-  const selectedConfig = youtubeAccountsConfig.get(accountType);
-  const client = createOAuth2Client({
-    access_token: validToken,
-    refresh_token: selectedConfig.refresh_token,
-    expiry_date: selectedConfig.expiry_date
-  });
-  return await callback(client);
 }
 
-export async function userAuthorization(client) {
-  const youtube = google.youtube({ version: ApiVersion, auth: client });
-  try {
-    const response = await youtube.channels.list({
-      part: 'snippet',
-      mine: true
-    });
-    const data = response.data.items[0];
+/**
+ * @typedef {Object} getYoutubeUserByName
+ * @property {string} id - The YouTube channel ID.
+ * @property {string} login - The YouTube channel name.
+ * @property {string} display_name - The display name of the channel.
+ * @property {string} customUrl - The custom URL of the channel (if any).
+ * @property {string} profile_image_url - URL to the channel's avatar image.
+ */
 
-    return data;
+/**
+ * Read public channeldata from a user.
+ * @param {string} channelName - Channel name for the user to search for
+ * @returns {getYoutubeUserByName} User data object or null on failure
+ */
+export async function getYoutubeUserByName(channelName) {
+  if (!channelName || typeof channelName !== 'string') {
+    Logger.error('Invalid channel name provided');
+    return null;
+  }
+  try {
+    const url = `https://www.youtube.com/${normalizeChannelName(channelName)}`;
+
+    const response = await fetch(url);
+    if (!response.ok) return null;
+    const html = await response.text();
+
+    // Extract initial data from the page
+    // YouTube embeds channel data in a script tag
+    let match = html.match(/var\s+ytInitialData\s*=\s*({.+?});/s);
+
+    if (!match) return null;
+
+    const jsonStr = match[1];
+    const data = JSON.parse(jsonStr);
+
+    // Extract channel header data
+    const channelData = extractChannelData(data);
+    if (channelData) {
+      return channelData;
+    }
+
+    Logger.warn(`Channel not found for name: ${channelName}`);
+    return null;
   } catch (error) {
-    Logger.error(`Error fetching YouTube user info: ${error.message}`);
+    Logger.error(`Error fetching YouTube channel: ${error.message}`);
+    return null;
+  }
+}
+
+/**
+ *
+ * @param {string} message - The message to send in the live stream chat
+ * @param {string} accountType - The account type (broadcaster or bot) to use for sending the message
+ * @returns {Promise<{success: boolean, error?: string}>} Result of the message sending operation
+ */
+export async function sendChatMessage(message, accountType = 'broadcaster') {
+  try {
+    const youtubeConfig = youtubeAccountsConfig.get('');
+    const channelId = youtubeConfig?.broadcaster?.id;
+
+    if (!channelId) {
+      Logger.error('No broadcaster channel ID found, cannot send YouTube message');
+      return { success: false, error: 'No broadcaster channel ID found' };
+    }
+
+    const connectedLiveChat = getCurrentLiveChatInstance();
+
+    if (connectedLiveChat?.running) {
+      await connectedLiveChat.sendMessage(message);
+      Logger.log('Message sent successfully');
+      return { success: true };
+    }
+
+    return await withYoutubeRetry(accountType, 'send chat message', async (yt) => {
+      const liveStreamId =
+        (await getActiveLivestreamId(yt, channelId)) || getCachedActiveLivestreamId();
+
+      if (!liveStreamId) {
+        Logger.warn('No active livestream found for channel');
+        return { success: false, error: 'No active livestream' };
+      }
+
+      const response = await yt.getInfo(liveStreamId);
+      const liveChat = response.getLiveChat();
+
+      if (!liveChat) {
+        Logger.warn('No active livestream found for channel');
+        return { success: false, error: 'No active livestream' };
+      }
+
+      await liveChat.sendMessage(message);
+      Logger.log('Message sent successfully');
+      return { success: true };
+    });
+  } catch (error) {
+    if (isYoutubeReauthRequiredError(error)) {
+      Logger.error(`YouTube chat message requires re-authentication: ${error.message}`);
+      return { success: false, error: error.message };
+    }
+
+    Logger.error(`Error sending YouTube chat message: ${error.message}`);
     return { success: false, error: error.message };
   }
 }
 
-/**
- * @typedef {Object} youTubeUserData
- * @property {string} id - The YouTube channel ID.
- * @property {string} login - The YouTube channel name.
- * @property {string} displayName - The display name of the channel.
- * @property {string} avatarUrl - URL to the channel's avatar image.
- */
-
-/**
- * Fetches channel data for the authenticated user.
- * @param {string} access_token
- * @param {object} userData
- * @param {string} accountType
- * @returns {youTubeUserData|null} User data object or null on failure
- */
-export async function getYoutubeUsers(access_token, userData, accountType) {
-  const userName = userData;
-
-  return validateAndProceed(access_token, accountType, async (client) => {
-    const youtube = google.youtube({ version: ApiVersion, auth: client });
-
-    const searchList = await youtube.search.list({
-      part: 'snippet',
-      q: userName,
-      type: 'channel',
-      maxResults: 5
-    });
-
-    const firstMatch = searchList.data.items?.[0];
-    if (!firstMatch?.snippet?.channelId) return;
-
-    const response = await youtube.channels.list({
-      part: 'snippet',
-      id: firstMatch.snippet.channelId
-    });
-
-    const data = response.data.items?.[0];
-    if (!data) return;
-
-    const userData = {
-      id: data?.id || '',
-      login: data?.snippet?.customUrl || '',
-      display_name: data?.snippet?.title || '',
-      customUrl: data?.snippet?.customUrl || '',
-      profile_image_url: data?.snippet?.thumbnails?.default?.url || ''
-    };
-
-    return userData;
-  });
-}
-
-/**
- * Revokes a YouTube access token and clears local credentials for the account.
- * @param {string} access_token
- * @param {string} accountType - 'broadcaster' | 'bot'
- * @returns {Promise<{status: number|string, message: string}>}
- */
-export async function revokeYoutubeAccessToken(accountType) {
+export async function getLiveStreamInfo() {
   try {
-    const client = createOAuth2Client();
-    const access_token = youtubeAccountsConfig.get(`${accountType}.access_token`);
+    const youtubeConfig = youtubeAccountsConfig.get('');
+    const resolvedChannelId = youtubeConfig?.broadcaster?.id;
 
-    if (access_token === '') {
-      return { success: false, status: 'error', message: 'No access token found' };
+    if (!resolvedChannelId) {
+      Logger.error('No broadcaster channel ID found, cannot fetch YouTube livestream info');
+      return null;
     }
 
-    const res = await client.revokeToken(access_token);
-    return { success: true, status: res.status, message: 'Token revoked successfully' };
+    return await withYoutubeRetry('broadcaster', 'get livestream info', async (yt) => {
+      const liveStreamId =
+        (await getActiveLivestreamId(yt, resolvedChannelId)) || getCachedActiveLivestreamId();
+
+      if (!liveStreamId) {
+        Logger.warn('No active livestream found for channel');
+        return null;
+      }
+
+      const response = await yt.getInfo(liveStreamId);
+      const basicInfo = response?.basic_info || {};
+      const liveChat = response?.getLiveChat?.();
+      const thumbnails = Array.isArray(basicInfo?.thumbnail)
+        ? basicInfo.thumbnail.map((thumbnail) => thumbnail?.url).filter(Boolean)
+        : [];
+
+      const returnData = {
+        platform: 'youtube',
+        channel_id: basicInfo?.channel_id || resolvedChannelId,
+        title: basicInfo?.title || '',
+        directory: basicInfo?.category || '',
+        directory_thumbnail: '',
+        id: liveStreamId,
+        description: basicInfo?.short_description || basicInfo?.description || '',
+        channelName: basicInfo?.author || '',
+        url: basicInfo?.url_canonical || `https://www.youtube.com/watch?v=${liveStreamId}`,
+        thumbnails,
+        viewCount: basicInfo?.view_count || null,
+        isLive: Boolean(basicInfo?.is_live),
+        isUpcoming: Boolean(basicInfo?.is_upcoming),
+        startTimestamp: basicInfo?.start_timestamp || null,
+        endTimestamp: basicInfo?.end_timestamp || null,
+        duration: basicInfo?.duration || null,
+        liveChatAvailable: Boolean(liveChat)
+      };
+
+      return returnData;
+    });
   } catch (error) {
-    Logger.error(`Error revoking YouTube token: ${error.message}`);
-    return { success: false, status: 'error', message: error.message };
+    if (isYoutubeReauthRequiredError(error)) {
+      Logger.error(`YouTube livestream info requires re-authentication: ${error.message}`);
+      return null;
+    }
+
+    Logger.error(`Error fetching YouTube livestream info: ${error.message}`);
+    return null;
   }
 }

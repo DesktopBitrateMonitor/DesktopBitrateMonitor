@@ -38,6 +38,7 @@ import HistoryWatcher from './panels/history-watcher/HistoryWatcher';
 import YoutubeAccountsSettings from './panels/youtube/components/YoutubeAccountsSettings';
 import YoutubeUserSettings from './panels/youtube/components/YoutubeUserSettings';
 import YoutubeSettings from './panels/youtube/YoutubeSettings';
+import LogReader from './panels/app/components/LogReader';
 
 const STATS_PAYLOAD_FLUSH_INTERVAL = 50;
 const ACTIONS_PAYLOAD_FLUSH_INTERVAL = 10;
@@ -252,6 +253,7 @@ function App() {
               />
               <Route path="stylesettings" element={<StyleSettings />} />
               <Route path="backup" element={<Backup />} />
+              <Route path="devsettings" element={<LogReader />} />
             </Route>
           </Route>
         </Routes>

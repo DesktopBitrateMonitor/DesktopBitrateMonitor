@@ -14,7 +14,8 @@ import React, { useEffect, useState } from 'react';
 import {
   useAppConfigStore,
   useKickAccountsConfig,
-  useTwitchAccountsConfig
+  useTwitchAccountsConfig,
+  useYoutubeAccountsConfig
 } from '../../contexts/DataContext';
 import ConnectionStates from './components/ConnectionStates';
 import FeedChart from './components/FeedChart';
@@ -37,6 +38,7 @@ import ReactGridLayout, {
 import { defaultLayout } from './components/layout-default';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import YoutubeIcon from '../../assets/icons/YoutubeIcon';
 
 const isDev = import.meta.env.DEV;
 
@@ -47,11 +49,28 @@ const createInitialLayouts = () => ({
   ...defaultLayout
 });
 
+function getSingleActivePlatform(activePlatforms = []) {
+  if (activePlatforms.includes('twitch')) {
+    return 'twitch';
+  }
+
+  if (activePlatforms.includes('kick')) {
+    return 'kick';
+  }
+
+  if (activePlatforms.includes('youtube')) {
+    return 'youtube';
+  }
+
+  return null;
+}
+
 const Main = () => {
   const { t } = useTranslation();
   const { appConfig, updateAppConfig } = useAppConfigStore();
   const { kickAccountsConfig } = useKickAccountsConfig();
   const { twitchAccountsConfig } = useTwitchAccountsConfig();
+  const { youtubeAccountsConfig } = useYoutubeAccountsConfig();
   const navigate = useNavigate();
 
   const { width, containerRef, mounted } = useContainerWidth();
@@ -62,10 +81,13 @@ const Main = () => {
   const [activePlatforms, setActivePlatforms] = React.useState([]);
   const [kickBroadcaster, setKickBroadcaster] = React.useState('');
   const [twitchBroadcaster, setTwitchBroadcaster] = React.useState('');
+  const [youtubeBroadcaster, setYoutubeBroadcaster] = React.useState('');
   const [contextMenuPosition, setContextMenuPosition] = useState(null);
   const [elementsMenuAnchor, setElementsMenuAnchor] = useState(null);
   const [lockLayoutState, setLockLayoutState] = useState(true);
   const [showHandles, setShowHandles] = useState(false);
+
+  const singleActivePlatform = getSingleActivePlatform(activePlatforms);
 
   const { layout, breakpoint, cols } = useResponsiveLayout({
     width,
@@ -81,12 +103,12 @@ const Main = () => {
     setActivePlatforms(appConfig.activePlatforms);
     setKickBroadcaster(kickAccountsConfig?.broadcaster?.display_name);
     setTwitchBroadcaster(twitchAccountsConfig?.broadcaster?.display_name);
-
+    setYoutubeBroadcaster(youtubeAccountsConfig?.broadcaster?.display_name);
     const storedLayouts = appConfig.layout?.dashboardLayout;
     if (storedLayouts && !Array.isArray(storedLayouts)) {
       setLayouts((prev) => ({ ...prev, ...storedLayouts }));
     }
-  }, [appConfig, kickAccountsConfig, twitchAccountsConfig]);
+  }, [appConfig, kickAccountsConfig, twitchAccountsConfig, youtubeAccountsConfig]);
 
   const handleLayoutChange = (nextLayout) => {
     setLayouts((prev) => {
@@ -277,7 +299,11 @@ const Main = () => {
                   sx={{ height: '100%' }}
                   content={
                     <Box display="flex" flexDirection={'column'} alignItems="center" gap={2}>
-                      {Array.isArray(activePlatforms) && activePlatforms.length > 1 ? (
+                      {!Array.isArray(activePlatforms) || activePlatforms.length === 0 ? (
+                        <Typography variant="body1" textAlign={'center'}>
+                          {t('dashboard.activePlatform.noneConnected')}
+                        </Typography>
+                      ) : Array.isArray(activePlatforms) && activePlatforms.length > 1 ? (
                         <>
                           <Box display="flex" alignItems="center" gap={2}>
                             {activePlatforms.includes('twitch') && (
@@ -306,10 +332,29 @@ const Main = () => {
                                 alignItems="center"
                                 gap={0.5}
                               >
-                                <KickIcon height={40} width={40} />
+                                <KickIcon height={48} width={48} />
                                 {kickBroadcaster ? (
                                   <Typography variant="body2" textAlign="center">
                                     {kickBroadcaster}
+                                  </Typography>
+                                ) : (
+                                  <Typography variant="body2" textAlign="center" color="error">
+                                    {t('dashboard.activePlatform.noData')}
+                                  </Typography>
+                                )}
+                              </Box>
+                            )}
+                            {activePlatforms.includes('youtube') && (
+                              <Box
+                                display="flex"
+                                flexDirection="column"
+                                alignItems="center"
+                                gap={0.5}
+                              >
+                                <YoutubeIcon height={40} width={40} />
+                                {youtubeBroadcaster ? (
+                                  <Typography variant="body2" textAlign="center">
+                                    {youtubeBroadcaster}
                                   </Typography>
                                 ) : (
                                   <Typography variant="body2" textAlign="center" color="error">
@@ -322,15 +367,27 @@ const Main = () => {
                         </>
                       ) : (
                         <>
-                          {activePlatforms.includes('twitch') ? (
+                          {singleActivePlatform === 'twitch' ? (
                             <TwitchIcon height={48} width={48} />
+                          ) : singleActivePlatform === 'youtube' ? (
+                            <YoutubeIcon height={48} width={48} />
                           ) : (
                             <KickIcon height={48} width={48} />
                           )}
-                          {activePlatforms.includes('twitch') ? (
+                          {singleActivePlatform === 'twitch' ? (
                             twitchBroadcaster ? (
                               <Typography variant="h6" color="text.primary">
                                 {twitchBroadcaster}
+                              </Typography>
+                            ) : (
+                              <Typography variant="body1" textAlign={'center'}>
+                                {t('dashboard.activePlatform.noData')}
+                              </Typography>
+                            )
+                          ) : singleActivePlatform === 'youtube' ? (
+                            youtubeBroadcaster ? (
+                              <Typography variant="h6" color="text.primary">
+                                {youtubeBroadcaster}
                               </Typography>
                             ) : (
                               <Typography variant="body1" textAlign={'center'}>

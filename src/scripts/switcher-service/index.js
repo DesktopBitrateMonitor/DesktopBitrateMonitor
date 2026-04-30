@@ -9,6 +9,7 @@ import {
 import { twitchMessageService } from '../twitch/message-service/chat-messages';
 import { kickMessageService } from '../kick/messages-service/chat-messages';
 import globalInternalStore from '../store/global-internal-store';
+import { youtubeMessageService } from '../youtube/message-service/chat-messages';
 
 // TODO: Implement different streaming software support
 
@@ -45,7 +46,8 @@ const {
   streamingSoftwareConfig,
   serverConfig,
   twitchAccountsConfig,
-  kickAccountsConfig
+  kickAccountsConfig,
+  youtubeAccountsConfig
 } = injectDefaults();
 
 const normalizeInstancesStats = (payload) => {
@@ -393,6 +395,25 @@ export async function switcherService(data, mainWindow = null) {
             }
 
             await kickMessageService({
+              action: 'switchScene',
+              event: 'success',
+              variables: { scene: targetScene, server: serverName }
+            });
+            Logger.log('Automatic switch to scene ' + key);
+          }
+
+          if (platforms.includes('youtube')) {
+            const youtubeCookies = youtubeAccountsConfig.get('broadcaster.cookies');
+            if (!Boolean(youtubeCookies)) {
+              Logger.log(
+                'No YouTube broadcaster cookies available, skipping YouTube chat notification for switching to ' +
+                  key +
+                  ' scene'
+              );
+              return;
+            }
+
+            await youtubeMessageService({
               action: 'switchScene',
               event: 'success',
               variables: { scene: targetScene, server: serverName }

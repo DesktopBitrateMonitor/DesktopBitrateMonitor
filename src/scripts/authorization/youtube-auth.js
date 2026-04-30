@@ -1,159 +1,250 @@
 import { BrowserWindow } from 'electron';
-import { google } from 'googleapis';
-import express from 'express';
+import { Innertube } from 'youtubei.js';
 import Logger from '../logging/logger';
 import { injectDefaults } from '../store/defaults';
-// import { userAuthorization, authAPI } from "../youtube/youtube-api";
-import img from '../../assets/icon.png';
-import { getTranslationData } from '../lib/translation-picker';
-import generateId from '../lib/id-generator';
-import { userAuthorization } from '../youtube/youtube-api';
 
-const { appConfig, youtubeAccountsConfig } = injectDefaults();
+const { youtubeAccountsConfig } = injectDefaults();
 
-export const youtubeRouter = express.Router();
+const YOUTUBE_SIGN_IN_URL =
+  'https://accounts.google.com/ServiceLogin?service=youtube&passive=true&continue=https%3A%2F%2Fwww.youtube.com%2F';
+const YOUTUBE_COOKIE_REFRESH_TIMEOUT_MS = 5 * 60 * 1000;
+const YOUTUBE_AUTH_COOKIE_NAMES = ['SAPISID', '__Secure-1PAPISID', '__Secure-3PAPISID'];
 
-const port = import.meta.env.VITE_SERVERPORT;
-const client_id = import.meta.env.VITE_YOUTUBECLIENTID;
-const client_secret = import.meta.env.VITE_YOUTUBECLIENTSECRET;
-const scope = import.meta.env.VITE_YOUTUBE_SCOPES;
+const cookieRefreshPromises = new Map();
 
-let type;
-let state;
-let oauth2Client;
-
-export async function startYoutubeAuthorization(authType) {
-  oauth2Client = null;
-  type = authType;
-  state = generateId(32);
-
-  oauth2Client = new google.auth.OAuth2(
-    client_id,
-    client_secret,
-    `http://localhost:${port}/oauth/youtube`
-  );
-
-  const authUrl = oauth2Client.generateAuthUrl({
-    access_type: 'offline',
-    scope: scope,
-    state: state
-  });
-
-  return authUrl;
+function getStoredYoutubeCookies(accountType) {
+  return youtubeAccountsConfig.get(`${accountType}.cookies`) || '';
 }
 
-youtubeRouter.get('/oauth/youtube', async (req, res) => {
-  const { code, state: returnedState } = req.query;
+function getYoutubeAuthPartition(accountType) {
+  return `persist:youtube-auth-${accountType}`;
+}
 
-  if (req?.query?.error) {
-    Logger.error(`Error during YouTube OAuth flow: ${req.query.error}`);
-    return res.status(400).send(`Error: ${req.query.error}`);
+function isYoutubeCookie(cookie) {
+  return cookie?.domain === 'youtube.com' || cookie?.domain?.endsWith('.youtube.com');
+}
+
+function normalizeCookieString(cookieString) {
+  return cookieString
+    .split(';')
+    .map((cookiePart) => cookiePart.trim())
+    .filter(Boolean)
+    .sort()
+    .join('; ');
+}
+
+async function getYoutubeSessionCookies(session) {
+  const cookies = await session.cookies.get({});
+  return cookies.filter(isYoutubeCookie);
+}
+
+async function buildYoutubeCookieString(session) {
+  const youtubeCookies = await getYoutubeSessionCookies(session);
+
+  return youtubeCookies.map((cookie) => `${cookie.name}=${cookie.value}`).join('; ');
+}
+
+async function hasYoutubeAuthCookies(session) {
+  const youtubeCookies = await getYoutubeSessionCookies(session);
+  const cookieNames = new Set(youtubeCookies.map((cookie) => cookie.name));
+
+  return YOUTUBE_AUTH_COOKIE_NAMES.some((cookieName) => cookieNames.has(cookieName));
+}
+
+function createYoutubeReauthError(message, cause) {
+  const error = new Error(message);
+  error.code = 'YOUTUBE_REAUTH_REQUIRED';
+
+  if (cause) {
+    error.cause = cause;
   }
 
-  if (state !== returnedState) {
-    Logger.error('State mismatch in YouTube OAuth flow');
-    return res.status(400).send('State mismatch');
-  }
+  return error;
+}
+
+export function isYoutubeReauthRequiredError(error) {
+  return error?.code === 'YOUTUBE_REAUTH_REQUIRED';
+}
+
+export function isYoutubeAuthError(error) {
+  const status = error?.response?.status || error?.status || error?.status_code;
+  const message = String(error?.message || '').toLowerCase();
+
+  return (
+    status === 401 ||
+    status === 403 ||
+    message.includes('request failed with status code 400') ||
+    message.includes('bad request') ||
+    message.includes('login_required') ||
+    message.includes('unauthorized') ||
+    message.includes('forbidden') ||
+    message.includes('invalid cookie') ||
+    message.includes('credentials') ||
+    message.includes('authorization') ||
+    message.includes('sapisid') ||
+    message.includes('sapisidhash')
+  );
+}
+
+export async function withYoutubeRetry(accountType, actionName, actionFn) {
+  const executeAction = async () => {
+    const cookies = getStoredYoutubeCookies(accountType);
+
+    if (!cookies) {
+      throw createYoutubeReauthError(`No cookies found for YouTube ${accountType} account.`);
+    }
+
+    const yt = await Innertube.create({ cookie: cookies });
+    return await actionFn(yt);
+  };
 
   try {
-    const { tokens } = await oauth2Client.getToken(code);
-    oauth2Client.setCredentials(tokens);
+    return await executeAction();
+  } catch (error) {
+    if (isYoutubeReauthRequiredError(error) || !isYoutubeAuthError(error)) {
+      throw error;
+    }
 
-    const user = await userAuthorization(oauth2Client);
+    Logger.warn(
+      `YouTube ${actionName} failed with an auth error. Refreshing ${accountType} cookies.`
+    );
 
-    const data = {
-      id: user.id,
-      login: user.snippet?.title || user.snippet?.customUrl,
-      display_name: user.snippet?.title || user.snippet?.customUrl,
-      customUrl: user.snippet?.customUrl || '',
-      access_token: tokens.access_token,
-      refresh_token: tokens.refresh_token,
-      expiry_date: tokens.expiry_date,
-      scopes: Array.isArray(tokens.scope) ? tokens.scope : tokens.scope.split(' '),
-      profile_image_url: user.snippet.thumbnails?.default?.url || ''
+    const refreshResult = await refreshYoutubeCookiesOnce(accountType, {
+      allowExistingCookies: false
+    });
+
+    if (!refreshResult.success) {
+      throw createYoutubeReauthError(
+        refreshResult.error || `Failed to refresh YouTube ${accountType} cookies.`,
+        error
+      );
+    }
+
+    try {
+      return await executeAction();
+    } catch (retryError) {
+      if (isYoutubeAuthError(retryError)) {
+        throw createYoutubeReauthError(
+          `Refreshed YouTube ${accountType} cookies, but ${actionName} is still unauthorized.`,
+          retryError
+        );
+      }
+
+      throw retryError;
+    }
+  }
+}
+
+export async function refreshYoutubeCookiesOnce(accountType, options = {}) {
+  if (!cookieRefreshPromises.has(accountType)) {
+    cookieRefreshPromises.set(
+      accountType,
+      (async () => {
+        try {
+          return await refreshYoutubeCookies(accountType, options);
+        } finally {
+          cookieRefreshPromises.delete(accountType);
+        }
+      })()
+    );
+  }
+
+  return await cookieRefreshPromises.get(accountType);
+}
+
+export function refreshYoutubeCookies(accountType = 'broadcaster', options = {}) {
+  const existingCookies = normalizeCookieString(getStoredYoutubeCookies(accountType));
+  const allowExistingCookies = options.allowExistingCookies !== false;
+  const authWindow = new BrowserWindow({
+    width: 600,
+    height: 800,
+    autoHideMenuBar: true,
+    title: 'YouTube Authentication',
+    webPreferences: {
+      nodeIntegration: false,
+      partition: getYoutubeAuthPartition(accountType)
+    }
+  });
+  const authWebContents = authWindow.webContents;
+  const authSession = authWebContents.session;
+
+  return new Promise((resolve) => {
+    let settled = false;
+
+    const attemptCookieCapture = async () => {
+      try {
+        const hasAuthCookies = await hasYoutubeAuthCookies(authSession);
+        if (!hasAuthCookies) {
+          return;
+        }
+
+        const youtubeCookies = await buildYoutubeCookieString(authSession);
+        if (!youtubeCookies) {
+          return;
+        }
+
+        if (
+          !allowExistingCookies &&
+          existingCookies &&
+          normalizeCookieString(youtubeCookies) === existingCookies
+        ) {
+          return;
+        }
+
+        youtubeAccountsConfig.set(`${accountType}.cookies`, youtubeCookies);
+        Logger.log(`Stored refreshed YouTube cookies for ${accountType}`);
+        finish({ success: true, data: youtubeCookies });
+      } catch (error) {
+        Logger.error(`Failed to capture YouTube cookies: ${error.message}`);
+      }
     };
 
-    if (type === 'broadcaster') {
-      youtubeAccountsConfig.set('broadcaster', data);
-    } else if (type === 'bot') {
-      youtubeAccountsConfig.set('bot', data);
-    }
+    const handleCookieChange = () => {
+      void attemptCookieCapture();
+    };
 
-    // Send data to the main process
-    // Search for the main window in all open windows.
-    // It should be only one window open, so it should be safe to take the first one.
-    const mainWindow = BrowserWindow.getAllWindows()[0];
-    mainWindow.webContents.send('send-youtube-oauth-data', { userType: type, data });
+    const finish = (result) => {
+      if (settled) {
+        return;
+      }
 
-    if (type === 'broadcaster' && appConfig.get('activePlatform') === 'youtube') {
-      // TODO: implement messages fetching from the channels live stream endpoint
-    }
+      settled = true;
+      clearTimeout(timeoutId);
+      authWebContents.removeListener('did-finish-load', handlePageLoad);
+      authWebContents.removeListener('did-navigate', handlePageLoad);
+      authSession.cookies.removeListener('changed', handleCookieChange);
 
-    const lng = appConfig.get('language') || 'en';
+      if (!authWindow.isDestroyed()) {
+        authWindow.close();
+      }
 
-    res.send(`
-            <!doctype html>
-            <html lang="${lng}">
-              <head>
-                <meta charset="UTF-8" />
-                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-              </head>
-              <body>
-                <div class="text-container">
-                  <img class="img" src=${img} alt="../../assets/icon.png" />
-                  <div>
-                    <h1 class="type">${getTranslationData({ lng, key: `authorization.youtube.${type}` })}</h1>
-                  </div>
-                  <h1 class="header">${getTranslationData({ lng, key: 'authorization.youtube.header' })}</h1>
-                  <p class="sub">${getTranslationData({ lng, key: 'authorization.youtube.description' })}</p>
-                </div>
-              </body>
-              <style>
-                body {
-                  margin: 0;
-                  padding: 0;
-                  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
-                    sans-serif;
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-                  height: 100vh;
-                  background-color: #121212;
-                }
-      
-                .img {
-                  position: absolute;
-                  top: 1rem;
-                  left: 1rem;
-                  width: 50px;
-                }
-                .text-container {
-                  position: relative;
-                  margin-top: 1rem;
-                  padding: 2rem;
-                  background-color: #fff;
-                  border-radius: 0.5rem;
-                  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                  background: rgba(255, 255, 255, 0.069);
-                }
-      
-                h1 {
-                  text-align: center;
-                  color: rgb(234, 234, 234);
-                }
-      
-                p {
-                  text-align: center;
-                  color: rgb(234, 234, 234);
-                }
-                .type {
-                  text-align: center;
-                  color: rgb(234, 234, 234);
-                }
-              </style>
-            </html>
-      `);
-  } catch (error) {
-    Logger.error(`Error during YouTube OAuth callback: ${error.message}`);
-  }
-});
+      resolve(result);
+    };
+
+    const handlePageLoad = () => {
+      void attemptCookieCapture();
+    };
+
+    const timeoutId = setTimeout(() => {
+      finish({
+        success: false,
+        error: 'Timed out waiting for refreshed YouTube cookies. Please sign in again.'
+      });
+    }, YOUTUBE_COOKIE_REFRESH_TIMEOUT_MS);
+
+    authWindow.on('closed', () => {
+      if (!settled) {
+        finish({
+          success: false,
+          error: 'YouTube authentication was cancelled before cookies were refreshed.'
+        });
+      }
+    });
+
+    authWebContents.on('did-finish-load', handlePageLoad);
+    authWebContents.on('did-navigate', handlePageLoad);
+    authSession.cookies.on('changed', handleCookieChange);
+
+    authWindow.loadURL(options.url || YOUTUBE_SIGN_IN_URL);
+  });
+}

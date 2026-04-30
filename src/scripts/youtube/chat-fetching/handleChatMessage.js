@@ -1,13 +1,17 @@
 import { commandActions } from '../../shared-chat-functions/command-actions';
-import { ifCurrentSceneIsPrivacyScene } from '../../shared-chat-functions/lib';
+import {
+  getRemainingCommandCooldown,
+  ifCurrentSceneIsPrivacyScene,
+  startCommandCooldown
+} from '../../shared-chat-functions/lib';
 import { injectDefaults } from '../../store/defaults';
-import { hasPermission } from './lib';
+import { getYoutubeUserRole, hasPermission } from './lib';
 import { youtubeMessageService } from '../message-service/chat-messages';
 
 const { commandsConfig, youtubeAccountsConfig, switcherConfig, serverConfig } = injectDefaults();
 
 export async function handleChatMessage(rawMessage) {
-  const message = rawMessage.snippet.displayMessage;
+  const message = rawMessage?.item?.message?.text;
   const args = message.split(' ');
   const commandName = args[0].toLowerCase();
   const commandArg = args.slice(1).join(' ').toLowerCase();
@@ -37,6 +41,19 @@ export async function handleChatMessage(rawMessage) {
   const serverSettings = serverConfig.get('');
   const serverName = serverSettings.serverInstances?.[0]?.name || 'undefined';
 
+  const role = getYoutubeUserRole({ event: rawMessage });
+  const remainingCooldownMs = getRemainingCommandCooldown({
+    platform: 'youtube',
+    commandId: commandObject.id,
+    role,
+    coolDowns: commandObject.coolDowns
+  });
+
+  if (remainingCooldownMs > 0) {
+    Logger.info(`Command: ${commandName} is on cooldown for ${remainingCooldownMs}ms`);
+    return;
+  }
+
   if (
     hasPermission({
       event: rawMessage,
@@ -45,15 +62,20 @@ export async function handleChatMessage(rawMessage) {
       inPrivacyScene: await ifCurrentSceneIsPrivacyScene()
     })
   ) {
-    console.log('ready to execute command action');
-    // commandActions({
-    //   platform: 'youtube',
-    //   messageService: youtubeMessageService,
-    //   server: serverName,
-    //   switcherConfig,
-    //   commandsConfig,
-    //   accountConfig: youtubeAccountsConfig
-    // })[commandObject.action](commandArgs);
+    commandActions({
+      platform: 'youtube',
+      messageService: youtubeMessageService,
+      server: serverName,
+      switcherConfig,
+      commandsConfig,
+      accountConfig: youtubeAccountsConfig
+    })[commandObject.action](commandArgs);
   }
-  console.log(rawMessage);
+
+  startCommandCooldown({
+    platform: 'youtube',
+    commandId: commandObject.id,
+    role,
+    coolDowns: commandObject.coolDowns
+  });
 }

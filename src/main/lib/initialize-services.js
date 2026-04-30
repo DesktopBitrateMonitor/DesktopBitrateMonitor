@@ -13,16 +13,16 @@ import {
   connectToTwitchEventSubs,
   disconnectTwitchEventSubs
 } from '../../scripts/twitch/event-subscriptions/eventsubs';
-// import {
-//   startYouTubeChatPolling,
-//   stopYouTubeChatPolling
-// } from '../../scripts/youtube/chat-fetching/chat-fetcher';
+import {
+  fetchLiveChatMessages,
+  stopYouTubeChatPolling
+} from '../../scripts/youtube/chat-fetching/chat-fetcher';
 
 const {
   appConfig,
   twitchAccountsConfig,
   kickAccountsConfig,
-  // youtubeAccountsConfig,
+  youtubeAccountsConfig,
   streamingSoftwareConfig,
   serverConfig
 } = injectDefaults();
@@ -61,7 +61,7 @@ export async function connectToActivePlatforms(mainWindow) {
 
   disconnectTwitchEventSubs(mainWindow);
   disconnectKickEventSub(mainWindow);
-  // stopYouTubeChatPolling(mainWindow);
+  stopYouTubeChatPolling();
 
   // Add a short delay to ensure all disconnections are processed before attempting new connections
   await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -83,6 +83,16 @@ export async function connectToActivePlatforms(mainWindow) {
         continue;
       }
       connectToKickEventSub(mainWindow);
+    }
+
+    if (platform === 'youtube') {
+      if (youtubeAccountsConfig.get('broadcaster.login').length === 0) {
+        Logger.log(
+          'No YouTube channel found in youtubeAccountsConfig. Skipping YouTube connection.'
+        );
+        continue;
+      }
+      fetchLiveChatMessages(mainWindow);
     }
   }
 

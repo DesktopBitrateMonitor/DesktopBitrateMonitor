@@ -57,22 +57,30 @@ export const authApi = {
   },
 
   // YOUTUBE AUTH HANDLING
-  startYoutubeAuthProcess: (accountType) => {
-    ipcRenderer.invoke('start-youtube-auth-process', accountType);
-  },
+  // startYoutubeAuthProcess: (accountType) => {
+  //   ipcRenderer.invoke('start-youtube-auth-process', accountType);
+  // },
 
-  revokeYoutubeAccessToken: (accountType) => {
-    return ipcRenderer.invoke('revoke-youtube-auth-token', accountType);
-  },
+  // revokeYoutubeAccessToken: (accountType) => {
+  //   return ipcRenderer.invoke('revoke-youtube-auth-token', accountType);
+  // },
 
   // Send the new OAuth_token to the frontend
-  setYoutubeOauthData: (callback) =>
-    ipcRenderer.on('send-youtube-oauth-data', (event, data) => {
-      callback(data);
-    }),
+  // setYoutubeOauthData: (callback) =>
+  //   ipcRenderer.on('send-youtube-oauth-data', (event, data) => {
+  //     callback(data);
+  //   }),
 
   validateYoutubeUser: (userType, userName) => {
     return ipcRenderer.invoke('validate-youtube-user', userType, userName);
+  },
+
+  validateYoutubeChannelByName: (channelName) => {
+    return ipcRenderer.invoke('validate-youtube-channel-by-name', channelName);
+  },
+
+  getYoutubeCookies: (accountType = 'broadcaster') => {
+    return ipcRenderer.invoke('get-youtube-cookies', accountType);
   },
 
   updateYoutubeUser: (callback) => {

@@ -8,8 +8,11 @@ import { Box, Stack, Switch, Tooltip, Typography } from '@mui/material';
 import LayoutToggle from '../../../components/functional/LayoutToggle';
 import YoutubeIcon from '../../../assets/icons/YoutubeIcon';
 
+const botAvailable = false;
+
 const YoutubeAccountsSettings = () => {
-  const { youtubeAccountsConfig, updateYoutubeAccountsConfig } = useYoutubeAccountsConfig();
+  const { youtubeAccountsConfig, updateYoutubeAccountsConfig, reloadYoutubeAccountsConfig } =
+    useYoutubeAccountsConfig();
   const { t } = useTranslation();
   const { showAlert } = useAlert();
 
@@ -25,7 +28,6 @@ const YoutubeAccountsSettings = () => {
     } else {
       setLayoutMode('list');
     }
-
     setBroadcasterData(youtubeAccountsConfig?.broadcaster);
     setChatbotData(youtubeAccountsConfig?.bot);
 
@@ -35,25 +37,25 @@ const YoutubeAccountsSettings = () => {
     setCollapsedIds(savedCollapsed);
 
     // Listen for OAuth data updates and update the frontend state accordingly
-    window.authApi.setYoutubeOauthData((data) => {
-      if (data.userType === 'broadcaster') {
-        setBroadcasterData(data.data);
-        showAlert({
-          message: t('platforms.youtube.accounts.broadcasterConnected'),
-          severity: 'success'
-        });
-      } else if (data.userType === 'bot') {
-        setChatbotData(data.data);
-        showAlert({
-          message: t('platforms.youtube.accounts.chatbotConnected'),
-          severity: 'success'
-        });
-      }
-      updateYoutubeAccountsConfig((prev) => ({
-        ...(prev || {}),
-        [data.userType]: data.data
-      }));
-    });
+    // window.authApi.setYoutubeOauthData((data) => {
+    //   if (data.userType === 'broadcaster') {
+    //     setBroadcasterData(data.data);
+    //     showAlert({
+    //       message: t('platforms.youtube.accounts.broadcasterConnected'),
+    //       severity: 'success'
+    //     });
+    //   } else if (data.userType === 'bot') {
+    //     setChatbotData(data.data);
+    //     showAlert({
+    //       message: t('platforms.youtube.accounts.chatbotConnected'),
+    //       severity: 'success'
+    //     });
+    //   }
+    //   updateYoutubeAccountsConfig((prev) => ({
+    //     ...(prev || {}),
+    //     [data.userType]: data.data
+    //   }));
+    // });
   }, [youtubeAccountsConfig]);
 
   const handleLayoutChange = useCallback(
@@ -83,48 +85,52 @@ const YoutubeAccountsSettings = () => {
     [collapsedIds, updateYoutubeAccountsConfig]
   );
 
-  const handleLogin = useCallback(async (accountType) => {
-    await window.authApi.startYoutubeAuthProcess(accountType);
-  }, []);
+  const handleLogin = useCallback(
+    async (accountType) => {
+      if (accountType === 'broadcaster') {
+        const res = await window.authApi.getYoutubeCookies();
+
+        if (res.success) {
+          reloadYoutubeAccountsConfig();
+        }
+      } else {
+        // await window.authApi.startYoutubeAuthProcess(accountType);
+      }
+    },
+    [reloadYoutubeAccountsConfig]
+  );
 
   const handleLogout = useCallback(
     async (accountType) => {
-      const res = await window.authApi.revokeYoutubeAccessToken(accountType);
+      const userData = {
+        id: '',
+        login: '',
+        display_name: '',
+        customUrl: '',
+        profile_image_url: '',
+        cookies: ''
+      };
 
-      if (res) {
-        const userData = {
-          id: '',
-          login: '',
-          display_name: '',
-          access_token: '',
-          customUrl: '',
-          refresh_token: '',
-          expiry_date: null,
-          scopes: [],
-          profile_image_url: ''
-        };
+      await window.storeApi.set(`youtube-accounts-config`, accountType, userData);
 
-        await window.storeApi.set(`youtube-accounts-config`, accountType, userData);
+      updateYoutubeAccountsConfig((prev) => ({
+        ...(prev || {}),
+        [accountType]: userData
+      }));
 
-        updateYoutubeAccountsConfig((prev) => ({
-          ...(prev || {}),
-          [accountType]: userData
-        }));
-
-        if (accountType === 'broadcaster') {
-          setBroadcasterData(userData);
-        } else if (accountType === 'bot') {
-          setChatbotData(userData);
-        }
-
-        showAlert({
-          message:
-            accountType === 'broadcaster'
-              ? t('platforms.youtube.accounts.loggedOutBroadcaster')
-              : t('platforms.youtube.accounts.loggedOutChatbot'),
-          severity: 'success'
-        });
+      if (accountType === 'broadcaster') {
+        setBroadcasterData(userData);
+      } else if (accountType === 'bot') {
+        setChatbotData(userData);
       }
+
+      showAlert({
+        message:
+          accountType === 'broadcaster'
+            ? t('platforms.youtube.accounts.loggedOutBroadcaster')
+            : t('platforms.youtube.accounts.loggedOutChatbot'),
+        severity: 'success'
+      });
     },
     [youtubeAccountsConfig, updateYoutubeAccountsConfig]
   );
@@ -217,32 +223,34 @@ const YoutubeAccountsSettings = () => {
           />
         </CollapsibleCard>
 
-        <CollapsibleCard
-          title={t('platforms.youtube.accounts.chatbot.header')}
-          subtitle={t('platforms.youtube.accounts.chatbot.description')}
-          actions={
-            <Box>
-              <Tooltip title={t('platforms.youtube.accounts.chatbot.hint')}>
-                <Typography variant="body2" color="text.secondary"></Typography>
-                <Switch
-                  checked={youtubeAccountsConfig.useBotAccount}
-                  onChange={handleSwitchChange}
-                  disabled={!broadcasterData?.id}
-                />
-              </Tooltip>
-            </Box>
-          }
-          collapsible={layoutMode === 'list'}
-          expanded={!collapsedIds.includes('bot')}
-          onExpandedChange={() => toggleCollapsed('bot')}
-        >
-          <YoutubeAccountsPanel
-            data={chatbotData}
-            accountType="bot"
-            login={() => handleLogin('bot')}
-            logout={() => handleLogout('bot')}
-          />
-        </CollapsibleCard>
+        {botAvailable && (
+          <CollapsibleCard
+            title={t('platforms.youtube.accounts.chatbot.header')}
+            subtitle={t('platforms.youtube.accounts.chatbot.description')}
+            actions={
+              <Box>
+                <Tooltip title={t('platforms.youtube.accounts.chatbot.hint')}>
+                  <Typography variant="body2" color="text.secondary"></Typography>
+                  <Switch
+                    checked={youtubeAccountsConfig.useBotAccount}
+                    onChange={handleSwitchChange}
+                    disabled={!broadcasterData?.id}
+                  />
+                </Tooltip>
+              </Box>
+            }
+            collapsible={layoutMode === 'list'}
+            expanded={!collapsedIds.includes('bot')}
+            onExpandedChange={() => toggleCollapsed('bot')}
+          >
+            <YoutubeAccountsPanel
+              data={chatbotData}
+              accountType="bot"
+              login={() => handleLogin('bot')}
+              logout={() => handleLogout('bot')}
+            />
+          </CollapsibleCard>
+        )}
       </Box>
     </Box>
   );

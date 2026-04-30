@@ -99,7 +99,8 @@
       "totalUptimeToolTip": "Gesamt-Uptime: Summe aller Feed-Uptimes seit der ersten erkannten Verbindung seit dem Start der App",
 
       "description": "Echtzeit-Bitrate-Feed von deinem Server.",
-      "noData": "Warten auf Daten..."
+      "noData": "Warten auf Daten...",
+      "noActivePlatforms": "Keine aktiven Plattformen ausgewählt"
     },
     "connectionStates": {
       "header": "Verbindungsstatus",
@@ -128,7 +129,8 @@
     "activePlatform": {
       "header": "Aktive Plattform",
       "description": "Die derzeit aktive Streaming-Plattform",
-      "noData": "Kein StreamerIn für die gewählte Plattform verbunden"
+      "noData": "Kein StreamerIn für die gewählte Plattform verbunden",
+      "noneConnected": "Keine Plattformen verbunden"
     },
     "logs": {
       "header": "Protokolle"
@@ -239,8 +241,15 @@
         },
         "button": {
           "login": "Konto anmelden",
-          "logout": "Abmelden"
-        }
+          "logout": "Abmelden",
+          "validate": "Kanal validieren"
+        },
+        "channelName": "Kanalname/Benutzername",
+        "enterChannelName": "Benutzernamen eingeben",
+        "channelNameRequired": "Kanalname ist erforderlich",
+        "channelValidated": "Kanal erfolgreich validiert",
+        "channelNotFound": "Kanal nicht gefunden. Bitte überprüfen Sie den Namen und versuchen Sie es erneut",
+        "validationError": "Bei der Validierung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut"
       }
     },
     "kick": {

@@ -9,18 +9,14 @@ import { injectDefaults } from '../../../store/defaults';
  * @returns {boolean} - Whether the user has the required permissions
  */
 
+const { youtubeAccountsConfig } = injectDefaults();
 export const hasPermission = ({ event, requiredRole, restricted, inPrivacyScene }) => {
-  const { twitchAccountsConfig } = injectDefaults();
+  const role = getYoutubeUserRole({ event });
 
-  const isBroadcaster = event.authorDetails.isChatOwner;
-  const admins = twitchAccountsConfig.get('admins').map((admin) => admin.login.toLowerCase());
-  const mods = twitchAccountsConfig.get('mods').map((mod) => mod.login.toLowerCase());
-
-  const displayName = event.authorDetails.displayName;
-  const normalizedDisplayName = normalizeDisplayName(displayName);
-
-  const isAdmin = admins.includes(normalizedDisplayName);
-  const isMod = mods.includes(normalizedDisplayName) || event.authorDetails.isChatModerator;
+  const isBroadcaster = role === 'broadcaster';
+  const isModerator = role === 'mod';
+  const isAdmin = role === 'admin';
+  const isMod = role === 'mod';
 
   // If the command is restricted and the current scene is the privacy scene, only allow broadcaster and admins to execute it
   if (restricted && inPrivacyScene) return isBroadcaster || isAdmin;
@@ -30,6 +26,25 @@ export const hasPermission = ({ event, requiredRole, restricted, inPrivacyScene 
   if (requiredRole === 'admin') return isAdmin;
   if (requiredRole === 'mod') return isAdmin || isMod;
   return false;
+};
+
+export const getYoutubeUserRole = ({ event }) => {
+  const broadcasterId = youtubeAccountsConfig.get('broadcaster.id');
+
+  const isBroadcaster = event.item.author.id === broadcasterId;
+  const admins = youtubeAccountsConfig.get('admins').map((admin) => admin.login.toLowerCase());
+  const mods = youtubeAccountsConfig.get('mods').map((mod) => mod.login.toLowerCase());
+
+  const displayName = event?.item?.author?.name.toLowerCase();
+  const normalizedDisplayName = normalizeDisplayName(displayName);
+
+  const isAdmin = admins.includes(normalizedDisplayName);
+  const isMod = mods.includes(normalizedDisplayName) || event.item.author.isChatModerator;
+
+  if (isBroadcaster) return 'broadcaster';
+  if (isAdmin) return 'admin';
+  if (isMod) return 'mod';
+  return 'user';
 };
 
 const normalizeDisplayName = (displayName) => {
