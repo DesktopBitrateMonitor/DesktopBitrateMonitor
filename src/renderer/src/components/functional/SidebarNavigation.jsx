@@ -39,7 +39,7 @@ const isDev = import.meta.env.DEV;
 
 const DISABLE_CHECKBOXES_DURATION = 4;
 
-const ACCOUNTS_PATH = '/dashboard/accountssettings';
+const PLATFORMS_PATH = '/dashboard/platformsettings';
 const NAV_ITEMS = [
   {
     translationKey: 'navigation.dashboard',
@@ -50,7 +50,7 @@ const NAV_ITEMS = [
   },
   {
     translationKey: 'navigation.platformsSettings',
-    path: ACCOUNTS_PATH,
+    path: PLATFORMS_PATH,
     icon: ManageAccountsIcon,
     matchPrefix: true,
     dev: false
@@ -100,11 +100,11 @@ const NAV_ITEMS = [
 ];
 
 const PLATFORM_ROUTES = [
-  { id: 'twitch', label: 'Twitch', path: `${ACCOUNTS_PATH}/twitch`, icon: TwitchIcon, dev: false },
+  { id: 'twitch', label: 'Twitch', path: `${PLATFORMS_PATH}/twitch`, icon: TwitchIcon, dev: false },
   {
     id: 'kick',
     label: 'Kick',
-    path: `${ACCOUNTS_PATH}/kick`,
+    path: `${PLATFORMS_PATH}/kick`,
     icon: KickIcon,
     dev: false,
     disabled: false
@@ -112,7 +112,7 @@ const PLATFORM_ROUTES = [
   {
     id: 'youtube',
     label: 'YouTube',
-    path: `${ACCOUNTS_PATH}/youtube`,
+    path: `${PLATFORMS_PATH}/youtube`,
     icon: YoutubeIcon,
     dev: true,
     disabled: false
@@ -300,7 +300,7 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
                   ? location.pathname === item.path || location.pathname.startsWith(`${item.path}/`)
                   : location.pathname === item.path;
 
-                const isAccountsItem = item.path === ACCOUNTS_PATH;
+                const isAccountsItem = item.path === PLATFORMS_PATH;
                 const navButton = (
                   <ListItemButton
                     onClick={(event) =>

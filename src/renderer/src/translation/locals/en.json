@@ -402,11 +402,11 @@
       },
       "addAlias": {
         "label": "Add Alias",
-        "hint": "Add a alias for an existing command"
+        "description": "Add a alias for an existing command"
       },
       "removeAlias": {
         "label": "Remove Alias",
-        "hint": "Remove a alias for an existing command"
+        "description": "Remove a alias for an existing command"
       }
     },
     "messages": {

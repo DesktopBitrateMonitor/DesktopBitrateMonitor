@@ -95,13 +95,4 @@ export async function connectToActivePlatforms(mainWindow) {
       fetchLiveChatMessages(mainWindow);
     }
   }
-
-  // if (platform === 'youtube') {
-  //   const youtubeChannelToConnect = youtubeAccountsConfig.get('broadcaster.login');
-  //   if (youtubeChannelToConnect.length === 0) {
-  //     Logger.log('No YouTube channel found in youtubeAccountsConfig. Skipping YouTube connection.');
-  //     return;
-  //   }
-  //   await startYouTubeChatPolling(mainWindow);
-  // }
 }

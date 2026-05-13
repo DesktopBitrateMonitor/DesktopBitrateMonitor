@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import Dashboard from './pages/Dashboard';
 import Welcome from './pages/Welcome';
 import ServerSettings from './panels/server/ServerSettings';
-import AccountsSettings from './panels/accounts/AccountsSettings';
+import PlatformsSettings from './panels/platforms/PlatformsSettings';
 import TwitchSettings from './panels/twitch/TwitchSettings';
 import KickSettings from './panels/kick/KickSettings';
 import CommandSettings from './panels/shared-platform-panels/CommandSettings';
@@ -200,8 +200,8 @@ function App() {
             <Route path="logs" element={<LoggingFeed />} />
             <Route path="history-watcher" element={<HistoryWatcher />} />
 
-            {/* ACCOUNT SETTINGS */}
-            <Route path="accountssettings" element={<AccountsSettings />}>
+            {/* PLATFORM SETTINGS */}
+            <Route path="platformsettings" element={<PlatformsSettings />}>
               {/* <Route index element={<Navigate to="twitch" replace />} /> */}
               <Route path="twitch" element={<TwitchSettings />}>
                 <Route index element={<CommandSettings />} />

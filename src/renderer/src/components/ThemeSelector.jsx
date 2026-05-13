@@ -1,4 +1,4 @@
-import { Stack, FormControl, Select, MenuItem, InputLabel } from '@mui/material';
+import { Stack, FormControl, Select, MenuItem, InputLabel, Box } from '@mui/material';
 import { useThemeMode } from '../contexts/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import { useAppConfigStore } from '../contexts/DataContext';
@@ -19,7 +19,7 @@ const ThemeSelector = () => {
   };
 
   return (
-    <Stack m={1} direction="row" alignItems="center" spacing={1.5}>
+    <Box>
       <FormControl size="small" sx={{ minWidth: 180 }}>
         <InputLabel>{t('appSettings.style.theme.label')}</InputLabel>
         <Select value={mode} onChange={handleChange} label={t('appSettings.style.theme.label')}>
@@ -28,7 +28,7 @@ const ThemeSelector = () => {
           <MenuItem value="system">{t('appSettings.style.theme.options.system')}</MenuItem>
         </Select>
       </FormControl>
-    </Stack>
+    </Box>
   );
 };
 

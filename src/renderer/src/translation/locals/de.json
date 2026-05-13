@@ -403,17 +403,17 @@
       },
       "addAlias": {
         "label": "Alias hinzufügen",
-        "hint": "Fügt einen Alias für einen Command hinzu"
+        "description": "Fügt einen Alias für einen Command hinzu"
       },
       "removeAlias": {
         "label": "Alias entfernen",
-        "hint": "Entfernt einen Alias für einen Command"
+        "description": "Entfernt einen Alias für einen Command"
       }
     },
     "messages": {
       "header": "Chat Nachrichten",
       "description": "Bearbeite die Chat Nachrichten für die verschiedenen Aktionen der Anwendung.",
-      "headerToolTip": "Nachirchten werden für alle Platformen verwendet",
+      "headerToolTip": "Nachrichten werden für alle Plattformen verwendet",
       "searchBox": {
         "label": "Nachricht suchen",
         "placeholder": "Titel oder Text"

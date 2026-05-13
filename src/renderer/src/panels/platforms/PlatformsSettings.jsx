@@ -2,7 +2,7 @@ import { Box } from '@mui/material';
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 
-const AccountsSettings = () => {
+const PlatformsSettings = () => {
   return (
     <Box
       component="main"
@@ -36,4 +36,4 @@ const AccountsSettings = () => {
   );
 };
 
-export default AccountsSettings;
+export default PlatformsSettings;
