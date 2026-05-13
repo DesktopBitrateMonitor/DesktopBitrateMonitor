@@ -15,6 +15,7 @@ let lastKnownLivestreamAt = 0;
 const NO_STREAM_RETRY_DELAY_MS = 5 * 1000;
 const CONNECTION_RETRY_DELAY_MS = 5 * 1000;
 const LIVESTREAM_CACHE_TTL_MS = 2 * 60 * 1000;
+const YOUTUBE_VIDEO_ID_PATTERN = /^[A-Za-z0-9_-]{11}$/;
 
 function rememberLivestreamId(livestreamId) {
   if (!livestreamId) {
@@ -28,6 +29,61 @@ function rememberLivestreamId(livestreamId) {
 function clearRememberedLivestreamId() {
   lastKnownLivestreamId = null;
   lastKnownLivestreamAt = 0;
+}
+
+function isValidYoutubeVideoId(value) {
+  return typeof value === 'string' && YOUTUBE_VIDEO_ID_PATTERN.test(value);
+}
+
+function extractVideoId(candidate) {
+  const candidateIds = [
+    candidate?.video_id,
+    candidate?.id,
+    candidate?.content_id,
+    candidate?.endpoint?.payload?.videoId,
+    candidate?.navigationEndpoint?.payload?.videoId
+  ];
+
+  return candidateIds.find(isValidYoutubeVideoId) || null;
+}
+
+function collectLivestreamCandidateIds(liveStreamsTab) {
+  const candidateIds = [];
+  const seenIds = new Set();
+  const videos = liveStreamsTab?.videos || [];
+  const memoEntries = liveStreamsTab?.memo ? Array.from(liveStreamsTab.memo.values()).flat() : [];
+
+  for (const candidate of [...videos, ...memoEntries]) {
+    const videoId = extractVideoId(candidate);
+
+    if (!videoId || seenIds.has(videoId)) {
+      continue;
+    }
+
+    seenIds.add(videoId);
+    candidateIds.push(videoId);
+  }
+
+  return candidateIds;
+}
+
+async function resolveLivestreamIdFromCandidates(yt, candidateIds) {
+  for (const candidateId of candidateIds) {
+    try {
+      const response = await yt.getInfo(candidateId);
+      const basicInfo = response?.basic_info || {};
+
+      if (basicInfo?.is_live || basicInfo?.is_upcoming) {
+        return candidateId;
+      }
+    } catch (error) {
+      Logger.warn(
+        `Failed to inspect YouTube livestream candidate ${candidateId}: ${error.message}`
+      );
+    }
+  }
+
+  return null;
 }
 
 export function getCachedActiveLivestreamId() {
@@ -99,7 +155,13 @@ export async function getActiveLivestreamId(yt, channelId) {
   // Only look for active live streams or upcoming streams, ignore past streams
   const activeStream = videos.find((video) => video?.is_live || video?.is_upcoming);
 
-  const livestreamId = activeStream?.video_id || activeStream?.id;
+  let livestreamId = activeStream?.video_id || activeStream?.id;
+
+  if (!livestreamId) {
+    const candidateIds = collectLivestreamCandidateIds(liveStreamsTab);
+
+    livestreamId = await resolveLivestreamIdFromCandidates(yt, candidateIds);
+  }
 
   if (livestreamId) {
     rememberLivestreamId(livestreamId);
@@ -114,6 +176,8 @@ export async function getActiveLivestreamId(yt, channelId) {
 async function getLiveChatConnection(channelId) {
   return await withYoutubeRetry('broadcaster', 'connect live chat', async (yt) => {
     const livestreamId = await getActiveLivestreamId(yt, channelId);
+
+    console.log('getLiveChatConnection - livestreamId:', livestreamId);
 
     if (!livestreamId) {
       return { livestreamId: null, liveChat: null };
