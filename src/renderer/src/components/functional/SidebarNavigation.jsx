@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Box,
   Checkbox,
+  Chip,
   Divider,
   Drawer,
   IconButton,
@@ -100,12 +101,21 @@ const NAV_ITEMS = [
 ];
 
 const PLATFORM_ROUTES = [
-  { id: 'twitch', label: 'Twitch', path: `${PLATFORMS_PATH}/twitch`, icon: TwitchIcon, dev: false },
+  {
+    id: 'twitch',
+    label: 'Twitch',
+    path: `${PLATFORMS_PATH}/twitch`,
+    icon: TwitchIcon,
+    beta: false,
+    dev: false,
+    disabled: false
+  },
   {
     id: 'kick',
     label: 'Kick',
     path: `${PLATFORMS_PATH}/kick`,
     icon: KickIcon,
+    beta: false,
     dev: false,
     disabled: false
   },
@@ -114,6 +124,7 @@ const PLATFORM_ROUTES = [
     label: 'YouTube',
     path: `${PLATFORMS_PATH}/youtube`,
     icon: YoutubeIcon,
+    beta: true,
     dev: true,
     disabled: false
   }
@@ -423,6 +434,22 @@ const SidebarNavigation = ({ initialCollapsed = false }) => {
                           <Icon fontSize="small" />
                         </ListItemIcon>
                         <ListItemText primary={platform.label} />
+                        {platform.beta && (
+                          <Chip
+                            label="BETA"
+                            size="small"
+                            color="primary"
+                            sx={{
+                              position: 'absolute',
+                              top: 4,
+                              right: 4,
+                              height: 15,
+                              fontSize: '0.6rem',
+                              fontWeight: 600,
+                              pointerEvents: 'none',
+                            }}
+                          />
+                        )}
                       </ListItemButton>
                     </Fragment>
                   );

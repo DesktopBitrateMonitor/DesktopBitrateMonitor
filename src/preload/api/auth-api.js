@@ -87,5 +87,9 @@ export const authApi = {
     ipcRenderer.on('update-youtube-user', (event, data) => {
       callback(data);
     });
+  },
+
+  logoutYoutubeUser: (accountType) => {
+    return ipcRenderer.invoke('logout-youtube-user', accountType);
   }
 };

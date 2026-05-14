@@ -182,7 +182,7 @@ export const injectDefaults = () => {
         profile_image_url: '',
         cookies: ''
       },
-      layout: 'grid',
+      layout: 'list',
       userLayout: 'grid',
       collapsed: [],
       useBotAccount: false,

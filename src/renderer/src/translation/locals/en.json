@@ -219,8 +219,8 @@
         }
       },
       "accounts": {
-        "header": "Kontoeinstellungen",
-        "description": "Melde dich hier mit deinem Broadcaster- und Bot-Konto an. Du kannst entscheiden, welches Konto Nachrichten im Kick-Chat postet. Fallback ist das Broadcaster-Konto. Die Anwendung hört automatisch auf das Kick-Konto des Broadcasters, wenn Kick die aktivierte Plattform ist.",
+        "header": "Account Settings",
+        "description": "Log in with your broadcaster account here. The application automatically listens to the broadcaster's YouTube account when YouTube is the active platform.",
         "notLoggedIn": "Not logged in",
         "broadcasterConnected": "Connected to Broadcaster account",
         "chatbotConnected": "Connected to Chatbot account",

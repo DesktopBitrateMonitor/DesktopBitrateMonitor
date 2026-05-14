@@ -112,6 +112,9 @@ const YoutubeAccountsSettings = () => {
       };
 
       await window.storeApi.set(`youtube-accounts-config`, accountType, userData);
+      const res = await window.authApi.logoutYoutubeUser(accountType);
+
+      console.log('Logout result:', res);
 
       updateYoutubeAccountsConfig((prev) => ({
         ...(prev || {}),
@@ -190,9 +193,9 @@ const YoutubeAccountsSettings = () => {
           </Typography>
         </Box>
 
-        <Stack direction="row" spacing={1.5} alignItems="center">
+        {/* <Stack direction="row" spacing={1.5} alignItems="center">
           <LayoutToggle value={layoutMode} onChange={handleLayoutChange} />
-        </Stack>
+        </Stack> */}
       </Box>
       <Box
         sx={{
@@ -211,7 +214,8 @@ const YoutubeAccountsSettings = () => {
         <CollapsibleCard
           title={t('platforms.youtube.accounts.broadcaster.header')}
           subtitle={t('platforms.youtube.accounts.broadcaster.description')}
-          collapsible={layoutMode === 'list'}
+          // collapsible={layoutMode === 'list'}
+          collapsible={false}
           expanded={!collapsedIds.includes('broadcaster')}
           onExpandedChange={() => toggleCollapsed('broadcaster')}
         >

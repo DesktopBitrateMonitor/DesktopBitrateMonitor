@@ -221,7 +221,7 @@
       },
       "accounts": {
         "header": "Kontoeinstellungen",
-        "description": "Melde dich hier mit deinem StreamerIn- und Bot-Konto an. Du kannst entscheiden, welches Konto Nachrichten im YouTube-Chat postet. Fallback ist das StreamerIn-Konto. Die Anwendung hört automatisch auf das YouTube-Konto des StreamerIns, wenn YouTube die aktivierte Plattform ist.",
+        "description": "Melde dich hier mit deinem StreamerIn Konto an. Die Anwendung hört automatisch auf das YouTube-Konto des StreamerIns, wenn YouTube die aktivierte Plattform ist.",
         "notLoggedIn": "Nicht angemeldet",
         "broadcasterConnected": "Mit StreamerIn-Konto verbunden",
         "chatbotConnected": "Mit Chatbot-Konto verbunden",

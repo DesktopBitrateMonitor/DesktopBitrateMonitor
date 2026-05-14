@@ -2,8 +2,9 @@ import { BrowserWindow } from 'electron';
 import { Innertube } from 'youtubei.js';
 import Logger from '../logging/logger';
 import { injectDefaults } from '../store/defaults';
+import { fetchLiveChatMessages } from '../youtube/chat-fetching/chat-fetcher';
 
-const { youtubeAccountsConfig } = injectDefaults();
+const { youtubeAccountsConfig, appConfig } = injectDefaults();
 
 const YOUTUBE_SIGN_IN_URL =
   'https://accounts.google.com/ServiceLogin?service=youtube&passive=true&continue=https%3A%2F%2Fwww.youtube.com%2F';
@@ -162,7 +163,8 @@ export function refreshYoutubeCookies(accountType = 'broadcaster', options = {})
     title: 'YouTube Authentication',
     webPreferences: {
       nodeIntegration: false,
-      partition: getYoutubeAuthPartition(accountType)
+      partition: getYoutubeAuthPartition(accountType),
+      devTools: false
     }
   });
   const authWebContents = authWindow.webContents;
@@ -193,6 +195,14 @@ export function refreshYoutubeCookies(accountType = 'broadcaster', options = {})
 
         youtubeAccountsConfig.set(`${accountType}.cookies`, youtubeCookies);
         Logger.log(`Stored refreshed YouTube cookies for ${accountType}`);
+
+        if (youtubeCookies) {
+          const activePlatforms = appConfig.get('activePlatforms');
+          if (accountType === 'broadcaster' && activePlatforms.includes('youtube')) {
+            await fetchLiveChatMessages();
+          }
+        }
+
         finish({ success: true, data: youtubeCookies });
       } catch (error) {
         Logger.error(`Failed to capture YouTube cookies: ${error.message}`);

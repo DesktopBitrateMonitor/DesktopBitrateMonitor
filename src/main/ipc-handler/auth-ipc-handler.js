@@ -9,10 +9,15 @@ import { injectDefaults } from '../../scripts/store/defaults';
 import { disconnectTwitchEventSubs } from '../../scripts/twitch/event-subscriptions/eventsubs';
 import { startKickAuthorization } from '../../scripts/authorization/kick-auth';
 import { disconnectKickEventSub } from '../../scripts/kick/event-subscriptions/eventsubs';
+import { connectToActivePlatforms } from '../lib/initialize-services';
+import {
+  fetchLiveChatMessages,
+  stopYouTubeChatPolling
+} from '../../scripts/youtube/chat-fetching/chat-fetcher';
 
 let isAuthIpcInitialized = false;
 
-const { twitchAccountsConfig, kickAccountsConfig } = injectDefaults();
+const { twitchAccountsConfig, kickAccountsConfig, appConfig } = injectDefaults();
 
 export async function initializeAuthIpc(ipcMain) {
   if (isAuthIpcInitialized) {
@@ -97,5 +102,10 @@ export async function initializeAuthIpc(ipcMain) {
 
   ipcMain.handle('get-youtube-cookies', async (event, accountType = 'broadcaster') => {
     return await refreshYoutubeCookies(accountType, { allowExistingCookies: true });
+  });
+
+  ipcMain.handle('logout-youtube-user', async (event, accountType) => {
+    const res = await stopYouTubeChatPolling();
+    return res;
   });
 }

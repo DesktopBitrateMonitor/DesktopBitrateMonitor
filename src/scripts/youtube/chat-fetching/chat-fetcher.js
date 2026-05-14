@@ -296,4 +296,5 @@ export function stopYouTubeChatPolling() {
   stopCurrentLiveChat();
   clearRememberedLivestreamId();
   Logger.log('Stopped YouTube live chat polling');
+  return { success: true, data: { message: 'YouTube chat polling stopped' }, error: null };
 }
