@@ -196,6 +196,42 @@ export const buildMessages = (locale) => {
     },
     {
       id: generateId(),
+      group: 'switcher',
+      action: 'enableSwitcher',
+      event: 'success',
+      enabled: true,
+      label: 'Enable Switcher Success Message',
+      message: gm('defaults.messages.enableSwitcher.success')
+    },
+    {
+      id: generateId(),
+      group: 'switcher',
+      action: 'enableSwitcher',
+      event: 'error',
+      enabled: true,
+      label: 'Enable Switcher Error Message',
+      message: gm('defaults.messages.enableSwitcher.error')
+    },
+    {
+      id: generateId(),
+      group: 'switcher',
+      action: 'disableSwitcher',
+      event: 'success',
+      enabled: true,
+      label: 'Disable Switcher Success Message',
+      message: gm('defaults.messages.disableSwitcher.success')
+    },
+    {
+      id: generateId(),
+      group: 'switcher',
+      action: 'disableSwitcher',
+      event: 'error',
+      enabled: true,
+      label: 'Disable Switcher Error Message',
+      message: gm('defaults.messages.disableSwitcher.error')
+    },
+    {
+      id: generateId(),
       group: 'user',
       action: 'addAdmin',
       event: 'success',
@@ -283,6 +319,15 @@ export const buildMessages = (locale) => {
       enabled: true,
       label: 'Remove Mod Success Message',
       message: gm('defaults.messages.removeMod.success')
+    },
+    {
+      id: generateId(),
+      group: 'user',
+      action: 'removeMod',
+      event: 'error',
+      enabled: true,
+      label: 'Remove Mod Error Message',
+      message: gm('defaults.messages.removeMod.error')
     },
     {
       id: generateId(),

@@ -154,5 +154,33 @@ export const adminCommands = [
       mod: 0,
       user: 5
     }
+  },
+  {
+    id: generateId(),
+    action: 'enableSwitcher',
+    requiredRole: 'admin',
+    label: 'Enable Scene Switcher',
+    description: 'Enables the scene switcher functionality.',
+    cmd: ['!switcherenable', '!switcheron', '!switcherstart'],
+    enabled: true,
+    coolDowns: {
+      all: 0,
+      mod: 0,
+      user: 5
+    }
+  },
+  {
+    id: generateId(),
+    action: 'disableSwitcher',
+    requiredRole: 'admin',
+    label: 'Disable Scene Switcher',
+    description: 'Disables the scene switcher functionality.',
+    cmd: ['!switcherdisable', '!switcheroff', '!switcherstop'],
+    enabled: true,
+    coolDowns: {
+      all: 0,
+      mod: 0,
+      user: 5
+    }
   }
 ];

@@ -1,3 +1,10 @@
+## v1.4.0
+
+- Add Youtube as platform - BETA state
+- Add a disable switcher chat command
+
+---
+
 ## v1.3.0
 
 - Add multi chat connection

@@ -70,13 +70,13 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
 <details>
   <summary>Display all platform settings</summary>
 
-  <div align="center">
+  <div >
     <ul>
       <li>
-        Only <span><u><b>one</b></u></span> platform can be active at a time
+        Enable or disable multiple platforms
       </li>
       <li>
-        When switching platforms, the app automatically connects to chat if an account is available
+        When en/disabling any platform, the app automatically reconnect to all enabled ones
       </li>
     </ul>
   </div>
@@ -364,7 +364,8 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
 ### Account Settings
 
 - Broadcaster login for the active platform is a requirement
-- Chatbot account is a option
+- Chatbot account is a option (only for Twitch or Kick)
+- Youtube does not support a alternate chatbot to post messages
 
 ![image](readme-assets/platform/accounts.png)
 
@@ -385,6 +386,14 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
       </li>
     </ul>
   </ol>
+
+### Youtube information's
+
+- Youtube you have to setup the broadcasters name into the textfield. After login a window opens to login the account from the Youtube user you typed in to the textfield
+- This step is really important, without the login the chatbot doesn't works
+- The best way to make sure the app listens to a chat from a livestream, plane the stream
+  - On not planed Youtube livestream's i could be buggy to listen for the chat messages
+
 </details>
 
 ---

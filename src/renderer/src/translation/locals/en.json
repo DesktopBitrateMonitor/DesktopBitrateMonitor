@@ -407,6 +407,14 @@
       "removeAlias": {
         "label": "Remove Alias",
         "description": "Remove a alias for an existing command"
+      },
+      "enableSwitcher": {
+        "label": "Enable switcher",
+        "description": "Enables the switcher service"
+      },
+      "disableSwitcher": {
+        "label": "Disable switcher",
+        "description": "Disables the switcher service"
       }
     },
     "messages": {
@@ -595,6 +603,26 @@
         "error": {
           "label": "Remove Alias Error Message",
           "hint": "Available variables: ${alias}, ${command}, ${server}"
+        }
+      },
+      "enableSwitcher": {
+        "success": {
+          "label": "Switcher enabled successfully message",
+          "hint": ""
+        },
+        "error": {
+          "label": "Switcher enabled error message",
+          "hint": ""
+        }
+      },
+      "disableSwitcher": {
+        "success": {
+          "label": "Switcher disabled successfully message",
+          "hint": ""
+        },
+        "error": {
+          "label": "Switcher disabled error message",
+          "hint": ""
         }
       },
       "users": {},
@@ -1147,6 +1175,14 @@
         "notFound": "No alias found with the name ${alias}",
         "error": "Failed to remove alias ${alias}",
         "hint": "Available variables: ${alias}, ${command}"
+      },
+      "enableSwitcher": {
+        "success": "Switcher successfully enabled",
+        "error": "Failed to enable the switcher"
+      },
+      "disableSwitcher": {
+        "success": "Switcher successfully disabled",
+        "error": "Failed to disable the switcher"
       }
     }
   }

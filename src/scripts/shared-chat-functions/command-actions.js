@@ -10,6 +10,7 @@ import {
 import Logger from '../logging/logger';
 import globalInternalStore from '../store/global-internal-store';
 import { getYoutubeUserByName } from '../youtube/youtube-api';
+import { event } from '@legendapp/state';
 
 /**
  *
@@ -489,9 +490,6 @@ export const commandActions = ({
     const commandsData = commandsConfig.get('commands') || [];
     const allAliases = commandsData.map((cmd) => cmd.cmd.map((c) => c.toLowerCase())).flat();
 
-    console.log(argument);
-    console.log(alias);
-
     // check if alias is empty or undefined
     if (!alias) {
       await messageService({
@@ -538,5 +536,35 @@ export const commandActions = ({
       event: 'success',
       variables: { command: commandToAddAlias.action, alias, server }
     });
+  },
+  enableSwitcher: async () => {
+    try {
+      switcherConfig.set('switcherEnabled', true);
+      await messageService({
+        action: 'enableSwitcher',
+        event: 'success'
+      });
+    } catch (error) {
+      await messageService({
+        action: 'enableSwitcher',
+        event: 'error'
+      });
+      Logger.error(`Failed to enable switcher: ${error.message}`);
+    }
+  },
+  disableSwitcher: async () => {
+    try {
+      switcherConfig.set('switcherEnabled', false);
+      await messageService({
+        action: 'disableSwitcher',
+        event: 'success'
+      });
+    } catch (error) {
+      await messageService({
+        action: 'disableSwitcher',
+        event: 'error'
+      });
+      Logger.error(`Failed to disable switcher: ${error.message}`);
+    }
   }
 });

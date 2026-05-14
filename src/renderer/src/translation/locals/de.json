@@ -408,6 +408,14 @@
       "removeAlias": {
         "label": "Alias entfernen",
         "description": "Entfernt einen Alias für einen Command"
+      },
+      "enableSwitcher": {
+        "label": "Switcher aktivieren",
+        "description": "Aktiviert den Switcher Service"
+      },
+      "disableSwitcher": {
+        "label": "Switcher deaktivieren",
+        "description": "Deaktiviert den Switcher Service"
       }
     },
     "messages": {
@@ -598,6 +606,27 @@
           "hint": "Verfügbare Variablen: ${alias}, ${command}, ${server}"
         }
       },
+      "enableSwitcher": {
+        "success": {
+          "label": "Switcher aktiviert erfolgreich Nachricht",
+          "hint": ""
+        },
+        "error": {
+          "label": "Switcher aktivieren Fehler Nachricht",
+          "hint": ""
+        }
+      },
+      "disableSwitcher": {
+        "success": {
+          "label": "Switcher deaktiviert erfolgreich Nachricht",
+          "hint": ""
+        },
+        "error": {
+          "label": "Switcher deaktivieren Fehler Nachricht",
+          "hint": ""
+        }
+      },
+
       "users": {},
       "accounts": {}
     },
@@ -1151,6 +1180,14 @@
         "notFound": "Kein Alias mit dem Namen ${alias} gefunden",
         "error": "Fehler beim Entfernen des Alias ${alias}",
         "hint": "Verfügbare Variablen: ${alias}, ${command}"
+      },
+      "enableSwitcher": {
+        "success": "Switcher erfolgreich aktiviert",
+        "error": "Fehler beim Aktivieren des Switchers"
+      },
+      "disableSwitcher": {
+        "success": "Switcher erfolgreich deaktiviert",
+        "error": "Fehler beim Deaktivieren des Switchers"
       }
     }
   }

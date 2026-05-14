@@ -114,8 +114,6 @@ const YoutubeAccountsSettings = () => {
       await window.storeApi.set(`youtube-accounts-config`, accountType, userData);
       const res = await window.authApi.logoutYoutubeUser(accountType);
 
-      console.log('Logout result:', res);
-
       updateYoutubeAccountsConfig((prev) => ({
         ...(prev || {}),
         [accountType]: userData
