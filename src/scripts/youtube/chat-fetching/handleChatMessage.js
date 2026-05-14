@@ -4,13 +4,14 @@ import {
   ifCurrentSceneIsPrivacyScene,
   startCommandCooldown
 } from '../../shared-chat-functions/lib';
+import Logger from '../../logging/logger';
 import { injectDefaults } from '../../store/defaults';
 import { getYoutubeUserRole, hasPermission } from './lib';
 import { youtubeMessageService } from '../message-service/chat-messages';
 
 const { commandsConfig, youtubeAccountsConfig, switcherConfig, serverConfig } = injectDefaults();
 
-export async function handleChatMessage(rawMessage) {
+export async function handleChatMessage(rawMessage, livestreamId = null) {
   const message = rawMessage?.item?.message?.text;
   const args = message.split(' ');
   const commandName = args[0].toLowerCase();
@@ -62,9 +63,15 @@ export async function handleChatMessage(rawMessage) {
       inPrivacyScene: await ifCurrentSceneIsPrivacyScene()
     })
   ) {
+    const scopedYoutubeMessageService = (payload) =>
+      youtubeMessageService({
+        ...payload,
+        context: { livestreamId }
+      });
+
     commandActions({
       platform: 'youtube',
-      messageService: youtubeMessageService,
+      messageService: scopedYoutubeMessageService,
       server: serverName,
       switcherConfig,
       commandsConfig,

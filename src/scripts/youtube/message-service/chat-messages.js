@@ -3,7 +3,7 @@ import { injectDefaults } from '../../store/defaults';
 import Logger from '../../logging/logger';
 import { sendChatMessage } from '../youtube-api';
 
-export async function youtubeMessageService({ action, event, variables = {} }) {
+export async function youtubeMessageService({ action, event, variables = {}, context = {} }) {
   const { messagesConfig, youtubeAccountsConfig } = injectDefaults();
   const allMessages = messagesConfig.get('messages');
 
@@ -17,15 +17,13 @@ export async function youtubeMessageService({ action, event, variables = {} }) {
   message = templateParser(message, variables);
 
   const youtubeConfig = youtubeAccountsConfig.get('');
-  const broadcaster_id = youtubeConfig.broadcaster.id;
   const bot_id = youtubeConfig.bot.id;
   const useBotAccount = youtubeConfig.useBotAccount;
-  const sender_id = bot_id !== '' && useBotAccount ? bot_id : broadcaster_id;
   const accountType = bot_id !== '' && useBotAccount ? 'bot' : 'broadcaster';
 
   Logger.log(`Chat message for action: "${action}" and event: "${event}" processed successfully`);
 
-  const res = await sendChatMessage(message, accountType);
+  const res = await sendChatMessage(message, accountType, context);
 
   if (res.success) {
     Logger.log(`Chat message for action: "${action}" and event: "${event}" sent successfully`);

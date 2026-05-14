@@ -186,19 +186,21 @@ export async function getYoutubeUserByName(channelName) {
  *
  * @param {string} message - The message to send in the live stream chat
  * @param {string} accountType - The account type (broadcaster or bot) to use for sending the message
+ * @param {{ livestreamId?: string | null }} options - Optional routing context for the target livestream
  * @returns {Promise<{success: boolean, error?: string}>} Result of the message sending operation
  */
-export async function sendChatMessage(message, accountType = 'broadcaster') {
+export async function sendChatMessage(message, accountType = 'broadcaster', options = {}) {
   try {
     const youtubeConfig = youtubeAccountsConfig.get('');
     const channelId = youtubeConfig?.broadcaster?.id;
+    const livestreamId = options?.livestreamId || null;
 
     if (!channelId) {
       Logger.error('No broadcaster channel ID found, cannot send YouTube message');
       return { success: false, error: 'No broadcaster channel ID found' };
     }
 
-    const connectedLiveChat = getCurrentLiveChatInstance();
+    const connectedLiveChat = getCurrentLiveChatInstance(livestreamId);
 
     if (connectedLiveChat?.running) {
       await connectedLiveChat.sendMessage(message);
@@ -208,7 +210,9 @@ export async function sendChatMessage(message, accountType = 'broadcaster') {
 
     return await withYoutubeRetry(accountType, 'send chat message', async (yt) => {
       const liveStreamId =
-        (await getActiveLivestreamId(yt, channelId)) || getCachedActiveLivestreamId();
+        livestreamId ||
+        (await getActiveLivestreamId(yt, channelId)) ||
+        getCachedActiveLivestreamId();
 
       if (!liveStreamId) {
         Logger.warn('No active livestream found for channel');
