@@ -31,7 +31,8 @@
 </div>
 
 
-#### [ENGLISH README](https://github.com/DesktopBitrateMonitor/DesktopBitrateMonitor/blob/main/README/ENG-README.MD)
+### [ENGLISH README](https://github.com/DesktopBitrateMonitor/DesktopBitrateMonitor/blob/main/README/ENG-README.MD)
+### [GERMAN README](https://github.com/DesktopBitrateMonitor/DesktopBitrateMonitor/blob/main/README/GER-README.MD)
 
 # Roadmap
 

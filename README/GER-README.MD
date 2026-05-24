@@ -411,7 +411,13 @@ Sobald du einen SRT-Feed startest und der Server Statistiken veröffentlicht, si
 ### YouTube-Informationen
 
 - Bei YouTube musst du den Namen des Broadcasters in das Textfeld eintragen. Nach dem Login öffnet sich ein Fenster zum Login des YouTube-Benutzers, den du im Textfeld eingetragen hast
+
+![image](readme-assets/platform/youtube-channel-name.png)
+
 - Dieser Schritt ist sehr wichtig, ohne Login funktioniert der Chatbot nicht
+
+![image](readme-assets/platform/youtube-login.png)
+
 - Der beste Weg, damit die App sicher den Chat eines Livestreams liest, ist die Planung des Streams
 	- Bei nicht geplanten YouTube-Livestreams kann das Chat-Listening fehlerhaft sein
 
