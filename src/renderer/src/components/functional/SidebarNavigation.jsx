@@ -125,7 +125,7 @@ const PLATFORM_ROUTES = [
     path: `${PLATFORMS_PATH}/youtube`,
     icon: YoutubeIcon,
     beta: true,
-    dev: true,
+    dev: false,
     disabled: false
   }
 ];

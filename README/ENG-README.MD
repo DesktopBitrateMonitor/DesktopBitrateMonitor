@@ -413,7 +413,13 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
 ### Youtube information's
 
 - Youtube you have to setup the broadcasters name into the textfield. After login a window opens to login the account from the Youtube user you typed in to the textfield
+
+![image](readme-assets/platform/youtube-channel-name.png)
+
 - This step is really important, without the login the chatbot doesn't works
+
+![image](readme-assets/platform/youtube-login.png)
+
 - The best way to make sure the app listens to a chat from a livestream, plane the stream
   - On not planed Youtube livestream's i could be buggy to listen for the chat messages
 
