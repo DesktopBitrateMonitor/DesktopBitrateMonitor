@@ -32,14 +32,18 @@ export const getTwitchUserRole = ({ event }) => {
   const { broadcaster_user_id, chatter_user_id, user_type, badges } = event;
 
   const isBroadcaster = broadcaster_user_id === chatter_user_id;
-  const admins = twitchAccountsConfig.get('admins').map((admin) => admin.login);
-  const mods = twitchAccountsConfig.get('mods').map((mod) => mod.login);
+  const admins = twitchAccountsConfig.get('admins').map((admin) => admin.id);
+  const mods = twitchAccountsConfig.get('mods').map((mod) => mod.id);
 
-  const isAdmin = admins.includes(event.chatter_user_login.toLowerCase());
+  console.log(admins, mods);
+
+  const isAdmin = admins.includes(event.chatter_user_id);
   const isMod =
-    mods.includes(event.chatter_user_login.toLowerCase()) ||
+    mods.includes(event.chatter_user_id) ||
     (badges.length > 0 &&
       badges.some((badge) => badge.set_id === 'moderator' || badge.set_id === 'lead_moderator'));
+
+  console.log({ isBroadcaster, isAdmin, isMod });
 
   if (isBroadcaster) return 'broadcaster';
   if (isAdmin) return 'admin';

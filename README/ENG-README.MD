@@ -146,7 +146,14 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
     <tbody>
       <tr>
         <td>start_stream</td>
-        <td>Starts the stream</td>
+        <td>
+          <div>
+            Starts the stream
+          </div>
+          <h6>
+            For Youtube only on planed stream chats
+          </h6>
+        </td>
         <td>!start</td>
         <td>Broadcaster</td>
         <td></td>
@@ -228,6 +235,22 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
         <td>switch_to_starting</td>
         <td>Switch to Starting Scene</td>
         <td>!intro</td>
+        <td>Admin</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>enable_switcher</td>
+        <td>Enables the switcher service</td>
+        <td>!switcherenable, !switcheron, !switcherstart</td>
+        <td>Admin</td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>disable_switcher</td>
+        <td>Disable the switcher service</td>
+        <td>!switcherdisable, !switcheroff, !switcherstop</td>
         <td>Admin</td>
         <td></td>
         <td></td>

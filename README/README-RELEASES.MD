@@ -2,7 +2,7 @@
 
 - Add Youtube as platform - BETA state
 - Add a disable switcher chat command
-
+- Fix Admin/Mod detection if a user changes his username
 ---
 
 ## v1.3.0
