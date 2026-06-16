@@ -343,13 +343,13 @@ async function collectMediaSources(sceneName, visited, isGroup) {
     }
 
     // Recurse into nested scenes or groups
-    if (item.sourceType === 'OBS_SOURCE_TYPE_SCENE') {
+    if (item.sourceType === 'OBS_SOURCE_TYPE_SCENE' && !item?.isGroup) {
       const nested = await collectMediaSources(item.sourceName, visited, false);
       results.push(...nested);
       continue;
     }
 
-    if (item.sourceType === 'OBS_SOURCE_TYPE_GROUP') {
+    if (item.sourceType === 'OBS_SOURCE_TYPE_SCENE' && item?.isGroup) {
       const nested = await collectMediaSources(item.sourceName, visited, true);
       results.push(...nested);
       continue;

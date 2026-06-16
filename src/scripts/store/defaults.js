@@ -74,6 +74,7 @@ export const injectDefaults = () => {
         messagesConfig: true,
         twitchAccountsConfig: true,
         kickAccountsConfig: true,
+        youtubeAccountsConfig: true,
         serverConfig: true,
         streamingSoftwareConfig: true,
         switcherConfig: true,

@@ -1049,6 +1049,7 @@
         "messagesConfig": "Nachrichtenkonfiguration",
         "twitchAccountsConfig": "Twitch-Kontokonfiguration",
         "kickAccountsConfig": "Kick-Kontokonfiguration",
+        "youtubeAccountsConfig": "YouTube-Kontokonfiguration",
         "serverConfig": "Serverkonfiguration",
         "streamingSoftwareConfig": "Streaming-Software-Konfiguration",
         "switcherConfig": "Switcher-Konfiguration",

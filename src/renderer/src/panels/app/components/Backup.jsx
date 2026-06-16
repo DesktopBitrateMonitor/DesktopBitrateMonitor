@@ -21,7 +21,8 @@ import {
   useServerConfigStore,
   useStreamingSoftwareConfigStore,
   useSwitcherConfigStore,
-  useTwitchAccountsConfig
+  useTwitchAccountsConfig,
+  useYoutubeAccountsConfig
 } from '../../../contexts/DataContext';
 import { parseBackupData, stringifyBackupData, timestamp } from '../../../scripts/lib';
 import { useTranslation } from 'react-i18next';
@@ -39,6 +40,7 @@ const Backup = () => {
   const { messagesConfig, updateMessagesConfig } = useMessagesConfigStore();
   const { twitchAccountsConfig, updateTwitchAccountsConfig } = useTwitchAccountsConfig();
   const { kickAccountsConfig, updateKickAccountsConfig } = useKickAccountsConfig();
+  const { youtubeAccountsConfig, updateYoutubeAccountsConfig } = useYoutubeAccountsConfig();
   const { serverConfig, updateServerConfig } = useServerConfigStore();
   const { streamingSoftwareConfig, updateStreamingSoftwareConfig } =
     useStreamingSoftwareConfigStore();
@@ -54,6 +56,7 @@ const Backup = () => {
       'messages-config': true,
       'twitch-accounts-config': true,
       'kick-accounts-config': true,
+      'youtube-accounts-config': true,
       'server-config': true,
       'streaming-software-config': true,
       'switcher-config': true,
@@ -70,6 +73,7 @@ const Backup = () => {
       'messages-config': messagesConfig,
       'twitch-accounts-config': twitchAccountsConfig,
       'kick-accounts-config': kickAccountsConfig,
+      'youtube-accounts-config': youtubeAccountsConfig,
       'server-config': serverConfig,
       'streaming-software-config': streamingSoftwareConfig,
       'switcher-config': switcherConfig,
@@ -82,6 +86,7 @@ const Backup = () => {
       messagesConfig,
       twitchAccountsConfig,
       kickAccountsConfig,
+      youtubeAccountsConfig,
       serverConfig,
       streamingSoftwareConfig,
       switcherConfig,
@@ -97,6 +102,7 @@ const Backup = () => {
       'messages-config': 'messagesConfig',
       'twitch-accounts-config': 'twitchAccountsConfig',
       'kick-accounts-config': 'kickAccountsConfig',
+      'youtube-accounts-config': 'youtubeAccountsConfig',
       'server-config': 'serverConfig',
       'streaming-software-config': 'streamingSoftwareConfig',
       'switcher-config': 'switcherConfig',
@@ -130,6 +136,7 @@ const Backup = () => {
     'messages-config': updateMessagesConfig,
     'twitch-accounts-config': updateTwitchAccountsConfig,
     'kick-accounts-config': updateKickAccountsConfig,
+    'youtube-accounts-config': updateYoutubeAccountsConfig,
     'server-config': updateServerConfig,
     'streaming-software-config': updateStreamingSoftwareConfig,
     'switcher-config': updateSwitcherConfig,
@@ -141,6 +148,11 @@ const Backup = () => {
     {
       key: 'twitch-accounts-config',
       label: t('appSettings.backup.switches.twitchAccountsConfig'),
+      isDev: false
+    },
+    {
+      key: 'youtube-accounts-config',
+      label: t('appSettings.backup.switches.youtubeAccountsConfig'),
       isDev: false
     },
     {
@@ -215,6 +227,9 @@ const Backup = () => {
         ? twitchAccountsConfig
         : null,
       'kick-accounts-config': selectedSettings['kick-accounts-config'] ? kickAccountsConfig : null,
+      'youtube-accounts-config': selectedSettings['youtube-accounts-config']
+        ? youtubeAccountsConfig
+        : null,
       'server-config': selectedSettings['server-config'] ? serverConfig : null,
       'streaming-software-config': selectedSettings['streaming-software-config']
         ? streamingSoftwareConfig
@@ -335,7 +350,8 @@ const Backup = () => {
             onClick={() => {
               if (
                 selectedSettings['twitch-accounts-config'] ||
-                selectedSettings['kick-accounts-config']
+                selectedSettings['kick-accounts-config'] ||
+                selectedSettings['youtube-accounts-config']
               ) {
                 setOpenWarningDialog(true);
               } else {

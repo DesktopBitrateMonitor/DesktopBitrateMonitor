@@ -1,3 +1,12 @@
+## v1.5.0
+
+- Add Youtube settings for export
+- Fix source refreshing error if a group are included in the live scene
+
+[Latest Release](https://github.com/DesktopBitrateMonitor/DesktopBitrateMonitor/releases)
+
+---
+
 ## v1.4.0
 
 - Add Youtube as platform - BETA state

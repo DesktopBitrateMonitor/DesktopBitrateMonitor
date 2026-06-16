@@ -1045,6 +1045,7 @@
         "messagesConfig": "Messages Config",
         "twitchAccountsConfig": "Twitch Accounts Config",
         "kickAccountsConfig": "Kick Accounts Config",
+        "youtubeAccountsConfig": "YouTube Accounts Config",
         "streamingSoftwareConfig": "Streaming Software Config",
         "switcherConfig": "Switcher Config",
         "overlayConfig": "Overlay Config"
