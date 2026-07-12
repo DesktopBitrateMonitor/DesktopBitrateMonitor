@@ -45,6 +45,10 @@
 - Add more different server types
 - Add more broadcasting softwares
 - Add more platforms (if there are more relevant in future)
+<<<<<<< HEAD
+=======
+
+>>>>>>> ccb866816b57570a8fb3d2e96877f3c0ff5afbac
 
 <div align="center">
   <h3>
