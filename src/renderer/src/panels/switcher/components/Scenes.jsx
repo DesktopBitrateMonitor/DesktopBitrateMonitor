@@ -68,8 +68,27 @@ const Scenes = ({ collapsedIds, toggleCollapsed }) => {
           scene: SCENE_KEYS.find((scene) => scene.key === name)?.label || name
         });
       }
-      if(name === 'scenePrivacy' && SCENE_KEYS.find((scene) => scene.key !== 'scenePrivacy' && scenesData[scene.key].toLowerCase() === value.toLowerCase())) {
+      if (
+        name === 'scenePrivacy' &&
+        SCENE_KEYS.find(
+          (scene) =>
+            scene.key !== 'scenePrivacy' &&
+            scenesData[scene.key].toLowerCase() === value.toLowerCase()
+        )
+      ) {
         return t('switcher.scenes.error3', {
+          scene: SCENE_KEYS.find((scene) => scene.key === name)?.label || name
+        });
+      }
+      if (
+        name === 'sceneStart' &&
+        SCENE_KEYS.find(
+          (scene) =>
+            scene.key !== 'sceneStart' &&
+            scenesData[scene.key].toLowerCase() === value.toLowerCase()
+        )
+      ) {
+        return t('switcher.scenes.error4', {
           scene: SCENE_KEYS.find((scene) => scene.key === name)?.label || name
         });
       }

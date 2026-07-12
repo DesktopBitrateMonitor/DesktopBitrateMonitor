@@ -1,9 +1,14 @@
+## v1.5.1
+
+- Fix theming for command aliases
+- Fix Intro scene has to be unique after the fix -> Switch starting to live does not work if starting scene matching other scenes
+
+---
+
 ## v1.5.0
 
 - Add Youtube settings for export
 - Fix source refreshing error if a group are included in the live scene
-
-[Latest Release](https://github.com/DesktopBitrateMonitor/DesktopBitrateMonitor/releases)
 
 ---
 
@@ -12,6 +17,7 @@
 - Add Youtube as platform - BETA state
 - Add a disable switcher chat command
 - Fix Admin/Mod detection if a user changes his username
+
 ---
 
 ## v1.3.0

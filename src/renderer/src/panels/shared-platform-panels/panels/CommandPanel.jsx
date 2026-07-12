@@ -340,7 +340,7 @@ const CommandPanel = ({ command, onChange, collapsible = true, expanded, onExpan
                         theme.palette.mode === 'light' ? 0.16 : 0.32
                       ),
                     border: (theme) => `1px solid ${alpha(theme.palette.primary.main, 0.6)}`,
-                    color: (theme) => theme.palette.primary.contrastText,
+                    color: (theme) => theme.palette.text.primary,
                     boxShadow: (theme) => `0 1px 6px ${alpha(theme.palette.primary.main, 0.35)}`,
                     '& .MuiChip-deleteIcon': {
                       color: (theme) => theme.palette.error.light,
