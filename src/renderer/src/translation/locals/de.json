@@ -458,6 +458,20 @@
           "hint": ""
         }
       },
+      "changeCollection": {
+        "success": {
+          "label": "Sammlung erfolgreich geändert Nachricht",
+          "hint": "Verfügbare Variablen: ${server}, ${collection}"
+        },
+        "error": {
+          "label": "Sammlung ändern Fehler Nachricht",
+          "hint": "Verfügbare Variablen: ${server}, ${collection}"
+        },
+        "notFound": {
+          "label": "Sammlung nicht gefunden Nachricht",
+          "hint": "Verfügbare Variablen: ${server}, ${collection}"
+        }
+      },
       "raid": {
         "success": {
           "label": "Raid erfolgreich Nachricht",
@@ -1119,6 +1133,12 @@
         "success": "${server}: Stream erfolgreich gestoppt",
         "error": "${server}: Fehler beim Stoppen des Streams",
         "hint": "Verfügbare Variablen: ${server}"
+      },
+      "changeCollection": {
+        "success": "${server}: Sammlung erfolgreich zu ${collection} geändert",
+        "error": "${server}: Fehler beim Ändern der Sammlung",
+        "notFound": "${server}: Sammlung ${collection} nicht gefunden",
+        "hint": "Verfügbare Variablen: ${server}, ${collection}"
       },
       "raid": {
         "success": "Folgt mit uns zu twitch.tv/${channel} für mehr Unterhaltung!",

@@ -71,6 +71,33 @@ export const buildMessages = (locale) => {
     {
       id: generateId(),
       group: 'stream',
+      action: 'changeCollection',
+      event: 'success',
+      enabled: true,
+      label: 'Change Collection Success Message',
+      message: gm('defaults.messages.changeCollection.success')
+    },
+    {
+      id: generateId(),
+      group: 'stream',
+      action: 'changeCollection',
+      event: 'error',
+      enabled: true,
+      label: 'Change Collection Error Message',
+      message: gm('defaults.messages.changeCollection.error')
+    },
+    {
+      id: generateId(),
+      group: 'stream',
+      action: 'changeCollection',
+      event: 'notFound',
+      enabled: true,
+      label: 'Change Collection Not Found Message',
+      message: gm('defaults.messages.changeCollection.notFound')
+    },
+    {
+      id: generateId(),
+      group: 'stream',
       action: 'stopStream',
       event: 'error',
       enabled: true,

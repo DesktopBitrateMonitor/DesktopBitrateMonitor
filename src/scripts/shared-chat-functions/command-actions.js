@@ -62,10 +62,27 @@ export const commandActions = ({
                 const collectionToSwitch = availableCollections[colIndex];
                 await setCurrentSceneCollection(collectionToSwitch);
                 Logger.log(`Switched to scene collection: ${sceneCollection}`);
+                messageService({
+                  action: 'changeCollection',
+                  event: 'success',
+                  variables: { server, collection: sceneCollection }
+                });
               } else {
                 Logger.error(`Scene collection ${sceneCollection} does not exist.`);
+                messageService({
+                  action: 'changeCollection',
+                  event: 'notFound',
+                  variables: { server, collection: sceneCollection }
+                });
               }
             }
+          } else {
+            Logger.error(`Failed to retrieve scene collections: ${collectionsRes.error}`);
+            messageService({
+              action: 'changeCollection',
+              event: 'error',
+              variables: { server, collection: sceneCollection }
+            });
           }
         }
 

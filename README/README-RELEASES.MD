@@ -1,6 +1,7 @@
 ## v1.5.2
 
 - Add scene collection support for OBS-Studio
+- Add reply messages for collection changes successfully, error, not found collection
 - Fix stream started successfully or not for not
 
 ---

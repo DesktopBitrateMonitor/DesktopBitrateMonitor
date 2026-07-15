@@ -457,6 +457,20 @@
           "hint": "Available variables: ${server}"
         }
       },
+      "changeCollection":{
+        "success": {
+          "label": "Collection Changed Message",
+          "hint": "Available variables: ${server}, ${collection}"
+        },
+        "error": {
+          "label": "Collection Change Error Message",
+          "hint": "Available variables: ${server}, ${collection}"
+        },
+        "notFound": {
+          "label": "Collection Not Found Message",
+          "hint": "Available variables: ${server}, ${collection}"
+        }
+      },
       "raid": {
         "success": {
           "label": "Raid Success Message",
@@ -1115,6 +1129,13 @@
         "error": "${server}: Failed to stop the stream.",
         "hint": "Available variables: ${server}"
       },
+      "changeCollection": {
+        "success": "${server}: Collection changed to ${collection} successfully!",
+        "error": "${server}: Failed to change the collection.",
+        "notFound": "${server}: Collection ${collection} not found.",
+        "hint": "Available variables: ${server}, ${collection}"
+      },
+
       "raid": {
         "success": "Follow us to twitch.tv/${channel} for more content!",
         "error": "Failed to raid twitch.tv/${channel}",
