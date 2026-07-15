@@ -1,3 +1,10 @@
+## v1.5.2
+
+- Add scene collection support for OBS-Studio
+- Fix stream started successfully or not for not
+
+---
+
 ## v1.5.1
 
 - Fix theming for command aliases

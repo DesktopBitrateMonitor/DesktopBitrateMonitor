@@ -1,11 +1,15 @@
 import React, { useCallback, useState } from 'react';
 import CollapsibleCard from '../../../components/functional/CollapsibleCard';
 import SaveIcon from '@mui/icons-material/Save';
+import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 
-import { Box, TextField } from '@mui/material';
+import { Box, Switch, TextField, Tooltip, Typography } from '@mui/material';
 import InputEndAdornment from '../../../components/feedback/InputEndAdornment';
 import { useAlert } from '../../../contexts/AlertContext';
-import { useSwitcherConfigStore } from '../../../contexts/DataContext';
+import {
+  useSwitcherConfigStore,
+  useStreamingSoftwareConfigStore
+} from '../../../contexts/DataContext';
 import { useTranslation } from 'react-i18next';
 
 const Scenes = ({ collapsedIds, toggleCollapsed }) => {
@@ -19,6 +23,7 @@ const Scenes = ({ collapsedIds, toggleCollapsed }) => {
   ];
 
   const { switcherConfig, updateSwitcherConfig } = useSwitcherConfigStore();
+  const { streamingSoftwareConfig } = useStreamingSoftwareConfigStore();
   const { showAlert } = useAlert();
 
   const initialScenesData = {
@@ -26,7 +31,8 @@ const Scenes = ({ collapsedIds, toggleCollapsed }) => {
     sceneOffline: switcherConfig.sceneOffline,
     sceneLow: switcherConfig.sceneLow,
     scenePrivacy: switcherConfig.scenePrivacy,
-    sceneStart: switcherConfig.sceneStart
+    sceneStart: switcherConfig.sceneStart,
+    sceneCollection: switcherConfig.sceneCollection
   };
 
   const [oldDataDraft, setOldDataDraft] = useState(initialScenesData);
@@ -37,14 +43,16 @@ const Scenes = ({ collapsedIds, toggleCollapsed }) => {
     sceneOffline: false,
     sceneLow: false,
     scenePrivacy: false,
-    sceneStart: false
+    sceneStart: false,
+    sceneCollection: false
   });
   const [errorMessages, setErrorMessages] = useState({
     sceneLive: '',
     sceneOffline: '',
     sceneLow: '',
     scenePrivacy: '',
-    sceneStart: ''
+    sceneStart: '',
+    sceneCollection: ''
   });
 
   const validateTextField = (name, value) => {
@@ -93,6 +101,13 @@ const Scenes = ({ collapsedIds, toggleCollapsed }) => {
         });
       }
     }
+    if (name === 'sceneCollection') {
+      if (value.length > 0 && value.trim() === '') {
+        return t('switcher.scenes.error1', {
+          scene: t('switcher.scenes.sceneCollection.label')
+        });
+      }
+    }
     return '';
   };
 
@@ -113,7 +128,6 @@ const Scenes = ({ collapsedIds, toggleCollapsed }) => {
         [name]: false
       }));
     }
-
     const validationMessage = validateTextField(name, value);
     setErrorMessages((prev) => ({
       ...prev,
@@ -153,41 +167,83 @@ const Scenes = ({ collapsedIds, toggleCollapsed }) => {
       expanded={!collapsedIds.includes('scenes')}
       onExpandedChange={() => toggleCollapsed('scenes')}
     >
-      {Object.entries(scenesData).map(([key, value]) => (
-        <Box key={key} mb={2}>
+      {streamingSoftwareConfig?.currentType === 'obs-studio' && (
+        <Box mb={2} sx={{ display: 'flex', alignItems: 'center' }}>
           <TextField
-            fullWidth
-            label={SCENE_KEYS.find((scene) => scene.key === key)?.label || key}
-            name={key}
-            value={value}
-            onChange={(e) => handleInputChange(key, e.target.value)}
+            label={t('switcher.scenes.sceneCollection.label')}
+            name="sceneCollection"
+            value={scenesData.sceneCollection}
+            onChange={(e) => handleInputChange('sceneCollection', e.target.value)}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
-                saveField(key);
+                saveField('sceneCollection');
               }
             }}
-            error={Boolean(errorMessages[key])}
-            helperText={errorMessages[key]}
+            error={Boolean(errorMessages['sceneCollection'])}
+            helperText={errorMessages['sceneCollection']}
             slotProps={{
               input: {
                 endAdornment:
-                  dirtyStates[key] && !errorMessages[key] ? (
+                  dirtyStates['sceneCollection'] && !errorMessages['sceneCollection'] ? (
                     <InputEndAdornment
                       title={t('switcher.inputAdornment')}
                       placement="top-start"
-                      open={Boolean(dirtyStates[key])}
+                      open={Boolean(dirtyStates['sceneCollection'])}
                       color="success"
                       icon={<SaveIcon color="success" />}
                       handleClick={() => {
-                        saveField(key);
+                        saveField('sceneCollection');
                       }}
                     />
                   ) : undefined
               }
             }}
           />
+          <Tooltip title={t('switcher.scenes.sceneCollection.hint')} arrow placement="bottom">
+            <HelpOutlineOutlinedIcon
+              sx={{ ml: 1, color: 'text.secondary', alignSelf: 'flex-start' }}
+            />
+          </Tooltip>
         </Box>
-      ))}
+      )}
+      {Object.entries(scenesData).map(([key, value]) => {
+        if (key === 'sceneCollection') return null; // Skip rendering sceneCollection field here
+        return (
+          <Box key={key} mb={2}>
+            <TextField
+              fullWidth
+              label={SCENE_KEYS.find((scene) => scene.key === key)?.label || key}
+              name={key}
+              value={value}
+              onChange={(e) => handleInputChange(key, e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  saveField(key);
+                }
+              }}
+              error={Boolean(errorMessages[key])}
+              helperText={errorMessages[key]}
+              slotProps={{
+                input: {
+                  endAdornment:
+                    dirtyStates[key] && !errorMessages[key] ? (
+                      <InputEndAdornment
+                        title={t('switcher.inputAdornment')}
+                        placement="top-start"
+                        open={Boolean(dirtyStates[key])}
+                        color="success"
+                        icon={<SaveIcon color="success" />}
+                        handleClick={() => {
+                          saveField(key);
+                        }}
+                      />
+                    ) : undefined
+                }
+              }}
+            />
+          </Box>
+        );
+      })}
     </CollapsibleCard>
   );
 };

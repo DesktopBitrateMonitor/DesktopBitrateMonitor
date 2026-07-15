@@ -275,7 +275,7 @@ export const injectDefaults = () => {
       collapsed: [],
       layout: 'list',
       trigger: 400,
-      rTrigger: 1200,
+      rTrigger: 1000,
       offTrigger: 0,
       triggerToLive: 0,
       triggerToLow: 3,
@@ -290,7 +290,8 @@ export const injectDefaults = () => {
       enableChatNotifications: true,
       switchToStartSceneOnStreamStart: true,
       switchFromStartingToLive: true,
-      stopStreamAfterRaid: true
+      stopStreamAfterRaid: true,
+      sceneCollection: ''
     }
   });
 

@@ -845,7 +845,11 @@
       "offlineScene": "Offline Scene",
       "lowBitrateScene": "Low-Bitrate Scene",
       "privacyScene": "Privacy Scene",
-      "startScene": "Start Scene"
+      "startScene": "Start Scene",
+      "sceneCollection": {
+        "label": "Scene Collection",
+        "hint": "The scene collection used in the broadcasting software. If empty, the current collection will be used. When sending the stream start command, the collection in the broadcasting software will be switched to the specified collection"
+      }
     },
     "triggers": {
       "header": "Trigger Settings",

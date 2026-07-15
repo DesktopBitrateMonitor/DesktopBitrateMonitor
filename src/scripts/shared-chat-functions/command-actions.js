@@ -5,7 +5,9 @@ import {
   startStream,
   stopStream,
   setCurrentProgramScene,
-  fixMediaSources
+  fixMediaSources,
+  getSceneCollectionList,
+  setCurrentSceneCollection
 } from '../streaming-software/obs-api';
 import Logger from '../logging/logger';
 import globalInternalStore from '../store/global-internal-store';
@@ -37,6 +39,36 @@ export const commandActions = ({
     if (res.success) {
       if (config.switchToStartSceneOnStreamStart) {
         const startScene = config.sceneStart;
+        const sceneCollection = config.sceneCollection.toLowerCase();
+
+        if (sceneCollection !== '') {
+          const collectionsRes = await getSceneCollectionList();
+
+          if (collectionsRes.success) {
+            const currentSceneCollectionName =
+              collectionsRes?.data?.currentSceneCollectionName.toLowerCase() || '';
+
+            const availableCollections = collectionsRes?.data?.sceneCollections || [];
+
+            if (sceneCollection !== currentSceneCollectionName) {
+              const collectionExists = availableCollections
+                .map((col) => col.toLowerCase())
+                .includes(sceneCollection);
+
+              if (collectionExists) {
+                const colIndex = availableCollections.findIndex(
+                  (col) => col.toLowerCase() === sceneCollection
+                );
+                const collectionToSwitch = availableCollections[colIndex];
+                await setCurrentSceneCollection(collectionToSwitch);
+                Logger.log(`Switched to scene collection: ${sceneCollection}`);
+              } else {
+                Logger.error(`Scene collection ${sceneCollection} does not exist.`);
+              }
+            }
+          }
+        }
+
         const sceneRes = await setCurrentProgramScene(startScene);
         if (sceneRes.success) {
           Logger.log(`Switched to start scene: ${startScene}`);

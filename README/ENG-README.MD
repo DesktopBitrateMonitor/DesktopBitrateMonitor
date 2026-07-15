@@ -607,6 +607,14 @@ Once you start an SRT feed and the server publishes stats, you will see live dat
 
   <ol>
     <li>
+      Scene Collection
+    </li>
+    <ul>
+      <li>
+        The scene collection in the broadcasting software with the scenes for the app. If the collection name empty, the current scene collection are used. If a collection is specified, the switcher try to change to the specified collection on the start stream command event
+      </li>
+    </ul>
+    <li>
       Live Scene
     </li>
     <ul>

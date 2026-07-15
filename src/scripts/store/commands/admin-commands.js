@@ -104,7 +104,7 @@ export const adminCommands = [
     action: 'switchToPrivacy',
     requiredRole: 'admin',
     label: 'Switch to Privacy Scene',
-    cmd: ['!privacy'],
+    cmd: ['!privacy', '!pause'],
     description: 'Switches to the privacy scene.',
     enabled: true,
     coolDowns: {

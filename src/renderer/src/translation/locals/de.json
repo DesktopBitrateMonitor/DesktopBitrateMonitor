@@ -847,7 +847,11 @@
       "offlineScene": "Offline-Szene",
       "lowBitrateScene": "Low-Bitrate-Szene",
       "privacyScene": "Privacy-Szene",
-      "startScene": "Start-Szene"
+      "startScene": "Start-Szene",
+      "sceneCollection": {
+        "label": "Szenen Sammlung",
+        "hint": "Die Szenensammlung, die in der Streaming-Software verwendet wird. Wenn leer, wird die aktuelle Sammlung verwendet. Mit absenden des Stream-Start Befehls wird die Sammlung in der Streaming-Software auf die angegebene Sammlung gewechselt"
+      }
     },
     "triggers": {
       "header": "Auslöser Einstellungen",

@@ -185,6 +185,25 @@ export async function getSceneList() {
   }
 }
 
+export async function getSceneCollectionList() {
+  try {
+    const collections = await obs.call('GetSceneCollectionList');
+
+    return { success: true, data: collections, error: null };
+  } catch (error) {
+    return { success: false, data: null, error: error };
+  }
+}
+
+export async function setCurrentSceneCollection(collectionName) {
+  try {
+    await obs.call('SetCurrentSceneCollection', { sceneCollectionName: collectionName });
+    return { success: true, data: null, error: null };
+  } catch (error) {
+    return { success: false, data: null, error: error };
+  }
+}
+
 export async function startStream() {
   try {
     const { data } = await getStreamState();
@@ -192,6 +211,15 @@ export async function startStream() {
       return { success: false, data: null, error: null };
     }
     await obs.call('StartStream');
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    const { data: newData } = await getStreamState();
+
+    // Check if the stream is active after starting
+    if (!newData?.outputActive) {
+      Logger.error('Stream did not start successfully');
+      return { success: false, data: null, error: 'Timeout waiting stream activation' };
+    }
+
     return { success: true, data: null, error: null };
   } catch (error) {
     Logger.error('Stream start failed');

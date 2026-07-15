@@ -2,18 +2,18 @@
 
 - Lade die Datei "Desktop-bitrate-monitor-x.x.x-setup.exe" herunter
 
-	![downloader-exe](readme-assets/quick-start/downloader-exe.png)
+  ![downloader-exe](readme-assets/quick-start/downloader-exe.png)
 
 - Starte den Installer
-	- Es kann eine Sicherheitswarnung erscheinen. Das passiert, weil die App nicht code-signiert ist
+  - Es kann eine Sicherheitswarnung erscheinen. Das passiert, weil die App nicht code-signiert ist
 - Wähle deine Plattform und konfiguriere dein Konto
-	- Der aktivierte Schalter zeigt, welche Plattform aktuell für das Chat-Listening aktiv ist
+  - Der aktivierte Schalter zeigt, welche Plattform aktuell für das Chat-Listening aktiv ist
 - Konfiguriere deinen Statistik-Server
 - Verbinde deine Broadcasting-Software per WebSocket (OBS WebSocket 5.x oder höher)
-	- Wenn die Zugangsdaten korrekt sind, wird die Verbindung automatisch hergestellt
+  - Wenn die Zugangsdaten korrekt sind, wird die Verbindung automatisch hergestellt
 - Wenn alles korrekt verbunden ist:
-	- Beide Verbindungsanzeigen werden grün
-	- Dein Kontoname wird angezeigt
+  - Beide Verbindungsanzeigen werden grün
+  - Dein Kontoname wird angezeigt
 
 Sobald du einen SRT-Feed startest und der Server Statistiken veröffentlicht, siehst du Live-Daten im Diagramm.
 
@@ -319,8 +319,8 @@ Sobald du einen SRT-Feed startest und der Server Statistiken veröffentlicht, si
 
 - Nachrichten werden über alle Plattformen geteilt
 - Können ausgelöst werden:
-	- Manuell per Befehl
-	- Automatisch über Switcher-Events
+  - Manuell per Befehl
+  - Automatisch über Switcher-Events
 
 ![image](readme-assets/platform//chat-messages.png)
 
@@ -419,7 +419,7 @@ Sobald du einen SRT-Feed startest und der Server Statistiken veröffentlicht, si
 ![image](readme-assets/platform/youtube-login.png)
 
 - Der beste Weg, damit die App sicher den Chat eines Livestreams liest, ist die Planung des Streams
-	- Bei nicht geplanten YouTube-Livestreams kann das Chat-Listening fehlerhaft sein
+  - Bei nicht geplanten YouTube-Livestreams kann das Chat-Listening fehlerhaft sein
 
 </details>
 
@@ -432,10 +432,10 @@ Sobald du einen SRT-Feed startest und der Server Statistiken veröffentlicht, si
 
 - Der Bitrate Monitor hört auf alle aktiven Serverinstanzen
 - Die oberste Instanz ist die "Primary Instance"
-	- Statistiken werden im Live-Diagramm angezeigt
-	- Statistiken werden in den Sitzungs-Logs protokolliert
+  - Statistiken werden im Live-Diagramm angezeigt
+  - Statistiken werden in den Sitzungs-Logs protokolliert
 - Um eine Instanz als Primary Instance festzulegen, ziehe sie per Drag & Drop an den Anfang der Liste
-	- Nach dem Umordnen startet das Abrufen der Statistiken automatisch neu
+  - Nach dem Umordnen startet das Abrufen der Statistiken automatisch neu
 
 ![image](readme-assets/server/server-settings.png)
 
@@ -536,7 +536,7 @@ Sobald du einen SRT-Feed startest und der Server Statistiken veröffentlicht, si
 - Wechsel von Offline/Starting zu Live ohne aktiven Feed: Eine der Instanzen liegt über dem "to live"-Schwellwert
 - Wechsel von Live zu Low: Alle aktiven Feeds müssen unter dem "to low"-Schwellwert liegen
 - Wechsel von Low zurück zu Live: Die "Primary Instance" liegt über dem "to live"-Schwellwert zur Wiederherstellung
-	- Bleibt die "Primary Instance" unter dem Schwellwert und alle anderen Instanzen liegen darüber, wechselt der Switcher <b> NICHT </b> zurück auf Live
+  - Bleibt die "Primary Instance" unter dem Schwellwert und alle anderen Instanzen liegen darüber, wechselt der Switcher <b> NICHT </b> zurück auf Live
 
 ##
 
@@ -604,49 +604,58 @@ Sobald du einen SRT-Feed startest und der Server Statistiken veröffentlicht, si
 ![image](readme-assets/switcher/scene-settings.png)
 
 <ol>
-	<li>
-		Live-Szene
-	</li>
-	<ul>
-		<li>
-			Die Haupt-Live-Szene. Diese Szene wird genutzt, wenn der Bitrate-Schwellwert im Bereich für das Live-Bild im Stream liegt
-		</li>
-	</ul>
-	<li>
-		Offline-Szene
-	</li>
-	<ul>
-		<li>
-			Diese Szene wird genutzt, wenn der Schwellwert unter dem Off-Trigger-Wert liegt
-		</li>
-	</ul>
-	<li>
-		Low-Bitrate-Szene
-	</li>
-	<ul>
-		<li>
-			Diese Szene wird genutzt, wenn der Schwellwert unter dem Live-Trigger und über dem Off-Trigger-Wert liegt
-		</li>
-	</ul>
-	<li>
-		Privacy-Szene
-	</li>
-	<ul>
-		<li>
-			Die Privacy-Szene ist eine spezielle Szene für private Momente. Der Switcher verlässt diese Szene nie automatisch, solange kein manuelles Ereignis ausgelöst wird. Die Szene kann außerdem geschützt werden, das heißt: Der Befehl zum Szenenwechsel kann eingeschränkt werden, sodass niemand ohne erforderliche Berechtigung die Privacy-Szene verlassen kann. Das Wechseln in die Privacy-Szene ist nicht eingeschränkt.
-		</li>
-		<li>
-		<b><u>Diese Szene muss einen eindeutigen Namen haben! Keine andere Szene darf denselben Namen wie die Privacy-Szene haben!</u></b>
-		</li>
-	</ul>
-	<li>
-		Intro-Szene
-	</li>
-	<ul>
-		<li>
-			Die Szene, zu der der Switcher wechselt, wenn die Option "Beim Stream-Start auf Start wechseln" aktiviert ist
-		</li>
-	</ul>
+    <li>
+      Szenensammlung
+    </li>
+    <ul>
+      <li>
+				Die Szenensammlung in der Streaming Software mit den Szene für die Anwendung. Ist das Textfeld leer, wird die aktuelle Szenensammlung verwendet. Ist eine Sammlung eingetragen, versucht die Anwendung beim Stream Start Befehl in die eingetragene Szenensammlung zu wechseln.
+      </li>
+    </ul>
+    <li>
+    	Live-Szene
+    </li>
+    <ul>
+    	<li>
+    		Die Haupt-Live-Szene. Diese Szene wird genutzt, wenn der Bitrate-Schwellwert im Bereich für das Live-Bild im Stream liegt
+    	</li>
+    </ul>
+    <li>
+    	Offline-Szene
+    </li>
+    <ul>
+    	<li>
+    		Diese Szene wird genutzt, wenn der Schwellwert unter dem Off-Trigger-Wert liegt
+    	</li>
+    </ul>
+    <li>
+    	Low-Bitrate-Szene
+    </li>
+    <ul>
+    	<li>
+    		Diese Szene wird genutzt, wenn der Schwellwert unter dem Live-Trigger und über dem Off-Trigger-Wert liegt
+    	</li>
+    </ul>
+    <li>
+    	Privacy-Szene
+    </li>
+    <ul>
+    	<li>
+    		Die Privacy-Szene ist eine spezielle Szene für private Momente. Der Switcher verlässt diese Szene nie automatisch, solange kein manuelles Ereignis ausgelöst wird. Die Szene kann außerdem geschützt werden, das heißt: Der Befehl zum Szenenwechsel kann eingeschränkt werden, sodass niemand ohne erforderliche Berechtigung die Privacy-Szene verlassen kann. Das Wechseln in die Privacy-Szene ist nicht eingeschränkt.
+    	</li>
+    	<li>
+    	<b><u>Diese Szene muss einen eindeutigen Namen haben! Keine andere Szene darf denselben Namen wie die Privacy-Szene haben!</u></b>
+    	</li>
+    </ul>
+    <li>
+    	Intro-Szene
+    </li>
+    <ul>
+    	<li>
+    		Die Szene, zu der der Switcher wechselt, wenn die Option "Beim Stream-Start auf Start wechseln" aktiviert ist
+    	</li>
+    </ul>
+
 </ol>
   
 ##
@@ -731,15 +740,15 @@ Sobald du einen SRT-Feed startest und der Server Statistiken veröffentlicht, si
 ![image](readme-assets/logging/logging-settings.png)
 
 1. Session-Logging-Einstellungen
-	 - Logging für Session-Daten aktivieren/deaktivieren
-	 - Pfad/Verzeichnis für die Log-Speicherung
-	 - Maximale Dateigröße pro Log - Logs werden nach Erreichen der Größe aufgeteilt
-	 - Startpunkt für Logging festlegen (App- oder Broadcasting-Start)
+   - Logging für Session-Daten aktivieren/deaktivieren
+   - Pfad/Verzeichnis für die Log-Speicherung
+   - Maximale Dateigröße pro Log - Logs werden nach Erreichen der Größe aufgeteilt
+   - Startpunkt für Logging festlegen (App- oder Broadcasting-Start)
 
 2. Action-Logging-Einstellungen
-	 - Action-Logging aktivieren/deaktivieren
-	 - Pfad/Verzeichnis für die Log-Speicherung
-	 - Maximale Dateigröße pro Log - Logs werden nach Erreichen der Größe aufgeteilt
+   - Action-Logging aktivieren/deaktivieren
+   - Pfad/Verzeichnis für die Log-Speicherung
+   - Maximale Dateigröße pro Log - Logs werden nach Erreichen der Größe aufgeteilt
 
 </details>
 
