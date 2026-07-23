@@ -138,6 +138,9 @@ export async function connectToOBS(mainWindow = null) {
 }
 
 export async function disconnectFromOBS(mainWindow = null) {
+  reconnectLoop = false;
+  reconnectAttempt = 0;
+
   if (obs) {
     try {
       await obs.disconnect();

@@ -1,3 +1,7 @@
+## 1.5.3
+
+- Meld integration. The integration is not visible right now, but is included for the case meld add SRT network inputs
+
 ## v1.5.2
 
 - Add scene collection support for OBS-Studio

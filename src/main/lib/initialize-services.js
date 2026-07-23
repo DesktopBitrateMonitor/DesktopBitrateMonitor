@@ -8,6 +8,7 @@ import {
   stopFetchingStats
 } from '../../scripts/stats-fetcher/stats-fetcher';
 import { injectDefaults } from '../../scripts/store/defaults';
+import { connectToMeld } from '../../scripts/streaming-software/meld-api';
 import { startOBSConnectionLoop } from '../../scripts/streaming-software/obs-api';
 import {
   connectToTwitchEventSubs,
@@ -51,6 +52,9 @@ export async function startFetchingServerStats(mainWindow = null) {
 export async function connectStreamingSoftware(mainWindow) {
   if (streamingSoftwareConfig.get('currentType') === 'obs-studio') {
     await startOBSConnectionLoop(mainWindow);
+  }
+  if (streamingSoftwareConfig.get('currentType') === 'meld-studio') {
+    await connectToMeld(mainWindow);
   }
 }
 

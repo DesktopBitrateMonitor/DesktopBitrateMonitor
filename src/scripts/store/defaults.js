@@ -262,8 +262,8 @@ export const injectDefaults = () => {
       },
       ['meld-studio']: {
         name: 'Meld Studio',
-        host: 'localhost',
-        port: 4455,
+        host: '127.0.0.1',
+        port: 13379,
         password: ''
       }
     }

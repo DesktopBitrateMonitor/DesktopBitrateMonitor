@@ -14,7 +14,6 @@ const SoftwareSettings = () => {
 
   const SOFTWARES = [
     { label: t('software.select.options.obsStudio'), value: 'obs-studio', isDev: false },
-    { label: t('software.select.options.streamlabsObs'), value: 'streamlabs-obs', isDev: true },
     { label: t('software.select.options.meldStudio'), value: 'meld-studio', isDev: true }
   ];
 
@@ -33,6 +32,8 @@ const SoftwareSettings = () => {
         currentType: nextType
       }));
       await window.storeApi.set('streaming-software-config', 'currentType', nextType);
+      const res = await window.servicesApi.reconnectBroadcastSoftware(nextType);
+      console.log('Reconnection result:', res);
     },
     [setSoftwareType, updateStreamingSoftwareConfig]
   );

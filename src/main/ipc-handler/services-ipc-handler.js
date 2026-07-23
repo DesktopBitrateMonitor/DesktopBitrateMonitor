@@ -2,8 +2,9 @@ import { dialog, shell } from 'electron';
 import fs from 'fs';
 import { broadcastOverlay } from '../../scripts/app-server/server';
 import Logger from '../../scripts/logging/logger';
-import { reconnectToOBS } from '../../scripts/streaming-software/obs-api';
+import { disconnectFromOBS, reconnectToOBS } from '../../scripts/streaming-software/obs-api';
 import { connectToActivePlatforms, startFetchingServerStats } from '../lib/initialize-services';
+import { connectToMeld, disconnectFromMeld } from '../../scripts/streaming-software/meld-api';
 
 let isServicesInitialized = false;
 
@@ -20,12 +21,15 @@ export async function initializeServicesIpc(ipcMain, mainWindow = null) {
   ipcMain.handle('reconnect-broadcast-software', async (event, type) => {
     switch (type) {
       case 'obs-studio':
-        const res = await reconnectToOBS(mainWindow);
-        return res;
+        await disconnectBroadcastingSoftware();
+        const resObs = await reconnectToOBS(mainWindow);
+        return resObs;
       case 'streamlabs-obs':
         break;
       case 'meld-studio':
-        break;
+        await disconnectBroadcastingSoftware();
+        const resMeld = await connectToMeld(mainWindow);
+        return resMeld;
       default:
         break;
     }
@@ -73,3 +77,8 @@ export async function initializeServicesIpc(ipcMain, mainWindow = null) {
     return { success: true, data: fileData };
   });
 }
+
+const disconnectBroadcastingSoftware = async () => {
+  await disconnectFromMeld();
+  await disconnectFromOBS();
+};
