@@ -147,7 +147,7 @@ const ServerElement = ({
     if (name === 'statsUrl') {
       if (!value.trim() || value.replace(/\s+/g, '').length === 0) {
         return t('server.error1');
-      } else if (!value.startsWith('http://')) {
+      } else if (!value.startsWith('http://') && !value.startsWith('https://')) {
         return t('server.error2');
       } else if (value.includes(' ')) {
         return t('server.error3');
