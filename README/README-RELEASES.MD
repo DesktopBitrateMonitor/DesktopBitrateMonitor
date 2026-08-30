@@ -1,6 +1,6 @@
 ## v1.5.4
 
-- Fix https:// support for server stats fetching
+- Fix https:// support for add server instance dialog
 
 ## v1.5.3
 
