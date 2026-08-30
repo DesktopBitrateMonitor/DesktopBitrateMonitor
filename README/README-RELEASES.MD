@@ -1,6 +1,6 @@
 ## v1.5.4
 
-- 
+- Fix https:// support for server stats fetching
 
 ## v1.5.3
 
